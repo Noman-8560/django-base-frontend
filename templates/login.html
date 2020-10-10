@@ -10,12 +10,6 @@
 
     <div class="p-ground h-100 py-5">
 
-        <div class="container text-center">
-            <p class="small bg-danger text-light p-2 rounded"><b> NOTE > </b>Page design is not final and text is random
-                its just a prototype, will be changed according to application requirements <i
-                        class="fa fa-spinner fa fa-spin"></i></p>
-        </div>
-
         <div class="text-center text-light">
             <img src="{% static 'images/nologo.png' %}" class="rounded-circle" height="100px;">
             <p class="m-0">COCOGNITE</p>
@@ -46,9 +40,9 @@
                                 <b class="text-danger">NOTE > </b>This page is specified for student login if you are
                                 searching for parent's login or registration please check the links given below.
                             </p>
-                            <a href="#" class="small"> Parents login Here.</a><br>
-                            <a href="mailto:help@exarth.com" class="small">Students registration Here.</a><br>
-                            <a href="mailto:help@exarth.com" class="small">Have any question ? Contact here.</a>
+                            <a href="{% url 'application:parent_login' %}" class="small"> Parents login Here.</a><br>
+                            <a href="#" class="small">Students registration Here.</a><br>
+                            <a href="mailto:help@cocognito.com" class="small">Have any question ? Contact here.</a>
                             <hr>
 
                             <div class="text-center">
