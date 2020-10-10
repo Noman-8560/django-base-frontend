@@ -8,7 +8,7 @@
 </div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-blueblack shadow-lg p-2" style="z-index: 10;">
     <div class="container">
-        <a class="navbar-brand font-weight-bold" href="#" style="font-size: 16px;">COCOGNITE <small
+        <a class="navbar-brand font-weight-bold" href="/" style="font-size: 16px;">COCOGNITO <small
                 class="text-success small text-muted">version_0.1</small></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,10 +18,10 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link small" href="/">Events</a>
+                    <a class="nav-link small" href="/home/">Events</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link small" href="/">My Events</a>
+                    <a class="nav-link small" href="#">My Events</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link small" href="#">Resources</a>
@@ -45,7 +45,7 @@
                         </div>
                         <hr>
                         <a class="dropdown-item small" href=""><i class="fa fa-dashboard"></i> Dashboard</a>
-                        <a class="dropdown-item small" href=""><i class="fa fa-heart"></i> Profile</a>
+                        <a class="dropdown-item small" href="{% url 'application:profile_update' %}"><i class="fa fa-heart"></i> Profile</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item small" href=""><i class="fa fa-refresh"></i> Settings</a>
                         <a class="dropdown-item small" href=""><i class="fa fa-shopping-cart"></i> Privacy</a>
