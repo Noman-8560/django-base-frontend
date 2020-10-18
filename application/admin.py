@@ -19,6 +19,7 @@ class ChoiceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(Choice, ChoiceAdmin)
 
 for model in models:
     admin.site.register(apps.get_model('application.' + model))
