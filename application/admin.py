@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.apps import apps
 from application.models import *
 
 admin.site.site_header = 'CoCognito | Admin'
@@ -7,18 +6,44 @@ admin.site.site_title = 'CoCognito | Admin'
 
 admin.site.index_title = 'CoCognito | Tables'
 
-models = ['Choice', 'Subject', 'Attempt', 'Team', 'Quiz']
+
+class OptionAdmin(admin.ModelAdmin):
+    list_display = ['text', 'id', 'created_on']
+
+
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'id', 'created_on']
+
+
+class GuardianAdmin(admin.ModelAdmin):
+    list_display = ['user', 'id', 'created_on']
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'statement']
+    list_display = ['statement', 'id', 'subject', 'created_on']
 
 
-class ChoiceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'text']
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ['title', 'id', 'created_on']
+
+
+class AttemptAdmin(admin.ModelAdmin):
+    list_display = ['question', 'user', 'successful', 'start_time', 'end_time', 'created_on', 'id']
+
+
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ['name', 'quiz', 'created_on']
+
+
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ['title', 'start_time', 'end_time', 'created_on']
 
 
 admin.site.register(Question, QuestionAdmin)
-
-for model in models:
-    admin.site.register(apps.get_model('application.' + model))
+admin.site.register(Option, OptionAdmin)
+admin.site.register(Student, StudentAdmin)
+admin.site.register(Guardian, GuardianAdmin)
+admin.site.register(Subject, SubjectAdmin)
+admin.site.register(Attempt, AttemptAdmin)
+admin.site.register(Team, TeamAdmin)
+admin.site.register(Quiz, QuizAdmin)
