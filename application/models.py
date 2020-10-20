@@ -5,8 +5,9 @@ from django.utils import timezone
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
-    created_on = models.DateTimeField(default=timezone.now())
     guardian = models.ForeignKey('Guardian', on_delete=models.DO_NOTHING, related_name='guardian+')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.user.first_name) + ' ' + str(self.user.last_name)
@@ -21,7 +22,8 @@ class Student(models.Model):
 
 class Guardian(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.user.first_name) + ' ' + str(self.user.last_name)
@@ -39,7 +41,8 @@ class Question(models.Model):
     options = models.ManyToManyField('Option', blank=False, related_name='choices+')
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
     subject = models.ForeignKey('Subject', blank=False, null=False, related_name='subject', on_delete=models.CASCADE)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.statement)
@@ -55,7 +58,8 @@ class Question(models.Model):
 class Option(models.Model):
     text = models.TextField(null=False, blank=False)
     is_correct = models.BooleanField(null=False, blank=False)
-    created_on = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.text)
@@ -69,7 +73,8 @@ class Option(models.Model):
 
 class Subject(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -89,7 +94,8 @@ class Attempt(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     successful = models.BooleanField(null=False, blank=False)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.question.statement + ' attempted by ' + self.user.first_name
@@ -106,7 +112,8 @@ class Team(models.Model):
     quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
     participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
     is_active = models.BooleanField(null=False, blank=False)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -124,7 +131,8 @@ class Quiz(models.Model):
     teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title

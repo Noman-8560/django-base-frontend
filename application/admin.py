@@ -8,35 +8,35 @@ admin.site.index_title = 'CoCognito | Tables'
 
 
 class OptionAdmin(admin.ModelAdmin):
-    list_display = ['text', 'id', 'created_on']
+    list_display = ['text', 'id']
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['user', 'id', 'created_on']
+    list_display = ['user', 'id']
 
 
 class GuardianAdmin(admin.ModelAdmin):
-    list_display = ['user', 'id', 'created_on']
+    list_display = ['user', 'id']
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['statement', 'id', 'subject', 'created_on']
+    list_display = ['statement', 'id', 'subject']
 
 
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ['title', 'id', 'created_on']
+    list_display = ['title', 'id']
 
 
 class AttemptAdmin(admin.ModelAdmin):
-    list_display = ['question', 'user', 'successful', 'start_time', 'end_time', 'created_on', 'id']
+    list_display = ['question', 'user', 'successful', 'start_time', 'end_time', 'id']
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['name', 'quiz', 'created_on']
+    list_display = ['name', 'quiz']
 
 
 class QuizAdmin(admin.ModelAdmin):
-    list_display = ['title', 'start_time', 'end_time', 'created_on']
+    list_display = ['title', 'start_time', 'end_time']
 
 
 admin.site.register(Question, QuestionAdmin)
