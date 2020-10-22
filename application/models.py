@@ -42,6 +42,11 @@ class Question(models.Model):
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
     subject = models.ForeignKey('Subject', blank=False, null=False, related_name='subject', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    hint = models.TextField(null=True, blank=True)
+    image_hint_url = models.URLField(null=True, blank=True, max_length=500)
+    audio_hint_url = models.URLField(null=True, blank=True, max_length=500)
+    image_hint_file = models.FileField(upload_to='static/Uploads/', null=True, blank=True)
+    audio_hint_file = models.FileField(upload_to='static/Uploads/', null=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
