@@ -37,3 +37,9 @@ def quiz_user_3(request):
     return render(request=request, template_name='quiz_user_3.html')
 
 
+def quiz_builder(request):
+    return render(request=request, template_name='quiz_builder.html')
+
+
+def question_builder(request):
+    return render(request=request, template_name='question_builder.html')
