@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from application.models import *
 
 
 def home(request):
@@ -39,6 +40,20 @@ def quiz_user_3(request):
 
 def quiz_builder(request):
     return render(request=request, template_name='quiz_builder.html')
+
+
+def learning_resource(request):
+    quizzes = Quiz.objects.all()
+    context = {'quizzes': quizzes}
+    return render(request=request, template_name='learning_resource.html', context=context)
+
+
+def learning_resource_quiz(request):
+    id = request.GET.get('id', 0)
+    print(str(id))
+    quiz = Quiz.objects.get(id=id)
+    context = {'quiz': quiz}
+    return render(request=request, template_name='learning_resource_quiz.html', context=context)
 
 
 def question_builder(request):
