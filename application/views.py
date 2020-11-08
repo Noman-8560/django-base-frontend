@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from application.models import *
 
+from application.models import *
+
 
 def home(request):
     return render(request=request, template_name='home.html')
@@ -57,4 +59,9 @@ def learning_resource_quiz(request):
 
 
 def question_builder(request):
-    return render(request=request, template_name='question_builder.html')
+    subjects = Subject.objects.all()
+
+    context = {
+        'subjects': subjects
+    }
+    return render(request=request, template_name='question_builder.html', context=context)
