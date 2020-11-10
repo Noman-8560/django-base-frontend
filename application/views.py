@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from application.models import *
-
-from application.models import *
+from .forms import *
+from .models import *
 
 
 def home(request):
@@ -58,10 +57,22 @@ def learning_resource_quiz(request):
     return render(request=request, template_name='learning_resource_quiz.html', context=context)
 
 
+''' QUESTION BUILDER VIEWS _______________________________________________________________'''
 def question_builder(request):
-    subjects = Subject.objects.all()
 
     context = {
-        'subjects': subjects
+        'form': QuestionForm,
     }
     return render(request=request, template_name='question_builder.html', context=context)
+
+
+def question_builder_update(request):
+
+    context = {
+        'form': QuestionForm,
+        'form_question_choice': QuestionChoiceForm,
+        'form_question_image': QuestionImageForm,
+        'form_question_audio': QuestionAudioForm,
+        'form_question_statement': QuestionStatementForm,
+    }
+    return render(request=request, template_name='question_builder_update.html', context=context)

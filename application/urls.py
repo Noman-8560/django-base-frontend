@@ -17,5 +17,5 @@ urlpatterns = [
     path('learning_resource/', learning_resource, name='learning_resource'),
     path('learning_resource_quiz/', learning_resource_quiz, name='learning_resource_quiz'),
     path('question/builder/', question_builder, name='question_builder'),
-
+    path('update/question/', question_builder_update, name='question_builder_update'),
 ]
