@@ -39,8 +39,8 @@ class QuizAdmin(admin.ModelAdmin):
     list_display = ['title', 'start_time', 'end_time']
 
 
-class QuestionOptionsAdmin(admin.ModelAdmin):
-    list_display = ['question', 'option', 'is_correct']
+class QuestionChoiceAdmin(admin.ModelAdmin):
+    list_display = ['text', 'is_correct', 'question']
 
 
 class QuestionStatementAdmin(admin.ModelAdmin):
@@ -69,8 +69,7 @@ admin.site.register(Question, QuestionAdmin)
 admin.site.register(QuestionType, QuestionTypeAdmin)
 admin.site.register(Screen, ScreenAdmin)
 admin.site.register(QuestionStatement, QuestionStatementAdmin)
-admin.site.register(QuestionOption, QuestionOptionsAdmin)
-admin.site.register(Option, OptionAdmin)
+admin.site.register(QuestionChoice, QuestionChoiceAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Guardian, GuardianAdmin)
 admin.site.register(Subject, SubjectAdmin)

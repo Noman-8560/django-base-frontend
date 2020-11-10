@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Quiz > Builder{% endblock %}
+
+{% block content %}
+
+    {% include 'message.html' %}
+
+    <div class="container my-3">
+
+        <div class="row mt-4">
+
+            <div class="col-sm-8">
+
+                {# basic details #}
+                <div class="p-2 p-sm-4 border">
+                    <div class="text-center">
+                        <p class="lead m-0">Question Details</p>
+                        <p class="text-muted small m-0">
+                            update/delete question details here you
+                        </p>
+                    </div>
+                    <br>
+
+                    <form autocomplete="off" method="post" action="">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <button type="submit" class="btn btn-success"> > SAVE</button>
+
+                    </form>
+                    <hr>
+                    <div>
+                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#statement_model">
+                            <i class="fa fa-file-text"></i> Add New Statement.
+                        </button>
+                        <br>
+                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#choice_model">
+                            <i class="fa fa-list"></i> Add New Option.
+                        </button>
+                        <br>
+                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#image_model">
+                            <i class="fa fa-picture-o"></i> Add New Image Hint.
+                        </button>
+                        <br>
+                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#audio_model">
+                            <i class="fa fa-music"></i> Add New Audio Hint.
+                        </button>
+                        <br>
+                    </div>
+                </div>
+
+                {# Statements details #}
+                <div class="p-2 p-sm-4 border mt-2">
+                    <div>
+                        <p class="lead m-0">Statements Here.</p>
+                        <p class="text-muted small text-left m-0">{% lorem 30 w random %}
+                        </p>
+                        <br>
+
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Text</th>
+                                    <th>Visibility</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+
+                                    <td>{% lorem 20 w random %}</td>
+                                    <td> Screen 1</td>
+                                    <td><i class="fa fa-trash-o text-danger"></i></td>
+                                </tr>
+                                <tr>
+
+                                    <td>{% lorem 20 w random %}</td>
+                                    <td> Screen 2</td>
+                                    <td><i class="fa fa-trash-o text-danger"></i></td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {# Images details #}
+                <div class="p-2 p-sm-4 border mt-2">
+                    <div>
+                        <p class="lead m-0">Images Here.</p>
+                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+                        </p>
+                        <br>
+
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <img src="{% static 'images/nologo.png' %}" class="img-thumbnail mt-1">
+                            </div>
+
+                            <div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <img src="{% static 'images/friends.png' %}" class="img-thumbnail">
+                            </div>
+
+                            <div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <img src="{% static 'images/apples.png' %}" class="img-thumbnail">
+                            </div>
+
+                            <div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <img src="{% static 'images/noimage.jpg' %}" class="img-thumbnail">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <div class="col-sm-4">
+                {# Choices details #}
+                <div class="p-2 p-sm-4 border">
+                    <div>
+                        <p class="lead m-0">Choices Here.</p>
+                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+                        </p>
+                        <br>
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Text</th>
+                                    <th>Correct</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>{% lorem 1 w random %}</td>
+                                    <td><i class="fa fa-check text-success"></i></td>
+                                    <td><i class="fa fa-trash-o text-danger"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>{% lorem 1 w random %}</td>
+                                    <td><i class="fa fa-times-circle text-danger"></i></td>
+                                    <td><i class="fa fa-trash-o text-danger"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>{% lorem 1 w random %}</td>
+                                    <td><i class="fa fa-times-circle text-danger"></i></td>
+                                    <td><i class="fa fa-trash-o text-danger"></i></td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {# Audio details #}
+                <div class="p-2 p-sm-4 border mt-2">
+                    <div>
+                        <p class="lead m-0">Audio Here.</p>
+                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+                        </p>
+                        <br>
+
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <audio controls>
+                                    <source src="https://www.computerhope.com/jargon/m/example.mp3"/>
+                                </audio>
+                            </div><div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <audio controls>
+                                    <source src="https://www.computerhope.com/jargon/m/example.mp3"/>
+                                </audio>
+                            </div><div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <audio controls>
+                                    <source src="https://www.computerhope.com/jargon/m/example.mp3"/>
+                                </audio>
+                            </div><div class="col">
+                                <button class="btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+                                <audio controls>
+                                    <source src="https://www.computerhope.com/jargon/m/example.mp3"/>
+                                </audio>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    {# MODELS #}
+
+    <!-- STATEMENT Modal -->
+    <div class="modal fade" id="statement_model" tabindex="-1" role="dialog" aria-labelledby="statement_modelLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" autocomplete="off" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">ADD Statement.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {{ form_question_statement | crispy }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">ADD</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# MODELS #}
+    <div>
+        <!-- IMAGE Modal -->
+        <div class="modal fade" id="image_model" tabindex="-1" role="dialog" aria-labelledby="image_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" autocomplete="off" action="">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD Image Hint.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_image | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- audio Modal -->
+        <div class="modal fade" id="audio_model" tabindex="-1" role="dialog" aria-labelledby="audio_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" autocomplete="off" action="">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD Audio Hint.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_audio | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- choice Modal -->
+        <div class="modal fade" id="choice_model" tabindex="-1" role="dialog" aria-labelledby="choice_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" autocomplete="off" action="">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD New Option.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_choice | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

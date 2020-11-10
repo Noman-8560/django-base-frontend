@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -35,38 +36,24 @@ class QuestionType(models.Model):
         verbose_name_plural = 'Question Types'
 
 
-class Option(models.Model):
-    text = models.TextField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return str(self.text)
-
-    def __unicode__(self):
-        return self.text
-
-    class Meta:
-        verbose_name = 'Option'
-        verbose_name_plural = 'Options'
-
-
 '''________________________________________________________________________________'''
 
 
+def is_more_than_eighteen(value):
+    if value > 18:
+        raise ValidationError('Value must be less than 18.')
+    pass
+
+
 class Question(models.Model):
-    options = models.ManyToManyField('Option', through='QuestionOption', blank=False, related_name='choices+')
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
     submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                            related_name='submited_by')
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                         related_name='select_choices')
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
+    age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     created_at = models.DateTimeField(auto_now_add=True)
-    image_hint_url = models.URLField(null=True, blank=True, max_length=500)
-    audio_hint_url = models.URLField(null=True, blank=True, max_length=500)
-    image_hint_file = models.FileField(upload_to='static/Uploads/', null=True, blank=True)
-    audio_hint_file = models.FileField(upload_to='static/Uploads/', null=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -81,7 +68,8 @@ class Question(models.Model):
 
 
 class QuestionStatement(models.Model):
-    statement = models.CharField(max_length=1000, null=False, blank=False)
+    statement = models.TextField(null=False, blank=False,
+                                 help_text='add your question statement/defination here you can add multiple statements to.')
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
@@ -133,20 +121,22 @@ class QuestionAudio(models.Model):
         verbose_name_plural = 'Questions Audios'
 
 
-class QuestionOption(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    option = models.ForeignKey(Option, on_delete=models.CASCADE)
-    is_correct = models.BooleanField(null=False, blank=False, default=False)
+class QuestionChoice(models.Model):
+    text = models.CharField(max_length=255, null=False, blank=False)
+    is_correct = models.BooleanField(default=False, null=False, blank=False)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.question.id)
+        return str(self.text)
 
     def __unicode__(self):
-        return self.option
+        return self.text
 
     class Meta:
-        verbose_name_plural = 'Question Options'
-        verbose_name = 'Question Option'
+        verbose_name = 'Question Choice'
+        verbose_name_plural = 'Questions Choices'
 
 
 '''________________________________________________________________________________'''
@@ -241,6 +231,8 @@ class Team(models.Model):
 
 class Quiz(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False)
+    age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
+    subjects = models.ManyToManyField(Subject, null=False, blank=False)
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)

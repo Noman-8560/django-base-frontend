@@ -5,225 +5,32 @@
 {% block base_title %}Quiz > Builder{% endblock %}
 
 {% block content %}
+
     {% include 'message.html' %}
 
     <div class="container my-3">
-        <div class="">
+        <div class="row justify-content-center mt-5">
 
-            <div class="row">
-                <div class="col-sm-8 p-2 p-sm-4">
+            <div class="col-sm-8 p-2 p-sm-4 border bg-light">
 
-                    <p class="lead m-0">Question Basic Details</p>
-                    <p class="text-muted small text-left m-0">Please select subject and fill all the three statements
-                        below if this question holds any image or audio please link it below.
-                    </p>
+                {# basic details #}
+                <div>
+                    <div class="text-center">
+                        <p class="lead m-0">STEP 1 > Basic Details</p>
+                        <p class="text-muted small m-0">
+                            Please add basic details about this question to proceed to step 2
+                        </p>
+                    </div>
                     <br>
 
-{#                     SUBJECTS#}
-                    <div class="form-group">
-                        <label for="exampleFormControlSelect1">Select Subjects</label>
-                        <select class="form-control" id="exampleFormControlSelect1">
-                            {% for subject in subjects %}
-                                <option>{{ subject.title }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-{#                     QUESTION_STATEMENT_1#}
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Question Statement 1</label>
-                        <textarea class="form-control" rows="3" id="exampleFormControlInput1"></textarea>
-                    </div>
-
-{#                     QUESTION_STATEMENT_2#}
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Question Statement 2</label>
-                        <textarea class="form-control" rows="3" id="exampleFormControlInput1"></textarea>
-                    </div>
-
-{#                     QUESTION_STATEMENT_3#}
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Question Statement 3</label>
-                        <textarea class="form-control" rows="3" id="exampleFormControlInput1"></textarea>
-                    </div>
-
-{#                     AGE_RANGE#}
-                    <div class="form-group">
-                        <label for="formControlRange">Select Age Range</label>
-                        <input type="range" class="form-control-range" id="formControlRange">
-                    </div>
-
-{#                     PICTURE_UPLOAD_LINK#}
-                    <div>
-                        <p class="lead m-0">Image Setting</p>
-                        <p class="text-muted small text-left m-0">Admin is allowed to directly upload or link some
-                            image from google or any other online media option are given below you can use both fields
-                            at the same time.
-                        </p>
-                        <br>
-                        <div class="input-group input-group-sm mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">URL</span>
-                            </div>
-                            <input type="url" class="form-control" aria-label="Sizing example input"
-                                   aria-describedby="inputGroup-sizing-sm">
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                       aria-describedby="inputGroupFileAddon01">
-                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                            </div>
-                        </div>
-                    </div>
-
-{#                     AUDIO_UPLOAD_LINK#}
-                    <div>
-                        <p class="lead m-0">Audio Setting</p>
-                        <p class="text-muted small text-left m-0">Admin is allowed to directly upload or link some
-                            audio from sound-cloud or any other online media option are given below you can use both
-                            fields
-                            at the same time.
-                        </p>
-                        <br>
-                        <label for="exampleFormControlInput1">Link or upload audio</label>
-                        <div class="input-group input-group-sm mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">URL</span>
-                            </div>
-                            <input type="url" class="form-control" aria-label="Sizing example input"
-                                   aria-describedby="inputGroup-sizing-sm">
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                       aria-describedby="inputGroupFileAddon01">
-                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-
-                {# STATICTICS #}
-                <div class="col-sm-4">
-
-
-                    <div class="border p-2 p-sm-4">
-
-                        <p class="lead m-0">Option setup here.</p>
-                        <p class="text-muted small text-left m-0">Please check the box when you are typing correct
-                            option below, here you are not allowed to update choice so please clean and create again.
-                        </p>
-                        <br>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <input type="checkbox" aria-label="Checkbox for following text input">
-                                </div>
-                            </div>
-                            <input type="text" class="form-control" aria-label="Text input with checkbox">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button"><i class="fa fa-plus"></i> ADD</button>
-                            </div>
-                        </div>
-
-                        <div class="py-4 px-1 small">
-                            <p class="bg-light p-2 m-0 border">option_value</p>
-                            <p class="bg-success p-2 m-0 border">second_value</p>
-                            <p class="bg-light p-2 m-0 border">third_value</p>
-                        </div>
-                        <div class="text-right">
-
-                            <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Clean</button>
-                        </div>
-
-                    </div>
-
-                    <div class="border p-2 p-sm-4 mt-4">
-                        <p class="lead m-0">Student Screen Control.</p>
-                        <p class="text-muted small text-left m-0">This area is used for student screen control if you
-                            are un-familiar try not use it, it will cause series problems in questions.
-                        </p>
-                        <br>
-
-                        {# QUESTION_CHOICES #}
-                        <div>
-                            {# QUESTION_STATEMENT_1 CHOICES #}
-                            <div>
-                                Statement_1 >
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio1"
-                                           value="option1">
-                                    <label class="form-check-label" for="inlineRadio1">s.1</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio2"
-                                           value="option2">
-                                    <label class="form-check-label" for="inlineRadio2">s.2</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio3"
-                                           value="option3">
-                                    <label class="form-check-label" for="inlineRadio3">s.3</label>
-                                </div>
-                            </div>
-
-                            {# QUESTION_STATEMENT_2 CHOICES #}
-                            <div>
-                                Statement_2 >
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio1"
-                                           value="option1">
-                                    <label class="form-check-label" for="inlineRadio1">s.1</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio2"
-                                           value="option2">
-                                    <label class="form-check-label" for="inlineRadio2">s.2</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio3"
-                                           value="option3">
-                                    <label class="form-check-label" for="inlineRadio3">s.3</label>
-                                </div>
-                            </div>
-
-                            {# QUESTION_STATEMENT_3 CHOICES #}
-                            <div>
-                                Statement_3 >
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio1"
-                                           value="option1">
-                                    <label class="form-check-label" for="inlineRadio1">s.1</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio2"
-                                           value="option2">
-                                    <label class="form-check-label" for="inlineRadio2">s.2</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
-                                           id="inlineRadio3"
-                                           value="option3">
-                                    <label class="form-check-label" for="inlineRadio3">s.3</label>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
+                    <form autocomplete="off" method="post" action="">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <a class="btn btn-success" href="{% url 'application:question_builder_update' %}"> > NEXT STEP.</a>
+                    </form>
                 </div>
             </div>
+
 
         </div>
     </div>
