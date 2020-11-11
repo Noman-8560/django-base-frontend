@@ -1,0 +1,65 @@
+<div class="container" id="model">
+
+</div>
+<script>
+    $('#form-add-customer').submit(function (event) {
+
+        event.preventDefault();
+        let data = new FormData(this);
+        $.ajax({
+            url: '/api/add/customer/',
+            type: 'POST',
+            data: data,
+            contentType: false,
+            processData: false,
+        }).then(function (data, status) {
+            $('#customer-card').show();
+            $('#c-id').text(data.id);
+            $('#c-name').text(data.name);
+            $('#myModal').modal('hide');
+        }).catch(function (err) {
+            alert(err.responseText);
+        });
+
+    });
+</script>
+
+<!-- MODEL -->
+<div class="container" id="model">
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <form id="form-add-customer">
+                <input type="hidden" name="csrfmiddlewaretoken"
+                       value="nnCPPxHeteskERPGfqOMQcyuccVs4gMbWtwnzMY3O1F59kf66Uy3NVNVK7eXWBe3">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Add Customer</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="text" name="name" id="name" class="form-control"
+                               placeholder="Name"><br>
+                        <input type="tel" name="phone" id="phone" class="form-control"
+                               placeholder="Phone"><br>
+                        <input type="text" name="creditcard" id="credit" class="form-control"
+                               placeholder="Creditcard"><br>
+                        <input type="text" name="address" id="address" class="form-control"
+                               placeholder="Address"><br>
+                        <select id="city-add" name="city" class="form-control">
+
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" value="POST" id="add-customer">&plus;
+                            ADD
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

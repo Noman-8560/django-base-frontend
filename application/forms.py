@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, HiddenInput
 from .models import *
 
 
@@ -11,23 +11,23 @@ class QuestionForm(ModelForm):
 class QuestionStatementForm(ModelForm):
     class Meta:
         model = QuestionStatement
-        fields = ['statement', 'screen', 'question']
+        fields = ['statement', 'screen']
 
 
 class QuestionImageForm(ModelForm):
     class Meta:
         model = QuestionImage
-        fields = ['url', 'image', 'screen', 'question']
+        fields = ['url', 'image', 'screen']
 
 
 class QuestionAudioForm(ModelForm):
     class Meta:
         model = QuestionAudio
-        fields = ['url', 'audio', 'screen', 'question']
+        fields = ['url', 'audio', 'screen']
 
 
 
 class QuestionChoiceForm(ModelForm):
     class Meta:
         model = QuestionChoice
-        fields = ['text', 'is_correct', 'question']
+        fields = ['text', 'is_correct']

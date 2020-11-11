@@ -87,12 +87,16 @@ class QuestionStatement(models.Model):
 
 class QuestionImage(models.Model):
     url = models.URLField(null=True, blank=True)
-    image = models.ImageField(upload_to=None, height_field=200, width_field=200, null=True, blank=True)
+    image = models.ImageField(
+        upload_to='images/projects/',
+        null=True, blank=True,
+        help_text='size of image less then 500*500 and format must be png, jpg or jpeg image file - '
+    )
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):
-        return self.pk
+        return str(self.url)
 
     def __unicode__(self):
         return self.pk
@@ -105,12 +109,16 @@ class QuestionImage(models.Model):
 
 class QuestionAudio(models.Model):
     url = models.URLField(null=True, blank=True)
-    audio = models.FileField(upload_to=None, null=True, blank=True)
+    audio = models.FileField(
+        upload_to='audios/projects/',
+        null=True, blank=True,
+        help_text='size of audio less then 5MB and format must be mps, ogg etc'
+    )
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
     def __unicode__(self):
         return self.pk
