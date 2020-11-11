@@ -6,6 +6,7 @@
 
 {% block content %}
 
+
     {% include 'message.html' %}
 
     <div class="container my-3">
@@ -26,7 +27,7 @@
                     <form autocomplete="off" method="post" action="">
                         {% csrf_token %}
                         {{ form | crispy }}
-                        <a class="btn btn-success" href="{% url 'application:question_builder_update' %}"> > NEXT STEP.</a>
+                        <button type="submit" class="btn btn-success"> > NEXT STEP.</button>
                     </form>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <div>
     {% if messages %}
-    <div class="small py-5">
+    <div class="container small pt-4">
         {% for message in messages %}
             {% if message.tags == 'info' %}
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -42,3 +42,4 @@
     </div>
 {% endif %}
 </div>
+
