@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('question/builder/', question_builder, name='question_builder'),
     path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
+    path('search/question/', search_question, name='search_question'),
 
     path('add/statement/for/question/<int:question>/', question_statement_add, name='question_statement_add'),
     path('delete/statement/<int:pk>/', question_statement_delete, name='question_statement_delete'),
@@ -31,4 +32,10 @@ urlpatterns = [
 
     path('add/audio/for/question/<int:question>/', question_audio_add, name='question_audio_add'),
     path('delete/audio/<int:pk>/', question_audio_delete, name='question_audio_delete'),
+
+    path('quiz/builder/', quiz_builder, name='quiz_builder'),
+    path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
+
+    path('add/quiz/<int:quiz>/question/<int:question>/', quiz_question_add, name='quiz_question_add'),
+    path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
 ]

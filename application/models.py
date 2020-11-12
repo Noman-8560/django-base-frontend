@@ -36,6 +36,21 @@ class QuestionType(models.Model):
         verbose_name_plural = 'Question Types'
 
 
+class Subject(models.Model):
+    title = models.CharField(max_length=50, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = 'Subjects'
+
+
 '''________________________________________________________________________________'''
 
 
@@ -150,6 +165,28 @@ class QuestionChoice(models.Model):
 '''________________________________________________________________________________'''
 
 
+class Quiz(models.Model):
+    title = models.CharField(max_length=100, null=False, blank=False)
+    age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
+    subjects = models.ManyToManyField(Subject, null=False, blank=False)
+    questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
+    teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
+    start_time = models.DateTimeField(null=False, blank=False)
+    end_time = models.DateTimeField(null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = 'Quizzes'
+
+
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
     guardian = models.ForeignKey('Guardian', on_delete=models.DO_NOTHING, related_name='guardian+')
@@ -181,21 +218,6 @@ class Guardian(models.Model):
     class Meta:
         managed = True
         verbose_name_plural = 'Guardians'
-
-
-class Subject(models.Model):
-    title = models.CharField(max_length=50, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.title
-
-    def __unicode__(self):
-        return self.title
-
-    class Meta:
-        verbose_name_plural = 'Subjects'
 
 
 class Attempt(models.Model):
@@ -237,22 +259,4 @@ class Team(models.Model):
         verbose_name_plural = 'Teams'
 
 
-class Quiz(models.Model):
-    title = models.CharField(max_length=100, null=False, blank=False)
-    age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
-    subjects = models.ManyToManyField(Subject, null=False, blank=False)
-    questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
-    teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
-    start_time = models.DateTimeField(null=False, blank=False)
-    end_time = models.DateTimeField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.title
-
-    def __unicode__(self):
-        return self.title
-
-    class Meta:
-        verbose_name_plural = 'Quizzes'

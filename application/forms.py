@@ -1,5 +1,11 @@
-from django.forms import ModelForm, HiddenInput
+from django.contrib.admin.widgets import AdminSplitDateTime, AdminTimeWidget
+from django.forms import *
+from django import forms
 from .models import *
+
+
+class CSDateTimeInput(forms.DateTimeInput):
+    input_type = 'da'
 
 
 class QuestionForm(ModelForm):
@@ -31,3 +37,14 @@ class QuestionChoiceForm(ModelForm):
     class Meta:
         model = QuestionChoice
         fields = ['text', 'is_correct']
+
+
+''' QUIZ BUILDER VIEWS _______________________________________________________________'''
+
+
+class QuizForm(ModelForm):
+
+    class Meta:
+        model = Quiz
+        fields = ['title', 'age_limit', 'subjects', 'age_limit', 'start_time', 'end_time']
+

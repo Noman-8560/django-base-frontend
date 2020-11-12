@@ -1,81 +1,37 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block base_title %}Quiz > Builder{% endblock %}
 
 {% block content %}
+
+
+    {% include 'message.html' %}
+
     <div class="container my-3">
-        <div class="">
+        <div class="row justify-content-center mt-5">
 
-            {# HEAD #}
+            <div class="col-sm-8 p-2 p-sm-4 border bg-light">
 
-            <div class="row">
-                <div class="col-sm-7 p-2 p-sm-4">
-
-                    <p class="h3">Quiz Setup</p>
-
-                    {# NO_OF_QUESTIONS #}
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">No Of Questions</label>
-                        <input type="number" class="form-control" id="exampleFormControlInput1"
-                               placeholder="00000">
+                {# basic details #}
+                <div>
+                    <div class="text-center">
+                        <p class="lead m-0">STEP 1 > Basic Details</p>
+                        <p class="text-muted small m-0">
+                            Please add basic details about this quiz to proceed to step 2
+                        </p>
                     </div>
+                    <br>
 
-                    {# SUBJECTS #}
-                    <div class="form-group">
-                        <label for="exampleFormControlSelect1">Select Subjects</label>
-                        <select multiple class="form-control" id="exampleFormControlSelect1">
-                            <option>Maths</option>
-                            <option>Physics</option>
-                            <option>Chemistry</option>
-                            <option>English</option>
-                            <option>Computer Science</option>
-                            <option>Biology</option>
-                            <option>Spanish</option>
-                        </select>
-                    </div>
-
-                    {# AGE_RANGE #}
-                    <div class="form-group">
-                        <label for="formControlRange">Select Age Range</label>
-                        <input type="range" class="form-control-range" id="formControlRange">
-                    </div>
-
-                    {# QUIZ DURATION #}
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Quiz Duration In Minutes</label>
-                        <input type="number" class="form-control" id="exampleFormControlInput1"
-                               placeholder="120">
-                    </div>
-
-                </div>
-
-                {# STATICTICS #}
-                <div class="col-sm-5 p-2 p-sm-4">
-
-                    <p class="h3">Quiz Statistics</p>
-
-                    {# SUBJECTS #}
-                    <p class="m-0"><i class="fa fa-times text-danger"></i> Subject Selected</p>
-                    <p class="m-0"><i class="fa fa-times text-danger"></i> No of Questions</p>
-                    <p class="m-0"><i class="fa fa-check text-success"></i> Age Range</p>
-                    <p class=""><i class="fa fa-times text-danger"></i> Total Quiz time set</p>
-
-                    <p class="h3 border-bottom">Listed Questions</p>
-
-                    <ol class="small">
-                        <li>{% lorem 10 w %}?</li>
-                        <li>{% lorem 8 w %}?</li>
-                        <li>{% lorem 7 w %}?</li>
-                        <li>{% lorem 12 w %}?</li>
-                        <li>{% lorem 5 w %}?</li>
-                        <li>{% lorem 10 w %}?</li>
-                        <li>{% lorem 7 w %}?</li>
-                    </ol>
-
-                    <button class="btn btn-block btn-success">Submit</button>
+                    <form autocomplete="off" method="post" action="">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <button type="submit" class="btn btn-success"> > NEXT STEP.</button>
+                    </form>
                 </div>
             </div>
+
 
         </div>
     </div>
