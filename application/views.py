@@ -1,8 +1,10 @@
+import json
+
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
+from django.core import serializers
 from .forms import *
 from .models import *
 
@@ -264,3 +266,119 @@ def question_audio_delete(request, pk):
         messages.error(request=request, message=f"Failed To Delete > Requested audio ({pk}) Does not Exists")
 
     return redirect('application:question_builder', permanent=True)
+
+
+''' QUIZ BUILDER VIEWS _______________________________________________________________'''
+
+
+def quiz_builder(request):
+    if request.method == 'POST':
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            quiz = form.save(commit=True)
+            messages.success(request=request,
+                             message="Quiz Added Successfully - Redirected to Quiz Description.")
+            return redirect('application:quiz_builder_update', quiz.pk, permanent=True)
+    else:
+        form = QuizForm()
+
+    context = {
+        'form': form
+    }
+    return render(request=request, template_name='quiz_builder.html', context=context)
+
+
+def search_question(request):
+
+    search = str(request.GET['search'])
+    questions_models =  Question.objects.filter(questionstatement__statement__icontains=search).distinct()
+
+    dict_out = {}
+    count = 0
+    for question in questions_models:
+
+        dict = {
+            'question': question.pk,
+            'statement': QuestionStatement.objects.filter(question=question)[0].statement,
+            'subject': question.subject.title,
+            'level': 'easy',
+        }
+        dict_out[count] = dict
+        count += 1
+
+    dict_out['length'] = count
+
+    return JsonResponse(dict_out, safe=False)
+
+
+
+def quiz_builder_update(request, pk):
+    question = None
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+    if request.method == 'POST':
+
+        form = QuizForm(request.POST or None, instance=Quiz.objects.get(pk=pk))
+        if form.is_valid():
+            form.save(commit=True)
+            messages.success(request=request,
+                             message="Quiz Updated Successfully - You can do more see options below.")
+
+    else:
+        form = QuizForm(instance=Quiz.objects.get(pk=pk))
+
+
+
+    context = {
+        'questions': quiz.questions.all(),
+        'subjects': quiz.subjects.all(),
+        'quiz_id': pk,
+        'total': quiz.questions.count(),
+        'remaining': 00,
+        'selected': 00,
+        'form': form,
+    }
+    return render(request=request, template_name='quiz_builder_update.html', context=context)
+
+
+def quiz_question_add(request, quiz, question):
+
+
+    quiz_model = None
+    question_model = None
+
+    try:
+        quiz_model = Quiz.objects.get(pk=quiz)
+        question_model = Question.objects.get(pk=question)
+
+    except [Quiz.DoesNotExist, Question.DoesNotExist]:
+        messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+    if quiz_model.questions.filter(pk=question):
+        messages.warning(request=request, message=f'Failed to add > Requested Question [ID: {question}] already associated with this quiz.')
+    else:
+        messages.success(request=request, message=f'Requested Question [ID: {question}] added successfully.')
+        quiz_model.questions.add(question_model)
+        quiz_model.save()
+
+    return redirect('application:quiz_builder_update', quiz, permanent=True)
+
+
+
+def quiz_question_delete(request, quiz, question):
+
+    try:
+        quiz_model = Quiz.objects.get(pk=quiz)
+        question_model = Question.objects.get(pk=question)
+
+        quiz_model.questions.remove(question_model)
+        messages.success(request=request, message=f'Requested Question [ID: {question}] deleted successfully.')
+        return redirect('application:quiz_builder_update', quiz, permanent=True)
+    except [Quiz.DoesNotExist, Question.DoesNotExist]:
+        messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
