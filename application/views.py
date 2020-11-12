@@ -331,8 +331,6 @@ def quiz_builder_update(request, pk):
     else:
         form = QuizForm(instance=Quiz.objects.get(pk=pk))
 
-
-
     context = {
         'questions': quiz.questions.all(),
         'subjects': quiz.subjects.all(),
@@ -340,6 +338,9 @@ def quiz_builder_update(request, pk):
         'total': quiz.questions.count(),
         'remaining': 00,
         'selected': 00,
+        'hard': 00,
+        'normal': 00,
+        'easy': 00,
         'form': form,
     }
     return render(request=request, template_name='quiz_builder_update.html', context=context)
