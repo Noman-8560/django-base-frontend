@@ -61,9 +61,15 @@ def is_more_than_eighteen(value):
 
 
 class Question(models.Model):
+    QUESTION_LEVEL = (
+        ('e', 'Easy'),
+        ('n', 'Normal'),
+        ('h', 'Hard'),
+    )
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
+    level = models.CharField(max_length=1, blank=True, null=True, default='e', choices=QUESTION_LEVEL)
     submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
-                                           related_name='submited_by')
+                                           related_name='submitted_by')
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                         related_name='select_choices')
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
@@ -186,7 +192,6 @@ class Quiz(models.Model):
         verbose_name_plural = 'Quizzes'
 
 
-
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
     guardian = models.ForeignKey('Guardian', on_delete=models.DO_NOTHING, related_name='guardian+')
@@ -257,6 +262,3 @@ class Team(models.Model):
 
     class Meta:
         verbose_name_plural = 'Teams'
-
-
-

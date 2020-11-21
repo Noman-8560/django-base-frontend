@@ -2,6 +2,7 @@ from django.contrib.admin.widgets import AdminSplitDateTime, AdminTimeWidget
 from django.forms import *
 from django import forms
 from .models import *
+from django.contrib.admin import widgets
 
 
 class CSDateTimeInput(forms.DateTimeInput):
@@ -43,8 +44,11 @@ class QuestionChoiceForm(ModelForm):
 
 
 class QuizForm(ModelForm):
+    start_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
+    end_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
 
     class Meta:
         model = Quiz
         fields = ['title', 'age_limit', 'subjects', 'age_limit', 'start_time', 'end_time']
+
 
