@@ -44,8 +44,8 @@ class QuestionChoiceForm(ModelForm):
 
 
 class QuizForm(ModelForm):
-    start_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
-    end_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
+    start_time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    end_time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
     class Meta:
         model = Quiz
