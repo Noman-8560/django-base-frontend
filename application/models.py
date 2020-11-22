@@ -91,7 +91,7 @@ class Question(models.Model):
 class QuestionStatement(models.Model):
     statement = models.TextField(null=False, blank=False,
                                  help_text='add your question statement/defination here you can add multiple statements to.')
-    screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
+    screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=True, blank=True)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):
@@ -174,7 +174,7 @@ class QuestionChoice(models.Model):
 class Quiz(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
-    subjects = models.ManyToManyField(Subject, null=False, blank=False)
+    subjects = models.ManyToManyField(Subject, blank=False)
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)
