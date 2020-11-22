@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Quiz > Builder{% endblock %}
+
+{% block content %}
+
+    {% include 'message.html' %}
+
+    <div class="container my-3">
+        <div class="row mt-4">
+            <div class="col-sm-8">
+
+                {# basic details #}
+                <div class="p-2 p-sm-4 border">
+                    <div class="text-center">
+                        <p class="lead m-0">Question Details</p>
+                        <p class="text-muted small m-0">
+                            update/delete question details here you
+                        </p>
+                    </div>
+                    <br>
+
+                    <form autocomplete="off" method="post" action="">
+                        {% csrf_token %}
+                        {{ form_question | crispy }}
+                        <button type="submit" class="btn btn-success"> > SAVE</button>
+
+                    </form>
+                    <hr>
+                    <div>
+                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#image_model">
+                            <i class="fa fa-picture-o"></i> Add New Image Hint.
+                        </button>
+                        <br>
+                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#audio_model">
+                            <i class="fa fa-music"></i> Add New Audio Hint.
+                        </button>
+                        <br>
+                    </div>
+                </div>
+
+                {# Statements details #}
+                <div class="p-2 p-sm-4 border mt-2" id="div_statements">
+                    {% csrf_token %}
+                    <div>
+                        <p class="lead m-0">Enter statements</p>
+                        <br>
+                        {% if data_question_statements %}
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Text</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for statement in data_question_statements %}
+                                        <tr>
+                                            <td> {{ statement.statement }} </td>
+                                            <td class="text-danger">
+                                                <a href="" class="delete-statement" id={{ statement.pk }}>
+                                                    <i class="fa fa-trash-o text-danger"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+
+                            <p class="p-2 text-danger border border-danger">
+                                <i class="fa fa-times-circle"></i> No statements added yet.
+                            </p>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <div class="p-2 p-sm-4 border mt-2" id="div_choices">
+                    {% csrf_token %}
+                    <div>
+                        <p class="lead m-0">Enter choices</p>
+                        <br>
+                        {% if data_question_choices %}
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Choice</th>
+                                        <th>Correct</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for choice in data_question_choices %}
+                                        <tr>
+                                            <td> {{ choice.text }} </td>
+                                            <td>{{ choice.is_correct }}</td>
+                                            <td class="text-danger">
+                                                <a href="" class="delete-choice" id={{ choice.pk }}>
+                                                    <i class="fa fa-trash-o text-danger"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+
+                            <p class="p-2 text-danger border border-danger">
+                                <i class="fa fa-times-circle"></i> No choices added yet.
+                            </p>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                {# Images details #}
+                <div class="p-2 p-sm-4 border mt-2">
+                    <div>
+                        <p class="lead m-0">Images Here.</p>
+                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+                        </p>
+                        <br>
+
+
+                        {% if data_question_images %}
+                            <div class="row">
+                                {% for image in data_question_images %}
+                                    <div class="col">
+                                        <a class="btn btn-link"
+                                           href="{% url 'application:question_image_delete' pk=image.pk %}"><i
+                                                class="fa fa-trash-o"></i> Remove</a>
+                                        <br>
+
+                                        {% if image.url %}
+                                            <a href="{{ image.url }}">
+                                                <img src="{{ image.url }}" class="img" height="100px">
+                                            </a>
+                                        {% else %}
+                                            <a href="/media/{{ image.image }}">
+                                                <img src="/media/{{ image.image }}" class="img" height="100px">
+                                            </a>
+                                        {% endif %}
+
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        {% else %}
+                            <p class="p-2 text-danger border border-danger">
+                                <i class="fa fa-times-circle"></i> No images added yet.
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-sm-4">
+
+                {# Audio details #}
+                <div class="p-2 p-sm-4 border mt-2">
+                    <div>
+                        <p class="lead m-0">Audio Here.</p>
+                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+                        </p>
+                        <br>
+
+
+
+                        {% if data_question_audios %}
+                            <div class="row">
+                                {% for audio in data_question_audios %}
+                                    <div class="col">
+                                        <a class="btn btn-link"
+                                           href="{% url 'application:question_audio_delete' pk=audio.pk %}"><i
+                                                class="fa fa-trash-o"></i> Remove</a>
+                                        <audio controls>
+                                            {% if audio.url %}
+                                                <source src="{{ audio.url }}"/>
+                                            {% else %}
+                                                <source src="/media/{{ audio.audio }}"/>
+                                            {% endif %}
+                                        </audio>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        {% else %}
+                            <p class="p-2 text-danger border border-danger">
+                                <i class="fa fa-times-circle"></i> No audio added yet.
+                            </p>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    {# MODELS #}
+    <div>
+        <!-- STATEMENT Modal -->
+        <div class="modal fade" id="statement_model" tabindex="-1" role="dialog" aria-labelledby="statement_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form autocomplete="off" id="form_statement" method="post"
+                          action="{% url 'application:question_statement_add' question=question_id %}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD Statement.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_statement | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" id="form_statement_btn">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- IMAGE Modal -->
+        <div class="modal fade" id="image_model" tabindex="-1" role="dialog" aria-labelledby="image_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" autocomplete="off" enctype="multipart/form-data"
+                          action="{% url 'application:question_image_add' question=question_id %}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD Image Hint.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_image | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- audio Modal -->
+        <div class="modal fade" id="audio_model" tabindex="-1" role="dialog" aria-labelledby="audio_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" autocomplete="off" enctype="multipart/form-data"
+                          action="{% url 'application:question_audio_add' question=question_id %}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD Audio Hint.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_audio | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- choice Modal -->
+        <div class="modal fade" id="choice_model" tabindex="-1" role="dialog" aria-labelledby="choice_modelLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" autocomplete="off"
+                          action="{% url 'application:question_choice_add' question=question_id %}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">ADD New Option.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_question_choice | crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block base_external_scripts %}
+
+    <script>
+        let statement_add = `
+<div class="input-group mb-3">
+  <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-primary" id="add-statement" type="button">ADD</button>
+  </div>
+</div>`;
+
+        let choice_add = `<form>
+  <div class="form-row align-items-center">
+    <div class="col-auto">
+      <input id="choice-text" type="text" class="form-control mb-2" placeholder="Choice">
+    </div>
+    <div class="col-auto">
+      <div class="form-check mb-1">
+        <input id="is-correct" class="form-check-input" type="checkbox">
+        <label class="form-check-label" for="autoSizingCheck">
+          Correct
+        </label>
+      </div>
+    </div>
+    <div class="col-auto">
+      <button id="add-choice" type="button" class="btn btn-primary mb-2">ADD</button>
+    </div>
+  </div>
+</form>`;
+
+        $(document).ready(function () {
+            $("#div_statements").append(statement_add);
+            $("#div_choices").append(choice_add);
+
+            let input_field_statement = $('#statement-text');
+            let input_field_is_correct = $('#is-correct');
+            let input_field_choice = $('#choice-text');
+
+            $('#add-statement').click(saveStatement);
+            $('#add-choice').click(saveChoice);
+
+            $('.delete-statement').click(deleteStatement);
+            $('.delete-choice').click(deleteChoice);
+
+            input_field_statement.removeClass("border-danger");
+            input_field_statement.addClass("border");
+
+            input_field_choice.removeClass("border-danger");
+            input_field_choice.addClass("border");
+            input_field_is_correct.prop('checked', false);
+        });
+
+        function deleteStatement() {
+            let id = $(this).attr('id');
+            $.get("/delete/question_statement/" + id + "/", function () {
+                window.location.reload()
+            });
+        }
+
+        function deleteChoice() {
+            let id = $(this).attr('id');
+            $.get("/delete/question_choice/" + id + "/", function () {
+                window.location.reload()
+            });
+        }
+
+        function saveChoice() {
+            let input_field = $('#choice-text');
+            let txt = input_field.val();
+            if (txt === "") {
+                input_field.addClass("border-danger");
+                return
+            }
+            input_field.removeClass("border-danger");
+            input_field.addClass("border");
+
+            let is_correct = $('#is-correct').is(":checked");
+            $.post("/add/question_choice/", {
+                'pk': {{ question_id }},
+                'text': txt,
+                'is_correct': is_correct
+            }, function (data, status) {
+                window.location.reload();
+            });
+        }
+
+        function saveStatement() {
+            let input_field = $('#statement-text');
+            let txt = input_field.val();
+            if (txt === "") {
+                input_field.addClass("border-danger");
+                return
+            }
+            input_field.removeClass("border-danger");
+            input_field.addClass("border");
+            $.post("/add/question_statement/", {'pk': {{ question_id }}, 'text': txt}, function (data, status) {
+                window.location.reload();
+            });
+        }
+
+    </script>
+{% endblock %}
