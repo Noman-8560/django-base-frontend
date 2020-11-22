@@ -9,9 +9,7 @@
     {% include 'message.html' %}
 
     <div class="container my-3">
-
         <div class="row mt-4">
-
             <div class="col-sm-8">
 
                 {# basic details #}
@@ -32,14 +30,6 @@
                     </form>
                     <hr>
                     <div>
-                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#statement_model">
-                            <i class="fa fa-file-text"></i> Add New Statement.
-                        </button>
-                        <br>
-                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#choice_model">
-                            <i class="fa fa-list"></i> Add New Option.
-                        </button>
-                        <br>
                         <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#image_model">
                             <i class="fa fa-picture-o"></i> Add New Image Hint.
                         </button>
@@ -52,34 +42,27 @@
                 </div>
 
                 {# Statements details #}
-                <div class="p-2 p-sm-4 border mt-2">
+                <div class="p-2 p-sm-4 border mt-2" id="div_statements">
+                    {% csrf_token %}
                     <div>
-                        <p class="lead m-0">Statements Here.</p>
-                        <p class="text-muted small text-left m-0">{% lorem 30 w random %}
-                        </p>
+                        <p class="lead m-0">Enter statements</p>
                         <br>
-
                         {% if data_question_statements %}
-
                             <div class="table-responsive">
                                 <table class="table table-borderless table-striped table-hover">
                                     <thead>
                                     <tr>
                                         <th>Text</th>
-                                        <th>Visibility</th>
-                                        <th>Delete</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
 
                                     {% for statement in data_question_statements %}
-
                                         <tr>
-
                                             <td> {{ statement.statement }} </td>
-                                            <td> {{ statement.screen.name }}</td>
                                             <td class="text-danger">
-                                                <a href="{% url 'application:question_statement_delete' statement.pk %}">
+                                                <a href="" class="delete-statement" id={{ statement.pk }}>
                                                     <i class="fa fa-trash-o text-danger"></i>
                                                 </a>
                                             </td>
@@ -87,16 +70,54 @@
 
                                     {% endfor %}
                                     </tbody>
-
                                 </table>
                             </div>
-
                         {% else %}
 
                             <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> Question statements are not available now.
+                                <i class="fa fa-times-circle"></i> No statements added yet.
                             </p>
+                        {% endif %}
 
+                    </div>
+                </div>
+
+                <div class="p-2 p-sm-4 border mt-2" id="div_choices">
+                    {% csrf_token %}
+                    <div>
+                        <p class="lead m-0">Enter choices</p>
+                        <br>
+                        {% if data_question_choices %}
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Choice</th>
+                                        <th>Correct</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for choice in data_question_choices %}
+                                        <tr>
+                                            <td> {{ choice.text }} </td>
+                                            <td>{{ choice.is_correct }}</td>
+                                            <td class="text-danger">
+                                                <a href="" class="delete-choice" id={{ choice.pk }}>
+                                                    <i class="fa fa-trash-o text-danger"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+
+                            <p class="p-2 text-danger border border-danger">
+                                <i class="fa fa-times-circle"></i> No choices added yet.
+                            </p>
                         {% endif %}
 
                     </div>
@@ -137,7 +158,7 @@
 
                         {% else %}
                             <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> Question images are not available now.
+                                <i class="fa fa-times-circle"></i> No images added yet.
                             </p>
                         {% endif %}
                     </div>
@@ -147,62 +168,6 @@
             </div>
 
             <div class="col-sm-4">
-                {# Choices details #}
-                <div class="p-2 p-sm-4 border">
-
-                    <div>
-                        <p class="lead m-0">Choices Here.</p>
-                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
-                        </p>
-                        <br>
-
-                        {% if data_question_choices %}
-
-                            <div class="table-responsive">
-                                <table class="table table-borderless table-striped table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Text</th>
-                                        <th>Correct</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-
-                                    {% for choice in data_question_choices %}
-
-                                        <tr>
-                                            <td>{{ choice.text }}</td>
-                                            {% if choice.is_correct %}
-                                                <td><i class="fa fa-check text-success"></i></td>
-                                            {% else %}
-                                                <td><i class="fa fa-times-circle text-danger"></i></td>
-                                            {% endif %}
-                                            <td>
-                                                <a href="{% url 'application:question_choice_delete' choice.pk %}">
-                                                    <i class="fa fa-trash-o text-danger"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-
-                                    {% endfor %}
-
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        {% else %}
-
-                            <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> Question Choices are not available now.
-                            </p>
-
-                        {% endif %}
-
-
-                    </div>
-                </div>
 
                 {# Audio details #}
                 <div class="p-2 p-sm-4 border mt-2">
@@ -218,7 +183,9 @@
                             <div class="row">
                                 {% for audio in data_question_audios %}
                                     <div class="col">
-                                        <a class="btn btn-link" href="{% url 'application:question_audio_delete' pk=audio.pk %}"><i class="fa fa-trash-o"></i> Remove</a>
+                                        <a class="btn btn-link"
+                                           href="{% url 'application:question_audio_delete' pk=audio.pk %}"><i
+                                                class="fa fa-trash-o"></i> Remove</a>
                                         <audio controls>
                                             {% if audio.url %}
                                                 <source src="{{ audio.url }}"/>
@@ -232,7 +199,7 @@
 
                         {% else %}
                             <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> Question Audios are not available now.
+                                <i class="fa fa-times-circle"></i> No audio added yet.
                             </p>
                         {% endif %}
 
@@ -350,9 +317,105 @@
     </div>
 {% endblock %}
 
-<script>
-    $(document).ready(function () {
+{% block base_external_scripts %}
 
-    });
-</script>
+    <script>
+        let statement_add = `
+<div class="input-group mb-3">
+  <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-primary" id="add-statement" type="button">ADD</button>
+  </div>
+</div>`;
 
+        let choice_add = `<form>
+  <div class="form-row align-items-center">
+    <div class="col-auto">
+      <input id="choice-text" type="text" class="form-control mb-2" placeholder="Choice">
+    </div>
+    <div class="col-auto">
+      <div class="form-check mb-1">
+        <input id="is-correct" class="form-check-input" type="checkbox">
+        <label class="form-check-label" for="autoSizingCheck">
+          Correct
+        </label>
+      </div>
+    </div>
+    <div class="col-auto">
+      <button id="add-choice" type="button" class="btn btn-primary mb-2">ADD</button>
+    </div>
+  </div>
+</form>`;
+
+        $(document).ready(function () {
+            $("#div_statements").append(statement_add);
+            $("#div_choices").append(choice_add);
+
+            let input_field_statement = $('#statement-text');
+            let input_field_is_correct = $('#is-correct');
+            let input_field_choice = $('#choice-text');
+
+            $('#add-statement').click(saveStatement);
+            $('#add-choice').click(saveChoice);
+
+            $('.delete-statement').click(deleteStatement);
+            $('.delete-choice').click(deleteChoice);
+
+            input_field_statement.removeClass("border-danger");
+            input_field_statement.addClass("border");
+
+            input_field_choice.removeClass("border-danger");
+            input_field_choice.addClass("border");
+            input_field_is_correct.prop('checked', false);
+        });
+
+        function deleteStatement() {
+            let id = $(this).attr('id');
+            $.get("/delete/question_statement/" + id + "/", function () {
+                window.location.reload()
+            });
+        }
+
+        function deleteChoice() {
+            let id = $(this).attr('id');
+            $.get("/delete/question_choice/" + id + "/", function () {
+                window.location.reload()
+            });
+        }
+
+        function saveChoice() {
+            let input_field = $('#choice-text');
+            let txt = input_field.val();
+            if (txt === "") {
+                input_field.addClass("border-danger");
+                return
+            }
+            input_field.removeClass("border-danger");
+            input_field.addClass("border");
+
+            let is_correct = $('#is-correct').is(":checked");
+            $.post("/add/question_choice/", {
+                'pk': {{ question_id }},
+                'text': txt,
+                'is_correct': is_correct
+            }, function (data, status) {
+                window.location.reload();
+            });
+        }
+
+        function saveStatement() {
+            let input_field = $('#statement-text');
+            let txt = input_field.val();
+            if (txt === "") {
+                input_field.addClass("border-danger");
+                return
+            }
+            input_field.removeClass("border-danger");
+            input_field.addClass("border");
+            $.post("/add/question_statement/", {'pk': {{ question_id }}, 'text': txt}, function (data, status) {
+                window.location.reload();
+            });
+        }
+
+    </script>
+{% endblock %}
