@@ -1,7 +1,12 @@
 /env
 /venv
 /__pycache__
+/__pycache__/
+__pycache__/
 .idea/
 /.idea
 /migrations
 requirements.txt
+
+application/__pycache__/
+application/__pycache__

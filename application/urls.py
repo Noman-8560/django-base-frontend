@@ -22,6 +22,13 @@ urlpatterns = [
     path('search/question/', search_question, name='search_question'),
 
     path('add/statement/for/question/<int:question>/', question_statement_add, name='question_statement_add'),
+
+    path('add/question_statement/', add_question_statement, name='add_question_statement'),
+    path('add/question_choice/', add_question_choice, name='add_question_choice'),
+
+    path('delete/question_statement/<int:pk>/', delete_question_statement, name='delete_question_statement'),
+    path('delete/question_choice/<int:pk>/', delete_question_choice, name='delete_question_choice'),
+
     path('delete/statement/<int:pk>/', question_statement_delete, name='question_statement_delete'),
 
     path('add/choice/for/question/<int:question>/', question_choices_add, name='question_choice_add'),

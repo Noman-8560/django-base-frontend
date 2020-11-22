@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
+
 from .forms import *
 from .models import *
 
@@ -133,6 +135,71 @@ def question_statement_add(request, question):
 
     messages.error(request=request, message=f'Error in adding statement')
     return HttpResponseRedirect(reverse('application:question_builder'))
+
+
+@csrf_exempt
+def add_question_statement(request):
+    if request.method == 'POST':
+        text = request.POST['text']
+        question_id = request.POST['pk']
+        statement = QuestionStatement()
+        statement.statement = text
+        statement.question = Question.objects.get(pk=question_id)
+        statement.save()
+        response = {
+            'statement': text
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)
+
+
+@csrf_exempt
+def add_question_choice(request):
+    if request.method == 'POST':
+        is_correct = str(request.POST['is_correct']) == 'true'
+        question_id = request.POST['pk']
+        text = request.POST['text']
+        choice = QuestionChoice()
+        choice.text = text
+        choice.question = Question.objects.get(pk=question_id)
+        choice.is_correct = is_correct
+        choice.save()
+        response = {'choice': text}
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)
+
+
+@csrf_exempt
+def delete_question_choice(request, pk):
+    if request.method == 'GET':
+        QuestionChoice.objects.get(pk=pk).delete()
+        return JsonResponse(data={"message": "success"}, safe=False)
+    else:
+        return JsonResponse(data=None)
+
+
+@csrf_exempt
+def delete_question_statement(request, pk):
+    if request.method == 'GET':
+        QuestionStatement.objects.get(pk=pk).delete()
+        return JsonResponse(data={"message": "success"}, safe=False)
+    else:
+        return JsonResponse(data=None)
+
+
+@csrf_exempt
+def get_question_statements(request, pk):
+    if request.method == 'GET':
+        statements = QuestionStatement.objects.filter(question=Question.objects.get(pk=pk))
+        serialized_queryset = serializers.serialize('python', statements)
+        response = {
+            'statements': serialized_queryset
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)
 
 
 def question_statement_delete(request, pk):
@@ -289,14 +356,12 @@ def quiz_builder(request):
 
 
 def search_question(request):
-
     search = str(request.GET['search'])
-    questions_models =  Question.objects.filter(questionstatement__statement__icontains=search).distinct()
+    questions_models = Question.objects.filter(questionstatement__statement__icontains=search).distinct()
 
     dict_out = {}
     count = 0
     for question in questions_models:
-
         dict = {
             'question': question.pk,
             'statement': QuestionStatement.objects.filter(question=question)[0].statement,
@@ -309,7 +374,6 @@ def search_question(request):
     dict_out['length'] = count
 
     return JsonResponse(dict_out, safe=False)
-
 
 
 def quiz_builder_update(request, pk):
@@ -347,8 +411,6 @@ def quiz_builder_update(request, pk):
 
 
 def quiz_question_add(request, quiz, question):
-
-
     quiz_model = None
     question_model = None
 
@@ -361,7 +423,8 @@ def quiz_question_add(request, quiz, question):
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
     if quiz_model.questions.filter(pk=question):
-        messages.warning(request=request, message=f'Failed to add > Requested Question [ID: {question}] already associated with this quiz.')
+        messages.warning(request=request,
+                         message=f'Failed to add > Requested Question [ID: {question}] already associated with this quiz.')
     else:
         messages.success(request=request, message=f'Requested Question [ID: {question}] added successfully.')
         quiz_model.questions.add(question_model)
@@ -370,9 +433,7 @@ def quiz_question_add(request, quiz, question):
     return redirect('application:quiz_builder_update', quiz, permanent=True)
 
 
-
 def quiz_question_delete(request, quiz, question):
-
     try:
         quiz_model = Quiz.objects.get(pk=quiz)
         question_model = Question.objects.get(pk=question)
