@@ -68,7 +68,7 @@ class Question(models.Model):
     )
 
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
-    level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL)
+    level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL, blank=False, null=False)
     submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                            related_name='submitted_by')
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
