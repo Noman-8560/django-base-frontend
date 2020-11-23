@@ -66,8 +66,9 @@ class Question(models.Model):
         ('n', 'Normal'),
         ('h', 'Hard'),
     )
+
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
-    level = models.CharField(max_length=1, blank=True, null=True, default='e', choices=QUESTION_LEVEL)
+    level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL, blank=False, null=False)
     submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                            related_name='submitted_by')
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
@@ -76,6 +77,9 @@ class Question(models.Model):
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.pk)
