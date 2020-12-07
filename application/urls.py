@@ -3,9 +3,13 @@ from .views import *
 
 app_name = 'application'
 urlpatterns = [
-    path('', help_view, name='help'),
+    path('help/', help_view, name='help'),
 
-    path('home/', home, name='home'),
+    path('', home, name='home'),
+    path('add/advertisement/', add_advertisement, name='add_advertisement'),
+    path('advertisement/<int:pk>/', advertisement, name='advertisement'),
+    path('update/advertisement/<int:pk>/', add_advertisement, name='update_advertisement'),
+
     path('signup/', signup, name='signup'),
     path('login/', login, name='login'),
     path('parent/login/', parent_login, name='parent_login'),

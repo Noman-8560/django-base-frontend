@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     # REQUIRED_APPLICATIONS
     'crispy_forms',
+    'ckeditor',
 
     # USER_APPLICATIONS
     'application',

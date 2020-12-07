@@ -12,7 +12,59 @@ from .models import *
 
 
 def home(request):
-    return render(request=request, template_name='home.html')
+    advertisements = EventAdvertisement.objects.filter(active=True)
+    context = {
+        'advertisements': advertisements,
+    }
+    return render(request=request, template_name='home.html', context=context)
+
+
+def advertisement(request, pk):
+    try:
+        advertisement_ = EventAdvertisement.objects.get(pk=pk)
+        context = {
+            'advertisement': advertisement_
+        }
+        return render(request=request, template_name='advertisement.html', context=context)
+    except EventAdvertisement.DoesNotExist:
+        messages.error(request=request, message=f'Requested Advertisement [ID: {pk}] Does not Exists.')
+        return HttpResponseRedirect(reverse('application:home'))
+
+
+def add_advertisement(request, pk=0):
+
+    if pk != 0:
+        try:
+            ad_check = EventAdvertisement.objects.get(pk=pk)
+        except EventAdvertisement.DoesNotExist:
+            messages.error(request=request, message=f'Requested Advertisement [ID: {pk}] Does not Exists.')
+            return HttpResponseRedirect(reverse('application:home'))
+
+    if request.method == 'POST':
+        if pk == 0:
+            form = EventAdvertisementForm(request.POST)
+            if form.is_valid():
+                add_form = form.save(commit=True)
+                messages.success(request=request,
+                                 message="Advertisement Added Successfully - Redirected to Advertisements.")
+                return redirect('application:home', permanent=True)
+        else:
+            form = EventAdvertisementForm(request.POST or None, instance=EventAdvertisement.objects.get(pk=pk))
+            if form.is_valid():
+                update_form = form.save(commit=True)
+                messages.success(request=request,
+                                message=f"Advertisement {pk} Updated Successfully - Redirected to Advertisements.")
+                return redirect('application:home', permanent=True)
+    else:
+        if pk == 0:
+            form = EventAdvertisementForm()
+        else:
+            form = EventAdvertisementForm(instance=EventAdvertisement.objects.get(pk=pk))
+
+    context = {
+        'form': form
+    }
+    return render(request=request, template_name='add_advertisement.html', context=context)
 
 
 def help_view(request):

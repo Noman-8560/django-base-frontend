@@ -63,6 +63,10 @@ class QuestionImageAdmin(admin.ModelAdmin):
     list_display = ['pk', 'url', 'image', 'screen', 'question']
 
 
+class EventAdvertisementAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'topic', 'event', 'active']
+
+
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
 admin.site.register(Question, QuestionAdmin)
@@ -76,3 +80,5 @@ admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Attempt, AttemptAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Quiz, QuizAdmin)
+
+admin.site.register(EventAdvertisement, EventAdvertisementAdmin)

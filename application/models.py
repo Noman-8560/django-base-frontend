@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from ckeditor.fields import RichTextField
 
 
 class Screen(models.Model):
@@ -49,6 +50,34 @@ class Subject(models.Model):
 
     class Meta:
         verbose_name_plural = 'Subjects'
+
+
+class EventAdvertisement(models.Model):
+    ADVERTISEMENT_TYPE = (
+        ('e', 'Event'),
+        ('a', 'Announcement'),
+        ('o', 'Other'),
+    )
+    topic = models.CharField(max_length=255, null=False, blank=False)
+    event = models.CharField(max_length=1, null=False, blank=False, choices=ADVERTISEMENT_TYPE,)
+    content = RichTextField(null=False, blank=False)
+
+    active = models.BooleanField(default=True,
+                                 help_text="ACTIVE : field is used to hide or show this post, if you will check this "
+                                           "post it will be displayed in news feed else it will be hidden.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.topic
+
+    def __unicode__(self):
+        return self.id
+
+    class Meta:
+        managed = True
+        verbose_name = 'EventAdvertisement'
+        verbose_name_plural = 'EventsAdvertisements'
 
 
 '''________________________________________________________________________________'''
