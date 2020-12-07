@@ -34,64 +34,84 @@ top
                         </tr>
                         <tr>
                             <td>1</td>
-                            <td><a href="{% url 'application:home' %}">/home/</a></td>
+                            <td><a href="{% url 'application:home' %}">/</a></td>
                             <td>Events and announcements page</td>
                         </tr>
                         <tr>
                             <td>2</td>
+                            <td><a href="{% url 'application:add_advertisement' %}">add/advertisement/</a></td>
+                            <td>Add Events and announcements</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><a href="{% url 'application:update_advertisement' 4 %}">update/advertisement/4/</a></td>
+                            <td>Update Events and announcements</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><a href="{% url 'application:advertisement' 4 %}">advertisement/4/</a></td>
+                            <td>show sepecific Event or announcement</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><a href="{% url 'application:help' %}">/help/</a></td>
+                            <td>Help page for cocognito</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
                             <td><a href="{% url 'application:login' %}">/login/</a></td>
                             <td>Login page for student</td>
                         </tr>
                         <tr>
-                            <td>3</td>
+                            <td>7</td>
                             <td><a href="{% url 'application:parent_login' %}">/parent/login/</a></td>
                             <td>Login page for student parents</td>
                         </tr>
 
                         <tr>
-                            <td>4</td>
+                            <td>8</td>
                             <td><a href="{% url 'application:profile_update' %}">/profile/update/</a></td>
                             <td>After signup verification and missing details form</td>
                         </tr>
 
                         <tr>
-                            <td>5</td>
+                            <td>9</td>
                             <td><a href="{% url 'application:quiz_user_1' %}">/quiz/user/1/</a></td>
                             <td>During quiz user 1 screen</td>
                         </tr>
 
                         <tr>
-                            <td>6</td>
+                            <td>10</td>
                             <td><a href="{% url 'application:quiz_user_2' %}">/quiz/user/2/</a></td>
                             <td>During quiz user 2 screen</td>
                         </tr>
 
                         <tr>
-                            <td>7</td>
+                            <td>11</td>
                             <td><a href="{% url 'application:quiz_user_3' %}">/quiz/user/3/</a></td>
                             <td>During quiz user 3 screen</td>
                         </tr>
 
                         <tr>
-                            <td>9</td>
+                            <td>12</td>
                             <td><a href="{% url 'application:question_builder' %}">/question/builder/</a></td>
                             <td>Admin can create questions here</td>
                         </tr>
 
                         <tr>
-                            <td>10</td>
+                            <td>13</td>
                             <td><a href="{% url 'application:question_builder_update' pk=1 %}">/question/id/</a></td>
                             <td>questiond description and update</td>
                         </tr>
 
                         <tr>
-                            <td>9</td>
+                            <td>14</td>
                             <td><a href="{% url 'application:quiz_builder' %}">/quiz/builder/</a></td>
                             <td>Admin can create quiz here</td>
                         </tr>
 
                         <tr>
-                            <td>10</td>
+                            <td>15</td>
                             <td><a href="{% url 'application:quiz_builder_update' pk=1 %}">/quiz/id/</a></td>
                             <td>quiz delete and update</td>
                         </tr>

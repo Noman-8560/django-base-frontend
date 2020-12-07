@@ -49,3 +49,9 @@ class QuizForm(ModelForm):
     class Meta:
         model = Quiz
         fields = ['title', 'age_limit', 'subjects', 'age_limit', 'start_time', 'end_time']
+
+
+class EventAdvertisementForm(ModelForm):
+    class Meta:
+        model = EventAdvertisement
+        fields = ['topic', 'event', 'content', 'content', 'active']
