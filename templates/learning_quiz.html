@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_title %}Home{% endblock %}
+
+{% block base_top_nav %}
+    <div class="bg-danger text-light text-center">
+        <p class="p-2 small">ALERT! description text about quiz like > videos on the right side will be replaced
+            with
+            live video streaming through zoom api's - 3 users</p>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        {# STATISTICS #}
+        <div>
+            <div class="table-responsive">
+                <table class="table center">
+                    <tr class="">
+                        <td class="p-2 border">
+                            <p class="m-0 text-center h4"><i class="fa fa-clock-o"></i> <b>8:56</b></p>
+                        </td>
+
+                        <td class="p-2 border">
+                            <p class="m-0 text-center"><i class="fa fa-list"></i> TOTAL</p>
+                            <p class="m-0 text-center"> 10 </p>
+                        </td>
+                        <td class="p-2 border">
+                            <p class="m-0 text-center"><i class="fa fa-check"></i> ATTEMPTED</p>
+                            <p class="m-0 text-center"> 2 </p>
+                        </td>
+                        <td class="p-2 border">
+                            <p class="m-0 text-center"><i class="fa fa-times"></i> SKIPPED</p>
+                            <p class="m-0 text-center"> 4 </p>
+                        </td>
+                        <td class="p-2 border">
+                            <p class="m-0 text-center"><i class="fa fa-refresh"></i> REMAINING</p>
+                            <p class="m-0 text-center"> 8 </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+        {# CONTROLS #}
+        <div class="text-right">
+            <div class="p-2">
+                <button class="btn btn-danger"><i class="fa fa-times"></i> END</button>
+                <button class="btn btn-warning"><i class="fa fa-refresh"></i> SKIP</button>
+                <button class="btn btn-success"><i class="fa fa-check"></i> NEXT</button>
+            </div>
+        </div><br>
+
+        {# QUESTIONS #}
+        <div>
+            <div class="border bg-light p-4">
+
+                {# STATEMENTS #}
+                <div>
+                    <ol>
+                        <li>{% lorem 20 w random %}?</li>
+                        <li>{% lorem 20 w random %}?</li>
+                        <li>{% lorem 20 w random %}?</li>
+                    </ol>
+
+                </div>
+
+                <br>
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-sm">
+                            <img src="{% static 'images/apples.png' %}" class="img-fluid img-thumbnail" height="300px">
+                        </div>
+                        <div class="col-sm">
+                            <img src="{% static 'images/apples.png' %}" class="img-fluid img-thumbnail" height="300px">
+                        </div>
+                        <div class="col-sm">
+                            <img src="{% static 'images/apples.png' %}" class="img-fluid img-thumbnail" height="300px">
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <div class="row text-center">
+                    <div class="col-sm">
+                        <audio controls>
+                            <source src="https://www.w3docs.com/build/audios/jingle_bells.ogg" type="audio/ogg">
+                            <source src="https://www.w3docs.com/build/audios/audio.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <div class="col-sm">
+                        <audio controls>
+                            <source src="https://www.w3docs.com/build/audios/jingle_bells.ogg" type="audio/ogg">
+                            <source src="https://www.w3docs.com/build/audios/audio.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <div class="col-sm">
+                        <audio controls>
+                            <source src="https://www.w3docs.com/build/audios/jingle_bells.ogg" type="audio/ogg">
+                            <source src="https://www.w3docs.com/build/audios/audio.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <div class="col-sm">
+                        <audio controls>
+                            <source src="https://www.w3docs.com/build/audios/jingle_bells.ogg" type="audio/ogg">
+                            <source src="https://www.w3docs.com/build/audios/audio.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
