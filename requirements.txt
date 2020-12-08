@@ -3,3 +3,4 @@ djangorestframework==3.11.0
 django-crispy-forms
 django-ckeditor
 pillow
+django-allauth
