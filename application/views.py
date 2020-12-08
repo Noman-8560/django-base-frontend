@@ -76,7 +76,7 @@ def signup(request):
 
 
 def login(request):
-    return render(request=request, template_name='login.html')
+    return render(request=request, template_name='login_old.html')
 
 
 def parent_login(request):

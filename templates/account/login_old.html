@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block base_title %}Login{% endblock %}
 
@@ -49,9 +50,9 @@
                                 <button type="submit" class="btn btn-sm btn-success">
                                     <i class="fa fa-tick"></i> Login
                                 </button>
-                                <button type="submit" class="btn btn-sm btn-danger">
+                                <a type="submit" href="{% provider_login_url 'google' %}" class="btn btn-sm btn-danger">
                                     <i class="fa fa-google"></i>oogle
-                                </button>
+                                </a>
                             </div>
 
                         </form>
