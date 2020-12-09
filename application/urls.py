@@ -10,8 +10,6 @@ urlpatterns = [
     path('advertisement/<int:pk>/', advertisement, name='advertisement'),
     path('update/advertisement/<int:pk>/', add_advertisement, name='update_advertisement'),
 
-    path('signup/', signup, name='signup'),
-    path('login/', login, name='login'),
     path('parent/login/', parent_login, name='parent_login'),
     path('profile/update/', profile_update, name='profile_update'),
     path('quiz/user/1/', quiz_user_1, name='quiz_user_1'),

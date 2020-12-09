@@ -29,35 +29,36 @@
                 <li class="nav-item">
                     <a class="nav-link small" href="/learning_resource/">Learning Resource</a>
                 </li>
-                {#                {% if not request.user.is_authenticated %}#}
-                {#                    <li class="nav-item">#}
-                {#                        <a class="nav-link small" href="/account/login/">Login</a>#}
-                {#                    </li>#}
-                {#                {% else %}#}
-                <li class="nav-item dropdown">
-                    <img class="nav-link dropdown-toggle small rounded-circle"
-                         src="{% static 'images/exarth_logo_white_head.png' %}"
-                         id="navbarDropdown" role="button" height="40px"
-                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    </img>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <div class="text-center">
-                            <img src="{% static 'images/nologo.png' %}" class="rounded-circle" height="100px"><br>
-                            <p class="m-0 small">Username</p>
-                            <small class="small m-0 p-1 bg-danger text-light">Student</small>
+                {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link small" href="{% url 'account_login' %}">Login</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item dropdown">
+                        <img class="nav-link dropdown-toggle small rounded-circle"
+                             src="{% static 'images/exarth_logo_white_head.png' %}"
+                             id="navbarDropdown" role="button" height="40px"
+                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <div class="text-center">
+                                <img src="{% static 'images/nologo.png' %}" class="rounded-circle" height="100px"><br>
+                                <p class="m-0 small">{{ request.user.username }}</p>
+{#                                <small class="small m-0 p-1 bg-danger text-light">Student</small>#}
+                            </div>
+                            <hr>
+                            <a class="dropdown-item small" href=""><i class="fa fa-dashboard"></i> Dashboard</a>
+                            <a class="dropdown-item small" href="{% url 'application:profile_update' %}"><i
+                                    class="fa fa-heart"></i> Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item small" href=""><i class="fa fa-refresh"></i> Settings</a>
+                            <a class="dropdown-item small" href=""><i class="fa fa-shopping-cart"></i> Privacy</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger small" href="{% url 'account_logout' %}"><i
+                                    class="fa fa-sign-out"></i> Sign Out</a>
                         </div>
-                        <hr>
-                        <a class="dropdown-item small" href=""><i class="fa fa-dashboard"></i> Dashboard</a>
-                        <a class="dropdown-item small" href="{% url 'application:profile_update' %}"><i class="fa fa-heart"></i> Profile</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item small" href=""><i class="fa fa-refresh"></i> Settings</a>
-                        <a class="dropdown-item small" href=""><i class="fa fa-shopping-cart"></i> Privacy</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-danger small" href=""><i
-                                class="fa fa-sign-out"></i> Sign Out</a>
-                    </div>
-                </li>
-                {#                {% endif %}#}
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
