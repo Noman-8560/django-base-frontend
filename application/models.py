@@ -5,6 +5,29 @@ from django.utils import timezone
 from ckeditor.fields import RichTextField
 
 
+class AppUpdate(models.Model):
+    UPDATE_STATUS = (
+        ('des', 'Designing'),
+        ('dev', 'Development'),
+        ('des', 'Testing'),
+    )
+    url = models.CharField(max_length=255, null=False, blank=False)
+    desc = models.CharField(max_length=255, null=False, blank=False)
+    status = models.CharField(max_length=3, null=False, blank=False, choices=UPDATE_STATUS)
+    active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.desc
+
+    def __unicode__(self):
+        return self.pk
+
+    class Meta:
+        managed = True
+        verbose_name = 'Application Update'
+        verbose_name_plural = 'Application Updates'
+
+
 class Screen(models.Model):
     no = models.PositiveIntegerField(null=False, blank=False)
     name = models.CharField(max_length=255, null=True, blank=True)

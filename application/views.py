@@ -68,15 +68,23 @@ def add_advertisement(request, pk=0):
 
 
 def help_view(request):
-    return render(request=request, template_name='help.html')
 
+    designing = AppUpdate.objects.filter(status='des').filter(active=True)
+    designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
 
-def signup(request):
-    return render(request=request, template_name='signup.html')
+    development = AppUpdate.objects.filter(status='dev').filter(active=True)
+    development_ = AppUpdate.objects.filter(status='dev').filter(active=False)
 
+    # testing = AppUpdate.objects.get(status='tes')
 
-def login(request):
-    return render(request=request, template_name='login_old.html')
+    context = {
+        'designing': designing,
+        'designing_': designing_,
+        'development': development,
+        'development_': development_,
+        'testing': None,
+    }
+    return render(request=request, template_name='help.html', context=context)
 
 
 def parent_login(request):

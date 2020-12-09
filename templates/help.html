@@ -15,7 +15,7 @@ top
             <i class="fa fa-heart text-light"></i></a>
     </div>
 
-    <div class="container mt-4">
+    <div class="container my-4">
         <div class="text-center">
             <p class="h1 text-center m-0">Cocognito</p>
             <p class="text-danger small">Application Designing Developments and Testing Status </p><br>
@@ -23,181 +23,137 @@ top
 
         <div class="row justify-content-center">
 
-            <div class="col-sm-8 p-4 bg-light border rounded">
+            <div class="col-sm-10 p-4 bg-light border rounded">
 
                 <p class="h3 text-center">PROTOTYPE</p>
                 <div class="table-responsive">
-                    <table class="table table-sm table-bordered table-hover">
+                    <table class="table table-sm table-hover">
                         <tbody class="text-secondary">
                         <tr>
-                            <td colspan="3" class="text-center p-2 bg-success text-light small">Designed</td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="{% url 'application:home' %}">/</a></td>
-                            <td>Events and announcements page</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><a href="{% url 'application:add_advertisement' %}">add/advertisement/</a></td>
-                            <td>Add Events and announcements</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td><a href="{% url 'application:update_advertisement' 4 %}">update/advertisement/4/</a></td>
-                            <td>Update Events and announcements</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td><a href="{% url 'application:advertisement' 4 %}">advertisement/4/</a></td>
-                            <td>show sepecific Event or announcement</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td><a href="{% url 'application:help' %}">/help/</a></td>
-                            <td>Help page for cocognito</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td><a href="{% url 'application:login' %}">/login/</a></td>
-                            <td>Login page for student</td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td><a href="{% url 'application:parent_login' %}">/parent/login/</a></td>
-                            <td>Login page for student parents</td>
+                            <td colspan="4" class="text-center p-2 bg-success text-light small">Designing</td>
                         </tr>
 
                         <tr>
-                            <td>8</td>
-                            <td><a href="{% url 'application:profile_update' %}">/profile/update/</a></td>
-                            <td>After signup verification and missing details form</td>
+                            <th>SNO</th>
+                            <th>URL</th>
+                            <th>DESCRIPTION</th>
+                            <th>COMPLETED</th>
+                        </tr>
+
+
+{#                        // DESIGNED + ACTIVE#}
+                        {% if designing %}
+                            {% for design in designing %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if design.active %}
+                                        <a href="{{ design.url }}">
+                                    {% else %}
+                                        <a>
+                                    {% endif %}
+                                    {{ design.url }}
+                                    </a>
+                                </td>
+                                <td>{{ design.desc }}</td>
+                                {% if design.active %}
+                                    <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="fa fa-times text-danger"></i></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
+
+                        <tr>
+                            <td colspan="4" class="text-center p-2 bg-light text-dark small">Under-Designing</td>
+                        </tr>
+
+{#                        // DESIGNED + DE-ACTIVE#}
+                        {% if designing_ %}
+                            {% for design in designing_ %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if design.active %}
+                                        <a href="{{ design.url }}">
+                                    {% else %}
+                                        <a>
+                                    {% endif %}
+                                    {{ design.url }}
+                                    </a>
+                                </td>
+                                <td>{{ design.desc }}</td>
+                                {% if design.active %}
+                                    <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="fa fa-times text-danger"></i></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
+
+
+                        <tr>
+                            <td colspan="4" class="text-center p-2 bg-danger text-light small">Development</td>
                         </tr>
 
                         <tr>
-                            <td>9</td>
-                            <td><a href="{% url 'application:quiz_user_1' %}">/quiz/user/1/</a></td>
-                            <td>During quiz user 1 screen</td>
+                            <th>SNO</th>
+                            <th>URL</th>
+                            <th>DESCRIPTION</th>
+                            <th>COMPLETED</th>
                         </tr>
+
+                        {% if development %}
+                            {% for develop in development %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if develop.active %}
+                                        <a href="{{ develop.url }}">
+                                    {% else %}
+                                        <a>
+                                    {% endif %}
+                                    {{ develop.url }}
+                                    </a>
+                                </td>
+                                <td>{{ develop.desc }}</td>
+                                {% if develop.active %}
+                                    <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="fa fa-times text-danger"></i></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
 
                         <tr>
-                            <td>10</td>
-                            <td><a href="{% url 'application:quiz_user_2' %}">/quiz/user/2/</a></td>
-                            <td>During quiz user 2 screen</td>
+                            <td colspan="4" class="text-center p-2 bg-light text-dark">Under-Development</td>
                         </tr>
 
-                        <tr>
-                            <td>11</td>
-                            <td><a href="{% url 'application:quiz_user_3' %}">/quiz/user/3/</a></td>
-                            <td>During quiz user 3 screen</td>
-                        </tr>
-
-                        <tr>
-                            <td>12</td>
-                            <td><a href="{% url 'application:question_builder' %}">/question/builder/</a></td>
-                            <td>Admin can create questions here</td>
-                        </tr>
-
-                        <tr>
-                            <td>13</td>
-                            <td><a href="{% url 'application:question_builder_update' pk=1 %}">/question/id/</a></td>
-                            <td>questiond description and update</td>
-                        </tr>
-
-                        <tr>
-                            <td>14</td>
-                            <td><a href="{% url 'application:quiz_builder' %}">/quiz/builder/</a></td>
-                            <td>Admin can create quiz here</td>
-                        </tr>
-
-                        <tr>
-                            <td>15</td>
-                            <td><a href="{% url 'application:quiz_builder_update' pk=1 %}">/quiz/id/</a></td>
-                            <td>quiz delete and update</td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="3" class="text-center p-2 bg-danger text-light small">Under-Designing</td>
-                        </tr>
-
-                        <tr>
-                            <td>1</td>
-                            <td>/dashboard/</td>
-                            <td>Student Dashboard contains graphs etc</td>
-                        </tr>
-
-                        <tr>
-                            <td>2</td>
-                            <td>/quiz/builder/</td>
-                            <td>quiz builder for admin</td>
-                        </tr>
-
-                        <tr>
-                            <td>3</td>
-                            <td>/update/quiz/</td>
-                            <td>other details and quiz update</td>
-                        </tr>
-
-                        <tr>
-                            <td>4</td>
-                            <td>/delete/quiz/</td>
-                            <td>delete quiz here</td>
-                        </tr>
-
-                        <tr>
-                            <td>5</td>
-                            <td>/delete/question/</td>
-                            <td>delete question here</td>
-                        </tr>
-
-                        <tr>
-                            <td>6</td>
-                            <td>/add/question/image/</td>
-                            <td>Update image w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>7</td>
-                            <td>/delete/question/image/</td>
-                            <td>delete image w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>8</td>
-                            <td>/add/question/audio/</td>
-                            <td>add audio w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>9</td>
-                            <td>/delete/question/audio/</td>
-                            <td>delete audio w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>10</td>
-                            <td>/add/question/statement/</td>
-                            <td>add statement w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>11</td>
-                            <td>/delete/question/statement/</td>
-                            <td>delete statement w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>12</td>
-                            <td>/add/question/choice/</td>
-                            <td>add choice w.r.t to question</td>
-                        </tr>
-
-                        <tr>
-                            <td>13</td>
-                            <td>/delete/question/choice/</td>
-                            <td>delete choice w.r.t to question</td>
-                        </tr>
-
+                        {% if development_ %}
+                            {% for develop in development_ %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if develop.active %}
+                                        <a href="{{ develop.url }}">
+                                    {% else %}
+                                        <a>
+                                    {% endif %}
+                                    {{ develop.url }}
+                                    </a>
+                                </td>
+                                <td>{{ develop.desc }}</td>
+                                {% if develop.active %}
+                                    <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="fa fa-times text-danger"></i></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
 
                         </tbody>
                     </table>

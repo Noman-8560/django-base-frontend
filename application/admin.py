@@ -67,6 +67,10 @@ class EventAdvertisementAdmin(admin.ModelAdmin):
     list_display = ['pk', 'topic', 'event', 'active']
 
 
+class AppUpdateAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'url', 'status', 'active']
+
+
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
 admin.site.register(Question, QuestionAdmin)
@@ -81,4 +85,5 @@ admin.site.register(Attempt, AttemptAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Quiz, QuizAdmin)
 
+admin.site.register(AppUpdate, AppUpdateAdmin)
 admin.site.register(EventAdvertisement, EventAdvertisementAdmin)
