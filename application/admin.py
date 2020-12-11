@@ -1,5 +1,6 @@
 from django.contrib import admin
 from application.models import *
+from allauth.account.models import EmailConfirmation
 
 admin.site.site_header = 'CoCognito | Admin'
 admin.site.site_title = 'CoCognito | Admin'
@@ -87,3 +88,5 @@ admin.site.register(Quiz, QuizAdmin)
 
 admin.site.register(AppUpdate, AppUpdateAdmin)
 admin.site.register(EventAdvertisement, EventAdvertisementAdmin)
+
+admin.site.register(EmailConfirmation)
