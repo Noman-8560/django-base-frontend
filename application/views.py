@@ -32,7 +32,6 @@ def advertisement(request, pk):
 
 
 def add_advertisement(request, pk=0):
-
     if pk != 0:
         try:
             ad_check = EventAdvertisement.objects.get(pk=pk)
@@ -53,7 +52,7 @@ def add_advertisement(request, pk=0):
             if form.is_valid():
                 update_form = form.save(commit=True)
                 messages.success(request=request,
-                                message=f"Advertisement {pk} Updated Successfully - Redirected to Advertisements.")
+                                 message=f"Advertisement {pk} Updated Successfully - Redirected to Advertisements.")
                 return redirect('application:home', permanent=True)
     else:
         if pk == 0:
@@ -68,7 +67,6 @@ def add_advertisement(request, pk=0):
 
 
 def help_view(request):
-
     designing = AppUpdate.objects.filter(status='des').filter(active=True)
     designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
 
@@ -95,7 +93,25 @@ def profile_update(request):
     return render(request=request, template_name='profile_update.html')
 
 
-def quiz_user_1(request):
+def quiz_user_1(request, team, quiz):
+    user_team = None
+    user_quiz = None
+
+    ''' QUIZ and TEAM is required here'''
+    try:
+        user_team = Team.objects.get(pk=team)
+        user_quiz = Quiz.objects.get(pk=quiz)
+    except [Quiz.DoesNotExist, Team.DoesNotExist]:
+        messages.error(request=request, message="Requested team or quiz doesn't exists")
+        return redirect('application:home', permanent=True)
+
+    ''' USE TIME CHECK HERE PLEASE '''
+    questions_ids = user_quiz.questions.all().values('pk')
+    context = {
+        'user': 1,
+        'questions_ids': questions_ids
+    }
+
     return render(request=request, template_name='quiz_user_1.html')
 
 
