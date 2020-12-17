@@ -8,31 +8,31 @@
     {% include 'message.html' %}
 
     <div class="container my-3">
-        {% if advertisements %}
+        {% if articles %}
             <div class="row ">
                 <div class="col-sm-8">
-                    {% for advertisement in advertisements %}
+                    {% for article in articles %}
                         <div class="border mb-4 bg-white">
                             {# HEAD #}
                             <div class="p-4 bg-light text-secondary border-bottom">
                                 <a class="text-secondary"
-                                   href="{% url 'application:advertisement' advertisement.pk %}">
+                                   href="{% url 'application:article' article.pk %}">
                                     <table class="small">
                                         <tr>
                                             <td>
                                                 <b>
-                                                    {% if advertisement.event == 'a' %}
+                                                    {% if article.event == 'a' %}
                                                         <i class="fa fa-bullhorn"></i>
-                                                    {% elif advertisement.event == 'e' %}
+                                                    {% elif article.event == 'e' %}
                                                         <i class="fa fa-calendar"></i>
                                                     {% else %}
                                                         <i class="fa fa-list"></i>
                                                     {% endif %}
-                                                    {{ advertisement.get_event_display }}
+                                                    {{ article.get_event_display }}
                                                 </b>
                                                 placed for
                                                 <b></b>
-                                                <b>{{ advertisement.topic }}</b><br>
+                                                <b>{{ article.topic }}</b><br>
                                             </td>
                                         </tr>
                                     </table>
@@ -43,8 +43,8 @@
                             <div>
                                 {# CONTENT #}
                                 <div class="p-4 small">
-                                    {{ advertisement.content|safe }}
-                                    <small class="font-italic">Created: {{ advertisement.created_at }}</small>
+                                    {{ article.content|safe }}
+                                    <small class="font-italic">Created: {{ article.created_at }}</small>
                                     {#                                        <img class="img-fluid my-3" src="{% static 'application/images/covid-image.jpg' %}">#}
                                 </div>
                             </div>
@@ -55,19 +55,19 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="border bg-light p-4 mb-4">
-                        <h2>UPCOMING</h2>
+                        <h3>Articles</h3>
                         <hr>
                         <ul class="list-unstyled">
-                            {% for advertisement in advertisements %}
-                                <li><a href="{% url 'application:advertisement' advertisement.pk %}">
-                                    {% if advertisement.event == 'a' %}
+                            {% for article in articles %}
+                                <li><a href="{% url 'application:article' article.pk %}">
+                                    {% if article.event == 'a' %}
                                         <i class="fa fa-bullhorn"></i>
-                                    {% elif advertisement.event == 'e' %}
+                                    {% elif article.event == 'e' %}
                                         <i class="fa fa-calendar"></i>
                                     {% else %}
                                         <i class="fa fa-list"></i>
                                     {% endif %}
-                                    {{ advertisement.topic }}</a></li>
+                                    {{ article.topic }}</a></li>
                             {% endfor %}
 
 

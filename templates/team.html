@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Quiz > New Team {% endblock %}
+
+{% block content %}
+
+    {% include 'message.html' %}
+
+    <div class="container my-3">
+
+        <div class="p-4 text-center">
+            <p class="m-0"><small>TEAM</small></p>
+            <p class="m-0"><b class="display-3">{{ team.name }}</b></p>
+            <p class="">
+                <b class="px-4 py-2 bg-danger text-light">Quiz > {{ team.quiz.title }}</b>
+            </p>
+            <p class="text-muted small">{{ team.quiz.start_time }}</p>
+            <p>
+                {% for user in team.participants.all %}
+                    <b class="small p-2 bg-light border">{{ user.username }}</b>
+                {% endfor %}
+            </p>
+            <p class="text-muted small border-top m-0">If this is not your team don't be afraid you are allowed to see
+                other teams
+                as well, <a href="#">Need Help</a>.
+            </p>
+
+            <div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+{% endblock %}

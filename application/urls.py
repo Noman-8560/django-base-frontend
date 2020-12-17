@@ -3,22 +3,29 @@ from .views import *
 
 app_name = 'application'
 urlpatterns = [
+    #  --- HELP_PAGE
     path('help/', help_view, name='help'),
-
     path('', home, name='home'),
-    path('add/advertisement/', add_advertisement, name='add_advertisement'),
-    path('advertisement/<int:pk>/', advertisement, name='advertisement'),
-    path('update/advertisement/<int:pk>/', add_advertisement, name='update_advertisement'),
-
+    path('add/article/', add_article, name='add_article'),
+    path('article/<int:pk>/', article, name='article'),
+    path('update/article/<int:pk>/', add_article, name='update_article'),
     path('parent/login/', parent_login, name='parent_login'),
     path('profile/update/', profile_update, name='profile_update'),
-    path('quiz/user/1/', quiz_user_1, name='quiz_user_1'),
-    path('quiz/user/2/', quiz_user_2, name='quiz_user_2'),
-    path('quiz/user/3/', quiz_user_3, name='quiz_user_3'),
+
+    # --- QUIZ SETUP
+    path('quiz/quiz/<int:quiz>/', quiz_user_1, name='quiz_start'),
+    # path('quiz/user/2/', quiz_user_2, name='quiz_user_2'),
+    # path('quiz/user/3/', quiz_user_3, name='quiz_user_3'),
     path('quiz/builder/', quiz_builder, name='quiz_builder'),
     path('learning_resource/', learning_resource, name='learning_resource'),
     path('learning_resource_quiz/', learning_resource_quiz, name='learning_resource_quiz'),
 
+    path('quizes/', quizes, name='quizes'),
+    path('teams/', teams, name='teams'),
+    path('team/<int:pk>/', team, name='team'),
+    path('enroll/quiz/<int:pk>/', enroll, name='enroll_quiz'),
+
+    # --- QUIZ BUILDER AND QUESTION BUILDER
     path('question/builder/', question_builder, name='question_builder'),
     path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
     path('search/question/', search_question, name='search_question'),
@@ -47,4 +54,7 @@ urlpatterns = [
 
     path('add/quiz/<int:quiz>/question/<int:question>/', quiz_question_add, name='quiz_question_add'),
     path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
+
+    # --- C-API
+    path('c/api/user/<str:username>/exists/', user_exists_json, name='capi_user_exists'),
 ]

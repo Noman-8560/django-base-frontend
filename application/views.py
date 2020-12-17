@@ -1,69 +1,71 @@
 import json
 
 from django.contrib import messages
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
+import datetime
 
 from .forms import *
 from .models import *
 
 
 def home(request):
-    advertisements = EventAdvertisement.objects.filter(active=True)
+    articles = Article.objects.filter(active=True)
     context = {
-        'advertisements': advertisements,
+        'articles': articles,
     }
     return render(request=request, template_name='home.html', context=context)
 
 
-def advertisement(request, pk):
+def article(request, pk):
     try:
-        advertisement_ = EventAdvertisement.objects.get(pk=pk)
+        article_ = Article.objects.get(pk=pk)
         context = {
-            'advertisement': advertisement_
+            'article': article_
         }
-        return render(request=request, template_name='advertisement.html', context=context)
-    except EventAdvertisement.DoesNotExist:
-        messages.error(request=request, message=f'Requested Advertisement [ID: {pk}] Does not Exists.')
+        return render(request=request, template_name='article.html', context=context)
+    except Article.DoesNotExist:
+        messages.error(request=request, message=f'Requested Article [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:home'))
 
 
-def add_advertisement(request, pk=0):
+def add_article(request, pk=0):
     if pk != 0:
         try:
-            ad_check = EventAdvertisement.objects.get(pk=pk)
-        except EventAdvertisement.DoesNotExist:
+            ad_check = Article.objects.get(pk=pk)
+        except Article.DoesNotExist:
             messages.error(request=request, message=f'Requested Advertisement [ID: {pk}] Does not Exists.')
             return HttpResponseRedirect(reverse('application:home'))
 
     if request.method == 'POST':
         if pk == 0:
-            form = EventAdvertisementForm(request.POST)
+            form = ArticleForm(request.POST)
             if form.is_valid():
                 add_form = form.save(commit=True)
                 messages.success(request=request,
-                                 message="Advertisement Added Successfully - Redirected to Advertisements.")
+                                 message="Article Added Successfully - Redirected to Articles.")
                 return redirect('application:home', permanent=True)
         else:
-            form = EventAdvertisementForm(request.POST or None, instance=EventAdvertisement.objects.get(pk=pk))
+            form = ArticleForm(request.POST or None, instance=Article.objects.get(pk=pk))
             if form.is_valid():
                 update_form = form.save(commit=True)
                 messages.success(request=request,
-                                 message=f"Advertisement {pk} Updated Successfully - Redirected to Advertisements.")
+                                 message=f"Article {pk} Updated Successfully - Redirected to Articles.")
                 return redirect('application:home', permanent=True)
     else:
         if pk == 0:
-            form = EventAdvertisementForm()
+            form = ArticleForm()
         else:
-            form = EventAdvertisementForm(instance=EventAdvertisement.objects.get(pk=pk))
+            form = ArticleForm(instance=Article.objects.get(pk=pk))
 
     context = {
         'form': form
     }
-    return render(request=request, template_name='add_advertisement.html', context=context)
+    return render(request=request, template_name='add_article.html', context=context)
 
 
 def help_view(request):
@@ -91,36 +93,6 @@ def parent_login(request):
 
 def profile_update(request):
     return render(request=request, template_name='profile_update.html')
-
-
-def quiz_user_1(request, team, quiz):
-    user_team = None
-    user_quiz = None
-
-    ''' QUIZ and TEAM is required here'''
-    try:
-        user_team = Team.objects.get(pk=team)
-        user_quiz = Quiz.objects.get(pk=quiz)
-    except [Quiz.DoesNotExist, Team.DoesNotExist]:
-        messages.error(request=request, message="Requested team or quiz doesn't exists")
-        return redirect('application:home', permanent=True)
-
-    ''' USE TIME CHECK HERE PLEASE '''
-    questions_ids = user_quiz.questions.all().values('pk')
-    context = {
-        'user': 1,
-        'questions_ids': questions_ids
-    }
-
-    return render(request=request, template_name='quiz_user_1.html')
-
-
-def quiz_user_2(request):
-    return render(request=request, template_name='quiz_user_2.html')
-
-
-def quiz_user_3(request):
-    return render(request=request, template_name='quiz_user_3.html')
 
 
 def quiz_builder(request):
@@ -520,3 +492,185 @@ def quiz_question_delete(request, quiz, question):
     except [Quiz.DoesNotExist, Question.DoesNotExist]:
         messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+
+''' QUIZ SETUP VIEWS _______________________________________________________________'''
+
+
+def quizes(request):
+    # ACTIVE _ START_DATE
+    teams = Quiz.objects.filter(teams__in=Team.objects.filter(participants=request.user))
+    quizes = Quiz.objects.filter(end_time__gt=timezone.now())
+
+    print(teams)
+    print(quizes)
+
+    context = {
+        'quizes_all': Quiz.objects.all(),
+        'quizes_available': Quiz.objects.filter(),
+        'quizes_enrolled': Quiz.objects.filter(),
+    }
+    return render(request=request, template_name='quizes.html', context=context)
+
+
+def teams(request):
+    teams = Team.objects.filter(participants__username=request.user.username)
+
+    context = {
+        'teams': teams
+    }
+    return render(request=request, template_name='teams.html', context=context)
+
+
+def team(request, pk):
+    team = None
+    try:
+        team = Team.objects.get(pk=pk)
+
+    except Team.DoesNotExist:
+        messages.error(request=request, message=f'Requested Team with [ ID:{pk} ] does not exists.')
+        return HttpResponseRedirect(reverse('application:teams'))
+
+    context = {
+        'team': team,
+        'players': team.participants.all()
+    }
+    return render(request=request, template_name='team.html', context=context)
+
+
+def enroll(request, pk):
+    # CHECK_QUIZ_EXISTS
+    quiz = None
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message=f'Requested Quiz with [ ID:{pk} ]does not exists.')
+        return HttpResponseRedirect(reverse('application:quizes'))
+
+    # ALREADY_ALLOCATED
+    if Team.objects.filter(participants__username=request.user.username, quiz=quiz).count() != 0:
+        messages.warning(request=request, message=f'You are already enrolled to this quiz')
+        return HttpResponseRedirect(reverse('application:quizes'))
+
+    # POST_METHOD
+    if request.method == 'POST':
+        team_name = request.POST['team_name']
+        player_1 = request.user
+        player_2 = None
+        player_3 = None
+
+        # USER_EXISTS_OR_NOT
+        try:
+
+            player_2 = User.objects.get(username=request.POST['player_2'])
+            if quiz.players == '3':
+                player_3 = User.objects.get(username=request.POST['player_3'])
+
+                # PLAYER_3_ASSIGNED_OR_NOT
+                if Team.objects.filter(participants__username=player_3.username, quiz=quiz).count() != 0:
+                    messages.warning(request=request,
+                                     message=f'Requested participant or participants '
+                                             f'already enrolled choose different partners.'
+                                     )
+                    return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+            # PLAYER_3_ASSIGNED_OR_NOT
+            if Team.objects.filter(participants__username=player_2.username, quiz=quiz).count() != 0:
+                messages.warning(request=request,
+                                 message=f'Requested participant or participants '
+                                         f'already enrolled choose different partners.'
+                                 )
+                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+        except User.DoesNotExist:
+            messages.error(request=request, message=f'Requested participant or participants does not exists.')
+            return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+        team = Team(name=team_name, quiz=quiz)
+        team.save()
+
+        team.participants.add(player_1, player_2, player_3)
+        messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
+                                                  f'with team={team_name} as a caption of team.')
+        return HttpResponseRedirect(reverse('application:quizes'))
+
+    # GET_METHOD
+    context = {
+        'quiz': quiz,
+        'form': TeamForm()
+    }
+    return render(request=request, template_name='add_team.html', context=context)
+
+
+def quiz_user_1(request, quiz):
+    user_team = None
+    user_quiz = None
+    allowed_to_start = False
+    time_status = None
+
+    ''' QUIZ and TEAM is required here'''
+    try:
+        user_quiz = Quiz.objects.get(pk=quiz)
+        user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
+        if not user_team:
+            messages.error(request=request,
+                           message="You are not registered to any team _ please register your team first")
+            return redirect('application:quizes', permanent=True)
+
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message="Requested Quiz doesn't exists")
+        return redirect('application:quizes', permanent=True)
+
+    if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
+        print("READY FOR QUIZ")
+        allowed_to_start = True
+        time_status = 'present'
+    else:
+        print("NOT AVAILABLE")
+        if user_quiz.start_time > timezone.now():
+            print("WILL BE SOON")
+            time_status = 'future'
+        elif timezone.now() > user_quiz.end_time:
+            print("ENDED PREVIOUSLY")
+            time_status = 'past'
+
+    context = {
+        'time_status': time_status,
+        'allowed_to_start': allowed_to_start,
+    }
+    ''' USE TIME CHECK HERE PLEASE '''
+    # questions_ids = user_quiz.questions.all().values('pk')
+    # context = {
+    #     'user': 1,
+    #     'questions_ids': questions_ids
+    # }
+
+    return render(request=request, template_name='quiz_user_1.html', context=context)
+
+
+def quiz_user_2(request):
+    return render(request=request, template_name='quiz_user_2.html')
+
+
+def quiz_user_3(request):
+    return render(request=request, template_name='quiz_user_3.html')
+
+
+''' CAPI VIEWS _______________________________________________________________'''
+
+
+def user_exists_json(request, username):
+    if request.method == 'GET':
+        flag = False
+        try:
+            user = User.objects.get(username=username)
+            flag = True
+        except User.DoesNotExist:
+            pass
+
+        response = {
+            'flag': flag
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)

@@ -75,14 +75,14 @@ class Subject(models.Model):
         verbose_name_plural = 'Subjects'
 
 
-class EventAdvertisement(models.Model):
-    ADVERTISEMENT_TYPE = (
+class Article(models.Model):
+    ARTICLE_TYPE = (
         ('e', 'Event'),
         ('a', 'Announcement'),
         ('o', 'Other'),
     )
     topic = models.CharField(max_length=255, null=False, blank=False)
-    event = models.CharField(max_length=1, null=False, blank=False, choices=ADVERTISEMENT_TYPE,)
+    event = models.CharField(max_length=1, null=False, blank=False, choices=ARTICLE_TYPE)
     content = RichTextField(null=False, blank=False)
 
     active = models.BooleanField(default=True,
@@ -99,8 +99,8 @@ class EventAdvertisement(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = 'EventAdvertisement'
-        verbose_name_plural = 'EventsAdvertisements'
+        verbose_name = 'Article'
+        verbose_name_plural = 'Articles'
 
 
 '''________________________________________________________________________________'''
@@ -224,16 +224,19 @@ class QuestionChoice(models.Model):
         verbose_name_plural = 'Questions Choices'
 
 
-
-
-
 '''________________________________________________________________________________'''
 
 
 class Quiz(models.Model):
+    NO_OF_PLAYERS = (
+        ('2', 'Two Players'),
+        ('3', 'Three Players'),
+    )
+
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     subjects = models.ManyToManyField(Subject, blank=False)
+    players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='3')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)
@@ -309,7 +312,7 @@ class Team(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
     quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
     participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
-    is_active = models.BooleanField(null=False, blank=False)
+    is_active = models.BooleanField(null=False, blank=False, default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
