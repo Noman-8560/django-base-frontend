@@ -64,7 +64,7 @@ class QuestionImageAdmin(admin.ModelAdmin):
     list_display = ['pk', 'url', 'image', 'screen', 'question']
 
 
-class EventAdvertisementAdmin(admin.ModelAdmin):
+class ArticleAdmin(admin.ModelAdmin):
     list_display = ['pk', 'topic', 'event', 'active']
 
 
@@ -87,6 +87,6 @@ admin.site.register(Team, TeamAdmin)
 admin.site.register(Quiz, QuizAdmin)
 
 admin.site.register(AppUpdate, AppUpdateAdmin)
-admin.site.register(EventAdvertisement, EventAdvertisementAdmin)
+admin.site.register(Article, ArticleAdmin)
 
 admin.site.register(EmailConfirmation)

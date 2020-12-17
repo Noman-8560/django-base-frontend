@@ -51,7 +51,13 @@ class QuizForm(ModelForm):
         fields = ['title', 'age_limit', 'subjects', 'age_limit', 'start_time', 'end_time']
 
 
-class EventAdvertisementForm(ModelForm):
+class ArticleForm(ModelForm):
     class Meta:
-        model = EventAdvertisement
+        model = Article
         fields = ['topic', 'event', 'content', 'content', 'active']
+
+
+class TeamForm(ModelForm):
+    class Meta:
+        model = Team
+        fields = ['name', 'participants', 'is_active']

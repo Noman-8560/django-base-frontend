@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block base_title %}Advertisement{% endblock %}
+{% block base_title %}Article{% endblock %}
 
 {% block content %}
 
@@ -13,19 +13,19 @@
                 {# HEAD #}
                 <div class="p-4 bg-light text-secondary border-bottom text-center">
                     <p class="m-0 h1">
-                        {% if advertisement.event == 'a' %}
+                        {% if article.event == 'a' %}
                             <i class="fa fa-bullhorn"></i>
-                        {% elif advertisement.event == 'e' %}
+                        {% elif article.event == 'e' %}
                             <i class="fa fa-calendar"></i>
                         {% else %}
                             <i class="fa fa-list"></i>
                         {% endif %}
                     </p>
                 <p class="m-0 small">
-                        {{ advertisement.get_event_display }}
+                        {{ article.get_event_display }}
                     </p>
                     <p class="m-0 h3">
-                        {{ advertisement.topic }}
+                        {{ article.topic }}
                     </p>
                 </div>
 
@@ -33,8 +33,8 @@
                 <div>
                     {# CONTENT #}
                     <div class="p-4">
-                        {{ advertisement.content|safe }}
-                        <small class="font-italic">Created: {{ advertisement.created_at }}</small>
+                        {{ article.content|safe }}
+                        <small class="font-italic">Created: {{ article.created_at }}</small>
                         {#                                        <img class="img-fluid my-3" src="{% static 'application/images/covid-image.jpg' %}">#}
                     </div>
                 </div>
