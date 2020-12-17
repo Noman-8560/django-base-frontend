@@ -14,7 +14,7 @@ from .models import *
 
 
 def home(request):
-    articles = Article.objects.filter(active=True)
+    articles = Article.objects.filter(active=True).order_by('-created_at')
     context = {
         'articles': articles,
     }
