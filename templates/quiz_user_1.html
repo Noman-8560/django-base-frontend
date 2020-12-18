@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tz %}
 
 {% block base_title %}QUIZ > SCREEN{% endblock %}
 
@@ -16,39 +17,52 @@
             <div class="container my-5">
                 <div class="row ">
 
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
 
                         {# 1-QUESTION #}
-                        <div class="border bg-light p-4">
-                            <p><b>QUESTION </b><br>Alwin has 42 apples in his basket, he ate some apples and distributed
-                                them to
-                                equally to his
-                                friends?
-                            </p>
-                            <div class="text-center">
-                                <img src="{% static 'images/apples.png' %}" height="330px">
+                        <div class="border bg-light p-4" id="question_div" data-question="0">
+
+                            {# STATEMENTS #}
+                            <small></small>
+                            <p class="h3"><b class="border px-2">Statements</b></p>
+                            <div id="statements_div" class="mb-4">
+
                             </div>
-                            <p class="small text-danger"><b>HINT</b><br><i>Talk to your friend to find out the other
-                                part
-                                question and answer choices that appear on their screens.</i></p>
+
+                            {# choices #}
+                            <p class="h3"><b class="border px-2">Choice Control</b></p>
+                            <div id="choices_div" class="mb-4 pl-4">
+
+
+                            </div>
+
+                            {# IMAGES #}
+                            <p class="h3"><b class="border px-2">Images Hint</b></p>
+                            <div id="images_div" class="mb-4">
+
+                            </div>
+
+                            {# AUDIOS #}
+                            <p class="h3"><b class="border px-2">Audios Hint</b></p>
+                            <div id="audios_div" class="mb-4">
+
+                            </div>
+
                         </div>
 
                         {# TIMER AND BUTTONS #}
                         <div class="py-4">
                             <div class="clearfix">
-                                <small class="h2 p-4 font-weight-bolder" id="count_down">10:00</small>
-                                <div class="float-right">
-                                    <button class="btn btn btn-primary rounded-circle"><i class="fa fa-refresh"></i>
-                                    </button>
-                                    |
-                                    <button class="btn btn btn-warning"><i class="fa fa-times"></i> Pass</button>
-                                    <button class="btn btn btn-success"><i class="fa fa-check"></i> Submit</button>
+                                <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
+                                <div class="float-right" id="submission_control_div">
+                                    <button class="btn btn btn-warning" id="button_next"><i class="fa fa-times"></i> Next</button>
+                                    <button class="btn btn btn-success" id="button_submit"><i class="fa fa-check"></i> Submit </button>
                                 </div>
                             </div>
                         </div>
 
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div>
                             <div class="mb-2">
                                 <div class="embed-responsive embed-responsive-16by9 ">
@@ -76,6 +90,7 @@
                             <div class="btn-group-vertical btn-block">
                                 <a href="#" class="btn btn-info">Go to My Dashboard</a>
                                 <a href="#" class="btn btn-secondary">Go to Event Dashboard</a>
+
                             </div>
                         </div>
                     </div>
@@ -85,55 +100,295 @@
         </div>
     {% else %}
         <div>
-            <div class="container my-5">
-                <div>
-                    {% if time_status == 'past' %}
+        <div class="container my-5">
+            <div>
+                {% if time_status == 'past' %}
 
-                    {% elif time_status == 'future' %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <div class="text-center">
-                                <p><strong><i class="fa fa-question"></i> PERMISSION REVOKED! </strong></p>
-                                <p class="small">You requested quiz is not available to attempt </p>
-                            </div>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <div class="alert alert-danger alert-dismissible fade show p-5" role="alert">
+                    <div class="text-center">
+                        <p class="m-0 h1"><i class="fa fa-ban"></i></p>
+                        <p class="m-0"><strong>REQUEST EXPIRED! </strong></p>
+                        <p class="small">You are not allowed to view the quiz now.</p>
+                        <hr class="border border-danger">
+                        <div class="text-left">
+                            <ul class="small">
+                                <li>You requested quiz is not available now.</li>
+                                <li>Quiz was ended on <b>{{ quiz_end_date }}</b></li>
+                                <li>If you were registered and didn't attempted the quiz, quiz is expired now.</li>
+                                <li>If you want to see your previous results please go back to your <a href="#">Dashboard</a>.
+                                </li>
+                                <li>If you were not registered with this quiz and didn't attempted, it doesn't effect
+                                    your
+                                    marks sheet, because you are not associated.
+                                </li>
+                                <li>There is no quiz data available now, illegal attempts to access alerts the
+                                    system to ban you from cocognito.
+                                </li>
+                                <li>Need any help, you will found <a href="#">HERE</a>.</li>
+                            </ul>
                         </div>
-                    {% endif %}
+                    </div>
+
+                {% elif time_status == 'future' %}
+                    <div class="alert alert-warning alert-dismissible fade show p-5" role="alert">
+                        <div class="text-center">
+                            <p class="m-0 h1"><i class="fa fa-exclamation-triangle"></i></p>
+                            <p class="m-0"><strong>PERMISSION REVOKED! </strong></p>
+                            <p class="small">You are not allowed to view the quiz now.</p>
+                            <hr class="border border-warning">
+                            <div class="text-left">
+                                <ul class="small">
+                                    <li>You requested quiz is not available now.</li>
+                                    <li>Quiz will be available on <b>{{ quiz_start_date }}</b></li>
+                                    <li>There is no quiz data available now, illegal attempts to access alerts the
+                                        system to ban you from cocognito.
+                                    </li>
+                                    <li>Need any help, you will found <a href="#">HERE</a>.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 </div>
             </div>
         </div>
     {% endif %}
 {% endblock %}
 
-{% block base_external_scripts %}
-    <script>
+{% if allowed_to_start %}
+    {% block base_external_scripts %}
+        <script>
 
-        function countdown(elementName, minutes, seconds) {
-            var element, endTime, hours, mins, msLeft, time;
 
-            function twoDigits(n) {
-                return (n <= 9 ? "0" + n : n);
+            let question_now = null;
+            let question_end = null;
+
+
+            question_div = $('#question_div');
+            images_div = $('#images_div');
+            audios_div = $('#audios_div');
+            statements_div = $('#statements_div');
+            choices_div = $('#choices_div');
+
+            button_submit = $('#button_submit');
+            button_next = $('#button_next');
+
+            question_ids = {{ question_ids }};
+            question_div_id = parseInt(question_div.data('question'));
+
+            {# INITIALIZATION #}
+            initialization();
+
+            {# ----------------------------------------------------------------------------------------------------- #}
+            {#                                   STARTER_FUNCTION                                                    #}
+            {# ----------------------------------------------------------------------------------------------------- #}
+
+            function initialization() {
+                countdown();
+                    button_submit.hide();
+                    button_next.hide();
+
+                x_accessor();
+
+                button_submit.click(function (event) {
+                    event.preventDefault();
+                    submit_question();
+                });
+
+                button_next.click(function (event) {
+                    event.preventDefault();
+                    next_question();
+                });
             }
 
-            function updateTimer() {
-                msLeft = endTime - (+new Date);
-                if (msLeft < 1000) {
-                    element.innerHTML = "Time is up!";
+            {# ----------------------------------------------------------------------------------------------------- #}
+            {#                                   QUIZ_CONTROL_SYSTEM                                                 #}
+            {# ----------------------------------------------------------------------------------------------------- #}
+
+            function x_accessor() {
+                if (question_ids.length > 0) {
+                    $.get('/c/api/quiz/{{ quiz_id }}/question/' + question_ids[0] + '/num/{{ user_no }}/', function (data) {
+
+                        {# 1 > CLEANING ON EACH CALL #}
+                        clean_all();
+                        {% now "jS F Y H:i:s" as nn %}
+                        question_now = get_time_formatted();
+
+                        {# 2 > SUBMISSION_CONTROL_CHECK #}
+                        question_div.attr('data-question', data.question);
+                        if (data.permissions.submission_permitted) {
+                            button_submit.show();
+                            button_next.hide();
+                        } else {
+                            button_submit.hide();
+                            button_next.show();
+                        }
+
+                        {# 3 > CHOICES_CONTROL_CHECK #}
+                        if (data.choices_keys.length > 0) {
+                            for (let index = 0; index < data.choices_keys.length; index++) {
+                                choices_div.append(`<input type="radio" name="ans" id="ans" value="${data.choices_keys[index]}"> ${data.choices_values[index]} &nbsp;&nbsp;<br>`);
+                            }
+                        }
+
+                        {# 4 > FETCHING STATEMENTS #}
+                        if (data.statements.length > 0) {
+                            for (x of data.statements) {
+                                statements_div.append(`<p> ${x} </p>`);
+                            }
+                        }
+
+                        {# 5 > FETCHING IMAGES #}
+                        if (data.images.length > 0) {
+                            for (x of data.images) {
+                                images_div.append(`<a href="${x}" target="_blank">
+                                                      <img src="${x}" class="p-2 img-responsive" height="320px">
+                                                   </a>`
+                                );
+                            }
+                        }
+
+                        {# 6 > FETCHING AUDIOS #}
+                        if (data.audios.length > 0) {
+                            for (x of data.audios) {
+                                audios_div.append(`<source src="${x}"/>`);
+                            }
+                        } else {
+                            audios_div.append(`<p class="p-2 border border-danger text-danger rounded">Audios are not available for you</p>`)
+                        }
+                    });
                 } else {
-                    time = new Date(msLeft);
-                    hours = time.getUTCHours();
-                    mins = time.getUTCMinutes();
-                    element.innerHTML = (hours ? hours + ':' + twoDigits(mins) : mins) + ':' + twoDigits(time.getUTCSeconds());
-                    setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+                    alert("Your quiz submitted successfully");
+                    window.location = {% url 'application:quizes' %};
                 }
             }
 
-            element = document.getElementById(elementName);
-            endTime = (+new Date) + 1000 * (60 * minutes + seconds) + 500;
-            updateTimer();
-        }
+            function submit_question() {
+                let next = false;
+                let end = 'False';
+                let choice = $("input[type='radio'][name='ans']:checked");
+                if (question_ids.length === 0) {
+                    end = 'True';
+                }
 
-        countdown("count_down", 1, 0);
-    </script>
-{% endblock %}
+                if (choice.length > 0) {
+
+                    {% now "jS F Y H:i:s" as nn %}
+                    question_end = get_time_formatted();
+
+                    // TODO: csrf security required _ avoid csrf_exempt in deployment
+                    $.post("/c/api/submit/question/",
+                        {
+                            quiz_id: {{ quiz_id }},
+                            question_id: question_div.attr('data-question'),
+                            choice_id: choice.val(),
+                            team_id: {{ team_id }},
+                            end: end,
+                            start_time: question_now,
+                            end_time: question_end,
+                        }, function (data, status) {
+
+                            if (end === true) {
+                                window.location =
+                                {% url 'application:teams' %}
+                            }
+
+                            if (data.success === false) {
+                                alert(data.message);
+                            } else {
+                                x_accessor();
+                            }
+                        });
+                } else {
+                    alert("Please Select any option to continue");
+                }
+
+            }
+
+            function next_question() {
+                let end = 'False';
+                if (question_ids.length === 0) {
+                    end = 'True';
+                }
+
+                $.post("/c/api/next/question/",
+                        {
+                            quiz_id: {{ quiz_id }},
+                            question_id: question_div.attr('data-question'),
+                            team_id: {{ team_id }},
+                            end: end
+                        }, function (data, status) {
+
+                            if (end === true) {
+                                window.location =
+                                {% url 'application:teams' %}
+                            }
+
+                            if (data.success === false) {
+                                alert(data.message);
+                            } else {
+                                x_accessor();
+                            }
+                        });
+            }
+
+            function clean_all() {
+                question_ids.shift();
+                statements_div.html('');
+                images_div.html('');
+                audios_div.html('');
+                choices_div.html('');
+            }
+
+            {# ----------------------------------------------------------------------------------------------------- #}
+            {#                              QUIZ_TIME_CALCULATION > FUNCTIONS                                        #}
+            {# ----------------------------------------------------------------------------------------------------- #}
+
+            function countdown() {
+                var countDownDate = new Date({{ quiz_end_date|date:"U" }} * 1000
+            ).
+                getTime();
+
+                // Update the count down every 1 second
+                var x = setInterval(function () {
+
+                    // Get today's date and time
+                    var now = new Date().getTime();
+
+                    // Find the distance between now and the count down date
+                    var distance = countDownDate - now;
+
+                    // Time calculations for days, hours, minutes and seconds
+                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Output the result in an element with id="demo"
+                    document.getElementById("count_down").innerHTML = days + "d " + hours + "h "
+                        + minutes + "m " + seconds + "s ";
+
+                    // If the count down is over, write some text
+                    if (distance < 0) {
+                        clearInterval(x);
+                        document.getElementById("count_down").innerHTML = "Time Up!";
+                    }
+                }, 1000);
+            }
+
+            function get_time_formatted() {
+                let date_ob = new Date();
+                let date = ("0" + date_ob.getDate()).slice(-2);
+                let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+                let year = date_ob.getFullYear();
+                let hours = date_ob.getHours();
+                let minutes = date_ob.getMinutes();
+                let seconds = date_ob.getSeconds();
+
+                return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+            }
+
+            {# -----------------------------------------------END--------------------------------------------------- #}
+        </script>
+    {% endblock %}
+{% endif %}

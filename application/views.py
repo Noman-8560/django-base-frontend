@@ -9,6 +9,7 @@ from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 
+from application.BusinessLogicLayer import identify_user_in_team
 from .forms import *
 from .models import *
 
@@ -605,8 +606,11 @@ def enroll(request, pk):
 def quiz_user_1(request, quiz):
     user_team = None
     user_quiz = None
-    allowed_to_start = False
+    allseowed_to_start = False
     time_status = None
+    question_ids = []
+    quiz_id = None
+    user_no = None
 
     ''' QUIZ and TEAM is required here'''
     try:
@@ -622,28 +626,30 @@ def quiz_user_1(request, quiz):
         return redirect('application:quizes', permanent=True)
 
     if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
-        print("READY FOR QUIZ")
         allowed_to_start = True
         time_status = 'present'
+
+        questions = user_quiz.questions.all()
+        for question in questions:
+            question_ids.append(question.pk)
+        user_no = identify_user_in_team(user_team, request, user_quiz)
+
     else:
-        print("NOT AVAILABLE")
         if user_quiz.start_time > timezone.now():
-            print("WILL BE SOON")
             time_status = 'future'
         elif timezone.now() > user_quiz.end_time:
-            print("ENDED PREVIOUSLY")
             time_status = 'past'
 
     context = {
         'time_status': time_status,
         'allowed_to_start': allowed_to_start,
+        'quiz_start_date': user_quiz.start_time,
+        'quiz_end_date': user_quiz.end_time,
+        'question_ids': question_ids,
+        'team_id': user_team.pk,
+        'quiz_id': user_quiz.pk,
+        'user_no': user_no
     }
-    ''' USE TIME CHECK HERE PLEASE '''
-    # questions_ids = user_quiz.questions.all().values('pk')
-    # context = {
-    #     'user': 1,
-    #     'questions_ids': questions_ids
-    # }
 
     return render(request=request, template_name='quiz_user_1.html', context=context)
 
@@ -674,3 +680,145 @@ def user_exists_json(request, username):
         return JsonResponse(data=response, safe=False)
     else:
         return JsonResponse(data=None)
+
+
+def quiz_access_question_json(request, quiz_id, question_id, user_id):
+    statements = []
+    images = []
+    audios = []
+    choices_keys = []
+    choices_values = []
+
+    if request.method == 'GET' and request.is_ajax():
+
+        ''' __FETCHING BASE DATA__'''
+        quiz = Quiz.objects.get(pk=quiz_id)
+        screen = Screen.objects.get(no=user_id)
+
+        '''__QUESTION LOGIC WILL BE HERE__'''
+        question = quiz.questions.get(pk=question_id)
+
+        '''__FETCHING SUBMISSION AND CHOICES CONTROL__'''
+        submission_permitted = screen == question.submission_control
+        choices_permitted = screen == question.choices_control
+
+        ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
+        [statements.append(x.statement) for x in question.questionstatement_set.filter(screen=screen)]
+        [images.append(y.image) if y.url is None else images.append(y.url) for y in
+         question.questionimage_set.filter(screen=screen)]
+        [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
+         question.questionaudio_set.filter(screen=screen)]
+        if choices_permitted:
+            [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
+            [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
+
+        ''' __GENERATING RESPONSES__'''
+        response = {
+            'permissions': {
+                'submission_permitted': submission_permitted,
+                'choices_permitted': choices_permitted,
+            },
+            'question': question.pk,
+            'choices_keys': choices_keys,
+            'choices_values': choices_values,
+            'statements': statements,
+            'images': images,
+            'audios': audios
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)
+
+
+from dateutil import parser
+
+
+@csrf_exempt
+def question_submission_json(request):
+    success = False
+    message = None
+    end = False
+
+    """ CHECK API CALL """
+    if request.method == 'POST':
+
+        quiz_id = request.POST['quiz_id']
+        question__id = request.POST['question_id']
+        team_id = request.POST['team_id']
+        choice_id = request.POST['choice_id']
+
+        users = Team.objects.get(pk=team_id).participants.all()
+        attempt = Attempt.objects.filter(user=request.user, question=Question.objects.get(pk=question__id))
+
+        """ QUIZ EXISTENCE WRT USER"""
+        if len(QuizCompleted.objects.filter(user=request.user, quiz=Quiz.objects.get(pk=quiz_id))) == 0:
+
+            """ CHECK ATTEMPTED OR NOT"""
+            if len(attempt) == 0:
+
+                """ CHECK CORRECT OR NOT """
+                correct = QuestionChoice.objects.get(pk=choice_id).is_correct
+
+                """------------------------------------------------------------"""
+                """                     SAVING DATA                            """
+                """------------------------------------------------------------"""
+
+                for user in users:
+                    Attempt(
+                        question=Question.objects.get(pk=question__id),
+                        user=user,
+                        start_time=request.POST['start_time'],
+                        end_time=request.POST['end_time'],
+                        successful=correct
+                    ).save()
+
+                if request.POST['end'] == 'True':
+                    for user in users:
+                        QuizCompleted(
+                            user=user,
+                            quiz=Quiz.objects.get(pk=quiz_id)
+                        ).save()
+
+                success = True
+                message = f"Question {request.POST['question_id']} marked successfully"
+
+            else:
+                success = False
+                message = f"Question {request.POST['question_id']} already marked"
+        else:
+            message = f"Requested Quiz attempted previously"
+
+        response = {
+            'success': success,
+            'message': message,
+            'end': request.POST['end'],
+        }
+
+        return JsonResponse(data=response, safe=False)
+
+
+@csrf_exempt
+def next_question_json(request):
+    success = False
+    message = None
+    end = False
+
+    """ CHECK API CALL """
+    if request.method == 'POST':
+
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+        question = Question.objects.get(pk=request.POST['question_id'])
+
+        if len(Attempt.objects.filter(user=request.user, question=question)) > 0:
+            success = True
+            message = "Question submitted Successfully"
+        else:
+            message = "Question is not submitted by you team"
+
+        response = {
+            'success': success,
+            'message': message,
+            'end': request.POST['end'],
+        }
+
+        return JsonResponse(data=response, safe=False)
