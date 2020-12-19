@@ -24,26 +24,26 @@
 
                             {# STATEMENTS #}
                             <small></small>
-                            <p class="h3"><b class="border px-2">Statements</b></p>
+                            <p class="h4">Statements</p>
                             <div id="statements_div" class="mb-4">
 
                             </div>
 
                             {# choices #}
-                            <p class="h3"><b class="border px-2">Choice Control</b></p>
-                            <div id="choices_div" class="mb-4 pl-4">
+                            <p class="h4">Choice Control</p>
+                            <div id="choices_div" class="mb-4">
 
 
                             </div>
 
                             {# IMAGES #}
-                            <p class="h3"><b class="border px-2">Images Hint</b></p>
+                            <p class="h4">Images Hint</p>
                             <div id="images_div" class="mb-4">
 
                             </div>
 
                             {# AUDIOS #}
-                            <p class="h3"><b class="border px-2">Audios Hint</b></p>
+                            <p class="h4">Audios Hint</p>
                             <div id="audios_div" class="mb-4">
 
                             </div>
@@ -51,12 +51,16 @@
                         </div>
 
                         {# TIMER AND BUTTONS #}
-                        <div class="py-4">
+                        <div class="p-4 border border-top-0 bg-light">
                             <div class="clearfix">
                                 <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
                                 <div class="float-right" id="submission_control_div">
-                                    <button class="btn btn btn-warning" id="button_next"><i class="fa fa-times"></i> Next</button>
-                                    <button class="btn btn btn-success" id="button_submit"><i class="fa fa-check"></i> Submit </button>
+                                    <button class="btn btn btn-success" id="button_next"><i
+                                            class="fa fa-arrow-circle-o-right"></i> Next
+                                    </button>
+                                    <button class="btn btn btn-success" id="button_submit"><i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -155,10 +159,12 @@
     {% endif %}
 {% endblock %}
 
-{% if allowed_to_start %}
-    {% block base_external_scripts %}
-        <script>
 
+{% block base_external_scripts %}
+    <script>
+        {% if allowed_to_start %}
+
+            $(document).on("keydown", disableF5);
 
             let question_now = null;
             let question_end = null;
@@ -185,8 +191,8 @@
 
             function initialization() {
                 countdown();
-                    button_submit.hide();
-                    button_next.hide();
+                button_submit.hide();
+                button_next.hide();
 
                 x_accessor();
 
@@ -211,7 +217,6 @@
 
                         {# 1 > CLEANING ON EACH CALL #}
                         clean_all();
-                        {% now "jS F Y H:i:s" as nn %}
                         question_now = get_time_formatted();
 
                         {# 2 > SUBMISSION_CONTROL_CHECK #}
@@ -229,6 +234,8 @@
                             for (let index = 0; index < data.choices_keys.length; index++) {
                                 choices_div.append(`<input type="radio" name="ans" id="ans" value="${data.choices_keys[index]}"> ${data.choices_values[index]} &nbsp;&nbsp;<br>`);
                             }
+                        } else {
+                            choices_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Choices are not available for you.</div>`)
                         }
 
                         {# 4 > FETCHING STATEMENTS #}
@@ -236,6 +243,8 @@
                             for (x of data.statements) {
                                 statements_div.append(`<p> ${x} </p>`);
                             }
+                        } else {
+                            statements_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Statements are not available for you.</div>`)
                         }
 
                         {# 5 > FETCHING IMAGES #}
@@ -246,6 +255,8 @@
                                                    </a>`
                                 );
                             }
+                        } else {
+                            images_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Images are not available for you.</div>`)
                         }
 
                         {# 6 > FETCHING AUDIOS #}
@@ -254,11 +265,12 @@
                                 audios_div.append(`<source src="${x}"/>`);
                             }
                         } else {
-                            audios_div.append(`<p class="p-2 border border-danger text-danger rounded">Audios are not available for you</p>`)
+                            audios_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Audios are not available for you.</div>`)
                         }
                     });
                 } else {
                     alert("Your quiz submitted successfully");
+                    {#window.close();#}
                     window.location = {% url 'application:quizes' %};
                 }
             }
@@ -289,8 +301,6 @@
                         }, function (data, status) {
 
                             if (end === true) {
-                                window.location =
-                                {% url 'application:teams' %}
                             }
 
                             if (data.success === false) {
@@ -312,24 +322,22 @@
                 }
 
                 $.post("/c/api/next/question/",
-                        {
-                            quiz_id: {{ quiz_id }},
-                            question_id: question_div.attr('data-question'),
-                            team_id: {{ team_id }},
-                            end: end
-                        }, function (data, status) {
+                    {
+                        quiz_id: {{ quiz_id }},
+                        question_id: question_div.attr('data-question'),
+                        team_id: {{ team_id }},
+                        end: end
+                    }, function (data, status) {
 
-                            if (end === true) {
-                                window.location =
-                                {% url 'application:teams' %}
-                            }
+                        if (end === true) {
+                        }
 
-                            if (data.success === false) {
-                                alert(data.message);
-                            } else {
-                                x_accessor();
-                            }
-                        });
+                        if (data.success === false) {
+                            alert(data.message);
+                        } else {
+                            x_accessor();
+                        }
+                    });
             }
 
             function clean_all() {
@@ -388,7 +396,11 @@
                 return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
             }
 
+            function disableF5(e) {
+                if ((e.which || e.keyCode) == 116) e.preventDefault();
+            };
+
             {# -----------------------------------------------END--------------------------------------------------- #}
-        </script>
-    {% endblock %}
-{% endif %}
+        {% endif %}
+    </script>
+{% endblock %}

@@ -499,17 +499,28 @@ def quiz_question_delete(request, quiz, question):
 
 
 def quizes(request):
-    # ACTIVE _ START_DATE
-    teams = Quiz.objects.filter(teams__in=Team.objects.filter(participants=request.user))
-    quizes = Quiz.objects.filter(end_time__gt=timezone.now())
+    """  ----------------------------------------------------------------------------------------------------------- """
+    """
+    quizes = Quiz.objects.all()
+    teams = Team.objects.filter(participants__username=request.user.username)
+    quizes_available = Quiz.objects.filter(~Q(teams__participants=request.user))
+    quizes_enrolled = Quiz.objects.filter(teams__participants=request.user)
 
-    print(teams)
-    print(quizes)
+    print(type(n), "   ", type(Quiz.objects.filter(teams__participants__username=request.user.username)))
+    print(Quiz.objects.filter(teams__participants__username=request.user.username))
 
+    QuizCompleted.objects.filter(user=request.user)
+    print(QuizCompleted.objects.filter(user=request.user))
+    print(Team.objects.filter(participants__username=request.user.username))
+    print(Quiz.objects.filter(teams__in=teams))
+    """
+    '''  ----------------------------------------------------------------------------------------------------------- '''
+
+    # TODO : Queries need to be correct at all.
     context = {
-        'quizes_all': Quiz.objects.all(),
-        'quizes_available': Quiz.objects.filter(),
-        'quizes_enrolled': Quiz.objects.filter(),
+        'quizes_all': Quiz.objects.all(),  # QUIZ=> REQUIRED(current, upcoming)
+        'quizes_available': Quiz.objects.all(),  # QUIZ=> REQUIRED(upcoming, not_enrolled)
+        'quizes_enrolled': Quiz.objects.all()  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
     }
     return render(request=request, template_name='quizes.html', context=context)
 
@@ -606,7 +617,7 @@ def enroll(request, pk):
 def quiz_user_1(request, quiz):
     user_team = None
     user_quiz = None
-    allseowed_to_start = False
+    allowed_to_start = False
     time_status = None
     question_ids = []
     quiz_id = None
@@ -619,6 +630,10 @@ def quiz_user_1(request, quiz):
         if not user_team:
             messages.error(request=request,
                            message="You are not registered to any team _ please register your team first")
+            return redirect('application:quizes', permanent=True)
+
+        if len(QuizCompleted.objects.filter(user=request.user, quiz=user_quiz)) > 0:
+            messages.error(request=request, message="Dear User you have already attempted this quiz")
             return redirect('application:quizes', permanent=True)
 
     except Quiz.DoesNotExist:
@@ -728,9 +743,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         return JsonResponse(data=response, safe=False)
     else:
         return JsonResponse(data=None)
-
-
-from dateutil import parser
 
 
 @csrf_exempt
