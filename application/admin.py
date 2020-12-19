@@ -72,6 +72,10 @@ class AppUpdateAdmin(admin.ModelAdmin):
     list_display = ['pk', 'url', 'status', 'active']
 
 
+class QuizCompletedAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'quiz', 'user', 'created']
+
+
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
 admin.site.register(Question, QuestionAdmin)
@@ -88,5 +92,6 @@ admin.site.register(Quiz, QuizAdmin)
 
 admin.site.register(AppUpdate, AppUpdateAdmin)
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(QuizCompleted, QuizCompletedAdmin)
 
 admin.site.register(EmailConfirmation)

@@ -124,8 +124,15 @@
                                 <td>{{ quiz.subjects.count }}</td>
                                 <td>{{ quiz.start_time }}</td>
                                 <td>{{ quiz.end_time }}</td>
-                                <td><a href="{% url 'application:quiz_start' quiz.pk %}"><i class="fa fa-play"></i>
-                                    Start</a>
+                                <td>
+                                    <a href="{% url 'application:quiz_start' quiz.pk %}"><i class="fa fa-play"></i>
+                                        Start
+                                    </a>
+{#                                    <button id="quiz_select_to_play" class="btn btn-link"#}
+{#                                            data-url="{% url 'application:quiz_start' quiz.pk %}"><i#}
+{#                                            class="fa fa-play"></i>#}
+{#                                        Start#}
+{#                                    </button>#}
                                 </td>
                             {% endfor %}
 
@@ -140,3 +147,14 @@
     </div>
 
 {% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#quiz_select_to_play').click(function (event) {
+                window.open($(this).data('url'), "{{ request.user.username }} Quiz Screen", "status=1,toolbar=0");
+            })
+        });
+    </script>
+{% endblock %}
+

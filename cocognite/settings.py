@@ -137,7 +137,7 @@ USE_I18N = False
 
 USE_L10N = False
 
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

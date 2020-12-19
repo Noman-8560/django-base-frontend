@@ -235,7 +235,7 @@ class Quiz(models.Model):
 
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
-    subjects = models.ManyToManyField(Subject, blank=False)
+    subjects = models.ManyToManyField(Subject, blank=True, null=True)
     players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='3')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
@@ -299,13 +299,27 @@ class Attempt(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.question.statement + ' attempted by ' + self.user.first_name
+        return str(self.question.questionstatement_set.first()) + ' attempted by ' + str(self.user.username)
 
     def __unicode__(self):
         return self.question.statement
 
     class Meta:
         verbose_name_plural = 'Attempts'
+
+
+class QuizCompleted(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Completed Quiz'
+        verbose_name_plural = 'Completed Quizes'
+
+    def __str__(self):
+        return 'QUIZ: '+str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
 
 
 class Team(models.Model):
