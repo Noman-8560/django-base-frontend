@@ -317,7 +317,7 @@ class QuizCompleted(models.Model):
         verbose_name_plural = 'Completed Quizes'
 
     def __str__(self):
-        return 'QUIZ: '+str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
+        return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
 
 
 class Team(models.Model):
