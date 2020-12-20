@@ -2,6 +2,8 @@ import json
 
 from django.contrib import messages
 from django.db.models import Q
+
+from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -34,6 +36,7 @@ def article(request, pk):
         return HttpResponseRedirect(reverse('application:home'))
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def add_article(request, pk=0):
     if pk != 0:
         try:
