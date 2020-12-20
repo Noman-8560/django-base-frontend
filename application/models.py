@@ -238,7 +238,6 @@ class Quiz(models.Model):
     subjects = models.ManyToManyField(Subject, blank=True, null=True)
     players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='3')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
-    teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -311,7 +310,6 @@ class Attempt(models.Model):
 class QuizCompleted(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
-
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

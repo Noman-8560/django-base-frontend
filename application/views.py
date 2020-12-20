@@ -517,10 +517,23 @@ def quizes(request):
     '''  ----------------------------------------------------------------------------------------------------------- '''
 
     # TODO : Queries need to be correct at all.
+
+    all_quizes = Quiz.objects.all().order_by('-start_time')
+    my_teams = Team.objects.filter(participants__in=[request.user.id])
+    my_quizes = Quiz.objects.filter(id__in=my_teams.values_list('quiz', flat=True))
+    available_quizes = Quiz.objects.filter(end_time__gte=timezone.now()).exclude(
+        id__in=my_quizes.values_list('id', flat=True)).order_by('-start_time')
+
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+
+    enrolled_quizes = Quiz.objects \
+        .filter(end_time__gt=timezone.now(), id__in=my_quizes.values_list('id', flat=True)) \
+        .exclude(id__in=completed_by_me.values_list('id', flat=True)).order_by('-start_time')
+
     context = {
-        'quizes_all': Quiz.objects.all(),  # QUIZ=> REQUIRED(current, upcoming)
-        'quizes_available': Quiz.objects.all(),  # QUIZ=> REQUIRED(upcoming, not_enrolled)
-        'quizes_enrolled': Quiz.objects.all()  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+        'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
+        'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
+        'quizes_enrolled': enrolled_quizes  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
     }
     return render(request=request, template_name='quizes.html', context=context)
 
