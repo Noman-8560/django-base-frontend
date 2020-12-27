@@ -33,7 +33,7 @@ class Screen(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return f"Screen_No: {str(self.no)} Screen_Name: {self.name}"
+        return f"User: {str(self.no)} Screen"
 
     def __unicode__(self):
         return self.no
@@ -61,7 +61,7 @@ class QuestionType(models.Model):
 
 
 class Subject(models.Model):
-    title = models.CharField(max_length=50, null=False, blank=False)
+    title = models.CharField(max_length=50, unique=True, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -72,6 +72,7 @@ class Subject(models.Model):
         return self.title
 
     class Meta:
+        verbose_name = 'Subject'
         verbose_name_plural = 'Subjects'
 
 
@@ -307,6 +308,45 @@ class Attempt(models.Model):
         verbose_name_plural = 'Attempts'
 
 
+class LearningResourceResult(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    total = models.PositiveIntegerField(null=False, blank=False, default=0)
+    obtained = models.PositiveIntegerField(null=False, blank=False, default=0)
+    attempts = models.PositiveIntegerField(null=False, blank=False, default=1)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Learning Resource Result'
+        verbose_name_plural = 'Learning Resource Results'
+
+    def __str__(self):
+        return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
+
+
+class LearningResourceAttempts(models.Model):
+    question = models.ForeignKey('Question', null=False, blank=False, related_name='question-attempt+',
+                                 on_delete=models.DO_NOTHING)
+    user = models.ForeignKey('auth.User', null=False, blank=False, related_name='attempt-by+',
+                             on_delete=models.CASCADE)
+    quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    successful = models.BooleanField(null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.question.questionstatement_set.first()) + ' attempted by ' + str(self.user.username)
+
+    def __unicode__(self):
+        return self.question.statement
+
+    class Meta:
+        verbose_name = 'Learning Resource Attempt'
+        verbose_name_plural = 'Learning Resource Attempts'
+
+
 class QuizCompleted(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
@@ -336,3 +376,27 @@ class Team(models.Model):
 
     class Meta:
         verbose_name_plural = 'Teams'
+
+
+# class Profile(models.Model):
+#     GENDER_CHOICE = (
+#         ('m', 'Male'),
+#         ('f', 'Female'),
+#         ('o', 'Other'),
+#     )
+#     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
+#     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
+#
+#     user = models.ForeignKey('auth.User', null=False, blank=False, on_delete=models.CASCADE)
+#     profile = models.ImageField(
+#         upload_to='images/profiles/',
+#         height_field='image_height', width_field='image_width',
+#         default='images/profiles/male-avatar.jpg',
+#         help_text="Profile Picture", verbose_name="Profile Picture",
+#         null=False, blank=False
+#     )
+#     is_guardian = models.BooleanField(null=False, blank=False)
+#     gender = models.CharField(max_length=1, null=True, blank=True, default='m', choices=GENDER_CHOICE)
+#     about = models.CharField(max_length=255, null=True, blank=True)
+#     phone = models.CharField(max_length=255, unique=True, blank=True, null=True)
+#     address = models.TextField(blank=True, null=True)

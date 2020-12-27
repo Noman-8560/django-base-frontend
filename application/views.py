@@ -1,13 +1,16 @@
 import json
+from queue import Queue
 
 from django.contrib import messages
+from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 from django.db.models import Q
 
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core import serializers
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 
@@ -17,11 +20,43 @@ from .models import *
 
 
 def home(request):
-    articles = Article.objects.filter(active=True)
+    articles = Article.objects.all()
+
+    articles = articles.order_by('-created_at')
+    articles_list = Article.objects.all().order_by('-created_at').values('pk', 'event', 'topic')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(articles, 1)
+
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        articles = paginator.page(1)
+    except EmptyPage:
+        articles = paginator.page(paginator.num_pages)
+
     context = {
         'articles': articles,
+        'articles_list': articles_list
     }
     return render(request=request, template_name='home.html', context=context)
+
+
+def coming_soon(request):
+    return render(request=request, template_name='coming_soon.html')
+
+
+def page_404(request):
+    return render(request=request, template_name='page_404.html')
+
+
+def page_500(request):
+    return render(request=request, template_name='page_500.html')
+
+
+@login_required
+def dashboard(request):
+    return render(request=request, template_name='dashboard.html')
 
 
 def article(request, pk):
@@ -34,6 +69,44 @@ def article(request, pk):
     except Article.DoesNotExist:
         messages.error(request=request, message=f'Requested Article [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:home'))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def articles(request):
+    context = {
+        'articles': Article.objects.all()
+    }
+    return render(request=request, template_name='articles.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_article(request, pk):
+    try:
+        article = Article.objects.get(pk=pk)
+        out = article.delete()
+        messages.success(request=request, message=f"Requested Article: {article.pk} deleted successfully.")
+    except Article.DoesNotExist:
+        messages.error(request=request, message=f"Requested Article ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:articles'))
+
+
+def help_view(request):
+    designing = AppUpdate.objects.filter(status='des').filter(active=True)
+    designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
+
+    development = AppUpdate.objects.filter(status='dev').filter(active=True)
+    development_ = AppUpdate.objects.filter(status='dev').filter(active=False)
+
+    # testing = AppUpdate.objects.get(status='tes')
+
+    context = {
+        'designing': designing,
+        'designing_': designing_,
+        'development': development,
+        'development_': development_,
+        'testing': None,
+    }
+    return render(request=request, template_name='help.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -72,69 +145,80 @@ def add_article(request, pk=0):
     return render(request=request, template_name='add_article.html', context=context)
 
 
-def help_view(request):
-    designing = AppUpdate.objects.filter(status='des').filter(active=True)
-    designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
-
-    development = AppUpdate.objects.filter(status='dev').filter(active=True)
-    development_ = AppUpdate.objects.filter(status='dev').filter(active=False)
-
-    # testing = AppUpdate.objects.get(status='tes')
-
-    context = {
-        'designing': designing,
-        'designing_': designing_,
-        'development': development,
-        'development_': development_,
-        'testing': None,
-    }
-    return render(request=request, template_name='help.html', context=context)
-
-
-def parent_login(request):
-    return render(request=request, template_name='parents_login.html')
-
-
+@login_required
 def profile_update(request):
     return render(request=request, template_name='profile_update.html')
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def quiz_builder(request):
     return render(request=request, template_name='quiz_builder.html')
-
-
-def learning_resource(request):
-    quizzes = Quiz.objects.all()
-    context = {'quizzes': quizzes}
-    return render(request=request, template_name='learning_resource.html', context=context)
-
-
-def learning_resource_quiz(request):
-    id = request.GET.get('id', 0)
-    print(str(id))
-    quiz = Quiz.objects.get(id=id)
-    context = {'quiz': quiz}
-    return render(request=request, template_name='learning_resource_quiz.html', context=context)
 
 
 ''' QUESTION BUILDER VIEWS _______________________________________________________________'''
 
 
-def question_builder(request):
-    if request.method == 'POST':
-        question_form_save = QuestionForm(request.POST)
-        if question_form_save.is_valid():
-            question = question_form_save.save(commit=True)
-            messages.success(request=request,
-                             message="Question Added Successfully - Redirected to Question Description.")
-            return redirect('application:question_builder_update', question.pk, permanent=True)
-
+@user_passes_test(lambda u: u.is_superuser)
+def questions(request):
     context = {
-        'form': QuestionForm,
+        'questions': Question.objects.all()
+    }
+    return render(request=request, template_name='questions.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def question_builder(request):
+    # ADD/GET FORM
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Question {out.pk} added successfully.")
+            return redirect('application:question_builder_update', out.pk, permanent=True)
+    else:
+        form = QuestionForm()
+
+    context = {'form': form}
+    return render(request=request, template_name='question_builder.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def update_question(request, pk):
+    # UPDATE/ GET UPDATE FORM
+    question = None
+    try:
+        question = Question.objects.get(pk=pk)
+    except Question.DoesNotExist:
+        return HttpResponseRedirect(reverse('application:question_builder'))
+
+    if request.method == 'POST':
+        form = QuestionForm(request.POST or None, instance=question)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Question {question.pk} updated successfully.")
+            return redirect('application:question_builder_update', question.pk, permanent=True)
+    else:
+        form = QuestionForm(instance=question)
+    context = {
+        'form': form,
     }
     return render(request=request, template_name='question_builder.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def delete_question(request, pk):
+    try:
+        question = Question.objects.get(pk=pk)
+        out = question.delete()
+        messages.success(request=request, message=f"Requested Question: {question.pk} deleted successfully.")
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Question ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:questions'))
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def question_builder_update(request, pk):
     try:
         question_form = QuestionForm(request.POST or None, instance=Question.objects.get(pk=pk))
@@ -161,6 +245,7 @@ def question_builder_update(request, pk):
     return render(request=request, template_name='question_builder_update.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_statement_add(request, question):
     if request.method == 'POST':
 
@@ -190,12 +275,15 @@ def question_statement_add(request, question):
 
 
 @csrf_exempt
+@user_passes_test(lambda u: u.is_superuser)
 def add_question_statement(request):
     if request.method == 'POST':
         text = request.POST['text']
+        screen = request.POST['screen']
         question_id = request.POST['pk']
         statement = QuestionStatement()
         statement.statement = text
+        statement.screen = Screen.objects.get(pk=screen)
         statement.question = Question.objects.get(pk=question_id)
         statement.save()
         response = {
@@ -207,6 +295,7 @@ def add_question_statement(request):
 
 
 @csrf_exempt
+@user_passes_test(lambda u: u.is_superuser)
 def add_question_choice(request):
     if request.method == 'POST':
         is_correct = str(request.POST['is_correct']) == 'true'
@@ -224,6 +313,7 @@ def add_question_choice(request):
 
 
 @csrf_exempt
+@user_passes_test(lambda u: u.is_superuser)
 def delete_question_choice(request, pk):
     if request.method == 'GET':
         QuestionChoice.objects.get(pk=pk).delete()
@@ -233,6 +323,7 @@ def delete_question_choice(request, pk):
 
 
 @csrf_exempt
+@user_passes_test(lambda u: u.is_superuser)
 def delete_question_statement(request, pk):
     if request.method == 'GET':
         QuestionStatement.objects.get(pk=pk).delete()
@@ -242,6 +333,7 @@ def delete_question_statement(request, pk):
 
 
 @csrf_exempt
+@user_passes_test(lambda u: u.is_superuser)
 def get_question_statements(request, pk):
     if request.method == 'GET':
         statements = QuestionStatement.objects.filter(question=Question.objects.get(pk=pk))
@@ -254,6 +346,7 @@ def get_question_statements(request, pk):
         return JsonResponse(data=None)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_statement_delete(request, pk):
     try:
         question_statement = QuestionStatement.objects.get(pk=pk)
@@ -268,6 +361,7 @@ def question_statement_delete(request, pk):
     return redirect('application:question_builder', permanent=True)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_choices_add(request, question):
     if request.method == 'POST':
 
@@ -297,6 +391,7 @@ def question_choices_add(request, question):
     return HttpResponseRedirect(reverse('application:question_builder'))
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_choice_delete(request, pk):
     try:
         question_choice = QuestionChoice.objects.get(pk=pk)
@@ -311,6 +406,7 @@ def question_choice_delete(request, pk):
     return redirect('application:question_builder', permanent=True)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_image_add(request, question):
     if request.method == 'POST':
 
@@ -335,6 +431,7 @@ def question_image_add(request, question):
     return HttpResponseRedirect(reverse('application:question_builder'))
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_image_delete(request, pk):
     try:
         question_image = QuestionImage.objects.get(pk=pk)
@@ -349,6 +446,7 @@ def question_image_delete(request, pk):
     return redirect('application:question_builder', permanent=True)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_audio_add(request, question):
     if request.method == 'POST':
 
@@ -373,6 +471,7 @@ def question_audio_add(request, question):
     return HttpResponseRedirect(reverse('application:question_builder'))
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def question_audio_delete(request, pk):
     try:
         question_audio = QuestionAudio.objects.get(pk=pk)
@@ -390,14 +489,23 @@ def question_audio_delete(request, pk):
 ''' QUIZ BUILDER VIEWS _______________________________________________________________'''
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def quizzes(request):
+    context = {
+        'quizes': Quiz.objects.all()
+    }
+    return render(request=request, template_name='quizzes.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def quiz_builder(request):
     if request.method == 'POST':
         form = QuizForm(request.POST)
         if form.is_valid():
-            quiz = form.save(commit=True)
+            out = form.save(commit=True)
             messages.success(request=request,
-                             message="Quiz Added Successfully - Redirected to Quiz Description.")
-            return redirect('application:quiz_builder_update', quiz.pk, permanent=True)
+                             message=f"Quiz {out.title} added Successfully.")
+            return redirect('application:quiz_builder_update', out.pk, permanent=True)
     else:
         form = QuizForm()
 
@@ -407,6 +515,67 @@ def quiz_builder(request):
     return render(request=request, template_name='quiz_builder.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def quiz_builder_update(request, pk):
+    quiz = None
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+    context = {
+        'questions': quiz.questions.all(),
+        'subjects': quiz.subjects.all(),
+        'quiz_id': pk,
+        'total': quiz.questions.count(),
+        'remaining': 00,
+        'selected': 00,
+        'hard': 00,
+        'normal': 00,
+        'easy': 00,
+    }
+    return render(request=request, template_name='quiz_builder_update.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def update_quiz(request, pk):
+    quiz = None
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+    if request.method == 'POST':
+
+        form = QuizForm(request.POST or None, instance=quiz)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Quiz {quiz.title} Updated Successfully.")
+            return redirect('application:quiz_builder_update', quiz.pk, permanent=True)
+    else:
+        form = QuizForm(instance=quiz)
+    context = {
+        'form': form
+    }
+
+    return render(request=request, template_name='quiz_builder.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_quiz(request, pk):
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+        out = quiz.delete()
+        messages.success(request=request, message=f"Requested Quiz: {quiz.title} deleted successfully.")
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Quiz ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:quizzes'))
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def search_question(request):
     search = str(request.GET['search'])
     questions_models = Question.objects.filter(questionstatement__statement__icontains=search).distinct()
@@ -428,40 +597,7 @@ def search_question(request):
     return JsonResponse(dict_out, safe=False)
 
 
-def quiz_builder_update(request, pk):
-    question = None
-    try:
-        quiz = Quiz.objects.get(pk=pk)
-    except Quiz.DoesNotExist:
-        messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
-        return HttpResponseRedirect(reverse('application:quiz_builder'))
-
-    if request.method == 'POST':
-
-        form = QuizForm(request.POST or None, instance=Quiz.objects.get(pk=pk))
-        if form.is_valid():
-            form.save(commit=True)
-            messages.success(request=request,
-                             message="Quiz Updated Successfully - You can do more see options below.")
-
-    else:
-        form = QuizForm(instance=Quiz.objects.get(pk=pk))
-
-    context = {
-        'questions': quiz.questions.all(),
-        'subjects': quiz.subjects.all(),
-        'quiz_id': pk,
-        'total': quiz.questions.count(),
-        'remaining': 00,
-        'selected': 00,
-        'hard': 00,
-        'normal': 00,
-        'easy': 00,
-        'form': form,
-    }
-    return render(request=request, template_name='quiz_builder_update.html', context=context)
-
-
+@user_passes_test(lambda u: u.is_superuser)
 def quiz_question_add(request, quiz, question):
     quiz_model = None
     question_model = None
@@ -485,6 +621,7 @@ def quiz_question_add(request, quiz, question):
     return redirect('application:quiz_builder_update', quiz, permanent=True)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def quiz_question_delete(request, quiz, question):
     try:
         quiz_model = Quiz.objects.get(pk=quiz)
@@ -498,9 +635,69 @@ def quiz_question_delete(request, quiz, question):
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
 
+''' QUESTION BUILDER VIEWS _______________________________________________________________'''
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def subjects(request):
+    context = {
+        'subjects': Subject.objects.all()
+    }
+    return render(request=request, template_name='subjects.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def update_subject(request, pk):
+    subject = None
+    try:
+        subject = Subject.objects.get(pk=pk)
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Subject ID: {pk} doesn't exists.")
+        return HttpResponseRedirect(reverse('application:subjects'))
+
+    if request.method == 'GET':
+        form = SubjectForm(instance=subject)
+    else:
+        form = SubjectForm(request.POST or None, instance=subject)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Subject {out} Updated Successfully.")
+
+    context = {'form': form}
+    return render(request=request, template_name='add_subject.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_subject(request):
+    if request.method == 'GET':
+        form = SubjectForm()
+    else:
+        form = SubjectForm(request.POST or None)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request, message=f"Subject: {out} added successfully.")
+    context = {
+        'form': form
+    }
+    return render(request=request, template_name='add_subject.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_subject(request, pk):
+    try:
+        subject = Subject.objects.get(pk=pk)
+        out = subject.delete()
+        messages.success(request=request, message=f"Requested Subject: {subject.title} deleted successfully.")
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Subject ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:subjects'))
+
+
 ''' QUIZ SETUP VIEWS _______________________________________________________________'''
 
 
+@login_required
 def quizes(request):
     """  ----------------------------------------------------------------------------------------------------------- """
     """
@@ -541,6 +738,7 @@ def quizes(request):
     return render(request=request, template_name='quizes.html', context=context)
 
 
+@login_required
 def teams(request):
     teams = Team.objects.filter(participants__username=request.user.username)
 
@@ -550,6 +748,24 @@ def teams(request):
     return render(request=request, template_name='teams.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def admin_teams(request):
+    context = {'teams': Team.objects.all()}
+    return render(request=request, template_name='admin_teams.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_team_delete(request, pk):
+    try:
+        team = Team.objects.get(pk=pk)
+        out = team.delete()
+        messages.success(request=request, message=f"Requested Team: {team.name} deleted successfully.")
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Team ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:admin_teams'))
+
+
+@login_required
 def team(request, pk):
     team = None
     try:
@@ -566,6 +782,7 @@ def team(request, pk):
     return render(request=request, template_name='team.html', context=context)
 
 
+@login_required
 def enroll(request, pk):
     # CHECK_QUIZ_EXISTS
     quiz = None
@@ -630,7 +847,8 @@ def enroll(request, pk):
     return render(request=request, template_name='add_team.html', context=context)
 
 
-def quiz_user_1(request, quiz):
+@login_required
+def quiz_start(request, quiz):
     user_team = None
     user_quiz = None
     allowed_to_start = False
@@ -685,17 +903,15 @@ def quiz_user_1(request, quiz):
     return render(request=request, template_name='quiz_user_1.html', context=context)
 
 
-def quiz_user_2(request):
-    return render(request=request, template_name='quiz_user_2.html')
-
-
-def quiz_user_3(request):
-    return render(request=request, template_name='quiz_user_3.html')
+@login_required
+def results(request):
+    return render(request=request, template_name='results.html')
 
 
 ''' CAPI VIEWS _______________________________________________________________'''
 
 
+@login_required
 def user_exists_json(request, username):
     if request.method == 'GET':
         flag = False
@@ -713,6 +929,7 @@ def user_exists_json(request, username):
         return JsonResponse(data=None)
 
 
+@login_required
 def quiz_access_question_json(request, quiz_id, question_id, user_id):
     statements = []
     images = []
@@ -762,6 +979,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
 
 
 @csrf_exempt
+@login_required
 def question_submission_json(request):
     success = False
     message = None
@@ -826,6 +1044,7 @@ def question_submission_json(request):
 
 
 @csrf_exempt
+@login_required
 def next_question_json(request):
     success = False
     message = None
@@ -842,6 +1061,158 @@ def next_question_json(request):
             message = "Question submitted Successfully"
         else:
             message = "Question is not submitted by you team"
+
+        response = {
+            'success': success,
+            'message': message,
+            'end': request.POST['end'],
+        }
+
+        return JsonResponse(data=response, safe=False)
+
+
+def learning_resources_start(request, quiz):
+    user_quiz = None
+    allowed_to_start = False
+    time_status = None
+    question_ids = []
+    quiz_id = None
+
+    ''' QUIZ and TEAM is required here'''
+    try:
+        user_quiz = Quiz.objects.get(pk=quiz)
+
+        # if len(QuizCompleted.objects.filter(user=request.user, quiz=user_quiz)) > 0:
+        # messages.success(request=request, message="Dear User you have already attempted this quiz, if you attempt it again your previous record will be updated")
+
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message="Requested Quiz doesn't exists")
+        return redirect('application:quizes', permanent=True)
+
+    if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
+        allowed_to_start = True
+        time_status = 'present'
+
+        questions = user_quiz.questions.all()
+        for question in questions:
+            question_ids.append(question.pk)
+
+    else:
+        if user_quiz.start_time > timezone.now():
+            time_status = 'future'
+        elif timezone.now() > user_quiz.end_time:
+            time_status = 'past'
+
+    context = {
+        'time_status': time_status,
+        'allowed_to_start': allowed_to_start,
+        'quiz_start_date': user_quiz.start_time,
+        'quiz_end_date': user_quiz.end_time,
+        'question_ids': question_ids,
+        'quiz_id': user_quiz.pk,
+    }
+
+    return render(request=request, template_name='learning_quiz.html', context=context)
+
+
+@login_required
+def learn_access_question_json(request, quiz_id, question_id):
+    statements = []
+    images = []
+    audios = []
+    choices_keys = []
+    choices_values = []
+
+    if request.method == 'GET' and request.is_ajax():
+
+        ''' __FETCHING BASE DATA__'''
+        quiz = Quiz.objects.get(pk=quiz_id)
+
+        '''__QUESTION LOGIC WILL BE HERE__'''
+        question = quiz.questions.get(pk=question_id)
+
+        '''__FETCHING SUBMISSION AND CHOICES CONTROL__'''
+
+        ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
+        [statements.append(x.statement) for x in question.questionstatement_set.all()]
+        [images.append(y.image) if y.url is None else images.append(y.url) for y in
+         question.questionimage_set.all()]
+        [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
+         question.questionaudio_set.all()]
+        [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
+        [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
+
+        ''' __GENERATING RESPONSES__'''
+        response = {
+            'question': question.pk,
+            'choices_keys': choices_keys,
+            'choices_values': choices_values,
+            'statements': statements,
+            'images': images,
+            'audios': audios
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)
+
+
+@csrf_exempt
+@login_required
+def learn_question_submission_json(request):
+    success = False
+    message = None
+    end = False
+
+    """ CHECK API CALL """
+    if request.method == 'POST':
+
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+        question = Question.objects.get(pk=request.POST['question_id'])
+        choice_id = request.POST['choice_id']
+
+        """ CHECK CORRECT OR NOT """
+        correct = QuestionChoice.objects.get(pk=choice_id).is_correct
+
+        """------------------------------------------------------------"""
+        """                     SAVING DATA                            """
+        """------------------------------------------------------------"""
+
+        learn_previous = LearningResourceResult.objects.filter(user=request.user, quiz=quiz)
+        if len(learn_previous) == 0:
+            LearningResourceAttempts(
+                question=question,
+                user=request.user,
+                quiz=quiz,
+                start_time=request.POST['start_time'],
+                end_time=request.POST['end_time'],
+                successful=correct
+            ).save()
+        else:
+            x = LearningResourceAttempts.objects.filter(question=question, user=request.user, quiz=quiz)[0]
+            x.start_time = request.POST['start_time']
+            x.end_time = request.POST['end_time']
+            x.successful = correct
+            x.save()
+
+        if request.POST['end'] == 'True':
+            yy = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz)
+
+            if len(learn_previous) == 0:
+                LearningResourceResult(
+                    user=request.user,
+                    quiz=quiz,
+                    total=yy.count(),
+                    obtained=yy.filter(successful=True).count()
+                ).save()
+            else:
+                y = LearningResourceResult.objects.filter(user=request.user, quiz=quiz)[0]
+                y.total = yy.count()
+                y.obtained = yy.filter(successful=True).count()
+                y.attempts = y.attempts + 1
+                y.save()
+
+        success = True
+        message = f"Question {request.POST['question_id']} marked successfully"
 
         response = {
             'success': success,

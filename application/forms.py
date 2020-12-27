@@ -12,7 +12,7 @@ class CSDateTimeInput(forms.DateTimeInput):
 class QuestionForm(ModelForm):
     class Meta:
         model = Question
-        fields = ['subject', 'submission_control', 'choices_control', 'age_limit']
+        fields = ['id', 'subject', 'submission_control', 'choices_control', 'age_limit']
 
 
 class QuestionStatementForm(ModelForm):
@@ -61,3 +61,9 @@ class TeamForm(ModelForm):
     class Meta:
         model = Team
         fields = ['name', 'participants', 'is_active']
+
+
+class SubjectForm(ModelForm):
+    class Meta:
+        model = Subject
+        fields = '__all__'

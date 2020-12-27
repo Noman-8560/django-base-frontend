@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %} {{ request.user }} {% endblock %}
+
+{% block base_links %}
+    <link rel="stylesheet" href="{% static 'application/libs/sweetalert2/sweetalert2.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card overflow-hidden">
+                <div class="bg-soft-primary">
+                    <div class="row">
+                        <div class="col-7">
+                            <div class="text-primary p-3">
+                                <h5 class="text-primary">Welcome Back !</h5>
+                                <p>{{ request.user }} Dashboard</p>
+                            </div>
+                        </div>
+                        <div class="col-5 align-self-end">
+                            <img src="{% static 'application/images/profile-img.png' %}" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="avatar-md profile-user-wid mb-4">
+                                <img src="{% static 'application/images/users/avatar-7.jpg' %}" alt=""
+                                     class="img-thumbnail rounded-circle">
+                            </div>
+                            <h5 class="font-size-15 text-truncate">{{ request.user.first_name }} {{ request.user.last_name }}</h5>
+                            <p class="text-muted mb-0 text-truncate">Student</p>
+                        </div>
+
+                        <div class="col-sm-8">
+                            <div class="pt-4">
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5 class="font-size-15">05</h5>
+                                        <p class="text-muted mb-0">Quizzes</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 class="font-size-15">45</h5>
+                                        <p class="text-muted mb-0">Learned</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="media-body">
+                                    <p class="text-muted font-weight-medium">Quizzes</p>
+                                    <h4 class="mb-0">45</h4>
+                                </div>
+
+                                <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-copy-alt font-size-24"></i>
+                                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="media-body">
+                                    <p class="text-muted font-weight-medium">Learning</p>
+                                    <h4 class="mb-0">100</h4>
+                                </div>
+
+                                <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-archive-in font-size-24"></i>
+                                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="media-body">
+                                    <p class="text-muted font-weight-medium">Pinned</p>
+                                    <h4 class="mb-0">16</h4>
+                                </div>
+
+                                <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+    <hr>
+    <div class="">
+
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Line with Data Labels</h4>
+
+                        <div id="line_chart_datalabel" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Dashed Line</h4>
+
+                        <div id="line_chart_dashed" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Spline Area</h4>
+
+                        <div id="spline_area" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Column Charts</h4>
+
+                        <div id="column_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Column with Data Labels</h4>
+
+                        <div id="column_chart_datalabel" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Bar Chart</h4>
+
+                        <div id="bar_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Line, Column &amp; Area Chart</h4>
+
+                        <div id="mixed_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Radial Chart</h4>
+
+                        <div id="radial_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Pie Chart</h4>
+
+                        <div id="pie_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Donut Chart</h4>
+
+                        <div id="donut_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <!-- apexcharts -->
+    <script src="{% static 'application/libs/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'application/js/pages/apexcharts.init.js' %}"></script>
+    <script src="{% static 'application/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+    <script src="{% static 'application/js/pages/sweet-alerts.init.js' %}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% endblock %}
+
+{% block base_external_scripts %}
+
+    <script>
+        $(document).ready(function () {
+            swal(`Welcome {{ request.user }}! You are accessing your dashboard
+
+            This page is just a prototype
+            All the records and charts are temporary,
+            As this is the last part of project so it will be functional after zoom API's implementation and a successful statistical analysis of data.
+
+            Regards:
+            Cocognito Development Team.
+            `);
+        });
+    </script>
+{% endblock %}
+
+

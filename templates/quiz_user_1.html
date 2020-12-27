@@ -6,7 +6,7 @@
 
 {% block base_top_nav %}{% endblock %}
 
-{% block content %}
+{% block dont_include_details %}
     {% if allowed_to_start %}
         <div>
             <div class="bg-danger text-light text-center">
@@ -14,55 +14,87 @@
                     with
                     live video streaming through zoom api's - 3 users</p>
             </div>
-            <div class="container my-5">
-                <div class="row ">
 
+            <div class="container">
+                <div class="row ">
                     <div class="col-sm-9">
 
                         {# 1-QUESTION #}
-                        <div class="border bg-light p-4" id="question_div" data-question="0">
+                        <div id="question_div" data-question="0">
 
-                            {# STATEMENTS #}
-                            <small></small>
-                            <p class="h4">Statements</p>
-                            <div id="statements_div" class="mb-4">
-
-                            </div>
-
-                            {# choices #}
-                            <p class="h4">Choice Control</p>
-                            <div id="choices_div" class="mb-4">
-
-
-                            </div>
-
-                            {# IMAGES #}
-                            <p class="h4">Images Hint</p>
-                            <div id="images_div" class="mb-4">
-
-                            </div>
-
-                            {# AUDIOS #}
-                            <p class="h4">Audios Hint</p>
-                            <div id="audios_div" class="mb-4">
-
-                            </div>
-
-                        </div>
-
-                        {# TIMER AND BUTTONS #}
-                        <div class="p-4 border border-top-0 bg-light">
-                            <div class="clearfix">
-                                <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
-                                <div class="float-right" id="submission_control_div">
-                                    <button class="btn btn btn-success" id="button_next"><i
-                                            class="fa fa-arrow-circle-o-right"></i> Next
-                                    </button>
-                                    <button class="btn btn btn-success" id="button_submit"><i class="fa fa-check"></i>
-                                        Submit
-                                    </button>
+                            <div class="">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <div class="clearfix">
+                                        <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
+                                        <div class="float-right" id="submission_control_div">
+                                            <button class="btn btn btn-success" id="button_next"><i
+                                                    class="fa fa-arrow-circle-o-right"></i> Next
+                                            </button>
+                                            <button class="btn btn btn-success" id="button_submit"><i
+                                                    class="fa fa-check"></i>
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
+                                </div>
+                                <div class="">
+                                    {# STATEMENTS #}
+                                    <div class="card border">
+                                        <div class="card-header"><p class="card-title">STATEMENTS</p></div>
+                                        <div class="card-body">
+
+                                            <div id="statements_div" class="mb-4">
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    {# choices #}
+                                    <div class="card border">
+                                        <div class="card-header">
+                                            <p class="card-title">CHOICE CONTROL</p>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div id="choices_div" class="mb-4">
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {# IMAGES #}
+                                    <div class="card border">
+                                        <div class="card-header">
+                                            <p class="card-title">IMAGE HINT</p>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div id="images_div" class="mb-4">
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {# AUDIOS #}
+                                    <div class="card border">
+                                        <div class="card-header">
+                                            <p class="card-title">AUDIO HINT</p>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div id="audios_div" class="mb-4">
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
+
                         </div>
 
                     </div>

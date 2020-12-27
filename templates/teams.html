@@ -3,23 +3,14 @@
 {% load crispy_forms_tags %}
 
 {% block base_title %}My Teams {% endblock %}
-
+{% block page_heading %} My Teams {% endblock %}
 {% block content %}
 
-    {% include 'message.html' %}
-
-    <div class="container my-3">
-        <div class="p-4 text-center">
-            <p class="lead m-0">Your Teams</p>
-            <p class="text-muted small m-0">Dear {{ request.user.username }} you are registered with the teams below,
-                you can view or leave these teams, <a href="#">Need Help ?</a>.
-            </p>
-        </div>
-
+    <div>
         {% if teams %}
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-striped">
-                    <thead class=small">
+                    <thead>
                     <tr>
                         <th>SNO</th>
                         <th>Name</th>
@@ -31,7 +22,7 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody class="small text-muted">
+                    <tbody class="">
 
                     {% for team in teams %}
                         <tr>
@@ -56,6 +47,21 @@
 
                     </tbody>
                 </table>
+            </div>
+        {% else %}
+            <div class="">
+                <div class="card border border-warning">
+                    <div class="card-header bg-transparent border-warning">
+                        <h5 class="my-0 text-warning">
+                            <i class="mdi mdi-alert-outline mr-3"></i>Team Help</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mt-0">How to Create or Join Team</h5>
+                        <p class="card-text">{{ request.user.username }}! You are not associated to any team until now,
+                            you can create your own team by selecting <a href="{% url 'application:quizes' %}">Quiz</a>
+                            from available quizes or you can join someone team, give them your username: <b>{{ request.user.username }}</b> and ask them to add.</p>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>
