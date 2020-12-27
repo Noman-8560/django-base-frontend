@@ -76,6 +76,14 @@ class QuizCompletedAdmin(admin.ModelAdmin):
     list_display = ['pk', 'quiz', 'user', 'created']
 
 
+class LearningResourceResultAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'user', 'attempts', 'total', 'obtained', 'created']
+
+
+class LearningResourceAttemptsAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'user', 'question', 'successful', 'start_time', 'end_time']
+
+
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
 admin.site.register(Question, QuestionAdmin)
@@ -93,5 +101,7 @@ admin.site.register(Quiz, QuizAdmin)
 admin.site.register(AppUpdate, AppUpdateAdmin)
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(QuizCompleted, QuizCompletedAdmin)
+admin.site.register(LearningResourceAttempts, LearningResourceAttemptsAdmin)
+admin.site.register(LearningResourceResult, LearningResourceResultAdmin)
 
 admin.site.register(EmailConfirmation)

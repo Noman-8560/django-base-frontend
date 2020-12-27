@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_title %} Quiz Subjects {% endblock %}
+{% block page_heading %} Quiz Subjects {% endblock %}
+{% block content %}
+
+    <div>
+        {% if subjects %}
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table border-0 table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>SNO</th>
+                            <th>Name</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>View</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+
+                        {% for subject in subjects %}
+                            <tr>
+                                <td>{{ subject.pk }}</td>
+                                <td>{{ subject.title }}</td>
+                                <td>{{ subject.created_at }}</td>
+                                <td>{{ subject.modified_at }}</td>
+                                <td><a href="{% url 'application:update_subject' subject.pk %}">
+                                    <i class="fa fa-edit"></i> View</a>
+                                </td>
+                                <td><a class="text-danger" href="{% url 'application:delete_subject' subject.pk %}">
+                                    <i class="fa fa-trash"></i> Delete</a>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="">
+                <div class="card border border-danger">
+                    <div class="card-header bg-transparent border-danger">
+                        <h5 class="my-0 text-danger">
+                            <i class="mdi mdi-block-helper mr-3"></i>Subject Help</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mt-0">No Subjects available</h5>
+                        <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no subject available for
+                            quiz
+                            initialization, please add subjects <a href="{% url 'application:add_subject' %}">Here</a>.
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
