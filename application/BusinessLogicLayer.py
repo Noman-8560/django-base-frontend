@@ -14,3 +14,9 @@ def identify_user_in_team(team, request, quiz):
             return 1
         else:
             return 2
+
+
+def is_guardian(user):
+    return user.email.endswith('@example.com')
+
+

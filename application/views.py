@@ -1,20 +1,16 @@
-import json
-from queue import Queue
-
 from django.contrib import messages
-from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
-from django.db.models import Q
-
-from django.contrib.auth.decorators import user_passes_test, login_required
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
-from django.views.decorators.cache import cache_page
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-import datetime
+from django.views.decorators.cache import never_cache
 
 from application.BusinessLogicLayer import identify_user_in_team
+
 from .forms import *
 from .models import *
 
@@ -92,22 +88,23 @@ def delete_article(request, pk):
 
 
 def help_view(request):
-    designing = AppUpdate.objects.filter(status='des').filter(active=True)
-    designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
-
-    development = AppUpdate.objects.filter(status='dev').filter(active=True)
-    development_ = AppUpdate.objects.filter(status='dev').filter(active=False)
+    # designing = AppUpdate.objects.filter(status='des').filter(active=True)
+    # designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
+    #
+    # development = AppUpdate.objects.filter(status='dev').filter(active=True)
+    # development_ = AppUpdate.objects.filter(status='dev').filter(active=False)
 
     # testing = AppUpdate.objects.get(status='tes')
 
-    context = {
-        'designing': designing,
-        'designing_': designing_,
-        'development': development,
-        'development_': development_,
-        'testing': None,
-    }
-    return render(request=request, template_name='help.html', context=context)
+    # context = {
+    #     'designing': designing,
+    #     'designing_': designing_,
+    #     'development': development,
+    #     'development_': development_,
+    #     'testing': None,
+    # }
+    return render(request=request, template_name='project.html')
+    # return render(request=request, template_name='help.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -147,8 +144,69 @@ def add_article(request, pk=0):
 
 
 @login_required
+@never_cache
 def profile_update(request):
-    return render(request=request, template_name='profile_update.html')
+    profile = None
+
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        if request.user.is_superuser:
+            messages.warning(request,
+                             f"You are super/root user may be your profile is not added by "
+                             f"developer during your account creation, you can create by own using this "
+                             f"link '{request.get_host()}/admin/application/profile/add/' or try to contact your "
+                             f"developer, by the way you don't need any profile."
+                             )
+        else:
+            messages.error(request, f"Your profile is not created yet, there may be some issue please contact admin.")
+        return redirect('application:home', permanent=True)
+
+    basic_form = ProfileBasicForm(instance=request.user)
+    school_form = ProfileSchoolForm(instance=profile)
+    guardian_form = ProfileParentForm(instance=profile)
+    image_form = ProfileImageForm(instance=profile)
+    other_form = ProfileOtherForm(instance=profile)
+
+    print(request.user.profile_set.first().profile)
+
+    if request.method == 'POST':
+        action = request.GET.get('action')
+        if action == 'basic':
+            pass
+            basic_form = ProfileBasicForm(request.POST or None, instance=request.user)
+            if basic_form.is_valid():
+                basic_form.save(commit=True)
+                messages.success(request, f'Your Name details updated')
+        elif action == 'school':
+            school_form = ProfileSchoolForm(request.POST or None, instance=profile)
+            if school_form.is_valid():
+                school_form.save(commit=True)
+                messages.success(request, f'Your School details updated')
+        elif action == 'guardian':
+            guardian_form = ProfileParentForm(request.POST or None, instance=profile)
+            if guardian_form.is_valid():
+                guardian_form.save(commit=True)
+                messages.success(request, f'Your Guardian details updated')
+        elif action == 'image':
+            image_form = ProfileImageForm(request.POST or None, request.FILES, instance=profile)
+            if image_form.is_valid():
+                image_form.save(commit=True)
+                messages.success(request, f'Your Profile image updated')
+        elif action == 'other':
+            other_form = ProfileOtherForm(request.POST or None, request.FILES, instance=profile)
+            if other_form.is_valid():
+                other_form.save(commit=True)
+                messages.success(request, f'Your Profile details updated')
+
+    context = {
+        'basic_form': basic_form,
+        'school_form': school_form,
+        'guardian_form': guardian_form,
+        'image_form': image_form,
+        'other_form': other_form,
+    }
+    return render(request=request, template_name='profile_update.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -599,7 +657,9 @@ def search_question(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+@never_cache
 def quiz_question_add(request, quiz, question):
+    print("HELLO")
     quiz_model = None
     question_model = None
 
@@ -623,6 +683,7 @@ def quiz_question_add(request, quiz, question):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+@never_cache
 def quiz_question_delete(request, quiz, question):
     try:
         quiz_model = Quiz.objects.get(pk=quiz)
