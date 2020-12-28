@@ -156,7 +156,11 @@
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user"
-                         src="{% static 'application/images/users/avatar-7.jpg' %}"
+                         {% if request.user.profile_set.first.profile %}
+                             src="/media/{{ request.user.profile_set.first.profile }}"
+                         {% else %}
+                             src="{% static 'application/images/users/avatar-7.jpg' %}"
+                         {% endif %}
                          alt="Header Avatar">
                     <span class="d-none d-xl-inline-block ml-1">{{ request.user.username }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
@@ -177,7 +181,7 @@
                         <i class="bx bx-book font-size-16 align-middle mr-1"></i> Learning Resources
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="#">
+                    <a class="dropdown-item" href="{% url 'application:profile_update' %}">
                         <i class="bx bx-user font-size-16 align-middle mr-1"></i> Profile
                     </a>
                     <a class="dropdown-item text-danger" href="{% url 'application:coming_soon' %}">

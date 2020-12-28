@@ -67,3 +67,33 @@ class SubjectForm(ModelForm):
     class Meta:
         model = Subject
         fields = '__all__'
+
+
+class ProfileImageForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['profile']
+
+
+class ProfileBasicForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
+
+
+class ProfileOtherForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['gender', 'phone', 'about', 'address']
+
+
+class ProfileSchoolForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['school_name', 'class_name', 'class_section', 'school_email', 'school_address']
+
+
+class ProfileParentForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['guardian_first_name', 'guardian_last_name', 'guardian_email']

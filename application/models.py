@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 from ckeditor.fields import RichTextField
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class AppUpdate(models.Model):
@@ -33,7 +35,7 @@ class Screen(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return f"User: {str(self.no)} Screen"
+        return f"Screen {str(self.no)}"
 
     def __unicode__(self):
         return self.no
@@ -378,25 +380,59 @@ class Team(models.Model):
         verbose_name_plural = 'Teams'
 
 
-# class Profile(models.Model):
-#     GENDER_CHOICE = (
-#         ('m', 'Male'),
-#         ('f', 'Female'),
-#         ('o', 'Other'),
-#     )
-#     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
-#     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
-#
-#     user = models.ForeignKey('auth.User', null=False, blank=False, on_delete=models.CASCADE)
-#     profile = models.ImageField(
-#         upload_to='images/profiles/',
-#         height_field='image_height', width_field='image_width',
-#         default='images/profiles/male-avatar.jpg',
-#         help_text="Profile Picture", verbose_name="Profile Picture",
-#         null=False, blank=False
-#     )
-#     is_guardian = models.BooleanField(null=False, blank=False)
-#     gender = models.CharField(max_length=1, null=True, blank=True, default='m', choices=GENDER_CHOICE)
-#     about = models.CharField(max_length=255, null=True, blank=True)
-#     phone = models.CharField(max_length=255, unique=True, blank=True, null=True)
-#     address = models.TextField(blank=True, null=True)
+class Profile(models.Model):
+    GENDER_CHOICE = (
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('o', 'Other'),
+    )
+    image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
+    image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
+
+    user = models.ForeignKey('auth.User', null=False, blank=False, on_delete=models.CASCADE)
+    profile = models.ImageField(
+        upload_to='images/profiles/',
+        height_field='image_height', width_field='image_width',
+        default='images/profiles/male-avatar.jpg',
+        help_text="Profile picture must be less then 500px of width and height, image must be in jpg, jpeg or png.",
+        verbose_name="Profile Picture",
+        null=False, blank=False
+    )
+    is_guardian = models.BooleanField(null=False, blank=False, default=False)
+    gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER_CHOICE)
+    phone = models.CharField(max_length=255, unique=True, blank=True, null=True,
+                             help_text='include your phone number with your country code.')
+    about = models.TextField(null=True, blank=True,
+                             help_text='you can add details about yourself like your hobbies, favorite lines, code of '
+                                       'life, bio or other details as well'
+                             )
+    address = models.TextField(blank=True, null=True)
+
+    school_name = models.CharField(max_length=255, null=True, blank=True)
+    class_name = models.CharField(max_length=255, null=True, blank=True)
+    class_section = models.CharField(max_length=255, null=True, blank=True)
+    school_email = models.CharField(max_length=255, null=True, blank=True)
+    school_address = models.TextField(null=True, blank=True)
+
+    guardian_first_name = models.CharField(max_length=255, null=True, blank=True)
+    guardian_last_name = models.CharField(max_length=255, null=True, blank=True)
+    guardian_email = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'User Profile'
+        verbose_name_plural = 'User Profiles'
+
+    def __str__(self):
+        return self.user.username
+
+
+@receiver(post_save, sender=User)
+def save_profile_on_user(sender, instance, created, **kwargs):
+    if created:
+        print("WELCOME")
+        if instance.id is None:
+            profile = Profile(user=User.objects.get(pk=instance.id))
+            profile.save()
+        else:
+            profile = Profile(user=User.objects.get(pk=instance.id))
+            profile.save()

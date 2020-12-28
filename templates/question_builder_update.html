@@ -10,6 +10,7 @@
         quiz.</p>
     <a href="{% url 'application:delete_question' question_id %}" class="btn btn-sm btn-link text-danger"><i class="fa fa-trash"></i> Remove</a>
     <a href="{% url 'application:update_question' question_id %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-edit"></i> Edit</a>
+    <a href="{% url 'application:question_builder' %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-plus"></i> Add Another</a>
 
 {% endblock %}
 

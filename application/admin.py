@@ -84,6 +84,11 @@ class LearningResourceAttemptsAdmin(admin.ModelAdmin):
     list_display = ['pk', 'user', 'question', 'successful', 'start_time', 'end_time']
 
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'user', 'is_guardian', 'gender', 'phone']
+
+
+admin.site.register(Profile, ProfileAdmin)
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
 admin.site.register(Question, QuestionAdmin)
