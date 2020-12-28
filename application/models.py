@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 from ckeditor.fields import RichTextField
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class AppUpdate(models.Model):
@@ -33,7 +35,7 @@ class Screen(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return f"Screen_No: {str(self.no)} Screen_Name: {self.name}"
+        return f"Screen {str(self.no)}"
 
     def __unicode__(self):
         return self.no
@@ -61,7 +63,7 @@ class QuestionType(models.Model):
 
 
 class Subject(models.Model):
-    title = models.CharField(max_length=50, null=False, blank=False)
+    title = models.CharField(max_length=50, unique=True, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -72,6 +74,7 @@ class Subject(models.Model):
         return self.title
 
     class Meta:
+        verbose_name = 'Subject'
         verbose_name_plural = 'Subjects'
 
 
@@ -235,10 +238,9 @@ class Quiz(models.Model):
 
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
-    subjects = models.ManyToManyField(Subject, blank=False)
+    subjects = models.ManyToManyField(Subject, blank=True, null=True)
     players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='3')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
-    teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -299,13 +301,65 @@ class Attempt(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.question.statement + ' attempted by ' + self.user.first_name
+        return str(self.question.questionstatement_set.first()) + ' attempted by ' + str(self.user.username)
 
     def __unicode__(self):
         return self.question.statement
 
     class Meta:
         verbose_name_plural = 'Attempts'
+
+
+class LearningResourceResult(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    total = models.PositiveIntegerField(null=False, blank=False, default=0)
+    obtained = models.PositiveIntegerField(null=False, blank=False, default=0)
+    attempts = models.PositiveIntegerField(null=False, blank=False, default=1)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Learning Resource Result'
+        verbose_name_plural = 'Learning Resource Results'
+
+    def __str__(self):
+        return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
+
+
+class LearningResourceAttempts(models.Model):
+    question = models.ForeignKey('Question', null=False, blank=False, related_name='question-attempt+',
+                                 on_delete=models.DO_NOTHING)
+    user = models.ForeignKey('auth.User', null=False, blank=False, related_name='attempt-by+',
+                             on_delete=models.CASCADE)
+    quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    successful = models.BooleanField(null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.question.questionstatement_set.first()) + ' attempted by ' + str(self.user.username)
+
+    def __unicode__(self):
+        return self.question.statement
+
+    class Meta:
+        verbose_name = 'Learning Resource Attempt'
+        verbose_name_plural = 'Learning Resource Attempts'
+
+
+class QuizCompleted(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Completed Quiz'
+        verbose_name_plural = 'Completed Quizes'
+
+    def __str__(self):
+        return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
 
 
 class Team(models.Model):
@@ -324,3 +378,61 @@ class Team(models.Model):
 
     class Meta:
         verbose_name_plural = 'Teams'
+
+
+class Profile(models.Model):
+    GENDER_CHOICE = (
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('o', 'Other'),
+    )
+    image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
+    image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
+
+    user = models.ForeignKey('auth.User', null=False, blank=False, on_delete=models.CASCADE)
+    profile = models.ImageField(
+        upload_to='images/profiles/',
+        height_field='image_height', width_field='image_width',
+        default='images/profiles/male-avatar.jpg',
+        help_text="Profile picture must be less then 500px of width and height, image must be in jpg, jpeg or png.",
+        verbose_name="Profile Picture",
+        null=False, blank=False
+    )
+    is_guardian = models.BooleanField(null=False, blank=False, default=False)
+    gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER_CHOICE)
+    phone = models.CharField(max_length=255, unique=True, blank=True, null=True,
+                             help_text='include your phone number with your country code.')
+    about = models.TextField(null=True, blank=True,
+                             help_text='you can add details about yourself like your hobbies, favorite lines, code of '
+                                       'life, bio or other details as well'
+                             )
+    address = models.TextField(blank=True, null=True)
+
+    school_name = models.CharField(max_length=255, null=True, blank=True)
+    class_name = models.CharField(max_length=255, null=True, blank=True)
+    class_section = models.CharField(max_length=255, null=True, blank=True)
+    school_email = models.CharField(max_length=255, null=True, blank=True)
+    school_address = models.TextField(null=True, blank=True)
+
+    guardian_first_name = models.CharField(max_length=255, null=True, blank=True)
+    guardian_last_name = models.CharField(max_length=255, null=True, blank=True)
+    guardian_email = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'User Profile'
+        verbose_name_plural = 'User Profiles'
+
+    def __str__(self):
+        return self.user.username
+
+
+@receiver(post_save, sender=User)
+def save_profile_on_user(sender, instance, created, **kwargs):
+    if created:
+        print("WELCOME")
+        if instance.id is None:
+            profile = Profile(user=User.objects.get(pk=instance.id))
+            profile.save()
+        else:
+            profile = Profile(user=User.objects.get(pk=instance.id))
+            profile.save()

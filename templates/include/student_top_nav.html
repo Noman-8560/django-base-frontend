@@ -1,59 +1,206 @@
 {% load static %}
 
-<div class="nav bg-danger justify-content-center">
-    <a class="navbar-link text-light p-1 small">
-        Cocognito is under-development its just a prototype - all the text and
-        designs are temporary will be changed according to application requirements
-        <i class="fa fa-heart text-light"></i></a>
-</div>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-2" style="z-index: 10;">
-    <div class="container">
-        <a class="navbar-brand font-weight-bold" href="/" style="font-size: 16px;">COCOGNITO <small
-                class="text-success small text-muted">version_0.1</small></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<header id="page-topbar">
+    <div class="navbar-header">
+        <div class="d-flex">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <a href="{% url 'application:home' %}" class="logo logo-dark text-dark">
+                                <span class="logo-sm">
+                                    <b>COCOGNITO</b>
+                                </span>
+                    <span class="logo-lg">
+                                    <b>COCOGNITO</b>
+                                </span>
+                </a>
 
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link small" href="/home/">Events</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link small" href="#">My Events</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link small" href="#">Resources</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link small" href="/learning_resource/">Learning Resource</a>
-                </li>
-                {% if not request.user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link small" href="{% url 'account_login' %}">Login</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item dropdown">
-                        <img class="nav-link dropdown-toggle small rounded-circle"
-                             src="{% static 'images/exarth_logo_white_head.png' %}"
-                             id="navbarDropdown" role="button" height="40px"
-                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a href="{% url 'application:home' %}" class="logo logo-light text-light">
+                                <span class="logo-sm">
+                                    <b class="lead">COCOGNITO</b>
+                                </span>
+                    <span class="logo-lg">
+                                    <b class="lead">COCOGNITO</b>
+                                </span>
+                </a>
+            </div>
 
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item small" href=""><i class="fa fa-dashboard"></i> Dashboard</a>
-                            <a class="dropdown-item small" href="{% url 'application:profile_update' %}"><i
-                                    class="fa fa-heart"></i> Profile</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item small" href=""><i class="fa fa-refresh"></i> Settings</a>
-                            <a class="dropdown-item small" href=""><i class="fa fa-shopping-cart"></i> Privacy</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger small" href="{% url 'account_logout' %}"><i
-                                    class="fa fa-sign-out"></i> Sign Out</a>
+            <button type="button" class="btn btn-sm px-3 font-size-16 d-lg-none header-item waves-effect waves-light"
+                    data-toggle="collapse" data-target="#topnav-menu-content">
+                <i class="fa fa-fw fa-bars"></i>
+            </button>
+
+        </div>
+
+        <div class="d-flex">
+
+
+            {# FLAGS #}
+            <div class="dropdown d-none d-lg-inline-block ml-1">
+                <button type="button" class="btn header-item waves-effect"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="" src="{% static 'application/images/flags/us.jpg' %}" alt="Header Language"
+                         height="16">
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+
+                    <!-- item-->
+                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <img src="{% static 'application/images/flags/spain.jpg' %}" alt="user-image" class="mr-1"
+                             height="12"> <span class="align-middle">Spanish</span>
+                    </a>
+
+                    <!-- item-->
+                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <img src="{% static 'application/images/flags/germany.jpg' %}" alt="user-image" class="mr-1"
+                             height="12"> <span class="align-middle">German</span>
+                    </a>
+
+                    <!-- item-->
+                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <img src="{% static 'application/images/flags/italy.jpg' %}" alt="user-image" class="mr-1"
+                             height="12"> <span class="align-middle">Italian</span>
+                    </a>
+
+                    <!-- item-->
+                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <img src="{% static 'application/images/flags/russia.jpg' %}" alt="user-image" class="mr-1"
+                             height="12"> <span class="align-middle">Russian</span>
+                    </a>
+                </div>
+            </div>
+
+            {# NOTIFICATIONS #}
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item noti-icon waves-effect"
+                        id="page-header-notifications-dropdown"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bx bx-bell bx-tada"></i>
+                    <span class="badge badge-danger badge-pill">3</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
+                     aria-labelledby="page-header-notifications-dropdown">
+                    <div class="p-3">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="m-0"> Notifications </h6>
+                            </div>
+                            <div class="col-auto">
+                                <a href="#" class="small"> View All</a>
+                            </div>
                         </div>
-                    </li>
-                {% endif %}
-            </ul>
+                    </div>
+                    <div data-simplebar style="max-height: 230px;">
+                        <a href="" class="text-reset notification-item">
+                            <div class="media">
+                                <div class="avatar-xs mr-3">
+                                                <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                                    <i class="bx bx-cart"></i>
+                                                </span>
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">Your order is placed</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">If several languages coalesce the grammar</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="" class="text-reset notification-item">
+                            <div class="media">
+                                <img src="{% static 'application/images/users/avatar-3.jpg' %}"
+                                     class="mr-3 rounded-circle avatar-xs" alt="user-pic">
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">James Lemire</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">It will seem like simplified English.</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 1 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="" class="text-reset notification-item">
+                            <div class="media">
+                                <div class="avatar-xs mr-3">
+                                                <span class="avatar-title bg-success rounded-circle font-size-16">
+                                                    <i class="bx bx-badge-check"></i>
+                                                </span>
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">Your item is shipped</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">If several languages coalesce the grammar</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                    <div class="p-2 border-top">
+                        <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="javascript:void(0)">
+                            <i class="mdi mdi-arrow-right-circle mr-1"></i> View More..
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {#            <div class="dropdown d-inline-block">#}
+            {#                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">#}
+            {#                    <i class="bx bx-cog bx-spin"></i>#}
+            {#                </button>#}
+            {#            </div>#}
+
+            {# USER ONLINE #}
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user"
+                         {% if request.user.profile_set.first.profile %}
+                             src="/media/{{ request.user.profile_set.first.profile }}"
+                         {% else %}
+                             src="{% static 'application/images/users/avatar-7.jpg' %}"
+                         {% endif %}
+                         alt="Header Avatar">
+                    <span class="d-none d-xl-inline-block ml-1">{{ request.user.username }}</span>
+                    <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <!-- item-->
+                    <a class="dropdown-item" href="{% url 'application:dashboard' %}">
+                        <i class="bx bxs-dashboard font-size-16 align-middle mr-1"></i> Dashboard
+                    </a>
+                    <a class="dropdown-item" href="{% url 'application:quizes' %}">
+                        {#                        <span class="badge badge-success float-right">11</span>#}
+                        <i class="bx bx-clipboard font-size-16 align-middle mr-1"></i> Quizzes
+                    </a>
+                    <a class="dropdown-item" href="{% url 'application:teams' %}">
+                        <i class="bx bx-sitemap font-size-16 align-middle mr-1"></i> Teams
+                    </a>
+                    <a class="dropdown-item" href="{% url 'application:quizes' %}">
+                        <i class="bx bx-book font-size-16 align-middle mr-1"></i> Learning Resources
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'application:profile_update' %}">
+                        <i class="bx bx-user font-size-16 align-middle mr-1"></i> Profile
+                    </a>
+                    <a class="dropdown-item text-danger" href="{% url 'application:coming_soon' %}">
+                        {#                        <span class="badge badge-success float-right">11</span>#}
+                        <i class="bx bx-wrench font-size-16 align-middle mr-1"></i> Settings
+                    </a>
+                    <a class="dropdown-item" href="{% url 'account_email' %}">
+                        <i class="bx bx-mail-send font-size-16 align-middle mr-1"></i> Email accounts
+                    </a>
+                    <a class="dropdown-item" href="{% url 'account_change_password' %}">
+                        <i class="bx bx-lock-open font-size-16 align-middle mr-1"></i>Password Change
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-primary" href="{% url 'account_logout' %}">
+                        <i class="bx bx-power-off font-size-16 align-middle mr-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+
         </div>
     </div>
-</nav>
+</header>

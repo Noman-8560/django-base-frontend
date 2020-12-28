@@ -137,7 +137,7 @@ USE_I18N = False
 
 USE_L10N = False
 
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -164,7 +164,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
@@ -172,7 +171,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'donald.duck0762@gmail.com'
 EMAIL_HOST_PASSWORD = 'ybwchppsknpddabc'
 EMAIL_PORT = 587
-DEFAULT_FROM_EMAIL = 'COCOGNITO-Team <noreply@cocognito.com>'
+DEFAULT_FROM_EMAIL = 'COCOGNITO-Team <noreply@application.com>'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True

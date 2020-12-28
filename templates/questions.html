@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_title %} Questions {% endblock %}
+{% block page_heading %} Questions {% endblock %}
+{% block content %}
+
+    <div>
+        {% if questions %}
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>SNO</th>
+
+                                <th>Submission</th>
+                                <th>Choices</th>
+                                <th>Subject</th>
+                                <th>Age</th>
+                                <th>created</th>
+                                <th>Level</th>
+                                <th>View</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody class="">
+
+                            {% for question in questions %}
+                                <tr>
+                                    <td>{{ question.pk }}</td>
+                                    <td>{{ question.submission_control }}</td>
+                                    <td>{{ question.choices_control }}</td>
+                                    <td>{{ question.subject }}</td>
+                                    <td>{{ question.age_limit }}</td>
+                                    <td>{{ question.created_at }}</td>
+                                    <td>
+                                        {% if question.level == 'e' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% elif question.level == 'm' %}
+                                            <i class="fa fa-star" style="color: darkorange;"></i>
+                                            <i class="fa fa-star" style="color: darkorange;"></i>
+                                        {% else %}
+                                            <i class="fa fa-star text-danger"></i>
+                                            <i class="fa fa-star text-danger"></i>
+                                            <i class="fa fa-star text-danger"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{% url 'application:question_builder_update' question.pk %}">
+                                        <i class="fa fa-clipboard"></i> View</a>
+                                    </td>
+                                    <td><a href="{% url 'application:update_question' question.pk %}">
+                                        <i class="fa fa-edit"></i> Edit</a>
+                                    </td>
+                                    <td><a class="text-danger"
+                                           href="{% url 'application:delete_question' question.pk %}">
+                                        <i class="fa fa-trash"></i> Delete</a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        {% else %}
+            <div class="">
+                <div class="card border border-danger">
+                    <div class="card-header bg-transparent border-danger">
+                        <h5 class="my-0 text-danger">
+                            <i class="mdi mdi-block-helper mr-3"></i>Questions Help</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mt-0">No Questions available</h5>
+                        <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no question available,
+                            include some questions to attract your users, First add Quiz <a
+                                    href="{% url 'application:quiz_builder' %}">Here</a> then you can add questions
+                            <a href="{% url 'application:question_builder' %}">Here</a>.
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

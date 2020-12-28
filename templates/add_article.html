@@ -4,14 +4,23 @@
 
 {% block base_title %}Add/Update Article{% endblock %}
 
-{% block content %}
-    <div class="container my-3">
+{% include 'message.html' %}
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.media }}
-            {{ form| crispy }}
-            <button class="btn btn-success" type="submit"><i class="fa fa-check"></i> Submit</button>
-        </form>
+{% block page_heading %}
+    Add/Update Articles
+{% endblock %}
+{% block content %}
+    <div class="row justify-content-center">
+
+        <div class="card col-sm-10">
+            <div class="card-body">
+                <form method="post">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form| crispy }}
+                <button class="btn btn-success" type="submit"><i class="fa fa-check"></i> Submit</button>
+            </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -1,29 +1,65 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% load i18n %}
+{% load account %}
+{% load static %}
 
-{% block base_title %}Verify Your Email Address{% endblock %}
-{% block base_top_nav %}{% endblock %}
-{% block content %}
+{% block base_title %}
+    Confirm Email
+{% endblock %}
 
-    <div class="bg-danger p-4">
-        <p class="text-center text-light h4 m-0">COCOGNITO</p>
-        <p class="text-center text-light small">welcome to cocognito user accounts security.</p>
-    </div>
 
-    <div>
-        {% include 'message.html' %}
-    </div>
-    <div class="container text-secondary">
+{% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
+
+{% block base_top_nav %} {% endblock %}
+{% block dont_include_details %}
+
+    {% include 'message.html' %}
+
+    <div class="container my-4">
         <div class="row justify-content-center">
-            <div class="p-4 col-10 col-sm-7 bg-light mt-5">
-                <h1>{% trans "Verify Your E-mail Address" %}</h1>
+            <div class="col-sm-8 col-12">
+                <div class="text-center">
+                    <img src="{% static 'images/logo_100.png' %}">
+                    <p class="text-danger mt-1"><b>Cocognito Account Security</b></p>
+                </div>
 
-                <p>{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize
-                    the
-                    signup process. Please contact us if you do not receive it within a few
-                    minutes.{% endblocktrans %}</p>
+                <hr class="border border-danger">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h1>{% trans "Confirm E-mail Address" %}</h1>
+
+                        {% if confirmation %}
+
+                            {% user_display confirmation.email_address.user as user_display %}
+
+                            <p>{% blocktrans with confirmation.email_address.email as email %}Please confirm that
+                                <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user
+                                {{ user_display }}
+                                .{% endblocktrans %}</p>
+
+                            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                                {% csrf_token %}
+                                <button class="btn btn-primary" type="submit"><i
+                                        class="fa fa-check"></i> {% trans 'Confirm' %}
+                                </button>
+                            </form>
+
+                        {% else %}
+
+                            {% url 'account_email' as email_url %}
+
+                            <p>{% blocktrans %}This e-mail confirmation link expired or is invalid. Please
+                                <a href="{{ email_url }}">issue a new e-mail confirmation request</a>
+                                .{% endblocktrans %}
+                            </p>
+
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 {% endblock %}

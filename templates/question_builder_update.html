@@ -2,165 +2,180 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block base_title %}Quiz > Builder{% endblock %}
+{% block base_title %}Question Builder{% endblock %}
+
+{% block page_heading %}
+    Question ID {{ question_id }}<br>
+    <p class="small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this question if this is used in any
+        quiz.</p>
+    <a href="{% url 'application:delete_question' question_id %}" class="btn btn-sm btn-link text-danger"><i class="fa fa-trash"></i> Remove</a>
+    <a href="{% url 'application:update_question' question_id %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-edit"></i> Edit</a>
+    <a href="{% url 'application:question_builder' %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-plus"></i> Add Another</a>
+
+{% endblock %}
 
 {% block content %}
 
-    {% include 'message.html' %}
-
-    <div class="container my-3">
-        <div class="row mt-4">
+    <div class="">
+        <div class="row">
             <div class="col-sm-8">
 
-                {# basic details #}
-                <div class="p-2 p-sm-4 border">
-                    <div class="text-center">
-                        <p class="lead m-0">Question Details</p>
-                        <p class="text-muted small m-0">
-                            update/delete question details here you
-                        </p>
-                    </div>
-                    <br>
-
-                    <form autocomplete="off" method="post" action="">
-                        {% csrf_token %}
-                        {{ form_question | crispy }}
-                        <button type="submit" class="btn btn-success"> > SAVE</button>
-
-                    </form>
-                    <hr>
-                    <div>
-                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#image_model">
-                            <i class="fa fa-picture-o"></i> Add New Image Hint.
-                        </button>
-                        <br>
-                        <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#audio_model">
-                            <i class="fa fa-music"></i> Add New Audio Hint.
-                        </button>
-                        <br>
-                    </div>
-                </div>
 
                 {# Statements details #}
-                <div class="p-2 p-sm-4 border mt-2" id="div_statements">
-                    {% csrf_token %}
-                    <div>
-                        <p class="lead m-0">Enter statements</p>
-                        <br>
-                        {% if data_question_statements %}
-                            <div class="table-responsive">
-                                <table class="table table-borderless table-striped table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Text</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    {% for statement in data_question_statements %}
+                <div class="card">
+                    <div class="card-header">
+                        <p class="lead m-0">Question statements</p>
+                    </div>
+                    <div class="card-body" id="div_statements">
+                        {% csrf_token %}
+                        <div>
+                            {% if data_question_statements %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
                                         <tr>
-                                            <td> {{ statement.statement }} </td>
-                                            <td class="text-danger">
-                                                <a href="" class="delete-statement" id={{ statement.pk }}>
-                                                    <i class="fa fa-trash-o text-danger"></i>
-                                                </a>
-                                            </td>
+                                            <th>Text</th>
+                                            <th>Screen</th>
+                                            <th>Remove</th>
                                         </tr>
+                                        </thead>
+                                        <tbody>
 
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
+                                        {% for statement in data_question_statements %}
+                                            <tr>
+                                                <td> {{ statement.statement }} </td>
+                                                <td> {{ statement.screen }} </td>
+                                                <td class="text-danger">
+                                                    <a href="" class="delete-statement text-danger"
+                                                       id={{ statement.pk }}>
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
 
-                            <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> No statements added yet.
-                            </p>
-                        {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
 
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="mdi mdi-block-helper mr-2"></i>
+                                    No statements available yet - add below.
+                                </div>
+                            {% endif %}
+                            <hr>
+
+                        </div>
                     </div>
                 </div>
 
-                <div class="p-2 p-sm-4 border mt-2" id="div_choices">
-                    {% csrf_token %}
-                    <div>
-                        <p class="lead m-0">Enter choices</p>
-                        <br>
-                        {% if data_question_choices %}
-                            <div class="table-responsive">
-                                <table class="table table-borderless table-striped table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Choice</th>
-                                        <th>Correct</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
+                {# choices #}
+                <div class="card">
+                    <div class="card-header">
+                        <p class="lead m-0">Question choices</p>
+                    </div>
+                    <div class="card-body" id="div_choices">
+                        {% csrf_token %}
+                        <div>
 
-                                    {% for choice in data_question_choices %}
+                            {% if data_question_choices %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
                                         <tr>
-                                            <td> {{ choice.text }} </td>
-                                            <td>{{ choice.is_correct }}</td>
-                                            <td class="text-danger">
-                                                <a href="" class="delete-choice" id={{ choice.pk }}>
-                                                    <i class="fa fa-trash-o text-danger"></i>
-                                                </a>
-                                            </td>
+                                            <th>Choice</th>
+                                            <th>Correct</th>
+                                            <th>Remove</th>
                                         </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
+                                        </thead>
+                                        <tbody>
 
-                            <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> No choices added yet.
-                            </p>
-                        {% endif %}
+                                        {% for choice in data_question_choices %}
+                                            <tr>
+                                                <td> {{ choice.text }} </td>
+                                                <td>
+                                                    {% if choice.is_correct %}
+                                                        <i class="fa fa-check text-success"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-times text-danger"></i>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-danger">
+                                                    <a href="" class="delete-choice text-danger" id={{ choice.pk }}>
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
 
+                            {% else %}
+
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="mdi mdi-block-helper mr-2"></i>
+                                    No choices available yet - add below.
+                                </div>
+                            {% endif %}
+                            <hr>
+
+                        </div>
                     </div>
                 </div>
 
                 {# Images details #}
-                <div class="p-2 p-sm-4 border mt-2">
-                    <div>
-                        <p class="lead m-0">Images Here.</p>
-                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+
+                <div class="card">
+                    <div class="card-header">
+                        <p class="lead m-0">Images Here</p>
+                        <p class="text-muted small text-left m-0">
+                            You can upload and link images for this question while image is just a hint for this
+                            question so size of image less then 500*500 pixels and format must be jpg, jpeg, png and
+                            other image formats only.
                         </p>
-                        <br>
+                    </div>
+                    <div class="card-body">
+                        <div>
+
+                            {% if data_question_images %}
+                                <div class="row">
+                                    {% for image in data_question_images %}
+                                        <div class="col">
+                                            <a class="btn btn-link"
+                                               href="{% url 'application:question_image_delete' pk=image.pk %}"><i
+                                                    class="fa fa-trash-o"></i> Remove</a>
+                                            <br>
+
+                                            {% if image.url %}
+                                                <a href="{{ image.url }}">
+                                                    <img src="{{ image.url }}" class="img" height="100px">
+                                                </a>
+                                            {% else %}
+                                                <a href="/media/{{ image.image }}">
+                                                    <img src="/media/{{ image.image }}" class="img" height="100px">
+                                                </a>
+                                            {% endif %}
 
 
-                        {% if data_question_images %}
-                            <div class="row">
-                                {% for image in data_question_images %}
-                                    <div class="col">
-                                        <a class="btn btn-link"
-                                           href="{% url 'application:question_image_delete' pk=image.pk %}"><i
-                                                class="fa fa-trash-o"></i> Remove</a>
-                                        <br>
+                                        </div>
+                                    {% endfor %}
+                                </div>
 
-                                        {% if image.url %}
-                                            <a href="{{ image.url }}">
-                                                <img src="{{ image.url }}" class="img" height="100px">
-                                            </a>
-                                        {% else %}
-                                            <a href="/media/{{ image.image }}">
-                                                <img src="/media/{{ image.image }}" class="img" height="100px">
-                                            </a>
-                                        {% endif %}
+                            {% else %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="mdi mdi-block-helper mr-2"></i>
+                                    No images available yet - add below.
+                                </div>
+                            {% endif %}
+                            <hr>
+                            <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#image_model">
+                                <i class="fa fa-picture-o"></i> Add New Image Hint.
+                            </button>
 
 
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                        {% else %}
-                            <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> No images added yet.
-                            </p>
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
 
@@ -170,41 +185,51 @@
             <div class="col-sm-4">
 
                 {# Audio details #}
-                <div class="p-2 p-sm-4 border mt-2">
-                    <div>
-                        <p class="lead m-0">Audio Here.</p>
-                        <p class="text-muted small text-left m-0">{% lorem 20 w random %}
+                <div class="card">
+                    <div class="card-header">
+                        <p class="lead m-0">Audio Here</p>
+                        <p class="text-muted small text-left m-0">
+                            While adding audio keep in mind that audio is just a hint for this question size of audio
+                            less then 5MB and format must be mp3, ogg and other audio formats only.
                         </p>
-                        <br>
+                    </div>
+                    <div class="card-body">
+                        <div>
 
 
+                            {% if data_question_audios %}
+                                <div class="row">
+                                    {% for audio in data_question_audios %}
+                                        <div class="col">
+                                            <a class="btn btn-link"
+                                               href="{% url 'application:question_audio_delete' pk=audio.pk %}"><i
+                                                    class="fa fa-trash-o"></i> Remove</a>
+                                            <audio controls>
+                                                {% if audio.url %}
+                                                    <source src="{{ audio.url }}"/>
+                                                {% else %}
+                                                    <source src="/media/{{ audio.audio }}"/>
+                                                {% endif %}
+                                            </audio>
+                                        </div>
+                                    {% endfor %}
+                                </div>
 
-                        {% if data_question_audios %}
-                            <div class="row">
-                                {% for audio in data_question_audios %}
-                                    <div class="col">
-                                        <a class="btn btn-link"
-                                           href="{% url 'application:question_audio_delete' pk=audio.pk %}"><i
-                                                class="fa fa-trash-o"></i> Remove</a>
-                                        <audio controls>
-                                            {% if audio.url %}
-                                                <source src="{{ audio.url }}"/>
-                                            {% else %}
-                                                <source src="/media/{{ audio.audio }}"/>
-                                            {% endif %}
-                                        </audio>
-                                    </div>
-                                {% endfor %}
-                            </div>
+                            {% else %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="mdi mdi-block-helper mr-2"></i> No audios available yet.
+                                </div>
+                            {% endif %}
 
-                        {% else %}
-                            <p class="p-2 text-danger border border-danger">
-                                <i class="fa fa-times-circle"></i> No audio added yet.
-                            </p>
-                        {% endif %}
-
+                            <hr>
+                            <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#audio_model">
+                                <i class="fa fa-music"></i> Add New Audio Hint.
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+
             </div>
 
         </div>
@@ -320,32 +345,46 @@
 {% block base_external_scripts %}
 
     <script>
+
         let statement_add = `
-<div class="input-group mb-3">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                        <select class="custom-select" id="screen_select" class="form-control" id="inputGroupSelect01">
+    <option value="1">Screen 1</option>
+    <option value="2">Screen 2</option>
+    <option value="3">Screen 3</option>
+  </select>
+                </div>
+                <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="add-statement" type="button">add</button>
+                </div>
+            </div>
+    `;
+
+        let statement_adds = `
+<div class="input-group">
   <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
   <div class="input-group-append">
-    <button class="btn btn-primary" id="add-statement" type="button">ADD</button>
+    <button class="btn btn-primary" id="add-statement" type="button">add</button>
   </div>
-</div>`;
+</div>`
 
         let choice_add = `<form>
-  <div class="form-row align-items-center">
-    <div class="col-auto">
-      <input id="choice-text" type="text" class="form-control mb-2" placeholder="Choice">
-    </div>
-    <div class="col-auto">
-      <div class="form-check mb-1">
-        <input id="is-correct" class="form-check-input" type="checkbox">
-        <label class="form-check-label" for="autoSizingCheck">
-          Correct
-        </label>
-      </div>
-    </div>
-    <div class="col-auto">
-      <button id="add-choice" type="button" class="btn btn-primary mb-2">ADD</button>
-    </div>
-  </div>
-</form>`;
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="checkbox" id="is-correct" aria-label="checkbox fro option">
+                    </div>
+                </div>
+                <input id="choice-text" type="text" class="form-control" placeholder="Choice here" aria-label="Text input with Option">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="add-choice" type="button">add</button>
+                </div>
+            </div>
+         </form>
+        `;
+
 
         $(document).ready(function () {
             $("#div_statements").append(statement_add);
@@ -405,14 +444,20 @@
 
         function saveStatement() {
             let input_field = $('#statement-text');
+            let input_screen = $('#screen_select');
             let txt = input_field.val();
+            let screen = input_screen.val();
             if (txt === "") {
                 input_field.addClass("border-danger");
                 return
             }
             input_field.removeClass("border-danger");
             input_field.addClass("border");
-            $.post("/add/question_statement/", {'pk': {{ question_id }}, 'text': txt}, function (data, status) {
+            $.post("/add/question_statement/", {
+                'pk': {{ question_id }},
+                'screen': screen,
+                'text': txt
+            }, function (data, status) {
                 window.location.reload();
             });
         }

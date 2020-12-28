@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_title %} Users Teams {% endblock %}
+{% block page_heading %} Users Teams {% endblock %}
+{% block content %}
+
+    <div>
+        {% if teams %}
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table border-0 table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>SNO</th>
+                            <th>Name</th>
+                            <th>quiz</th>
+                            <th>participants</th>
+                            <th>is_active</th>
+                            <th>created_at</th>
+                            <th>modified_at</th>
+                            <th>View</th
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+
+                        {% for team in teams %}
+                            <tr>
+                                <td>{{ team.pk }}</td>
+                                <td>{{ team.name }}</td>
+                                <td>{{ team.quiz }}</td>
+                                <td>{{ team.participants.count }}</td>
+                                <td>{{ team.is_active }}</td>
+                                <td>{{ team.created_at }}</td>
+                                <td>{{ team.modified_at }}</td>
+                                <td><a href="{% url 'application:team' team.pk %}">
+                                    <i class="fa fa-clipboard"></i> View</a>
+                                </td>
+                                <td><a class="text-danger" href="{% url 'application:admin_team_delete' team.pk %}">
+                                    <i class="fa fa-trash"></i> Delete</a>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="">
+                <div class="card border border-danger">
+                    <div class="card-header bg-transparent border-danger">
+                        <h5 class="my-0 text-danger">
+                            <i class="mdi mdi-block-helper mr-3"></i>Team Help</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mt-0">No Teams available</h5>
+                        <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no team available or no
+                            user is enrolled to any quiz, if you haven't added quiz yet add quizes
+                            <a href="{% url 'application:quiz_builder' %}">Here</a>.
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
