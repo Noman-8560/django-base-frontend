@@ -156,31 +156,16 @@
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user"
-                         {% if request.user.profile_set.first.profile %}
-                             src="/media/{{ request.user.profile_set.first.profile }}"
-                         {% else %}
-                             src="{% static 'application/images/users/avatar-7.jpg' %}"
-                         {% endif %}
+                            {% if request.user.profile_set.first.profile %}
+                         src="/media/{{ request.user.profile_set.first.profile }}"
+                            {% else %}
+                         src="{% static 'application/images/users/avatar-7.jpg' %}"
+                            {% endif %}
                          alt="Header Avatar">
                     <span class="d-none d-xl-inline-block ml-1">{{ request.user.username }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <!-- item-->
-                    <a class="dropdown-item" href="{% url 'application:dashboard' %}">
-                        <i class="bx bxs-dashboard font-size-16 align-middle mr-1"></i> Dashboard
-                    </a>
-                    <a class="dropdown-item" href="{% url 'application:quizes' %}">
-                        {#                        <span class="badge badge-success float-right">11</span>#}
-                        <i class="bx bx-clipboard font-size-16 align-middle mr-1"></i> Quizzes
-                    </a>
-                    <a class="dropdown-item" href="{% url 'application:teams' %}">
-                        <i class="bx bx-sitemap font-size-16 align-middle mr-1"></i> Teams
-                    </a>
-                    <a class="dropdown-item" href="{% url 'application:quizes' %}">
-                        <i class="bx bx-book font-size-16 align-middle mr-1"></i> Learning Resources
-                    </a>
-                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'application:profile_update' %}">
                         <i class="bx bx-user font-size-16 align-middle mr-1"></i> Profile
                     </a>
@@ -204,3 +189,43 @@
         </div>
     </div>
 </header>
+<div class="topnav">
+    <div class="container-fluid">
+        <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+
+            <div class="collapse navbar-collapse" id="topnav-menu-content">
+                <ul class="navbar-nav">
+
+                    {#DASHBOARD#}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'application:dashboard' %}">
+                            <i class="bx bxs-dashboard mr-2"></i>Dashboard
+                        </a>
+                    </li>
+
+                    {#QUIZES#}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'application:quizes' %}">
+                            <i class="bx bx-clipboard mr-2"></i>Quizzes
+                        </a>
+                    </li>
+
+                    {#TEAMS#}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'application:teams' %}">
+                            <i class="bx bx-sitemap mr-2"></i>Teams
+                        </a>
+                    </li>
+
+                    {#Learning#}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'application:quizes' %}">
+                            <i class="bx bx-book mr-2"></i>Learning Resource
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>

@@ -967,7 +967,38 @@ def quiz_start(request, quiz):
 
 @login_required
 def results(request):
+    # quiz = Quiz.objects.get(pk=1)
+    # attempts = LearningResourceAttempts.objects.filter(quiz=quiz, user=request.user)
+    # result = LearningResourceResult(quiz=quiz, user=request.user)
+    #
+    # print(result)
+    # print(attempts)
+    # print(quiz)
+
     return render(request=request, template_name='results.html')
+
+
+@login_required
+def learning_resources_result(request, quiz):
+    quiz_ = None
+    result = None
+
+    try:
+        quiz_ = Quiz.objects.get(pk=quiz)
+        result = LearningResourceResult.objects.get(user=request.user, quiz=quiz_)
+    except LearningResourceResult.DoesNotExist:
+        pass
+    except Quiz.DoesNotExist:
+        pass
+
+    attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz_)
+
+    context = {
+        'quiz': quiz_,
+        'result': result,
+        'attempts': attempts
+    }
+    return render(request=request, template_name='learning_quiz_result.html', context=context)
 
 
 ''' CAPI VIEWS _______________________________________________________________'''
@@ -1056,7 +1087,7 @@ def question_submission_json(request):
         choice_id = request.POST['choice_id']
 
         users = Team.objects.get(pk=team_id).participants.all()
-        attempt = Attempt.objects.filter(user=request.user, question=Question.objects.get(pk=question__id))
+        attempt = Attempt.objects.filter(user=request.user, question=Question.objects.get(pk=question__id), quiz=Quiz.objects.get(pk=quiz_id))
 
         """ QUIZ EXISTENCE WRT USER"""
         if len(QuizCompleted.objects.filter(user=request.user, quiz=Quiz.objects.get(pk=quiz_id))) == 0:
@@ -1077,7 +1108,8 @@ def question_submission_json(request):
                         user=user,
                         start_time=request.POST['start_time'],
                         end_time=request.POST['end_time'],
-                        successful=correct
+                        successful=correct,
+                        quiz=Quiz.objects.get(pk=request.POST['quiz_id']),
                     ).save()
 
                 if request.POST['end'] == 'True':
@@ -1091,8 +1123,8 @@ def question_submission_json(request):
                 message = f"Question {request.POST['question_id']} marked successfully"
 
             else:
-                success = False
-                message = f"Question {request.POST['question_id']} already marked"
+                success = True
+                message = f"Question {request.POST['question_id']} already marked you are directed to next question"
         else:
             message = f"Requested Quiz attempted previously"
 
@@ -1118,7 +1150,7 @@ def next_question_json(request):
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
         question = Question.objects.get(pk=request.POST['question_id'])
 
-        if len(Attempt.objects.filter(user=request.user, question=question)) > 0:
+        if len(Attempt.objects.filter(user=request.user, question=question, quiz=quiz)) > 0:
             success = True
             message = "Question submitted Successfully"
         else:
@@ -1280,6 +1312,7 @@ def learn_question_submission_json(request):
             'success': success,
             'message': message,
             'end': request.POST['end'],
+            'path': request.get_full_path()
         }
 
         return JsonResponse(data=response, safe=False)

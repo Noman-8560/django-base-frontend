@@ -30,6 +30,7 @@ urlpatterns = [
     path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
 
     path('learn/quiz/<int:quiz>/', learning_resources_start, name='learning_resource_start'),
+    path('learning_resource/result/quiz/<int:quiz>/', learning_resources_result, name='learning_resource_result'),
 
     path('quizes/', quizes, name='quizes'),
     path('teams/', teams, name='teams'),
