@@ -294,6 +294,7 @@ class Attempt(models.Model):
                                  on_delete=models.DO_NOTHING)
     user = models.ForeignKey('auth.User', null=False, blank=False, related_name='attempt-by+',
                              on_delete=models.CASCADE)
+    quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     successful = models.BooleanField(null=False, blank=False)
@@ -339,7 +340,7 @@ class LearningResourceAttempts(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.question.questionstatement_set.first()) + ' attempted by ' + str(self.user.username)
+        return str(self.question.questionstatement_set.first())
 
     def __unicode__(self):
         return self.question.statement

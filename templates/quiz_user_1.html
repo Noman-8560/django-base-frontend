@@ -242,12 +242,10 @@
 
                         {# 2 > SUBMISSION_CONTROL_CHECK #}
                         question_div.attr('data-question', data.question);
-                        if (data.permissions.submission_permitted) {
+                        if (data.permissions.choices_permitted) {
                             button_submit.show();
-                            button_next.hide();
                         } else {
                             button_submit.hide();
-                            button_next.show();
                             async_question_next_sync();
                         }
 

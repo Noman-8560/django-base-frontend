@@ -159,6 +159,7 @@
 
             let question_now = null;
             let question_end = null;
+            let path = null;
 
 
             question_div = $('#question_div');
@@ -245,8 +246,13 @@
                     });
                 } else {
                     alert("Your quiz submitted successfully");
-                    {#window.close();#}
-                    window.location = {% url 'application:results' %};
+
+                    if (path === '/c/api/learn/submit/question/') {
+                        window.location = '{% url "application:learning_resource_result" quiz_id %}';
+                    } else {
+                        {#window.close();#}
+                        window.location = '{% url "application:results" %}';
+                    }
                 }
             }
 
@@ -277,6 +283,7 @@
                             if (data.success === false) {
                                 alert(data.message);
                             } else {
+                                path = data.path;
                                 x_accessor();
                             }
                         });
