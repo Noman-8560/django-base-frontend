@@ -232,7 +232,6 @@ class QuestionChoice(models.Model):
 
 class Quiz(models.Model):
     NO_OF_PLAYERS = (
-        ('1', 'Single Player'),
         ('2', 'Two Players'),
         ('3', 'Three Players'),
     )
