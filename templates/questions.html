@@ -13,8 +13,6 @@
                             <thead>
                             <tr>
                                 <th>SNO</th>
-
-                                <th>Submission</th>
                                 <th>Choices</th>
                                 <th>Subject</th>
                                 <th>Age</th>
@@ -30,7 +28,6 @@
                             {% for question in questions %}
                                 <tr>
                                     <td>{{ question.pk }}</td>
-                                    <td>{{ question.submission_control }}</td>
                                     <td>{{ question.choices_control }}</td>
                                     <td>{{ question.subject }}</td>
                                     <td>{{ question.age_limit }}</td>

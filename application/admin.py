@@ -21,7 +21,7 @@ class GuardianAdmin(admin.ModelAdmin):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'subject', 'submission_control', 'choices_control']
+    list_display = ['id', 'subject', 'choices_control']
 
 
 class SubjectAdmin(admin.ModelAdmin):
