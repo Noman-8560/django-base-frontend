@@ -171,9 +171,15 @@ class QuestionChoice(models.Model):
 
 
 class Quiz(models.Model):
+    PLAYERS = (
+        ('1', 'One Player Quiz'),
+        ('2', 'Two Player Quiz'),
+        ('3', 'Three Player Quiz'),
+    )
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     subjects = models.ManyToManyField(Subject, blank=False)
+    quiz_type = models.CharField(max_length=1, null=False, blank=False, default='1', choices=PLAYERS)
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     teams = models.ManyToManyField('Team', blank=True, related_name='participating-teams+')
     start_time = models.DateTimeField(null=False, blank=False)

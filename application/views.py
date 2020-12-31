@@ -1000,6 +1000,16 @@ def learning_resources_result(request, quiz):
     return render(request=request, template_name='learning_quiz_result.html', context=context)
 
 
+@login_required
+def learning_resources(request):
+    quizes_all = Quiz.objects.all().order_by('-start_time')
+
+    context = {
+        'quizes_all': quizes_all,
+    }
+    return render(request=request, template_name='learning_resources.html', context=context)
+
+
 ''' CAPI VIEWS _______________________________________________________________'''
 
 
@@ -1039,7 +1049,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         question = quiz.questions.get(pk=question_id)
 
         '''__FETCHING SUBMISSION AND CHOICES CONTROL__'''
-        submission_permitted = screen == question.submission_control
         choices_permitted = screen == question.choices_control
 
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
@@ -1055,7 +1064,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         ''' __GENERATING RESPONSES__'''
         response = {
             'permissions': {
-                'submission_permitted': submission_permitted,
                 'choices_permitted': choices_permitted,
             },
             'question': question.pk,

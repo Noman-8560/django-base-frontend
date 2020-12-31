@@ -32,13 +32,17 @@
                                                         class="fa fa-check"></i>
                                                     Submit
                                                 </button>
+                                                <a class="btn btn btn-danger" id="button_end" href="{% url 'application:quizes' %}"><i
+                                                        class="fa fa-times"></i>
+                                                    Cancel
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="">
                                     {# STATEMENTS #}
-                                    <div class="card border">
+                                    <div class="card border" id="main_statements_div">
                                         <div class="card-header"><p class="card-title">STATEMENTS</p></div>
                                         <div class="card-body">
 
@@ -50,7 +54,7 @@
 
 
                                     {# choices #}
-                                    <div class="card border">
+                                    <div class="card border" id="main_choices_div">
                                         <div class="card-header">
                                             <p class="card-title">CHOICE CONTROL</p>
                                         </div>
@@ -63,7 +67,7 @@
                                     </div>
 
                                     {# IMAGES #}
-                                    <div class="card border">
+                                    <div class="card border" id="main_images_div">
                                         <div class="card-header">
                                             <p class="card-title">IMAGE HINT</p>
                                         </div>
@@ -76,7 +80,7 @@
                                     </div>
 
                                     {# AUDIOS #}
-                                    <div class="card border">
+                                    <div class="card border" id="main_audios_div">
                                         <div class="card-header">
                                             <p class="card-title">AUDIO HINT</p>
                                         </div>
@@ -199,9 +203,13 @@
 
             question_div = $('#question_div');
             images_div = $('#images_div');
+            images_main_div = $('#main_images_div');
             audios_div = $('#audios_div');
+            audios_main_div = $('#main_audios_div');
             statements_div = $('#statements_div');
+            statements_main_div = $('#main_statements_div');
             choices_div = $('#choices_div');
+            choices_main_div = $('#main_choices_div');
 
             button_submit = $('#button_submit');
 
@@ -251,24 +259,27 @@
 
                         {# 3 > CHOICES_CONTROL_CHECK #}
                         if (data.choices_keys.length > 0) {
+                            choices_main_div.show();
                             for (let index = 0; index < data.choices_keys.length; index++) {
                                 choices_div.append(`<input type="radio" name="ans" id="ans" value="${data.choices_keys[index]}"> ${data.choices_values[index]} &nbsp;&nbsp;<br>`);
                             }
                         } else {
-                            choices_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Choices are not available for you.</div>`)
+                            choices_main_div.hide();
                         }
 
                         {# 4 > FETCHING STATEMENTS #}
                         if (data.statements.length > 0) {
+                            statements_main_div.show();
                             for (x of data.statements) {
                                 statements_div.append(`<p> ${x} </p>`);
                             }
                         } else {
-                            statements_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Statements are not available for you.</div>`)
+                            statements_main_div.hide();
                         }
 
                         {# 5 > FETCHING IMAGES #}
                         if (data.images.length > 0) {
+                            images_main_div.show();
                             for (x of data.images) {
                                 images_div.append(`<a href="${x}" target="_blank">
                                                       <img src="${x}" class="p-2 img-responsive" height="320px">
@@ -276,16 +287,17 @@
                                 );
                             }
                         } else {
-                            images_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Images are not available for you.</div>`)
+                            images_main_div.hide();
                         }
 
                         {# 6 > FETCHING AUDIOS #}
                         if (data.audios.length > 0) {
+                            audios_main_div.show();
                             for (x of data.audios) {
                                 audios_div.append(`<source src="${x}"/>`);
                             }
                         } else {
-                            audios_div.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fa fa-exclamation-triangle"></i> Audios are not available for you.</div>`)
+                            audios_main_div.hide();
                         }
                     });
                 } else {

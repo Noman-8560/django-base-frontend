@@ -232,6 +232,7 @@ class QuestionChoice(models.Model):
 
 class Quiz(models.Model):
     NO_OF_PLAYERS = (
+        ('1', 'Single Player'),
         ('2', 'Two Players'),
         ('3', 'Three Players'),
     )
@@ -239,7 +240,7 @@ class Quiz(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     subjects = models.ManyToManyField(Subject, blank=True, null=True)
-    players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='3')
+    players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
@@ -400,6 +401,10 @@ class Profile(models.Model):
         null=False, blank=False
     )
     is_guardian = models.BooleanField(null=False, blank=False, default=False)
+    date_of_birth = models.DateField(
+        null=True, blank=True,
+        help_text='Date of birth format must be [yyyy/mm/dd] or [yyyy-mm-dd]'
+    )
     gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER_CHOICE)
     phone = models.CharField(max_length=255, unique=True, blank=True, null=True,
                              help_text='include your phone number with your country code.')
