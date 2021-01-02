@@ -16,6 +16,7 @@ from .models import *
 
 
 def home(request):
+
     articles = Article.objects.all()
 
     articles = articles.order_by('-created_at')
