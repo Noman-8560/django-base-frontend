@@ -181,7 +181,7 @@
             // FUNCTIONS
             function search_questions(search) {
                 $.ajax({
-                    url: "/search/question/?search=" + search,
+                    url: "/search/questions/for/quiz/{{ quiz_id }}/?search=" + search,
                     type: 'GET',
                     success: function (response) {
                         for (let i = 0; i < response['length']; i++) {

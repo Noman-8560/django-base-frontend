@@ -20,11 +20,20 @@
                 <div class="card-body">
                     <h5 class="card-title mt-0">Your Quiz submitted successfully</h5>
                     <p class="card-text">Complete results or questions correct answers are not allowed to show, please
-                        go
-                        back and check <a href="#">dashboard</a> for more information and results.</p>
+                        go back and check <a href="{% url 'application:dashboard' %}">dashboard</a> for more information and results.</p>
                 </div>
             </div>
         </div>
     </div>
 
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            window.location = {% url 'application:quizes' %};
+        }, 5000);
+    });
+    </script>
 {% endblock %}

@@ -210,15 +210,10 @@
                 <ul class="navbar-nav">
 
                     {#DASHBOARD#}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dashboard" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle arrow-none" href="{% url 'application:dashboard' %}">
                             <i class="bx bx-home-circle mr-2"></i>Admin Dashboard
-                            <div class="arrow-down"></div>
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
-
-                        </div>
                     </li>
 
 
@@ -273,7 +268,6 @@
                                     <div class="arrow-down"></div>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="topnav-charts">
-                                    <a href="{% url 'application:add_article' %}" class="dropdown-item">Add New</a>
                                     <a href="{% url 'application:home' %}" class="dropdown-item">User View</a>
                                     <a href="{% url 'application:articles' %}" class="dropdown-item">View
                                         All</a>
@@ -286,7 +280,6 @@
                                     <div class="arrow-down"></div>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="topnav-form">
-                                    <a href="{% url 'application:quiz_builder' %}" class="dropdown-item">Add New</a>
                                     <a href="{% url 'application:quizzes' %}" class="dropdown-item">View All</a>
                                 </div>
                             </div>
@@ -297,7 +290,6 @@
                                     <div class="arrow-down"></div>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="topnav-table">
-                                    <a href="{% url 'application:question_builder' %}" class="dropdown-item">Add New</a>
                                     <a href="{% url 'application:questions' %}" class="dropdown-item">View All</a>
                                 </div>
                             </div>
