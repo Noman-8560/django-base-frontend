@@ -635,9 +635,10 @@ def delete_quiz(request, pk):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def search_question(request):
+def search_question(request, quiz_pk):
+    quiz_subjects = Quiz.objects.get(pk=quiz_pk).subjects.all()
     search = str(request.GET['search'])
-    questions_models = Question.objects.filter(questionstatement__statement__icontains=search).distinct()
+    questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(questionstatement__statement__icontains=search).distinct()
 
     dict_out = {}
     count = 0

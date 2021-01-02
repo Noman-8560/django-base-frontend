@@ -134,7 +134,7 @@ class Question(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        self.choices_control = Screen.objects.order_by('?').first()
+        self.choices_control = Screen.objects.first()
         self.submission_control = self.choices_control
         super().save(*args, **kwargs)
 
