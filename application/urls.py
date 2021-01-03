@@ -30,6 +30,8 @@ urlpatterns = [
     path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
 
     path('learn/quiz/<int:quiz>/', learning_resources_start, name='learning_resource_start'),
+    path('learning_resources/', learning_resources, name='learning_resources'),
+    path('learning_resource/result/quiz/<int:quiz>/', learning_resources_result, name='learning_resource_result'),
 
     path('quizes/', quizes, name='quizes'),
     path('teams/', teams, name='teams'),
@@ -45,7 +47,7 @@ urlpatterns = [
     path('delete/question/<int:pk>/', delete_question, name='delete_question'),
     path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
 
-    path('search/question/', search_question, name='search_question'),
+    path('search/questions/for/quiz/<int:quiz_pk>/', search_question, name='search_question'),
     path('add/statement/for/question/<int:question>/', question_statement_add, name='question_statement_add'),
     path('add/question_statement/', add_question_statement, name='add_question_statement'),
     path('add/question_choice/', add_question_choice, name='add_question_choice'),

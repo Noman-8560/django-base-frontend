@@ -1,10 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% load i18n %}
+
+{% block base_title %}Result{% endblock %}
+
+{% block page_heading %}
+    Learning Resource > Result Quiz: {{ quiz.pk }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mini-stats-wid">
+                <div class="card-body">
+                    <div class="media">
+                        <div class="media-body">
+                            <p class="text-muted font-weight-medium">Total Points</p>
+                            <h4 class="mb-0">{{ result.total }}</h4>
+                        </div>
+
+                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-flag font-size-24"></i>
+                                                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mini-stats-wid">
+                <div class="card-body">
+                    <div class="media">
+                        <div class="media-body">
+                            <p class="text-muted font-weight-medium">Obtained Points</p>
+                            <h4 class="mb-0">{{ result.obtained }}</h4>
+                        </div>
+
+                        <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-check-circle font-size-24"></i>
+                                                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mini-stats-wid">
+                <div class="card-body">
+                    <div class="media">
+                        <div class="media-body">
+                            <p class="text-muted font-weight-medium">No of Attempts</p>
+                            <h4 class="mb-0">{{ result.attempts }}</h4>
+                        </div>
+
+                        <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-list-plus font-size-24"></i>
+                                                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th>SNO</th>
+                    <th>Description</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Result</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for attempt in attempts %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ attempt }}</td>
+                        <td>{{ attempt.start_time }}</td>
+                        <td>{{ attempt.end_time }}</td>
+                        {% if attempt.successful %}
+                            <td><i class="text-success mdi mdi-check-circle"></i></td>
+                        {% else %}
+                            <td><i class="text-danger fa fa-times-circle"></i></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}

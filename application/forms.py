@@ -12,7 +12,7 @@ class CSDateTimeInput(forms.DateTimeInput):
 class QuestionForm(ModelForm):
     class Meta:
         model = Question
-        fields = ['id', 'subject', 'submission_control', 'choices_control', 'age_limit']
+        fields = ['id', 'subject', 'age_limit']
 
 
 class QuestionStatementForm(ModelForm):
@@ -48,7 +48,7 @@ class QuizForm(ModelForm):
 
     class Meta:
         model = Quiz
-        fields = ['title', 'age_limit', 'subjects', 'age_limit', 'start_time', 'end_time']
+        fields = ['title', 'age_limit', 'players', 'subjects', 'start_time', 'end_time']
 
 
 class ArticleForm(ModelForm):
@@ -82,9 +82,10 @@ class ProfileBasicForm(ModelForm):
 
 
 class ProfileOtherForm(ModelForm):
+
     class Meta:
         model = Profile
-        fields = ['gender', 'phone', 'about', 'address']
+        fields = ['gender', 'phone', 'date_of_birth', 'about', 'address']
 
 
 class ProfileSchoolForm(ModelForm):
