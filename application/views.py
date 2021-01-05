@@ -1184,6 +1184,7 @@ def next_question_json(request):
         return JsonResponse(data=response, safe=False)
 
 
+@never_cache
 def learning_resources_start(request, quiz):
     user_quiz = None
     allowed_to_start = False
@@ -1200,6 +1201,11 @@ def learning_resources_start(request, quiz):
 
     except Quiz.DoesNotExist:
         messages.error(request=request, message="Requested Quiz doesn't exists")
+        return redirect('application:quizes', permanent=True)
+
+
+    if not user_quiz.questions.all():
+        messages.error(request=request, message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
         return redirect('application:quizes', permanent=True)
 
     if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
@@ -1280,6 +1286,8 @@ def learn_question_submission_json(request):
     if request.method == 'POST':
 
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+
+
         question = Question.objects.get(pk=request.POST['question_id'])
         choice_id = request.POST['choice_id']
 
