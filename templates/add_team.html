@@ -12,67 +12,62 @@
             <div class="card">
                 <div class="card-body">
                     <form action="{% url 'application:enroll_quiz' quiz.pk %}" method="post">
-                    {% csrf_token %}
-                    <div class="p-4 text-center border-bottom">
-                        <p class="h2 m-0">Team Registration</p>
-                        <p class="text-muted m-0">Register your team for quiz <a href="#">{{ quiz.title }}</a>,
-                            need help <a href="#">how to use</a>.
-                        </p>
-                    </div>
-                    <div class="p-4 border-bottom">
-                        <div class="">
-                            <label for="team_name" class="form-label">Team Name</label>
-                            <input type="text" class="form-control" id="team_name" name="team_name">
+                        {% csrf_token %}
+                        <div class="p-4 text-center border-bottom">
+                            <p class="h2 m-0">Team Registration</p>
+                            <p class="text-muted m-0">Register your team for quiz <a href="#">{{ quiz.title }}</a>,
+                                need help <a href="#">how to use</a>.
+                            </p>
                         </div>
-                        <br>
-
-                        <div id="player_1_complete">
-                            <label for="player_1" class="form-label">Player 1</label>
-                            <input type="text" class="form-control" id="player_1" name="player_1"
-                                   value="{{ request.user.username }}">
-                            <div class="" id="player_1_status">
-
-                            </div>
-                        </div>
-
-                        <div class="mb-2">
-                            <label for="player_2" class="form-label">Player 2</label>
-                            <input type="text" class="form-control" name="player_2" id="player_2" required
-                                   placeholder="enter player username">
-                            <div class="" id="player_2_status">
-
-                            </div>
-                        </div>
-                        {% if quiz.players == '3' %}
+                        <div class="p-4 border-bottom">
                             <div class="">
-                                <label for="player_3" class="form-label">Player 3</label>
-                                <input type="text" class="form-control" name="player_3" id="player_3"
-                                       required placeholder="enter player username">
-                                <div class="" id="player_3_status">
-
-                                </div>
+                                <label for="team_name" class="form-label">Team Name</label>
+                                <input type="text" class="form-control" id="team_name" name="team_name">
                             </div>
-                        {% endif %}
-                    </div>
-                    <div class="p-4">
-                        <ul class="text-muted small">
+                            <br>
 
-                            <li>You current quiz type may have {{ quiz.players }} participants and you are player <b
-                                    class="px-2 border bg-light">1</b></li>
-                            <li>You are allowed to add two more players other then you, by default you
-                                are selected as a caption.
-                            </li>
-                            <li>You are not allowed to update quiz details, remove participants and
-                                transfer status.
-                            </li>
-                            <li>If you have any issue please remove your team and add new one</li>
-                            <li>once your team attempts the quiz you are not allowed to delete
-                                team.
-                            </li>
-                        </ul>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-flag"></i> Create Team</button>
-                    </div>
-                </form>
+
+                            {% if quiz.players == 2 or quiz.players == 3 %}
+                                <div class="mb-2">
+                                    <label for="player_2" class="form-label">Player 2</label>
+                                    <input type="text" class="form-control" name="player_2" id="player_2" required
+                                           placeholder="enter player username">
+                                    <div class="" id="player_2_status">
+
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if quiz.players == '3' %}
+                                <div class="">
+                                    <label for="player_3" class="form-label">Player 3</label>
+                                    <input type="text" class="form-control" name="player_3" id="player_3"
+                                           required placeholder="enter player username">
+                                    <div class="" id="player_3_status">
+
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="p-4">
+                            <ul class="text-muted">
+
+                                <li>If quiz type is single player start one man team.
+                                </li>
+                                <li>You are allowed to add one or two more players, depending upon the quiz req
+                                </li>
+                                <li>You are not allowed to update quiz details, remove participants and
+                                    transfer status.
+                                </li>
+                                <li>If you have any issue please remove your team and add new one</li>
+                                <li>once your team attempts the quiz you are not allowed to delete
+                                    team anymore.
+                                </li>
+                            </ul>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-flag"></i> Create Team
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
             </div>
