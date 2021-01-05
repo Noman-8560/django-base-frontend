@@ -290,6 +290,7 @@ def question_builder_update(request, pk):
 
     context = {
         'question_id': pk,
+        'question': Question.objects.get(pk=pk),
         'form_question': question_form,
         'form_question_choice': QuestionChoiceForm,
         'form_question_image': QuestionImageForm,
@@ -870,25 +871,26 @@ def enroll(request, pk):
         # USER_EXISTS_OR_NOT
         try:
 
-            player_2 = User.objects.get(username=request.POST['player_2'])
-            if quiz.players == '3':
-                player_3 = User.objects.get(username=request.POST['player_3'])
+            if quiz.players == 2:
+                player_2 = User.objects.get(username=request.POST['player_2'])
+                if quiz.players == '3':
+                    player_3 = User.objects.get(username=request.POST['player_3'])
+
+                    # PLAYER_3_ASSIGNED_OR_NOT
+                    if Team.objects.filter(participants__username=player_3.username, quiz=quiz).count() != 0:
+                        messages.warning(request=request,
+                                         message=f'Requested participant or participants '
+                                                 f'already enrolled choose different partners.'
+                                         )
+                        return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
                 # PLAYER_3_ASSIGNED_OR_NOT
-                if Team.objects.filter(participants__username=player_3.username, quiz=quiz).count() != 0:
+                if Team.objects.filter(participants__username=player_2.username, quiz=quiz).count() != 0:
                     messages.warning(request=request,
                                      message=f'Requested participant or participants '
                                              f'already enrolled choose different partners.'
                                      )
                     return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-
-            # PLAYER_3_ASSIGNED_OR_NOT
-            if Team.objects.filter(participants__username=player_2.username, quiz=quiz).count() != 0:
-                messages.warning(request=request,
-                                 message=f'Requested participant or participants '
-                                         f'already enrolled choose different partners.'
-                                 )
-                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
         except User.DoesNotExist:
             messages.error(request=request, message=f'Requested participant or participants does not exists.')
@@ -911,6 +913,7 @@ def enroll(request, pk):
 
 
 @login_required
+@never_cache
 def quiz_start(request, quiz):
     user_team = None
     user_quiz = None
@@ -921,6 +924,7 @@ def quiz_start(request, quiz):
     user_no = None
 
     ''' QUIZ and TEAM is required here'''
+
     try:
         user_quiz = Quiz.objects.get(pk=quiz)
         user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
@@ -935,6 +939,10 @@ def quiz_start(request, quiz):
 
     except Quiz.DoesNotExist:
         messages.error(request=request, message="Requested Quiz doesn't exists")
+        return redirect('application:quizes', permanent=True)
+
+    if not user_quiz.questions.all():
+        messages.error(request=request, message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
         return redirect('application:quizes', permanent=True)
 
     if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
@@ -960,7 +968,8 @@ def quiz_start(request, quiz):
         'question_ids': question_ids,
         'team_id': user_team.pk,
         'quiz_id': user_quiz.pk,
-        'user_no': user_no
+        'user_no': user_no,
+        'quiz': Quiz.objects.get(pk=quiz)
     }
 
     return render(request=request, template_name='quiz_user_1.html', context=context)
@@ -1035,6 +1044,7 @@ def user_exists_json(request, username):
 
 @login_required
 def quiz_access_question_json(request, quiz_id, question_id, user_id):
+    # TODO: please write query to avoid re-attempting quiz
     statements = []
     images = []
     audios = []

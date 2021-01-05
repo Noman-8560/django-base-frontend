@@ -10,12 +10,19 @@
     {% if allowed_to_start %}
         <div>
             <div class="bg-danger text-light text-center">
-                <p class="p-2 small">ALERT! description text about quiz like > videos on the right side will be replaced
-                    with
-                    live video streaming through zoom api's - 3 users</p>
+                {% if quiz.players != '1' %}
+                    <p class="p-4">
+                        You have a combine quiz, statements options and hints are divided among your team please contact
+                        each other with zoom and attempt carefully.
+                    </p>
+                {% else %}
+                    <p class="p-4"><i class="fa fa-warning"></i>
+                        You are assigned to single player quiz attempt questions carefully
+                    </p>
+                {% endif %}
             </div>
 
-            <div class="container">
+            <div class="container pt-4">
                 <div class="row ">
                     <div class="col-sm-9">
 
@@ -32,7 +39,8 @@
                                                         class="fa fa-check"></i>
                                                     Submit
                                                 </button>
-                                                <a class="btn btn btn-danger" id="button_end" href="{% url 'application:quizes' %}"><i
+                                                <a class="btn btn btn-danger" id="button_end"
+                                                   href="{% url 'application:quizes' %}"><i
                                                         class="fa fa-times"></i>
                                                     Cancel
                                                 </a>
@@ -99,38 +107,40 @@
                         </div>
 
                     </div>
-                    <div class="col-sm-3">
-                        <div>
-                            <div class="mb-2">
-                                <div class="embed-responsive embed-responsive-16by9 ">
-                                    <iframe class="embed-responsive-item"
-                                            src="https://www.youtube.com/embed/uxQOHZGO98A?rel=0"
-                                            allowfullscreen></iframe>
+                    {% if quiz.players != '1' %}
+                        <div class="col-sm-3">
+                            <div>
+                                <div class="mb-2">
+                                    <div class="embed-responsive embed-responsive-16by9 ">
+                                        <iframe class="embed-responsive-item"
+                                                src="https://www.youtube.com/embed/uxQOHZGO98A?rel=0"
+                                                allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="embed-responsive embed-responsive-16by9 ">
+                                        <iframe class="embed-responsive-item"
+                                                src="https://www.youtube.com/embed/P7d1H83IcjE?rel=0"
+                                                allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="embed-responsive embed-responsive-16by9 ">
+                                        <iframe class="embed-responsive-item"
+                                                src="https://www.youtube.com/embed/FCPdIvXo2rU?rel=0"
+                                                allowfullscreen></iframe>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <div class="embed-responsive embed-responsive-16by9 ">
-                                    <iframe class="embed-responsive-item"
-                                            src="https://www.youtube.com/embed/P7d1H83IcjE?rel=0"
-                                            allowfullscreen></iframe>
-                                </div>
-                            </div>
-                            <div class="mb-2">
-                                <div class="embed-responsive embed-responsive-16by9 ">
-                                    <iframe class="embed-responsive-item"
-                                            src="https://www.youtube.com/embed/FCPdIvXo2rU?rel=0"
-                                            allowfullscreen></iframe>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="btn-group-vertical btn-block">
-                                <a href="#" class="btn btn-info">Go to My Dashboard</a>
-                                <a href="#" class="btn btn-secondary">Go to Event Dashboard</a>
+                            <div class="mt-4">
+                                <div class="btn-group-vertical btn-block">
+                                    <a href="#" class="btn btn-info">Go to My Dashboard</a>
+                                    <a href="#" class="btn btn-secondary">Go to Event Dashboard</a>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
 
                 </div>
             </div>
@@ -369,7 +379,7 @@
                         end: end
                     }, function (data, status) {
 
-                        if (data.success === true ){
+                        if (data.success === true) {
                             x_accessor();
                         }
                     })
@@ -382,57 +392,57 @@
                 }, 3000);
             }
 
-                {# ----------------------------------------------------------------------------------------------------- #}
-                {#                              QUIZ_TIME_CALCULATION > FUNCTIONS                                        #}
-                {# ----------------------------------------------------------------------------------------------------- #}
+            {# ----------------------------------------------------------------------------------------------------- #}
+            {#                              QUIZ_TIME_CALCULATION > FUNCTIONS                                        #}
+            {# ----------------------------------------------------------------------------------------------------- #}
 
-                function countdown() {
-                    var countDownDate = new Date({{ quiz_end_date|date:"U" }} * 1000
-                ).
-                    getTime();
+            function countdown() {
+                var countDownDate = new Date({{ quiz_end_date|date:"U" }} * 1000
+            ).
+                getTime();
 
-                    // Update the count down every 1 second
-                    var x = setInterval(function () {
+                // Update the count down every 1 second
+                var x = setInterval(function () {
 
-                        // Get today's date and time
-                        var now = new Date().getTime();
+                    // Get today's date and time
+                    var now = new Date().getTime();
 
-                        // Find the distance between now and the count down date
-                        var distance = countDownDate - now;
+                    // Find the distance between now and the count down date
+                    var distance = countDownDate - now;
 
-                        // Time calculations for days, hours, minutes and seconds
-                        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    // Time calculations for days, hours, minutes and seconds
+                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                        // Output the result in an element with id="demo"
-                        document.getElementById("count_down").innerHTML = days + "d " + hours + "h "
-                            + minutes + "m " + seconds + "s ";
+                    // Output the result in an element with id="demo"
+                    document.getElementById("count_down").innerHTML = days + "d " + hours + "h "
+                        + minutes + "m " + seconds + "s ";
 
-                        // If the count down is over, write some text
-                        if (distance < 0) {
-                            clearInterval(x);
-                            document.getElementById("count_down").innerHTML = "Time Up!";
-                        }
-                    }, 1000);
-                }
+                    // If the count down is over, write some text
+                    if (distance < 0) {
+                        clearInterval(x);
+                        document.getElementById("count_down").innerHTML = "Time Up!";
+                    }
+                }, 1000);
+            }
 
-                function get_time_formatted() {
-                    let date_ob = new Date();
-                    let date = ("0" + date_ob.getDate()).slice(-2);
-                    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-                    let year = date_ob.getFullYear();
-                    let hours = date_ob.getHours();
-                    let minutes = date_ob.getMinutes();
-                    let seconds = date_ob.getSeconds();
+            function get_time_formatted() {
+                let date_ob = new Date();
+                let date = ("0" + date_ob.getDate()).slice(-2);
+                let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+                let year = date_ob.getFullYear();
+                let hours = date_ob.getHours();
+                let minutes = date_ob.getMinutes();
+                let seconds = date_ob.getSeconds();
 
-                    return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-                }
+                return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+            }
 
-                function disableF5(e) {
-                    if ((e.which || e.keyCode) == 116) e.preventDefault();
-                };
+            function disableF5(e) {
+                if ((e.which || e.keyCode) == 116) e.preventDefault();
+            };
 
             {# -----------------------------------------------END--------------------------------------------------- #}
         {% endif %}

@@ -12,7 +12,7 @@ class CSDateTimeInput(forms.DateTimeInput):
 class QuestionForm(ModelForm):
     class Meta:
         model = Question
-        fields = ['id', 'subject', 'age_limit']
+        fields = ['id', 'subject', 'question_type', 'age_limit']
 
 
 class QuestionStatementForm(ModelForm):

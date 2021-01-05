@@ -18,7 +18,7 @@
 
     <div class="">
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-12">
 
 
                 {# Statements details #}
@@ -126,7 +126,6 @@
                 </div>
 
                 {# Images details #}
-
                 <div class="card">
                     <div class="card-header">
                         <p class="lead m-0">Images Here</p>
@@ -180,10 +179,6 @@
                 </div>
 
 
-            </div>
-
-            <div class="col-sm-4">
-
                 {# Audio details #}
                 <div class="card">
                     <div class="card-header">
@@ -228,8 +223,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
 
         </div>
@@ -340,6 +333,11 @@
             </div>
         </div>
     </div>
+
+
+
+
+
 {% endblock %}
 
 {% block base_external_scripts %}
@@ -387,8 +385,18 @@
 
 
         $(document).ready(function () {
+
             $("#div_statements").append(statement_add);
             $("#div_choices").append(choice_add);
+
+            let question_type = {{ question.question_type }};
+
+            if (question_type === 1){
+                $("option[value='2']").remove();
+                $("option[value='3']").remove();
+            }else if (question_type == 2){
+                $("option[value='3']").remove();
+            }
 
             let input_field_statement = $('#statement-text');
             let input_field_is_correct = $('#is-correct');

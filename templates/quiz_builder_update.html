@@ -13,9 +13,12 @@
 
 {% block page_heading %}
     Quiz ID {{ quiz_id }}<br>
-    <p class="m-0 small text-white bg-danger p-2 my-2"> <b>WARNING: </b>don't delete this quiz if this is attempted by anyone.</p>
-    <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i class="fa fa-trash"></i> Remove</a>
-    <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-edit"></i> Edit</a>
+    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by
+        anyone.</p>
+    <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
+            class="fa fa-trash"></i> Remove</a>
+    <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i
+            class="fa fa-edit"></i> Edit</a>
 
 {% endblock %}
 
@@ -24,8 +27,6 @@
 
 
     <div class="">
-
-
         <div class="">
             <div class="card">
                 <div class="card-header text-left"><p class="lead m-0">Quiz Statistics</p></div>
@@ -92,8 +93,6 @@
                     </div>
                 </div>
             </div>
-
-
 
             {% if questions %}
 

@@ -121,6 +121,11 @@ class Question(models.Model):
         ('n', 'Normal'),
         ('h', 'Hard'),
     )
+    QUESTION_TYPE = (
+        ('1', 'Single Player'),
+        ('2', 'Two Player'),
+        ('3', 'Three Player'),
+    )
 
     quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
     level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL, blank=False, null=False)
@@ -129,6 +134,7 @@ class Question(models.Model):
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                         related_name='select_choices')
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
+    question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -234,6 +240,7 @@ class QuestionChoice(models.Model):
 
 class Quiz(models.Model):
     NO_OF_PLAYERS = (
+        ('1', 'Single Player'),
         ('2', 'Two Players'),
         ('3', 'Three Players'),
     )

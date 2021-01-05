@@ -8,55 +8,78 @@
     Learning Resources
 {% endblock %}
 
+
+
+{% block base_links %}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+{% endblock %}
+
 {% block content %}
+    <div class="card">
+        <div class="card-body">
+            {% if quizes_all %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Questions</th>
+                            <th>Subjects</th>
+                            <th>Starts</th>
+                            <th>Ends</th>
+                            <th>Ends</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
 
-    {% if quizes_all %}
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Questions</th>
-                    <th>Subjects</th>
-                    <th>Starts</th>
-                    <th>Ends</th>
-                    <th>Ends</th>
-                </tr>
-                </thead>
-                <tbody class="">
+                        {% for quiz in quizes_all %}
+                            <tr>
+                            <td>{{ quiz.title }}</td>
+                            <td>{{ quiz.questions.count }}</td>
+                            <td>{{ quiz.subjects.count }}</td>
+                            <td>{{ quiz.start_time }}</td>
+                            <td>{{ quiz.end_time }}</td>
+                            <td><a href="{% url 'application:learning_resource_start' quiz.pk %}"><i
+                                    class="bx bx-task"></i> Try
+                                a
+                                tutorial</a></td>
 
-                {% for quiz in quizes_all %}
-                    <tr>
-                    <td>{{ quiz.title }}</td>
-                    <td>{{ quiz.questions.count }}</td>
-                    <td>{{ quiz.subjects.count }}</td>
-                    <td>{{ quiz.start_time }}</td>
-                    <td>{{ quiz.end_time }}</td>
-                    <td><a href="{% url 'application:learning_resource_start' quiz.pk %}"><i class="bx bx-task"></i> Try
-                        a
-                        tutorial</a></td>
-
-                {% endfor %}
+                        {% endfor %}
 
 
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="p-4">
-            <div class="card border border-warning">
-                <div class="card-header bg-transparent border-warning">
-                    <h5 class="my-0 text-warning">
-                        <i class="mdi mdi-alert-outline mr-3"></i>Learning Resource Help</h5>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title mt-0">No learning resource available?</h5>
-                    <p class="card-text">{{ request.user.username }}! No learning resources are available now because
-                        the admin didn't added yet come back later.</p>
+            {% else %}
+                <div class="p-4">
+                    <div class="card border border-warning">
+                        <div class="card-header bg-transparent border-warning">
+                            <h5 class="my-0 text-warning">
+                                <i class="mdi mdi-alert-outline mr-3"></i>Learning Resource Help</h5>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-0">No learning resource available?</h5>
+                            <p class="card-text">{{ request.user.username }}! No learning resources are available now
+                                because
+                                the admin didn't added yet come back later.</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
-    {% endif %}
+    </div>
+{% endblock %}
 
+
+{% block base_internal_scripts %}
+    <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+            $('table').DataTable();
+        });
+    </script>
 {% endblock %}
 
