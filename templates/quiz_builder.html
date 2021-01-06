@@ -20,22 +20,22 @@
         <div class="row justify-content-center">
             <div class="col-sm-7 col-12">
                 <div class="card">
-{#                <div class="card-header text-center p-4">#}
-{#                    <p class="card-title m-0">Basic Details</p>#}
-{##}
-{#                </div>#}
-                <div class="card-body">
-                    <br>
+                    {#                <div class="card-header text-center p-4">#}
+                    {#                    <p class="card-title m-0">Basic Details</p>#}
+                    {##}
+                    {#                </div>#}
+                    <div class="card-body">
+                        <br>
 
-                    <div class="p-4">
-                        <form autocomplete="off" method="post" action="">
-                            {% csrf_token %}
-                            {{ form | crispy }}
-                            <button type="submit" class="btn btn-success"> > Submit</button>
-                        </form>
+                        <div class="p-4">
+                            <form autocomplete="off" method="post" action="">
+                                {% csrf_token %}
+                                {{ form | crispy }}
+                                <button type="submit" class="btn btn-success"> > Submit</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
 
@@ -53,12 +53,52 @@
 {% block base_external_scripts %}
     <script>
         $(document).ready(function () {
+
+            let players_div = $('#div_id_players');
+            let submission_div = $('#div_id_submission_control');
+            let submission_control = $('#id_submission_control');
+
+            check_selection($('#id_players').children("option:selected").val());
+            check_resource($('#id_learning_purpose').is(':checked'));
+
+            $('#id_players').change(function () {
+                let option = $(this).children("option:selected").val();
+                check_selection(option);
+            });
+
+            $('#id_learning_purpose').change(function () {
+                check_resource(this.checked);
+            });
+
             $('#id_start_time').datetimepicker({
                 format: 'Y-m-d H:i:s',
             });
             $('#id_end_time').datetimepicker({
                 format: 'Y-m-d H:i:s',
             });
+
+            function check_selection(option) {
+                if (option == 1) {
+                    $(submission_control).children("option[value='2']").hide();
+                    $(submission_control).children("option[value='3']").hide();
+                } else if (option == 2) {
+                    $(submission_control).children("option[value='2']").show();
+                    $(submission_control).children("option[value='3']").hide();
+                } else if (option == 3) {
+                    $(submission_control).children("option[value='2']").show();
+                    $(submission_control).children("option[value='3']").show();
+                }
+            }
+
+            function check_resource(check) {
+                if (check) {
+                    players_div.hide();
+                    submission_div.hide();
+                } else {
+                    players_div.show();
+                    submission_div.show();
+                }
+            }
         });
     </script>
 {% endblock %}

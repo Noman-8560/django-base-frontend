@@ -21,6 +21,7 @@
                         <tr>
                             <th>SNO</th>
                             <th>Name</th>
+                            <th>Submission</th>
                             <th>Players</th>
                             <th>Subjects</th>
                             <th>Questions</th>
@@ -38,7 +39,8 @@
                             <tr>
                                 <td>{{ quiz.pk }}</td>
                                 <td>{{ quiz.title }}</td>
-                                <td>{{ quiz.get_players_display }}</td>
+                                <td>{{ quiz.submission_control }}</td>
+                                <td>{{ quiz.players }}</td>
                                 <td>{{ quiz.subjects.count }}</td>
                                 <td>{{ quiz.questions.count }}</td>
                                 <td>{{ quiz.start_time }}</td>

@@ -48,7 +48,7 @@ class QuizForm(ModelForm):
 
     class Meta:
         model = Quiz
-        fields = ['title', 'age_limit', 'players', 'subjects', 'start_time', 'end_time']
+        fields = ['learning_purpose', 'title', 'age_limit', 'players', 'submission_control', 'subjects', 'start_time', 'end_time']
 
 
 class ArticleForm(ModelForm):

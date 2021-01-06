@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
+from django.core.mail import send_mail
 
 from application.BusinessLogicLayer import identify_user_in_team
 
@@ -16,7 +17,6 @@ from .models import *
 
 
 def home(request):
-
     articles = Article.objects.all()
 
     articles = articles.order_by('-created_at')
@@ -551,6 +551,14 @@ def question_audio_delete(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def quizzes(request):
+    # send_mail(
+    #     subject='Checking MAil !!',
+    #     message='',
+    #     from_email='donald.duck0762@gmail.com',
+    #     recipient_list=['ikram.khan0762@gmail.com'],
+    #     fail_silently=False,
+    #     html_message='<h1><strong>HII</strong> man how are you<h2/>'
+    # )
     context = {
         'quizes': Quiz.objects.all()
     }
@@ -637,10 +645,15 @@ def delete_quiz(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def search_question(request, quiz_pk):
-    quiz_subjects = Quiz.objects.get(pk=quiz_pk).subjects.all()
-    search = str(request.GET['search'])
-    questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(questionstatement__statement__icontains=search).distinct()
+    quiz = Quiz.objects.get(pk=quiz_pk)
 
+    quiz_subjects = quiz.subjects.all()
+
+    search = str(request.GET['search'])
+    questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
+        questionstatement__statement__icontains=search).distinct()
+
+    questions_models= questions_models.filter(question_type__exact=quiz.players)
     dict_out = {}
     count = 0
     for question in questions_models:
@@ -871,7 +884,7 @@ def enroll(request, pk):
         # USER_EXISTS_OR_NOT
         try:
 
-            if quiz.players == 2:
+            if quiz.players == '2':
                 player_2 = User.objects.get(username=request.POST['player_2'])
                 if quiz.players == '3':
                     player_3 = User.objects.get(username=request.POST['player_3'])
@@ -903,6 +916,7 @@ def enroll(request, pk):
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                   f'with team={team_name} as a caption of team.')
         return HttpResponseRedirect(reverse('application:quizes'))
+    print(quiz.players)
 
     # GET_METHOD
     context = {
@@ -922,6 +936,7 @@ def quiz_start(request, quiz):
     question_ids = []
     quiz_id = None
     user_no = None
+    submission = None
 
     ''' QUIZ and TEAM is required here'''
 
@@ -942,7 +957,8 @@ def quiz_start(request, quiz):
         return redirect('application:quizes', permanent=True)
 
     if not user_quiz.questions.all():
-        messages.error(request=request, message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
+        messages.error(request=request,
+                       message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
         return redirect('application:quizes', permanent=True)
 
     if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
@@ -953,6 +969,11 @@ def quiz_start(request, quiz):
         for question in questions:
             question_ids.append(question.pk)
         user_no = identify_user_in_team(user_team, request, user_quiz)
+
+        if user_no == user_quiz.submission_control.pk:
+            submission = '1'
+        else:
+            submission = '0'
 
     else:
         if user_quiz.start_time > timezone.now():
@@ -969,6 +990,7 @@ def quiz_start(request, quiz):
         'team_id': user_team.pk,
         'quiz_id': user_quiz.pk,
         'user_no': user_no,
+        'submission_control': submission,
         'quiz': Quiz.objects.get(pk=quiz)
     }
 
@@ -1052,7 +1074,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
     choices_values = []
 
     if request.method == 'GET' and request.is_ajax():
-
         ''' __FETCHING BASE DATA__'''
         quiz = Quiz.objects.get(pk=quiz_id)
         screen = Screen.objects.get(no=user_id)
@@ -1060,24 +1081,17 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         '''__QUESTION LOGIC WILL BE HERE__'''
         question = quiz.questions.get(pk=question_id)
 
-        '''__FETCHING SUBMISSION AND CHOICES CONTROL__'''
-        choices_permitted = screen == question.choices_control
-
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
         [statements.append(x.statement) for x in question.questionstatement_set.filter(screen=screen)]
         [images.append(y.image) if y.url is None else images.append(y.url) for y in
          question.questionimage_set.filter(screen=screen)]
         [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
          question.questionaudio_set.filter(screen=screen)]
-        if choices_permitted:
-            [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
-            [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
+        [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
+        [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
 
         ''' __GENERATING RESPONSES__'''
         response = {
-            'permissions': {
-                'choices_permitted': choices_permitted,
-            },
             'question': question.pk,
             'choices_keys': choices_keys,
             'choices_values': choices_values,
@@ -1086,6 +1100,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
             'audios': audios
         }
         return JsonResponse(data=response, safe=False)
+
     else:
         return JsonResponse(data=None)
 
@@ -1106,7 +1121,8 @@ def question_submission_json(request):
         choice_id = request.POST['choice_id']
 
         users = Team.objects.get(pk=team_id).participants.all()
-        attempt = Attempt.objects.filter(user=request.user, question=Question.objects.get(pk=question__id), quiz=Quiz.objects.get(pk=quiz_id))
+        attempt = Attempt.objects.filter(user=request.user, question=Question.objects.get(pk=question__id),
+                                         quiz=Quiz.objects.get(pk=quiz_id))
 
         """ QUIZ EXISTENCE WRT USER"""
         if len(QuizCompleted.objects.filter(user=request.user, quiz=Quiz.objects.get(pk=quiz_id))) == 0:
@@ -1203,9 +1219,9 @@ def learning_resources_start(request, quiz):
         messages.error(request=request, message="Requested Quiz doesn't exists")
         return redirect('application:quizes', permanent=True)
 
-
     if not user_quiz.questions.all():
-        messages.error(request=request, message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
+        messages.error(request=request,
+                       message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
         return redirect('application:quizes', permanent=True)
 
     if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
@@ -1286,7 +1302,6 @@ def learn_question_submission_json(request):
     if request.method == 'POST':
 
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
-
 
         question = Question.objects.get(pk=request.POST['question_id'])
         choice_id = request.POST['choice_id']

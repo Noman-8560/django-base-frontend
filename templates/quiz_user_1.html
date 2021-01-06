@@ -13,7 +13,7 @@
                 {% if quiz.players != '1' %}
                     <p class="p-4">
                         You have a combine quiz, statements options and hints are divided among your team please contact
-                        each other with zoom and attempt carefully.
+                        each other with zoom and attempt carefully
                     </p>
                 {% else %}
                     <p class="p-4"><i class="fa fa-warning"></i>
@@ -35,10 +35,12 @@
                                         <div class="clearfix">
                                             <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
                                             <div class="float-right" id="submission_control_div">
-                                                <button class="btn btn btn-success" id="button_submit"><i
+                                                {% if submission_control == '1' %}
+                                                    <button class="btn btn btn-success" id="button_submit"><i
                                                         class="fa fa-check"></i>
                                                     Submit
                                                 </button>
+                                                {% endif %}
                                                 <a class="btn btn btn-danger" id="button_end"
                                                    href="{% url 'application:quizes' %}"><i
                                                         class="fa fa-times"></i>
@@ -204,6 +206,7 @@
         {% if allowed_to_start %}
 
             active_async = false;
+            submission_control = {{ submission_control }};
 
             $(document).on("keydown", disableF5);
 
@@ -235,7 +238,6 @@
 
             function initialization() {
                 countdown();
-                button_submit.hide();
 
                 x_accessor();
 
@@ -260,21 +262,15 @@
 
                         {# 2 > SUBMISSION_CONTROL_CHECK #}
                         question_div.attr('data-question', data.question);
-                        if (data.permissions.choices_permitted) {
-                            button_submit.show();
-                        } else {
-                            button_submit.hide();
-                            async_question_next_sync();
-                        }
 
-                        {# 3 > CHOICES_CONTROL_CHECK #}
-                        if (data.choices_keys.length > 0) {
+                        if (submission_control=='1') {
                             choices_main_div.show();
                             for (let index = 0; index < data.choices_keys.length; index++) {
                                 choices_div.append(`<input type="radio" name="ans" id="ans" value="${data.choices_keys[index]}"> ${data.choices_values[index]} &nbsp;&nbsp;<br>`);
                             }
                         } else {
                             choices_main_div.hide();
+                            async_question_next_sync();
                         }
 
                         {# 4 > FETCHING STATEMENTS #}
