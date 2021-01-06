@@ -12,13 +12,15 @@
 {% endblock %}
 
 {% block page_heading %}
-    Quiz ID {{ quiz_id }}<br>
-    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by
-        anyone.</p>
+    Quiz ID {{ quiz_id }}<br><br>
+{#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
+{#        anyone.</p>#}
     <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
             class="fa fa-trash"></i> Remove</a>
     <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i
             class="fa fa-edit"></i> Edit</a>
+    <a href="{% url 'application:quiz_builder' %}" class="btn btn-sm btn-link text-primary"><i
+            class="fa fa-plus"></i> Add New</a>
 
 {% endblock %}
 
@@ -107,6 +109,7 @@
                                 <tr>
                                     <th>Text</th>
                                     <th>Subject</th>
+                                    <th>Type</th>
                                     <th>Difficulty</th>
                                     <th>Remove</th>
                                 </tr>
@@ -116,10 +119,11 @@
                                     <tr>
                                         <td> {{ question.questionstatement_set.first }} </td>
                                         <td> {{ question.subject.title }}</td>
+                                        <td> {{ question.get_question_type_display }}</td>
                                         <td class="text-warning">
                                             <i class="fa fa-star"></i>
                                         </td>
-                                        <td><a href="/delete/quiz/{{ quiz_id }}/question/{{ question.pk }}/"><i
+                                        <td><a href="/delete/quiz/{{ quiz_id }}/question/{{ question.pk }}/" class="text-danger"><i
                                                 class="fa fa-trash"></i></a></td>
                                     </tr>
                                 {% endfor %}

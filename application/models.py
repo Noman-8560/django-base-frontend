@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -134,7 +134,7 @@ class Question(models.Model):
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                         related_name='select_choices')
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
-    question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False)
+    question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False, default='1')
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -250,10 +250,18 @@ class Quiz(models.Model):
     subjects = models.ManyToManyField(Subject, blank=True, null=True)
     players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
+    submission_control = models.ForeignKey(Screen, null=False, blank=True, on_delete=models.CASCADE)
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    learning_purpose = models.BooleanField(default=False,
+                                           help_text='By checking Learning purpose some changes will be applied '
+                                                     'to this quiz, it will only visible for learning resource, '
+                                                     'quiz will be different from main quizes, '
+                                                     'student can only use this quiz for learning purpose'
+                                           )
 
     def __str__(self):
         return self.title
@@ -263,6 +271,14 @@ class Quiz(models.Model):
 
     class Meta:
         verbose_name_plural = 'Quizzes'
+
+    def save(self, *args, **kwargs):
+        if self.learning_purpose:
+            self.players = '1'
+            self.submission_control = Screen.objects.first()
+        super().save(*args, **kwargs)
+
+
 
 
 class Student(models.Model):
@@ -450,3 +466,4 @@ def save_profile_on_user(sender, instance, created, **kwargs):
         else:
             profile = Profile(user=User.objects.get(pk=instance.id))
             profile.save()
+

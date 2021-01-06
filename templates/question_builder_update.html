@@ -5,9 +5,9 @@
 {% block base_title %}Question Builder{% endblock %}
 
 {% block page_heading %}
-    Question ID {{ question_id }}<br>
-    <p class="small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this question if this is used in any
-        quiz.</p>
+    Question ID {{ question_id }}<br><br>
+{#    <p class="small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this question if this is used in any#}
+{#        quiz.</p>#}
     <a href="{% url 'application:delete_question' question_id %}" class="btn btn-sm btn-link text-danger"><i class="fa fa-trash"></i> Remove</a>
     <a href="{% url 'application:update_question' question_id %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-edit"></i> Edit</a>
     <a href="{% url 'application:question_builder' %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-plus"></i> Add Another</a>
@@ -31,7 +31,7 @@
                         <div>
                             {% if data_question_statements %}
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
+                                    <table class="table table-hover table-striped">
                                         <thead>
                                         <tr>
                                             <th>Text</th>
@@ -64,7 +64,6 @@
                                     No statements available yet - add below.
                                 </div>
                             {% endif %}
-                            <hr>
 
                         </div>
                     </div>
@@ -119,7 +118,6 @@
                                     No choices available yet - add below.
                                 </div>
                             {% endif %}
-                            <hr>
 
                         </div>
                     </div>

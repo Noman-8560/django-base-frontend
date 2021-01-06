@@ -9,11 +9,14 @@ def identify_user_in_team(team, request, quiz):
             return 3
         else:
             return 2
-    else:
+
+    elif quiz.players == '2':
         if team.participants.first() == request.user:
             return 1
         else:
             return 2
+    else:
+        return 1
 
 
 def is_guardian(user):
