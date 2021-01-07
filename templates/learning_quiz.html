@@ -4,6 +4,7 @@
 
 {% block base_title %}Learning Resource{% endblock %}
 
+
 {% block base_top_nav %}{% endblock %}
 
 {% block dont_include_details %}
@@ -32,6 +33,63 @@
                                                     class="fa fa-check"></i>
                                                 Submit
                                             </button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class=" mini-stats-wid">
+                                                <div class="card-body">
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            <p class="text-muted font-weight-medium">Total</p>
+                                                            <h4 class="mb-0" id="total">00</h4>
+                                                        </div>
+
+                                                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-flag font-size-24"></i>
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mini-stats-wid">
+                                                <div class="card-body">
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            <p class="text-muted font-weight-medium">Attempted</p>
+                                                            <h4 class="mb-0" id="total_attempted">00</h4>
+                                                        </div>
+
+                                                        <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-success">
+                                                            <i class="bx bx-check-circle font-size-24"></i>
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mini-stats-wid">
+                                                <div class="card-body">
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            <p class="text-muted font-weight-medium">Remaining</p>
+                                                            <h4 class="mb-0" id="total_remains">00</h4>
+                                                        </div>
+
+                                                        <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-danger">
+                                                            <i class="bx bx-list-plus font-size-24"></i>
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -150,6 +208,15 @@
     {% endif %}
 {% endblock %}
 
+{% if allowed_to_start %}
+
+    {% block base_internal_scripts %}
+        <script src="{% static 'js/refresh.js' %}"></script>
+        <script src="{% static 'js/right_click.js' %}"></script>
+        <script src="{% static 'js/back_click.js' %}"></script>
+    {% endblock %}
+
+{% endif %}
 
 {% block base_external_scripts %}
     <script>
@@ -160,6 +227,10 @@
             let question_now = null;
             let question_end = null;
             let path = null;
+
+            total = $('#total');
+            attempted = $('#total_attempted');
+            remains = $('#total_remains');
 
 
             question_div = $('#question_div');
@@ -208,6 +279,10 @@
                         question_now = get_time_formatted();
 
                         question_div.attr('data-question', data.question);
+
+                        total.text(data.total);
+                        attempted.text(data.attempts);
+                        remains.text(data.remains);
 
                         {# 3 > CHOICES_CONTROL_CHECK #}
                         if (data.choices_keys.length > 0) {

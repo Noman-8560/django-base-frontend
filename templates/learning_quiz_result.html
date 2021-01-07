@@ -1,12 +1,15 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% load i18n %}
 
 {% block base_title %}Result{% endblock %}
 
+
 {% block page_heading %}
-    Learning Resource > Result Quiz: {{ quiz.pk }}
+    Learning Resource > Result: <b class="text-primary">{{ quiz.title }}</b>
 {% endblock %}
+
 
 {% block content %}
 
@@ -99,4 +102,8 @@
     </div>
 
 
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <script src="{% static 'js/refresh.js' %}"></script>
 {% endblock %}

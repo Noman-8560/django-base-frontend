@@ -1,6 +1,8 @@
 Django==3.1.4
-djangorestframework==3.11.0
+# djangorestframework==3.11.0
 django-crispy-forms
 django-ckeditor
 pillow
 django-allauth
+django-notifications-hq
+django-model-utils

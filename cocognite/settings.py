@@ -48,6 +48,9 @@ INSTALLED_APPS = [
 
     # USER_APPLICATIONS
     'application',
+
+    # MUST BE AT THE END
+    'notifications'
 ]
 
 MIDDLEWARE = [
