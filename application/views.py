@@ -12,6 +12,8 @@ from django.core.mail import send_mail
 
 from application.BusinessLogicLayer import identify_user_in_team
 
+from notifications.signals import notify
+
 from .forms import *
 from .models import *
 
@@ -653,7 +655,9 @@ def search_question(request, quiz_pk):
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
 
-    questions_models= questions_models.filter(question_type__exact=quiz.players)
+    # TODO: Block already present questions
+    questions_models = questions_models.filter(question_type=quiz.players)
+
     dict_out = {}
     count = 0
     for question in questions_models:
@@ -915,8 +919,22 @@ def enroll(request, pk):
         team.participants.add(player_1, player_2, player_3)
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                   f'with team={team_name} as a caption of team.')
+        if player_2 is not None:
+            notify.send(request.user, recipient=player_2,
+                        verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
+                             f'{quiz.start_time}'
+            )
+
+        if player_3 is not None:
+            notify.send(request.user, recipient=player_2,
+                        verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
+                             f'{quiz.start_time}'
+            )
+        notify.send(request.user, recipient=player_1,
+                    verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
+                         f'{quiz.start_time}'
+        )
         return HttpResponseRedirect(reverse('application:quizes'))
-    print(quiz.players)
 
     # GET_METHOD
     context = {
@@ -1067,6 +1085,9 @@ def user_exists_json(request, username):
 @login_required
 def quiz_access_question_json(request, quiz_id, question_id, user_id):
     # TODO: please write query to avoid re-attempting quiz
+    total = 0
+    attempts = 0
+    remains = 0
     statements = []
     images = []
     audios = []
@@ -1090,6 +1111,11 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
         [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
 
+        total = quiz.questions.count()
+        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
+        remains = total-attempts
+
+
         ''' __GENERATING RESPONSES__'''
         response = {
             'question': question.pk,
@@ -1097,7 +1123,11 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
             'choices_values': choices_values,
             'statements': statements,
             'images': images,
-            'audios': audios
+            'audios': audios,
+
+            'total': total,
+            'attempts': attempts,
+            'remains': remains,
         }
         return JsonResponse(data=response, safe=False)
 
@@ -1252,6 +1282,10 @@ def learning_resources_start(request, quiz):
 
 @login_required
 def learn_access_question_json(request, quiz_id, question_id):
+    total = 0
+    attempts = 0
+    remains = 0
+
     statements = []
     images = []
     audios = []
@@ -1277,6 +1311,10 @@ def learn_access_question_json(request, quiz_id, question_id):
         [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
         [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
 
+        total = quiz.questions.count()
+        attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz).count()
+        remains = total - attempts
+
         ''' __GENERATING RESPONSES__'''
         response = {
             'question': question.pk,
@@ -1284,7 +1322,11 @@ def learn_access_question_json(request, quiz_id, question_id):
             'choices_values': choices_values,
             'statements': statements,
             'images': images,
-            'audios': audios
+            'audios': audios,
+
+            'total': total,
+            'attempts': attempts,
+            'remains': remains,
         }
         return JsonResponse(data=response, safe=False)
     else:
