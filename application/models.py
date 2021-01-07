@@ -279,8 +279,6 @@ class Quiz(models.Model):
         super().save(*args, **kwargs)
 
 
-
-
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
     guardian = models.ForeignKey('Guardian', on_delete=models.DO_NOTHING, related_name='guardian+')
@@ -379,6 +377,8 @@ class QuizCompleted(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    total = models.PositiveIntegerField(null=False, blank=False, default=0)
+    obtained = models.PositiveIntegerField(null=False, blank=False, default=0)
 
     class Meta:
         verbose_name = 'Completed Quiz'

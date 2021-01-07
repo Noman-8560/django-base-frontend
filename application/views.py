@@ -553,16 +553,9 @@ def question_audio_delete(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def quizzes(request):
-    # send_mail(
-    #     subject='Checking MAil !!',
-    #     message='',
-    #     from_email='donald.duck0762@gmail.com',
-    #     recipient_list=['ikram.khan0762@gmail.com'],
-    #     fail_silently=False,
-    #     html_message='<h1><strong>HII</strong> man how are you<h2/>'
-    # )
     context = {
-        'quizes': Quiz.objects.all()
+        'quizes': Quiz.objects.all(),
+
     }
     return render(request=request, template_name='quizzes.html', context=context)
 
@@ -780,41 +773,31 @@ def delete_subject(request, pk):
 
 @login_required
 def quizes(request):
-    """  ----------------------------------------------------------------------------------------------------------- """
-    """
-    quizes = Quiz.objects.all()
-    teams = Team.objects.filter(participants__username=request.user.username)
-    quizes_available = Quiz.objects.filter(~Q(teams__participants=request.user))
-    quizes_enrolled = Quiz.objects.filter(teams__participants=request.user)
 
-    print(type(n), "   ", type(Quiz.objects.filter(teams__participants__username=request.user.username)))
-    print(Quiz.objects.filter(teams__participants__username=request.user.username))
-
-    QuizCompleted.objects.filter(user=request.user)
-    print(QuizCompleted.objects.filter(user=request.user))
-    print(Team.objects.filter(participants__username=request.user.username))
-    print(Quiz.objects.filter(teams__in=teams))
-    """
-    '''  ----------------------------------------------------------------------------------------------------------- '''
-
-    # TODO : Queries need to be correct at all.
-
-    all_quizes = Quiz.objects.all().order_by('-start_time')
+    # ALL_QUIZES
+    all_quizes = Quiz.objects.filter(learning_purpose=False).order_by('-start_time')
     my_teams = Team.objects.filter(participants__in=[request.user.id])
     my_quizes = Quiz.objects.filter(id__in=my_teams.values_list('quiz', flat=True))
-    available_quizes = Quiz.objects.filter(end_time__gte=timezone.now()).exclude(
+
+    # AVAILABLE_QUIZES
+    available_quizes = Quiz.objects.filter(end_time__gte=timezone.now(), learning_purpose=False).exclude(
         id__in=my_quizes.values_list('id', flat=True)).order_by('-start_time')
 
     completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
 
+    # QUIZ ENROLLED
     enrolled_quizes = Quiz.objects \
-        .filter(end_time__gt=timezone.now(), id__in=my_quizes.values_list('id', flat=True)) \
-        .exclude(id__in=completed_by_me.values_list('id', flat=True)).order_by('-start_time')
+        .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
+        .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
+
+    # QUIZ SUBMITTED
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
 
     context = {
         'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
         'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
-        'quizes_enrolled': enrolled_quizes  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+        'quizes_enrolled': enrolled_quizes,  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+        'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
     }
     return render(request=request, template_name='quizes.html', context=context)
 
@@ -923,17 +906,17 @@ def enroll(request, pk):
             notify.send(request.user, recipient=player_2,
                         verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
                              f'{quiz.start_time}'
-            )
+                        )
 
         if player_3 is not None:
             notify.send(request.user, recipient=player_2,
                         verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
                              f'{quiz.start_time}'
-            )
+                        )
         notify.send(request.user, recipient=player_1,
                     verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
                          f'{quiz.start_time}'
-        )
+                    )
         return HttpResponseRedirect(reverse('application:quizes'))
 
     # GET_METHOD
@@ -1053,10 +1036,20 @@ def learning_resources_result(request, quiz):
 
 @login_required
 def learning_resources(request):
-    quizes_all = Quiz.objects.all().order_by('-start_time')
+    # ALL_QUIZES
+    all_quizes = Quiz.objects.filter(learning_purpose=True).order_by('-start_time')
+
+    # AVAILABLE_QUIZES
+    available_quizes = Quiz.objects.filter(
+        end_time__gte=timezone.now(),
+        learning_purpose=True).order_by('-start_time')
+
+    completed_by_me = LearningResourceResult.objects.filter(user__id=request.user.id).order_by('-created')
 
     context = {
-        'quizes_all': quizes_all,
+        'all_quizes': all_quizes,
+        'available_quizes': available_quizes,
+        'completed_quizes': completed_by_me,
     }
     return render(request=request, template_name='learning_resources.html', context=context)
 
@@ -1113,8 +1106,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
 
         total = quiz.questions.count()
         attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
-        remains = total-attempts
-
+        remains = total - attempts
 
         ''' __GENERATING RESPONSES__'''
         response = {
@@ -1178,10 +1170,13 @@ def question_submission_json(request):
                     ).save()
 
                 if request.POST['end'] == 'True':
+                    yy = Attempt.objects.filter(user=request.user, quiz=Quiz.objects.get(pk=quiz_id))
                     for user in users:
                         QuizCompleted(
                             user=user,
-                            quiz=Quiz.objects.get(pk=quiz_id)
+                            quiz=Quiz.objects.get(pk=quiz_id),
+                            total=yy.count(),
+                            obtained=yy.filter(successful=True).count()
                         ).save()
 
                 success = True
@@ -1400,3 +1395,16 @@ def learn_question_submission_json(request):
         }
 
         return JsonResponse(data=response, safe=False)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def sent_mail(request):
+    # send_mail(
+    #     subject='Checking MAil !!',
+    #     message='',
+    #     from_email='donald.duck0762@gmail.com',
+    #     recipient_list=['ikram.khan0762@gmail.com'],
+    #     fail_silently=False,
+    #     html_message='<h1><strong>HII</strong> man how are you<h2/>'
+    # )
+    pass
