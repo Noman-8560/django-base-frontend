@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # USER_APPLICATIONS
     'application',
+    'application.wsite',
 
     # MUST BE AT THE END
     'notifications'
@@ -71,7 +72,7 @@ AUTHENTICATION_BACKENDS = (
 ROOT_URLCONF = 'cocognite.urls'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 TEMPLATES = [
     {

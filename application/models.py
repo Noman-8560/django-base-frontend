@@ -6,6 +6,8 @@ from ckeditor.fields import RichTextField
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from django.utils.text import slugify
+
 
 class AppUpdate(models.Model):
     UPDATE_STATUS = (
@@ -87,6 +89,7 @@ class Article(models.Model):
     topic = models.CharField(max_length=255, null=False, blank=False)
     event = models.CharField(max_length=1, null=False, blank=False, choices=ARTICLE_TYPE)
     content = RichTextField(null=False, blank=False)
+    slug = models.SlugField(unique=True, null=True, blank=True)
 
     active = models.BooleanField(default=True,
                                  help_text="ACTIVE : field is used to hide or show this post, if you will check this "
@@ -94,16 +97,20 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        managed = True
+        verbose_name = 'Article'
+        verbose_name_plural = 'Articles'
+
     def __str__(self):
         return self.topic
 
     def __unicode__(self):
         return self.id
 
-    class Meta:
-        managed = True
-        verbose_name = 'Article'
-        verbose_name_plural = 'Articles'
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.topic)
+        super(Article, self).save(*args, **kwargs)
 
 
 '''________________________________________________________________________________'''

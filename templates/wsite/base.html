@@ -1,0 +1,63 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8"/>
+
+    <title>CoCognito |
+        {% block base_title %}
+            Home
+        {% endblock %}
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Tarbazar Official - Home page" name="description"/>
+    <meta content="mark" name="author"/>
+    <meta content="multirole-business" name="organization"/>
+
+    <link rel="shortcut icon" href="{% static 'application/images/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'application/libs/owl.carousel/assets/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'application/libs/owl.carousel/assets/owl.theme.default.min.css' %}">
+
+    <link href="{% static 'application/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'application/css/icons.min.css' %}" rel="stylesheet"/>
+
+    <link href="{% static 'application/css/app.min.css' %}" rel="stylesheet"/>
+
+    {% block base_css_links %}
+
+    {% endblock %}
+
+</head>
+
+<body data-spy="scroll" data-target="#topnav-menu" data-offset="60">
+
+{% block base_header %}
+    {% include 'wsite/include/header.html' %}
+{% endblock %}
+
+{% block base_content %}{% endblock %}
+
+{% block base_footer %}
+    {% include 'wsite/include/footer.html' %}
+{% endblock %}
+
+<script src="{% static 'application/libs/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'application/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'application/libs/metismenu/metisMenu.min.js' %}"></script>
+<script src="{% static 'application/libs/simplebar/simplebar.min.js' %}"></script>
+<script src="{% static 'application/libs/node-waves/waves.min.js' %}"></script>
+
+<script src="{% static 'application/libs/jquery.easing/jquery.easing.min.js' %}"></script>
+
+<script src="{% static 'application/libs/jquery-countdown/jquery.countdown.min.js' %}"></script>
+<script src="{% static 'application/libs/owl.carousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'application/js/pages/ico-landing.init.js' %}"></script>
+<script src="{% static 'application/js/app.js' %}"></script>
+
+{% block base_internal_js %}{% endblock %}
+
+</body>
+</html>
+{% block base_external_js %}{% endblock %}

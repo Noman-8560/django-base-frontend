@@ -22,12 +22,17 @@ import notifications.urls
 from . import settings
 from django.urls import path, include
 from django.views.generic import TemplateView
+from application.wsite.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     # path('login/', TemplateView.as_view(template_name="account/login.html")),
+
+    path('', home, name='home'),
     path('', include('application.urls', namespace='application')),
+    path('site/', include('application.wsite.urls', namespace='wsite')),
+
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
 

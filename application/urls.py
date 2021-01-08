@@ -1,16 +1,17 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
 
 app_name = 'application'
 urlpatterns = [
     #  --- HELP_PAGE
+
+
+
     path('help/', help_view, name='help'),
-    path('', home, name='home'),
     path('dashboard/', dashboard, name='dashboard'),
 
     path('articles/', articles, name='articles'),
     path('add/article/', add_article, name='add_article'),
-    path('article/<int:pk>/', article, name='article'),
     path('update/article/<int:pk>/', add_article, name='update_article'),
     path('delete/article/<int:pk>/', delete_article, name='delete_article'),
 
@@ -40,6 +41,8 @@ urlpatterns = [
     path('team/<int:pk>/', team, name='team'),
     path('enroll/quiz/<int:pk>/', enroll, name='enroll_quiz'),
 
+    path('delete/team/<int:pk>/', delete_team, name='delete_team'),
+
     # --- QUESTION BUILDER
     path('questions/', questions, name='questions'),
     path('question/builder/', question_builder, name='question_builder'),
@@ -63,7 +66,6 @@ urlpatterns = [
 
     path('add/quiz/<int:quiz>/question/<int:question>/', quiz_question_add, name='quiz_question_add'),
     path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
-
 
     path('coming_soon/', coming_soon, name='coming_soon'),
     path('404/', page_404, name='404'),

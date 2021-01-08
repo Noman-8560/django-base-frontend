@@ -1,0 +1,103 @@
+{% load static %}
+<!-- Footer start -->
+<footer class="landing-footer">
+    <div class="container">
+
+        {% if site.full_footer_display %}
+            <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mb-4 mb-lg-0">
+                        <h5 class="mb-3 footer-list-title">Company</h5>
+                        <ul class="list-unstyled footer-list-menu">
+                            <li><a href="/#home">Home</a></li>
+                            <li><a href="/#roadmap">events</a></li>
+                            <li><a href="/#team">Team</a></li>
+                            <li><a href="/#news">News</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mb-4 mb-lg-0">
+                        <h5 class="mb-3 footer-list-title">Resources</h5>
+                        <ul class="list-unstyled footer-list-menu">
+                            <li><a href="{% url 'wsite:articles' %}">Blog</a></li>
+                            <li><a href="{% url 'wsite:articles' %}">Articles</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mb-4 mb-lg-0">
+                        <h5 class="mb-3 footer-list-title">Links</h5>
+                        <ul class="list-unstyled footer-list-menu">
+                            <li><a href="{% url 'account_login' %}">Login</a></li>
+                            <li><a href="{% url 'account_signup' %}">Registration</a></li>
+                            <li><a href="{% url 'application:dashboard' %}">Dashboard</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mb-4 mb-lg-0">
+                        <h5 class="mb-3 footer-list-title">Contact Us</h5>
+                        <div class="blog-post">
+                            <div class="badge badge-soft-success font-size-11 mb-3">Support</div>
+                            <p class="mb-0"><i class="bx bx-phone mr-1"></i> {{ site.phone }}</p>
+                            <a class="text-white-50" href="mailto:{{ site.organization_mail }}"><i
+                                    class="bx bx-envelope mr-1"></i> {{ site.support_mail }}</a><br>
+                            <hr>
+                            <div class="badge badge-soft-success font-size-11 mb-3">Other</div>
+                            <br>
+                            <a class="text-white-50"><i class="bx bx-phone mr-1"></i> {{ site.organization_phone }} </a><br>
+                            <a class="text-white-50" href="mailto:{{ site.organization_mail }}"><i
+                                    class="bx bx-envelope mr-1"></i> {{ site.organization_mail }}
+                            </a><br>
+
+                            <p class="mb-0"><i class="bx bx-map mr-1"></i> {{ site.business_address }} </p><br>
+
+                            {% if site.google %}
+                                <a href="{{ site.google }}" class="text-white-50" target="_blank"><i
+                                        class="bx bxl-google mr-1"></i>Subscribe
+                                    Us on Google</a><br>
+                            {% endif %}
+                            {% if site.instagram %}
+                                <a href="{{ site.instagram }}" class="text-white-50" target="_blank"><i
+                                        class="bx bxl-instagram mr-1"></i>Follow us on instagram</a><br>
+                            {% endif %}
+                            {% if site.facebook %}
+                                <a href="{{ site.facebook }}" target="_blank" class="text-white-50"><i
+                                        class="bx bxl-facebook mr-1"></i>Follow
+                                    us on facebook</a>
+                            {% endif %}
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+
+            <hr class="footer-border my-5">
+        {% endif %}
+
+        <div class="row text-center">
+
+            <div class="col-lg-4 text-center">
+                <img src="{% static 'images/logo_100.png' %}" class="rounded-circle" height="50">
+            </div>
+
+            <div class="col-lg-6 text-left">
+
+                <p class="mb-2">2020 ©
+                    <a href="{{ site.footer_organization_url }}" target="_blank">{{ site.footer_organization_name }}</a>.
+                    Design & Develop by
+                    <strong><a class="text-white" href="mailto:umair_mnz105@yahoo.com" target="_blank">Chameleon</a></strong> &
+                    <strong><a class="text-white" href="https://exarth.com/" target="_blank">Exarth</a></strong>
+                </p>
+                <p>{{ site.footer_description }}</p>
+            </div>
+
+        </div>
+    </div>
+    <!-- end container -->
+</footer>
+<!-- Footer end -->

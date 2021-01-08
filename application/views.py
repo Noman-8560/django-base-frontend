@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -16,29 +17,6 @@ from notifications.signals import notify
 
 from .forms import *
 from .models import *
-
-
-def home(request):
-    articles = Article.objects.all()
-
-    articles = articles.order_by('-created_at')
-    articles_list = Article.objects.all().order_by('-created_at').values('pk', 'event', 'topic')
-
-    page = request.GET.get('page', 1)
-    paginator = Paginator(articles, 1)
-
-    try:
-        articles = paginator.page(page)
-    except PageNotAnInteger:
-        articles = paginator.page(1)
-    except EmptyPage:
-        articles = paginator.page(paginator.num_pages)
-
-    context = {
-        'articles': articles,
-        'articles_list': articles_list
-    }
-    return render(request=request, template_name='home.html', context=context)
 
 
 def coming_soon(request):
@@ -58,24 +36,12 @@ def dashboard(request):
     return render(request=request, template_name='dashboard.html')
 
 
-def article(request, pk):
-    try:
-        article_ = Article.objects.get(pk=pk)
-        context = {
-            'article': article_
-        }
-        return render(request=request, template_name='article.html', context=context)
-    except Article.DoesNotExist:
-        messages.error(request=request, message=f'Requested Article [ID: {pk}] Does not Exists.')
-        return HttpResponseRedirect(reverse('application:home'))
-
-
 @user_passes_test(lambda u: u.is_superuser)
 def articles(request):
     context = {
         'articles': Article.objects.all()
     }
-    return render(request=request, template_name='articles.html', context=context)
+    return render(request=request, template_name='admin_articles.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -90,23 +56,7 @@ def delete_article(request, pk):
 
 
 def help_view(request):
-    # designing = AppUpdate.objects.filter(status='des').filter(active=True)
-    # designing_ = AppUpdate.objects.filter(status='des').filter(active=False)
-    #
-    # development = AppUpdate.objects.filter(status='dev').filter(active=True)
-    # development_ = AppUpdate.objects.filter(status='dev').filter(active=False)
-
-    # testing = AppUpdate.objects.get(status='tes')
-
-    # context = {
-    #     'designing': designing,
-    #     'designing_': designing_,
-    #     'development': development,
-    #     'development_': development_,
-    #     'testing': None,
-    # }
     return render(request=request, template_name='project.html')
-    # return render(request=request, template_name='help.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -115,8 +65,8 @@ def add_article(request, pk=0):
         try:
             ad_check = Article.objects.get(pk=pk)
         except Article.DoesNotExist:
-            messages.error(request=request, message=f'Requested Advertisement [ID: {pk}] Does not Exists.')
-            return HttpResponseRedirect(reverse('application:home'))
+            messages.error(request=request, message=f'Requested Article [ID: {pk}] Does not Exists.')
+            return redirect('application:articles', permanent=True)
 
     if request.method == 'POST':
         if pk == 0:
@@ -125,14 +75,14 @@ def add_article(request, pk=0):
                 add_form = form.save(commit=True)
                 messages.success(request=request,
                                  message="Article Added Successfully - Redirected to Articles.")
-                return redirect('application:home', permanent=True)
+                return redirect('application:articles', permanent=True)
         else:
             form = ArticleForm(request.POST or None, instance=Article.objects.get(pk=pk))
             if form.is_valid():
                 update_form = form.save(commit=True)
                 messages.success(request=request,
                                  message=f"Article {pk} Updated Successfully - Redirected to Articles.")
-                return redirect('application:home', permanent=True)
+                return redirect('application:articles', permanent=True)
     else:
         if pk == 0:
             form = ArticleForm()
@@ -162,7 +112,7 @@ def profile_update(request):
                              )
         else:
             messages.error(request, f"Your profile is not created yet, there may be some issue please contact admin.")
-        return redirect('application:home', permanent=True)
+        return redirect('application:dashboard', permanent=True)
 
     basic_form = ProfileBasicForm(instance=request.user)
     school_form = ProfileSchoolForm(instance=profile)
@@ -773,7 +723,6 @@ def delete_subject(request, pk):
 
 @login_required
 def quizes(request):
-
     # ALL_QUIZES
     all_quizes = Quiz.objects.filter(learning_purpose=False).order_by('-start_time')
     my_teams = Team.objects.filter(participants__in=[request.user.id])
@@ -804,10 +753,18 @@ def quizes(request):
 
 @login_required
 def teams(request):
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
+
     teams = Team.objects.filter(participants__username=request.user.username)
 
+    expired_teams = teams.filter(quiz__end_time__lt=timezone.now())
+    available_teams = teams.filter(quiz__end_time__gt=timezone.now()).exclude(quiz__in=completed)
+
     context = {
-        'teams': teams
+        'teams': teams.order_by('-created_at'),
+        'ex_teams': expired_teams.order_by('-created_at'),
+        'av_teams': available_teams.order_by('-created_at'),
     }
     return render(request=request, template_name='teams.html', context=context)
 
@@ -844,6 +801,33 @@ def team(request, pk):
         'players': team.participants.all()
     }
     return render(request=request, template_name='team.html', context=context)
+
+
+@login_required
+@never_cache
+def delete_team(request, pk):
+    team = None
+    try:
+        Team.objects.get(pk=pk)
+    except Team.DoesNotExist:
+        messages.error(request=request, message="Requested Team Does not exists")
+        return redirect('application:teams', permanent=True)
+
+    if len(Team.objects.filter(participants__username=request.user.username, pk=pk)) == 0:
+        messages.error(request=request, message="You are not allowed to delete this team")
+        return redirect('application:teams', permanent=True)
+
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
+
+    if Team.objects.filter(quiz__in=completed):
+        messages.error(request=request,
+                       message="you have attempted quiz with this team you are not allowed to delete this team ")
+        return redirect('application:teams', permanent=True)
+
+    messages.success(request=request,
+                   message="You have been removed from team")
+    return redirect('application:teams', permanent=True)
 
 
 @login_required
