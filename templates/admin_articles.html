@@ -44,7 +44,7 @@
                                         <i class="fa fa-times text-danger"></i>
                                     {% endif %}
                                 </td>
-                                <td><a href="{% url 'application:article' article.pk %}">
+                                <td><a href="{% url 'wsite:article' article.slug %}">
                                     <i class="fa fa-clipboard"></i> View</a>
                                 </td>
                                 <td><a href="{% url 'application:update_article' article.pk %}">

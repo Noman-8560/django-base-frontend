@@ -136,3 +136,5 @@ assets/
 
 migrations
 migrations/
+
+.gitignore
