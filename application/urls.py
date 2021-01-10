@@ -17,6 +17,8 @@ urlpatterns = [
 
     path('profile/', profile_update, name='profile_update'),
 
+    path('site/builder/', site_builder, name='site_builder'),
+
     path('subjects/', subjects, name='subjects'),
     path('add/subject/', add_subject, name='add_subject'),
     path('update/subject/<int:pk>/', update_subject, name='update_subject'),

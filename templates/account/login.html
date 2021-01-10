@@ -41,9 +41,9 @@
                                 <a href="">
                                     <div class="avatar-md profile-user-wid mb-4">
                                             <span class="avatar-title rounded-circle bg-light">
-                                                <img src="{% static 'application/images/logo_100.png' %}" alt=""
+                                                <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt=""
                                                      class="rounded-circle"
-                                                     height="34">
+                                                     height="45">
                                             </span>
                                     </div>
                                 </a>
@@ -126,8 +126,11 @@
                         <p>Don't have an account ? <a href="{% url 'account_signup' %}"
                                                       class="font-weight-medium text-primary">
                             Signup now </a></p>
-                        <p>© 2020 - {% now 'Y' %} cocognito. Crafted with <i class="mdi mdi-heart text-danger"></i> by
-                            Exarth</p>
+                        <p>© 2020 - {% now 'Y' %}
+                            <a class="text-secondary" href="{% url 'home' %}" target="_blank"> <strong>cocognito </strong></a>.
+                    Design & Develop by
+                    <strong><a class="text-primary" href="mailto:umair_mnz105@yahoo.com" target="_blank">Chameleon</a></strong> &
+                    <strong><a class="text-primary" href="https://exarth.com/" target="_blank">Exarth</a></strong></p>
                     </div>
 
                 </div>
