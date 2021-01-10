@@ -32,6 +32,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('', include('application.urls', namespace='application')),
     path('site/', include('application.wsite.urls', namespace='wsite')),
+    path('zoom/', include('application.zoom_api.urls', namespace='zoom_api')),
 
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]

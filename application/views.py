@@ -31,6 +31,14 @@ def page_500(request):
     return render(request=request, template_name='page_500.html')
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def site_builder(request):
+    context = {
+
+    }
+    return render(request=request, template_name='site_builder.html', context=context)
+
+
 @login_required
 def dashboard(request):
     return render(request=request, template_name='dashboard.html')

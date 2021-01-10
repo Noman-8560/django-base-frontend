@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # USER_APPLICATIONS
     'application',
     'application.wsite',
+    'application.zoom_api',
 
     # MUST BE AT THE END
     'notifications'
