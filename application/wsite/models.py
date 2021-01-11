@@ -153,7 +153,7 @@ class WebsiteTeam(models.Model):
         max_length=50, null=False, blank=False, unique=False,
         help_text='Member current status or rank in cocognito'
     )
-    phone = models.PositiveIntegerField(null=False, blank=False)
+    phone = models.CharField(max_length=18, null=False, blank=False, default='000 000 00 00 0')
     email = models.EmailField(null=True, blank=True)
     facebook = models.URLField(null=True, blank=True, help_text='Complete Facebook link/url of members profile')
     linkedin = models.URLField(null=True, blank=True, help_text='Complete Linkedin link/url of members profile')

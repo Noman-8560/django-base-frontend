@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %} admin {{ request.user }} {% endblock %}
+
+{% block base_links %}{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Time spent report</h4>
+                    <div id="team_stats" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Attempts report</h4>
+                    <div id="team_stats_total" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Correct vs All Teams Average report</h4>
+                    <div id="team_stats_average" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+{% endblock %}
+
+{% block base_external_scripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            {# CHART 1 #}
+            var options = {
+                series: [{
+                    name: 'Sum of Max',
+                    data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+                }, {
+                    name: 'Sum of Min',
+                    data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+                }, {
+                    name: 'Average Sum',
+                    data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: ['TeamA', 'TeamB', 'TeamC', 'TeamD', 'TeamE', 'TeamF', 'TeamG', 'TeamH', 'TeamI'],
+                },
+                yaxis: {
+                    title: {
+                        text: '$ (thousands)'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "$ " + val + " thousands"
+                        }
+                    }
+                }
+            };
+            var chart = new ApexCharts(document.querySelector("#team_stats"), options);
+            chart.render();
+
+            {# CHART 2 #}
+            var options1 = {
+                series: [{
+                    name: 'Sum Total Pass',
+                    data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+                }, {
+                    name: 'Sum Total Correct',
+                    data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+                }, {
+                    name: 'Sum Total Incorrect',
+                    data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                colors:['#DFFF00', '#40E0D0', '#6495ED'],
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: ['TeamA', 'TeamB', 'TeamC', 'TeamD', 'TeamE', 'TeamF', 'TeamG', 'TeamH', 'TeamI'],
+                },
+                yaxis: {
+                    title: {
+                        text: '$ (thousands)'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "$ " + val + " thousands"
+                        }
+                    }
+                }
+            };
+            var chart1 = new ApexCharts(document.querySelector("#team_stats_total"), options1);
+            chart1.render();
+
+            {# CHART 3 #}
+            var options2 = {
+                series: [{
+                    name: 'Sum of Average Pass',
+                    data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+                }, {
+                    name: 'Sum of Average Correct',
+                    data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+                }, {
+                    name: 'Sum of Average Incorrect',
+                    data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                colors:['#DE3163', '#FFBF00', '#CCCCFF'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: ['TeamA', 'TeamB', 'TeamC', 'TeamD', 'TeamE', 'TeamF', 'TeamG', 'TeamH', 'TeamI'],
+                },
+                yaxis: {
+                    title: {
+                        text: '$ (thousands)'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "$ " + val + " thousands"
+                        }
+                    }
+                }
+            };
+            var chart2 = new ApexCharts(document.querySelector("#team_stats_average"), options2);
+            chart2.render();
+        });
+    </script>
+{% endblock %}
+
+

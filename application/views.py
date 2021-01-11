@@ -33,15 +33,15 @@ def page_500(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def site_builder(request):
-    context = {
-
-    }
+    context = {}
     return render(request=request, template_name='site_builder.html', context=context)
 
 
 @login_required
 def dashboard(request):
-    return render(request=request, template_name='dashboard.html')
+    if request.user.is_superuser:
+        return render(request=request, template_name='admin_dashboard.html')
+    return render(request=request, template_name='student_dashboard.html')
 
 
 @user_passes_test(lambda u: u.is_superuser)
