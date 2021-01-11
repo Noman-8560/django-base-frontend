@@ -4,7 +4,7 @@
 {% block base_content %}
     <!-- hero section start -->
     <section class="section hero-section bg-ico-hero" id="home">
-        <div class="bg-overlay bg-primary"></div>
+        <div class="bg-overlay" style="background-color: orangered;"></div>
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-5">
@@ -37,6 +37,23 @@
         </div>
         <!-- end container -->
     </section>
+
+    {% if site.system_description %}
+        <!-- description start -->
+        <section class="section" id="description">
+            <div class="container">
+
+                <div class="row mt-4">
+                    <div class="col-lg-12">
+                        {{ site.system_description|safe }}
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </section>
+        <!-- description end -->
+    {% endif %}
 
     <!-- Roadmap start -->
     <section class="section bg-white" id="roadmap">

@@ -45,12 +45,22 @@
                             <a class="text-white-50" href="mailto:{{ site.organization_mail }}"><i
                                     class="bx bx-envelope mr-1"></i> {{ site.support_mail }}</a><br>
                             <hr>
+
                             <div class="badge badge-soft-success font-size-11 mb-3">Other</div>
                             <br>
-                            <a class="text-white-50"><i class="bx bx-phone mr-1"></i> {{ site.organization_phone }} </a><br>
-                            <a class="text-white-50" href="mailto:{{ site.organization_mail }}"><i
-                                    class="bx bx-envelope mr-1"></i> {{ site.organization_mail }}
-                            </a><br>
+
+                            {% if site.organization_phone %}
+                                <a class="text-white-50"><i class="bx bx-phone mr-1"></i>
+                                    {{ site.organization_phone }}
+                                </a>
+                                <br>
+                            {% endif %}
+
+                            {% if site.organization_mail %}
+                                <a class="text-white-50" href="mailto:{{ site.organization_mail }}"><i
+                                        class="bx bx-envelope mr-1"></i> {{ site.organization_mail }}
+                                </a><br>
+                            {% endif %}
 
                             <p class="mb-0"><i class="bx bx-map mr-1"></i> {{ site.business_address }} </p><br>
 
@@ -88,9 +98,10 @@
             <div class="col-lg-6 text-left">
 
                 <p class="mb-2">2020 - {% now 'Y' %} ©
-                    <a href="{{ site.footer_organization_url }}" target="_blank">{{ site.footer_organization_name }}</a>.
+                    <a href="{% if site.footer_organization_url %}{{ site.footer_organization_url }}{% endif %}" target="_blank">{{ site.footer_organization_name }}</a>.
                     Design & Develop by
-                    <strong><a class="text-white" href="mailto:umair_mnz105@yahoo.com" target="_blank">Chameleon</a></strong> &
+                    <strong><a class="text-white" href="mailto:umair_mnz105@yahoo.com"
+                               target="_blank">Chameleon</a></strong> &
                     <strong><a class="text-white" href="https://exarth.com/" target="_blank">Exarth</a></strong>
                 </p>
                 <p>{{ site.footer_description }}</p>
