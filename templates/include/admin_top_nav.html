@@ -1,25 +1,26 @@
 {% load static %}
 
-<header id="page-topbar">
-    <div class="navbar-header">
+<header id="page-topbar" style="background-color: orangered;">
+    <div class="navbar-header" style="background-color: orangered;">
         <div class="d-flex">
             <!-- LOGO -->
+            <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="{% url 'home' %}" class="logo logo-dark text-dark">
+                <a href="/" class="logo logo-dark">
                                 <span class="logo-sm">
-                                    <b>COCOGNITO</b>
+                                    <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="22">
                                 </span>
                     <span class="logo-lg">
-                                    <b>COCOGNITO</b>
+                                    <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="17">
                                 </span>
                 </a>
 
-                <a href="{% url 'home' %}" class="logo logo-light text-light">
+                <a href="/" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <b class="lead">COCOGNITO</b>
+                                    <img src="{% static 'images/new_1.png' %}" alt="" height="22">
                                 </span>
                     <span class="logo-lg">
-                                    <b class="lead">COCOGNITO</b>
+                                    <img src="{% static 'images/new_1.png' %}" alt="" height="19">
                                 </span>
                 </a>
             </div>
@@ -82,7 +83,7 @@
                         id="page-header-notifications-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="bx bx-bell bx-tada"></i>
-                    <span class="badge badge-danger badge-pill">3</span>
+                    <span class="badge badge-dark badge-pill">3</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                      aria-labelledby="page-header-notifications-dropdown">
@@ -204,7 +205,7 @@
 </header>
 <div class="topnav">
     <div class="container-fluid">
-        <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+        <nav class="navbar navbar-light navbar-expand-lg topnav-menu" >
 
             <div class="collapse navbar-collapse" id="topnav-menu-content">
                 <ul class="navbar-nav">
@@ -247,7 +248,7 @@
                             <a href="{% url 'application:question_builder' %}" class="dropdown-item">Question
                                 Builder</a>
                             <a href="{% url 'application:add_article' %}" class="dropdown-item">Article Builder</a>
-                            <a href="{% url 'application:add_article' %}" class="dropdown-item text-danger">Site
+                            <a href="{% url 'wsite:site_builder' %}" class="dropdown-item">Site
                                 Builder</a>
                         </div>
                     </li>

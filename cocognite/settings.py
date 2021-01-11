@@ -16,7 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/edn/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 's(l5vi&5nq2vnt(^t)ezh7twcbn#_z&a$@)2*k_20kl(phyzd!'
@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'crispy_forms',
     'ckeditor',
 
+    # TEMP
+    'django_seed',
+
+    # AUTH_API
     'django.contrib.sites',
     'allauth',
     'allauth.account',
