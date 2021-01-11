@@ -62,8 +62,6 @@
                                 </a><br>
                             {% endif %}
 
-                            <p class="mb-0"><i class="bx bx-map mr-1"></i> {{ site.business_address }} </p><br>
-
                             {% if site.google %}
                                 <a href="{{ site.google }}" class="text-white-50" target="_blank"><i
                                         class="bx bxl-google mr-1"></i>Subscribe
@@ -76,8 +74,9 @@
                             {% if site.facebook %}
                                 <a href="{{ site.facebook }}" target="_blank" class="text-white-50"><i
                                         class="bx bxl-facebook mr-1"></i>Follow
-                                    us on facebook</a>
+                                    us on facebook</a><br>
                             {% endif %}
+                            <a class="text-white-50"><i class="bx bx-map mr-1"></i> {{ site.business_address }} </a><br>
 
 
                         </div>
@@ -98,7 +97,8 @@
             <div class="col-lg-6 text-left">
 
                 <p class="mb-2">2020 - {% now 'Y' %} ©
-                    <a href="{% if site.footer_organization_url %}{{ site.footer_organization_url }}{% endif %}" target="_blank">{{ site.footer_organization_name }}</a>.
+                    <a href="{% if site.footer_organization_url %}{{ site.footer_organization_url }}{% endif %}"
+                       target="_blank">{{ site.footer_organization_name }}</a>.
                     Design & Develop by
                     <strong><a class="text-white" href="mailto:umair_mnz105@yahoo.com"
                                target="_blank">Chameleon</a></strong> &

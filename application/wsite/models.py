@@ -110,7 +110,8 @@ class Website(models.Model):
                   'for this please contact cocognito development team for this.'
     )
     footer_description = models.TextField(
-        max_length=255, null=True, blank=True, help_text='Add a small description on your footer'
+        max_length=255, null=True, blank=True, help_text='Add a small description on your footer, information about '
+                                                         'cocognito / copyright or any other details'
     )
 
     full_footer_display = models.BooleanField(default=True, null=False, blank=False, help_text='Show complete footer')
@@ -139,17 +140,24 @@ class WebsiteModules(models.Model):
 
 
 class WebsiteTeam(models.Model):
-    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
+    name = models.CharField(max_length=50, null=False, blank=False, unique=True, help_text='Full name of a team member')
     image = models.ImageField(
         upload_to='website/images/team/', null=True, blank=True,
+        help_text='Image must be 200*200px and format must be jpeg, jpg or png'
     )
-    description = models.TextField(null=False, blank=False)
-    rank = models.CharField(max_length=50, null=False, blank=False, unique=False)
+    description = models.TextField(
+        max_length=100, null=False, blank=False,
+        help_text='Small description about this member'
+    )
+    rank = models.CharField(
+        max_length=50, null=False, blank=False, unique=False,
+        help_text='Member current status or rank in cocognito'
+    )
     phone = models.PositiveIntegerField(null=False, blank=False)
     email = models.EmailField(null=True, blank=True)
-    facebook = models.URLField(null=True, blank=True)
-    linkedin = models.URLField(null=True, blank=True)
-    is_active = models.BooleanField(default=True, blank=False, null=False)
+    facebook = models.URLField(null=True, blank=True, help_text='Complete Facebook link/url of members profile')
+    linkedin = models.URLField(null=True, blank=True, help_text='Complete Linkedin link/url of members profile')
+    is_active = models.BooleanField(default=True, blank=False, null=False, help_text='Show this member on home site')
 
     class Meta:
         verbose_name = 'member'
@@ -168,8 +176,8 @@ class WebsiteEvents(models.Model):
     start_date = models.DateTimeField(blank=False, null=False)
     end_date = models.DateTimeField(blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
-    is_current = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_current = models.BooleanField(default=False, help_text='The event is currently active')
+    is_active = models.BooleanField(default=True, help_text='Show this event on home page.')
 
     class Meta:
         verbose_name = 'Event'
