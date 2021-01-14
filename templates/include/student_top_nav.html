@@ -78,7 +78,7 @@
                         id="page-header-notifications-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="bx bx-bell bx-tada"></i>
-                    <span class="badge badge-dark badge-pill">1</span>
+                    <span class="badge badge-dark badge-pill">{% live_notify_badge  %}</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                      aria-labelledby="page-header-notifications-dropdown">
@@ -92,12 +92,15 @@
                             </div>
                         </div>
                     </div>
-                    <div data-simplebar style="max-height: 230px;" id="notify_me_now">
+                    <div data-simplebar style="max-height: 230px;">
+                        <div id="notify_me_now">
 
+                        </div>
                     </div>
                     <div class="p-2 border-top">
-                        <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="javascript:void(0)">
-                            <i class="mdi mdi-arrow-right-circle mr-1"></i> View More..
+                        <a class="btn btn-sm btn-link font-size-14 btn-block text-center"
+                           href="/inbox/notifications/mark-all-as-read/">
+                            <i class="mdi mdi-arrow-right-circle mr-1"></i> Mark All as Read
                         </a>
                     </div>
                 </div>

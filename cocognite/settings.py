@@ -140,7 +140,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+if DEBUG:
+    TIME_ZONE = 'Asia/Karachi'
+else:
+    TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = False
 
