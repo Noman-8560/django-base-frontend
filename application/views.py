@@ -1,20 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
-from django.core.mail import send_mail
-
-from application.BusinessLogicLayer import identify_user_in_team
-
+from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
 
+from application.BusinessLogicLayer import identify_user_in_team
 from .forms import *
 from .models import *
 
@@ -63,8 +58,65 @@ def delete_article(request, pk):
     return HttpResponseRedirect(reverse('application:articles'))
 
 
+from django.db.models import Min, Max, Avg
+
+
 def help_view(request):
-    return render(request=request, template_name='project.html')
+    start_time = []
+    end_time = []
+    correct = []
+    total = []
+    wrong = []
+    v = []
+
+    quiz = Quiz.objects.get(pk=80)
+    questions = quiz.questions.all()
+
+    q_s_attempts = []
+    q_u_attempts = []
+
+    q_sum_a_pass = []
+    q_sum_a_correct = []
+    q_sum_a_incorrect = []
+
+    c_list = []
+    i_list = []
+
+    for question in questions:
+        attempts = Attempt.objects.filter(question=question).values('team').distinct()
+        s_attempts = attempts.filter(successful=True)
+        u_attempts = attempts.filter(successful=False)
+        q_s_attempts.append(s_attempts.count())
+        q_u_attempts.append(u_attempts.count())
+
+        denominator = s_attempts.count() + u_attempts.count()
+        c_list.append(s_attempts.count() / denominator if denominator > 0 else 0)
+        i_list.append(u_attempts.count() / denominator if denominator > 0 else 0)
+
+    print("s_Attempts : " + str(q_s_attempts))
+    print("u_Attempts : " + str(q_u_attempts))
+    print('c_list : ' + str(c_list))
+    print('i_list : ' + str(i_list))
+
+    quiz_attempts = Attempt.objects.filter(quiz__pk=80)
+    distinct_attempts = quiz_attempts.values('question').distinct()
+    correct = distinct_attempts.filter().values_list('question').distinct()
+    wrong = distinct_attempts.filter(successful=False).values_list('pk')
+    v = distinct_attempts.count() - (correct.count() + wrong.count())
+
+    # print("Total Attempts : " + str(distinct_attempts))
+    # print("correct : " + str(correct))
+    # print("wrong : " + str(wrong))
+    # print("passed : " + str(v if v > 0 else 0))
+
+    context = {
+        'all_attempts': distinct_attempts,
+        'correct': correct,
+        'wrong': wrong,
+        'passed': v
+    }
+
+    return render(context=context, request=request, template_name='project.html')
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -834,7 +886,7 @@ def delete_team(request, pk):
         return redirect('application:teams', permanent=True)
 
     messages.success(request=request,
-                   message="You have been removed from team")
+                     message="You have been removed from team")
     return redirect('application:teams', permanent=True)
 
 
@@ -963,7 +1015,7 @@ def quiz_start(request, quiz):
             question_ids.append(question.pk)
         user_no = identify_user_in_team(user_team, request, user_quiz)
 
-        if user_no == user_quiz.submission_control.pk:
+        if user_no == user_quiz.submission_control.no:
             submission = '1'
         else:
             submission = '0'

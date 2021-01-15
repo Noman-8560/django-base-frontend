@@ -29,7 +29,8 @@ class SubjectAdmin(admin.ModelAdmin):
 
 
 class AttemptAdmin(admin.ModelAdmin):
-    list_display = ['question', 'user', 'successful', 'start_time', 'end_time', 'id']
+    list_display = ['pk', 'question', 'user', 'quiz', 'team', 'successful', 'start_time', 'end_time']
+    list_filter = ('quiz', 'question', 'team', 'successful', 'user')
 
 
 class TeamAdmin(admin.ModelAdmin):
