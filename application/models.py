@@ -319,26 +319,50 @@ class Guardian(models.Model):
         verbose_name_plural = 'Guardians'
 
 
+class Team(models.Model):
+    name = models.CharField(max_length=20, null=False, blank=False)
+    quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
+    participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
+    is_active = models.BooleanField(null=False, blank=False, default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Teams'
+
+
 class Attempt(models.Model):
     question = models.ForeignKey('Question', null=False, blank=False, related_name='question-attempt+',
                                  on_delete=models.DO_NOTHING)
     user = models.ForeignKey('auth.User', null=False, blank=False, related_name='attempt-by+',
                              on_delete=models.CASCADE)
     quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     successful = models.BooleanField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name_plural = 'Attempts'
+
     def __str__(self):
-        return str(self.question.questionstatement_set.first()) + ' attempted by ' + str(self.user.username)
+        return str(self.pk)
 
     def __unicode__(self):
         return self.question.statement
 
-    class Meta:
-        verbose_name_plural = 'Attempts'
+    def save(self, *args, **kwargs):
+        team = Team.objects.filter(quiz=self.quiz, participants__username=self.user.username).first()
+        self.team = team
+        super().save(*args, **kwargs)
 
 
 class LearningResourceResult(models.Model):
@@ -393,24 +417,6 @@ class QuizCompleted(models.Model):
 
     def __str__(self):
         return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=20, null=False, blank=False)
-    quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
-    participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
-    is_active = models.BooleanField(null=False, blank=False, default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name_plural = 'Teams'
 
 
 class Profile(models.Model):
