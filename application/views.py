@@ -52,7 +52,7 @@ def dashboard(request):
         start_time__lte=timezone.now()) \
         .order_by('-start_time')
 
-    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, quiz__end_time__lt=timezone.now())
 
     # QUIZ ENROLLED
     enrolled_quizes = Quiz.objects \
@@ -72,9 +72,11 @@ def dashboard(request):
 
     if request.GET.get('quiz'):
         try:
-
             allow = True
             quiz = Quiz.objects.get(pk=request.GET.get('quiz'))
+
+            if quiz in completed:
+                print("COMPLETED")
 
             questions = quiz.questions.all()
             user = User.objects.get(username=request.user.username)

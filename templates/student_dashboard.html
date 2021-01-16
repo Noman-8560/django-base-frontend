@@ -35,7 +35,7 @@
                             <a class="nav-link" data-toggle="tab" href="#completed_events" role="tab"
                                aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                                <span class="d-none d-sm-block">Controlled Events</span>
+                                <span class="d-none d-sm-block">Completed Events</span>
                             </a>
                         </li>
                     </ul>
@@ -45,10 +45,10 @@
                         <div class="tab-pane active" id="live_events" role="tabpanel">
                             <ol class="m-0 list-unstyled">
                                 {% for quiz in quizes_available %}
-                                    <li>Event <b>{{ quiz.quiz.title }}</b> started on
-                                        <b>{{ quiz.quiz.start_time }}</b> and closes on
-                                        <b>{{ quiz.quiz.end_time }}</b>
-                                        <a href="#" class="text-secondary font-size-15">
+                                    <li>Event <b>{{ quiz.title }}</b> started on
+                                        <b>{{ quiz.start_time }}</b> and closes on
+                                        <b>{{ quiz.end_time }}</b>
+                                        <a href="#" class="font-size-15">
                                             Click to go live.
                                         </a>
                                     </li>
@@ -58,9 +58,8 @@
                         <div class="tab-pane" id="enrolled_events" role="tabpanel">
                             <ol class="m-0">
                                 {% for quiz in quizes_enrolled %}
-                                    <li>Event <b>{{ quiz.quiz.title }}</b> will be started
-                                        <b>{{ quiz.quiz.start_time }}</b> and closes on <b>{{ quiz.quiz.end_time }}</b>
-                                        you are enrolled to this quiz already.
+                                    <li>Event <b>{{ quiz.title }}</b> will be started
+                                        <b>{{ quiz.start_time }}</b> and closes on <b>{{ quiz.end_time }}</b>.
                                     </li>
                                 {% endfor %}
                             </ol>
