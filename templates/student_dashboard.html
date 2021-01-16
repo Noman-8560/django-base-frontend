@@ -44,29 +44,37 @@
                     <div class="tab-content p-3">
                         <div class="tab-pane active" id="live_events" role="tabpanel">
                             <ol class="m-0 list-unstyled">
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 8 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 7 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 9 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 10 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 6 w %}</a></li>
+                                {% for quiz in quizes_available %}
+                                    <li>Event <b>{{ quiz.quiz.title }}</b> started on
+                                        <b>{{ quiz.quiz.start_time }}</b> and closes on
+                                        <b>{{ quiz.quiz.end_time }}</b>
+                                        <a href="#" class="text-secondary font-size-15">
+                                            Click to go live.
+                                        </a>
+                                    </li>
+                                {% endfor %}
                             </ol>
                         </div>
                         <div class="tab-pane" id="enrolled_events" role="tabpanel">
                             <ol class="m-0">
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 15 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 12 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 13 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 14 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 15 w %}</a></li>
+                                {% for quiz in quizes_enrolled %}
+                                    <li>Event <b>{{ quiz.quiz.title }}</b> will be started
+                                        <b>{{ quiz.quiz.start_time }}</b> and closes on <b>{{ quiz.quiz.end_time }}</b>
+                                        you are enrolled to this quiz already.
+                                    </li>
+                                {% endfor %}
                             </ol>
                         </div>
                         <div class="tab-pane" id="completed_events" role="tabpanel">
                             <ol class="m-0">
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 10 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 9 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 8 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 9 w %}</a></li>
-                                <li><a href="#" class="text-secondary font-size-15">{% lorem 6 w %}</a></li>
+                                {% for quiz in quizes_completed %}
+                                    <li>Event <b>{{ quiz.quiz.title }}</b> was closed on <b>{{ quiz.quiz.end_time }}</b>
+                                        to check statistics
+                                        <a href="/dashboard/?quiz={{ quiz.quiz.pk }}" class="font-size-15">
+                                            Click here.
+                                        </a>
+                                    </li>
+                                {% endfor %}
                             </ol>
                         </div>
                     </div>
@@ -76,87 +84,487 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title mb-4">Collaborative Quiz</h4>
-                    <div id="teams_report" class="apex-charts" dir="ltr"></div>
-                </div>
-            </div><!--end card-->
+    {% if allow %}
+        <div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Time Statistics Total</h4>
+                        <div id="time_states_total" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Attempt Statistics Total</h4>
+                        <div id="attempt_states_total" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Attempt Statistics Average</h4>
+                        <div id="attempt_stats_average" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Pass Attempts</h4>
+                        <div id="pass_attempts" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Correct Attempts</h4>
+                        <div id="correct_attempts" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Incorrect Attempts</h4>
+                        <div id="incorrect_attempts" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">My Team vs Teams Average Time</h4>
+                        <div id="team_vs_teams" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
         </div>
     </div>
+    {% endif %}
+
+
 {% endblock %}
 
 {% block base_internal_scripts %}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 {% endblock %}
 
-{% block base_external_scripts %}
+{% if allow %}
+    {% block base_external_scripts %}
 
     <script>
         $(document).ready(function () {
-            var options = {
-                series: [
-                    {
-                        name: 'Team A',
-                        data: [44, 55, 41, 67, 22, 43, 12, 7, 25, 13]
-                    }, {
-                        name: 'Team B',
-                        data: [13, 23, 20, 8, 11, 13, 27, 25, 13, 22]
-                    }, {
-                        name: 'Team C',
-                        data: [11, 17, 15, 15, 21, 14, 13, 23, 20, 8]
-                    }, {
-                        name: 'Team D',
-                        data: [21, 7, 25, 13, 22, 8, 41, 67, 22, 40]
-                    }
-                ],
+
+            {# CHART 1 TIME STATISTICS#}
+            let chart_time_states_total_options = {
+                series: [{
+                    name: 'Sum Maxi Time',
+                    data: {{ time_sum_of_max }}
+                }, {
+                    name: 'Sum Min Time',
+                    data: {{ time_sum_of_min }}
+                }, {
+                    name: 'Sum Avg Time',
+                    data: {{ time_sum_of_avg }}
+                }],
                 chart: {
                     type: 'bar',
-                    height: 350,
-                    stacked: true,
-                    toolbar: {
-                        show: true
-                    },
-                    zoom: {
-                        enabled: true
-                    }
+                    height: 350
                 },
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        legend: {
-                            position: 'bottom',
-                            offsetX: -10,
-                            offsetY: 0
-                        }
-                    }
-                }],
                 plotOptions: {
                     bar: {
                         horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
                     },
                 },
-                xaxis: {
-                    type: 'text',
-                    categories: [
-                        'Que1', 'Que2', 'Que3', 'Que4', 'Que5', 'Que6', 'Que7', 'Que8', 'Que9', 'Que10',
-                    ],
+                dataLabels: {
+                    enabled: false
                 },
-                legend: {
-                    position: 'right',
-                    offsetY: 40
+                colors: ['#DFFF00', '#40E0D0', '#6495ED'],
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Seconds'
+                    }
                 },
                 fill: {
                     opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "" + val + " seconds"
+                        }
+                    }
                 }
             };
+            let chart_time_states_total = new ApexCharts(
+                document.querySelector("#time_states_total"), chart_time_states_total_options
+            );
+            chart_time_states_total.render();
 
-            var chart = new ApexCharts(document.querySelector("#teams_report"), options);
-            chart.render();
+            {# CHART 2  #}
+            var chart_attempt_states_total_options = {
+                series: [{
+                    name: 'Sum of Total Pass',
+                    data: {{ pass_attempts_all }}
+                }, {
+                    name: 'Sum of Total Correct',
+                    data: {{ correct_attempts_all }}
+                }, {
+                    name: 'Sum of Total Incorrect',
+                    data: {{ incorrect_attempts_all }}
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Total'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {}
+            };
+            var chart_attempt_states_total = new ApexCharts(document.querySelector("#attempt_states_total"),
+                chart_attempt_states_total_options
+            );
+            chart_attempt_states_total.render();
+
+            {# CHART 3 #}
+            var chart_attempt_states_average_options = {
+                series: [{
+                    name: 'Sum of Average Pass',
+                    data: {{ average_pass_attempts_all }}
+                }, {
+                    name: 'Sum of Average Correct',
+                    data: {{ average_correct_attempts_all }}
+                }, {
+                    name: 'Sum of Average Incorrect',
+                    data: {{ average_incorrect_attempts_all }}
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                colors: ['#DE3163', '#FFBF00', '#CCCCFF'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Average'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "" + val
+                        }
+                    }
+                }
+            };
+            var chart_attempt_states_average = new ApexCharts(document.querySelector("#attempt_stats_average"),
+                chart_attempt_states_average_options
+            );
+            chart_attempt_states_average.render();
+
+            {# CHART 4 #}
+            var chart_correct_attempts_options = {
+                series: [{
+                    name: 'Sum of Avg Pass Attempts',
+                    data: {{ average_pass_attempts_all }}
+                }, {
+                    name: 'Sum of Team Pass Attempts',
+                    data: {{ user_total_pass }}
+                }
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                {#colors:['#DE3163', '#FFBF00', '#CCCCFF'],#}
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Attempts'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "" + val
+                        }
+                    }
+                }
+            };
+            var chart_correct_attempts = new ApexCharts(document.querySelector("#correct_attempts"),
+                chart_correct_attempts_options
+            );
+            chart_correct_attempts.render();
+
+            {# CHART 5 #}
+            var chart_incorrect_attempts_options = {
+                series: [{
+                    name: 'Sum of Avg Correct Attempts',
+                    data: {{ average_correct_attempts_all }}
+                }, {
+                    name: 'Sum of Team Correct Attempts',
+                    data: {{ user_total_correct }}
+                }
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                {#colors:['#DE3163', '#FFBF00', '#CCCCFF'],#}
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Attempts'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "" + val
+                        }
+                    }
+                }
+            };
+            var chart_incorrect_attempts = new ApexCharts(document.querySelector("#incorrect_attempts"),
+                chart_incorrect_attempts_options
+            );
+            chart_incorrect_attempts.render();
+
+            {# CHART 6 #}
+            var chart_pass_attempts_options = {
+                series: [{
+                    name: 'Sum of Avg Wrong Attempts',
+                    data: {{ average_incorrect_attempts_all }}
+                }, {
+                    name: 'Sum of Team Wrong Attempts',
+                    data: {{ user_total_incorrect }}
+                }
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                {#colors:['#DE3163', '#FFBF00', '#CCCCFF'],#}
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Attempts'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "" + val
+                        }
+                    }
+                }
+            };
+            var chart_pass_attempts = new ApexCharts(document.querySelector("#pass_attempts"),
+                chart_pass_attempts_options
+            );
+            chart_pass_attempts.render();
+
+            {# CHART 7 #}
+            var chart_myteam_vs_teams_options = {
+                series: [{
+                    name: 'Sum of Max Time',
+                    data: {{ time_sum_of_max }}
+                }, {
+                    name: 'Sum of Min Time',
+                    data: {{ time_sum_of_min }}
+                }, {
+                    name: 'Sum of Avg Time',
+                    data: {{ time_sum_of_avg }}
+                }, {
+                    name: 'Sum of My Team',
+                    data: {{ user_time_spent }}
+                }
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                {#colors:['#DE3163', '#FFBF00', '#CCCCFF'],#}
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ questions }},
+                },
+                yaxis: {
+                    title: {
+                        text: 'Seconds'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "" + val + " seconds"
+                        }
+                    }
+                }
+            };
+            var chart_myteam_vs_teams = new ApexCharts(document.querySelector("#team_vs_teams"),
+                chart_myteam_vs_teams_options
+            );
+            chart_myteam_vs_teams.render();
         });
     </script>
 {% endblock %}
+{% endif %}
+
+
 
 
