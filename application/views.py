@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
@@ -34,9 +36,168 @@ def site_builder(request):
 
 @login_required
 def dashboard(request):
+    allow = False
     if request.user.is_superuser:
         return render(request=request, template_name='admin_dashboard.html')
-    return render(request=request, template_name='student_dashboard.html')
+
+    # ALL_QUIZES
+    all_quizes = Quiz.objects.filter(learning_purpose=False).order_by('-start_time')
+    my_teams = Team.objects.filter(participants__in=[request.user.id])
+    my_quizes = Quiz.objects.filter(id__in=my_teams.values_list('quiz', flat=True))
+
+    # AVAILABLE_QUIZES
+    available_quizes = Quiz.objects.filter(
+        end_time__gte=timezone.now(),
+        learning_purpose=False,
+        start_time__lte=timezone.now()) \
+        .order_by('-start_time')
+
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+
+    # QUIZ ENROLLED
+    enrolled_quizes = Quiz.objects \
+        .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
+        .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
+
+    # QUIZ SUBMITTED
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
+    context = {
+        'allow': allow,
+        'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
+        'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
+        'quizes_enrolled': enrolled_quizes,
+        # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+        'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
+    }
+
+    if request.GET.get('quiz'):
+        try:
+
+            allow = True
+            quiz = Quiz.objects.get(pk=request.GET.get('quiz'))
+
+            questions = quiz.questions.all()
+            user = User.objects.get(username=request.user.username)
+            user_attempts = Attempt.objects.filter(user=user, quiz=quiz)
+            teams = []
+
+            # USER_REQUIREMENTS
+            user_total_correct = []
+            user_total_incorrect = []
+            user_time_spent = []
+            user_total_pass = []
+
+            # OVER_ALL_REQUIREMENTS
+            correct_attempts_all = []
+            incorrect_attempts_all = []
+            average_correct_attempts_all = []
+            average_incorrect_attempts_all = []
+            pass_attempts_all = []
+            average_pass_attempts_all = []
+
+            time_sum_of_all = []
+            time_sum_of_max = []
+            time_sum_of_min = []
+            time_sum_of_avg = []
+            time_sum_of_pas = []
+
+            for question in questions:
+                pass_attempts_all.append(1)
+                average_pass_attempts_all.append(1)
+                _attempts = Attempt.objects.filter(question=question).values('team').distinct()
+                _s_attempts = _attempts.filter(successful=True)
+                _u_attempts = _attempts.filter(successful=False)
+                temp_denominator = _s_attempts.count() + _u_attempts.count()
+
+                # GET TIMES -------------------------------------------------------------------------------------
+                _all_time_sum = 0
+                _min_time_sum = 0
+                _max_time_sum = 0
+                _avg_time_sum = 0
+
+                _max_time = 0
+                _min_time = 1000
+                count = 0
+                for v in _attempts.values('start_time', 'end_time', 'team', 'question'):
+
+                    current = (v['end_time'] - v['start_time']).total_seconds()
+                    if current < _max_time:
+                        _max_time = _max_time
+                    else:
+                        _max_time = current
+
+                    if current < _min_time:
+                        _min_time = current
+                    else:
+                        _min_time = _min_time
+                    count += 1
+
+                    _all_time_sum += int(current)
+                    _max_time_sum += int(_max_time)
+                    _min_time_sum += int(_min_time)
+
+                time_sum_of_all.append(int(_all_time_sum))
+                time_sum_of_max.append(int(_max_time_sum))
+                time_sum_of_min.append(int(_min_time_sum))
+                time_sum_of_avg.append(_all_time_sum / count)
+
+                # -----------------------------------------------------------------------------------------------
+
+                # CORRECT ALL and IN_CORRECT ALL ----------------------------------------------------------------
+                correct_attempts_all.append(_s_attempts.count())
+                incorrect_attempts_all.append(_u_attempts.count())
+                # -----------------------------------------------------------------------------------------------
+
+                # AVG CORRECT ALL and AVG IN_CORRECT ALL --------------------------------------------------------
+                average_correct_attempts_all.append(
+                    _s_attempts.count() / temp_denominator if temp_denominator > 0 else 0)
+                average_incorrect_attempts_all.append(
+                    _u_attempts.count() / temp_denominator if temp_denominator > 0 else 0)
+                # -----------------------------------------------------------------------------------------------
+
+            for attempt in user_attempts:
+                if attempt.successful:
+                    user_total_correct.append(1)
+                    user_total_incorrect.append(0)
+                else:
+                    user_total_correct.append(0)
+                    user_total_incorrect.append(1)
+
+                user_time_spent.append((attempt.end_time - attempt.start_time).total_seconds())
+                user_total_pass.append(0)
+
+            context = {
+                'allow': allow,
+                'questions': [question.pk for question in questions],
+
+                'user_total_correct': user_total_correct,
+                'user_total_incorrect': user_total_incorrect,
+                'user_time_spent': user_time_spent,
+                'user_total_pass': user_total_pass,
+
+                'correct_attempts_all': correct_attempts_all,
+                'incorrect_attempts_all': incorrect_attempts_all,
+                'pass_attempts_all': pass_attempts_all,
+
+                'time_sum_of_max': time_sum_of_max,
+                'time_sum_of_min': time_sum_of_min,
+                'time_sum_of_avg': time_sum_of_avg,
+
+                'average_correct_attempts_all': average_correct_attempts_all,
+                'average_incorrect_attempts_all': average_incorrect_attempts_all,
+                'average_pass_attempts_all': average_pass_attempts_all,
+
+                'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
+                'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
+                'quizes_enrolled': enrolled_quizes,
+                # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+                'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
+            }
+        except Quiz.DoesNotExist:
+            allow = False
+            messages.error(request, 'Requested quiz does not exists.')
+
+    return render(request=request, template_name='student_dashboard.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -62,61 +223,7 @@ from django.db.models import Min, Max, Avg
 
 
 def help_view(request):
-    start_time = []
-    end_time = []
-    correct = []
-    total = []
-    wrong = []
-    v = []
-
-    quiz = Quiz.objects.get(pk=80)
-    questions = quiz.questions.all()
-
-    q_s_attempts = []
-    q_u_attempts = []
-
-    q_sum_a_pass = []
-    q_sum_a_correct = []
-    q_sum_a_incorrect = []
-
-    c_list = []
-    i_list = []
-
-    for question in questions:
-        attempts = Attempt.objects.filter(question=question).values('team').distinct()
-        s_attempts = attempts.filter(successful=True)
-        u_attempts = attempts.filter(successful=False)
-        q_s_attempts.append(s_attempts.count())
-        q_u_attempts.append(u_attempts.count())
-
-        denominator = s_attempts.count() + u_attempts.count()
-        c_list.append(s_attempts.count() / denominator if denominator > 0 else 0)
-        i_list.append(u_attempts.count() / denominator if denominator > 0 else 0)
-
-    print("s_Attempts : " + str(q_s_attempts))
-    print("u_Attempts : " + str(q_u_attempts))
-    print('c_list : ' + str(c_list))
-    print('i_list : ' + str(i_list))
-
-    quiz_attempts = Attempt.objects.filter(quiz__pk=80)
-    distinct_attempts = quiz_attempts.values('question').distinct()
-    correct = distinct_attempts.filter().values_list('question').distinct()
-    wrong = distinct_attempts.filter(successful=False).values_list('pk')
-    v = distinct_attempts.count() - (correct.count() + wrong.count())
-
-    # print("Total Attempts : " + str(distinct_attempts))
-    # print("correct : " + str(correct))
-    # print("wrong : " + str(wrong))
-    # print("passed : " + str(v if v > 0 else 0))
-
-    context = {
-        'all_attempts': distinct_attempts,
-        'correct': correct,
-        'wrong': wrong,
-        'passed': v
-    }
-
-    return render(context=context, request=request, template_name='project.html')
+    return render(request=request, template_name='project.html')
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -1439,6 +1546,10 @@ def learn_question_submission_json(request):
         }
 
         return JsonResponse(data=response, safe=False)
+
+
+# def statistics(request):
+#     return JsonResponse(context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
