@@ -6,7 +6,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block base_title %}{% trans "Change Password" %}{% endblock %}
+{% block base_title %}{% trans "Project Statistics" %}{% endblock %}
 
 {% block base_top_nav %}{% endblock %}
 {% block dont_include_details %}
@@ -187,18 +187,19 @@
 
                             <li class="event-list active">
                                 <div class="event-timeline-dot">
-                                    <i class="bx bx-right-arrow-circle bx-fade-right"></i>
+                                    <i class="bx bx-right-arrow-circle text-dark"></i>
                                 </div>
                                 <div class="media">
                                     <div class="mr-3">
-                                        <i class="bx bxs-dashboard bx-tada h2 text-primary"></i>
+                                        <i class="bx bxs-dashboard h2 text-primary"></i>
                                     </div>
                                     <div class="media-body">
                                         <div>
                                             <h5 class="">Dashboard</h5>
-                                            <p class="text-muted">Prototype of dashboard for admin and student is ready,
-                                                <a href="{% url 'application:dashboard' %}">Visit Here</a>, due to statistical calculations it will be completely functional at the end of of project.</p>
-
+                                            <p class="text-muted">dashboard for student is ready, it may be buggy now
+                                                <a href="{% url 'application:dashboard' %}">Visit Here</a>,
+                                                due to statistical calculations it will be completely
+                                                functional at the end of of project with live quiz statistics also</p>
                                         </div>
                                     </div>
                                 </div>
