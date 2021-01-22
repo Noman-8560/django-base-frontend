@@ -1,4 +1,5 @@
 from datetime import datetime
+from itertools import product
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -1102,9 +1103,16 @@ def quiz_start(request, quiz):
                            message="You are not registered to any team _ please register your team first")
             return redirect('application:quizes', permanent=True)
 
-        if len(QuizCompleted.objects.filter(user=request.user, quiz=user_quiz)) > 0:
-            messages.error(request=request, message="Dear User you have already attempted this quiz")
-            return redirect('application:quizes', permanent=True)
+        quiz_complete = QuizCompleted.objects.filter(user=request.user, quiz=user_quiz).first()
+        if quiz_complete:
+            total = quiz_complete.total
+            passed = quiz_complete.passed
+            if total == passed:
+                print("ALL DONE")
+                messages.error(request=request, message="Dear User you have already attempted this quiz")
+                return redirect('application:quizes', permanent=True)
+            else:
+                print("NOT DONE")
 
     except Quiz.DoesNotExist:
         messages.error(request=request, message="Requested Quiz doesn't exists")
@@ -1119,9 +1127,10 @@ def quiz_start(request, quiz):
         allowed_to_start = True
         time_status = 'present'
 
-        questions = user_quiz.questions.all()
-        for question in questions:
-            question_ids.append(question.pk)
+        attempts = Attempt.objects.filter(quiz=user_quiz, user=request.user)
+        remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
+        for re in remaining:
+            question_ids.append(re.pk)
         user_no = identify_user_in_team(user_team, request, user_quiz)
 
         if user_no == user_quiz.submission_control.no:
@@ -1244,10 +1253,12 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         ''' __FETCHING BASE DATA__'''
         quiz = Quiz.objects.get(pk=quiz_id)
         screen = Screen.objects.get(no=user_id)
+        attempts = Attempt.objects.filter(quiz=quiz, user=request.user)
+        remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
+        print(remaining.values('pk'))
 
         '''__QUESTION LOGIC WILL BE HERE__'''
-        question = quiz.questions.get(pk=question_id)
-
+        question = remaining[0]
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
         [statements.append(x.statement) for x in question.questionstatement_set.filter(screen=screen)]
         [images.append(y.image) if y.url is None else images.append(y.url) for y in
@@ -1290,59 +1301,49 @@ def question_submission_json(request):
     """ CHECK API CALL """
     if request.method == 'POST':
 
-        quiz_id = request.POST['quiz_id']
-        question__id = request.POST['question_id']
-        team_id = request.POST['team_id']
-        choice_id = request.POST['choice_id']
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+        question = Question.objects.get(pk=request.POST['question_id'])
+        team = Team.objects.get(pk=request.POST['team_id'])
+        choice = QuestionChoice.objects.get(pk=request.POST['choice_id'])
 
-        users = Team.objects.get(pk=team_id).participants.all()
-        attempt = Attempt.objects.filter(user=request.user, question=Question.objects.get(pk=question__id),
-                                         quiz=Quiz.objects.get(pk=quiz_id))
+        users = team.participants.all()
+        attempt = Attempt.objects.filter(user=request.user, question=question, quiz=quiz)
 
-        """ QUIZ EXISTENCE WRT USER"""
-        if len(QuizCompleted.objects.filter(user=request.user, quiz=Quiz.objects.get(pk=quiz_id))) == 0:
+        try:
 
-            """ CHECK ATTEMPTED OR NOT"""
-            if len(attempt) == 0:
+            quiz_complete = QuizCompleted.objects.get(quiz=quiz, user=request.user)
+            quiz_complete.passed += 1
+            if choice.is_correct:
+                quiz_complete.obtained += 1
+            quiz_complete.save()
 
-                """ CHECK CORRECT OR NOT """
-                correct = QuestionChoice.objects.get(pk=choice_id).is_correct
+        except QuizCompleted.DoesNotExist:
 
-                """------------------------------------------------------------"""
-                """                     SAVING DATA                            """
-                """------------------------------------------------------------"""
-
-                for user in users:
-                    Attempt(
-                        question=Question.objects.get(pk=question__id),
-                        user=user,
-                        start_time=request.POST['start_time'],
-                        end_time=request.POST['end_time'],
-                        successful=correct,
-                        quiz=Quiz.objects.get(pk=request.POST['quiz_id']),
-                    ).save()
-
-                if request.POST['end'] == 'True':
-                    yy = Attempt.objects.filter(user=request.user, quiz=Quiz.objects.get(pk=quiz_id))
-                    for user in users:
-                        QuizCompleted(
-                            user=user,
-                            quiz=Quiz.objects.get(pk=quiz_id),
-                            total=yy.count(),
-                            obtained=yy.filter(successful=True).count()
-                        ).save()
-
-                success = True
-                message = f"Question {request.POST['question_id']} marked successfully"
-
+            if choice.is_correct:
+                quiz_complete = QuizCompleted(
+                    quiz=quiz,
+                    total=quiz.questions.count(),
+                    user=request.user,
+                    passed=1,
+                    obtained=1
+                ).save()
             else:
-                success = True
-                message = f"Question {request.POST['question_id']} already marked you are directed to next question"
-        else:
-            message = f"Requested Quiz attempted previously"
+                quiz_complete = QuizCompleted(
+                    quiz=quiz,
+                    total=quiz.questions.count(),
+                    user=request.user,
+                    passed=1
+                ).save()
+
+        for user in users:
+            Attempt(
+                quiz=quiz, user=user, question=question, team=team,
+                start_time=request.POST['start_time'], end_time=request.POST['end_time'],
+                successful=choice.is_correct
+            ).save()
 
         response = {
-            'success': success,
+            'success': 'true',
             'message': message,
             'end': request.POST['end'],
         }

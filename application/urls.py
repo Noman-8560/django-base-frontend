@@ -5,8 +5,6 @@ app_name = 'application'
 urlpatterns = [
     #  --- HELP_PAGE
 
-
-
     path('help/', help_view, name='help'),
     path('dashboard/', dashboard, name='dashboard'),
 
