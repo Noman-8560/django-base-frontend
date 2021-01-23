@@ -465,7 +465,7 @@ def add_question_statement(request):
         question_id = request.POST['pk']
         statement = QuestionStatement()
         statement.statement = text
-        statement.screen = Screen.objects.get(pk=screen)
+        statement.screen = Screen.objects.get(no=screen)
         statement.question = Question.objects.get(pk=question_id)
         statement.save()
         response = {
@@ -890,6 +890,8 @@ def delete_subject(request, pk):
 
 ''' QUIZ SETUP VIEWS _______________________________________________________________'''
 
+from django.db.models import F
+
 
 @login_required
 def quizes(request):
@@ -902,7 +904,7 @@ def quizes(request):
     available_quizes = Quiz.objects.filter(end_time__gte=timezone.now(), learning_purpose=False).exclude(
         id__in=my_quizes.values_list('id', flat=True)).order_by('-start_time')
 
-    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
 
     # QUIZ ENROLLED
     enrolled_quizes = Quiz.objects \
@@ -1092,6 +1094,7 @@ def quiz_start(request, quiz):
     quiz_id = None
     user_no = None
     submission = None
+    new = False
 
     ''' QUIZ and TEAM is required here'''
 
@@ -1103,16 +1106,10 @@ def quiz_start(request, quiz):
                            message="You are not registered to any team _ please register your team first")
             return redirect('application:quizes', permanent=True)
 
-        quiz_complete = QuizCompleted.objects.filter(user=request.user, quiz=user_quiz).first()
-        if quiz_complete:
-            total = quiz_complete.total
-            passed = quiz_complete.passed
-            if total == passed:
-                print("ALL DONE")
-                messages.error(request=request, message="Dear User you have already attempted this quiz")
-                return redirect('application:quizes', permanent=True)
-            else:
-                print("NOT DONE")
+        completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
+        if completed_by_me:
+            messages.error(request=request, message="Dear User you have already attempted this quiz")
+            return redirect('application:quizes', permanent=True)
 
     except Quiz.DoesNotExist:
         messages.error(request=request, message="Requested Quiz doesn't exists")
@@ -1132,6 +1129,13 @@ def quiz_start(request, quiz):
         for re in remaining:
             question_ids.append(re.pk)
         user_no = identify_user_in_team(user_team, request, user_quiz)
+
+        if not QuizCompleted.objects.filter(user=request.user, quiz=quiz):
+            for user in user_team.participants.all():
+                QuizCompleted(
+                    user=user, quiz=user_quiz, remains=','.join(map(str, question_ids)),
+                    total=user_quiz.questions.count()
+                ).save()
 
         if user_no == user_quiz.submission_control.no:
             submission = '1'
@@ -1238,32 +1242,59 @@ def user_exists_json(request, username):
 
 
 @login_required
-def quiz_access_question_json(request, quiz_id, question_id, user_id):
+def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
     # TODO: please write query to avoid re-attempting quiz
-    total = 0
-    attempts = 0
-    remains = 0
     statements = []
     images = []
     audios = []
     choices_keys = []
     choices_values = []
+    id = 0
 
     if request.method == 'GET' and request.is_ajax():
+
         ''' __FETCHING BASE DATA__'''
         quiz = Quiz.objects.get(pk=quiz_id)
         screen = Screen.objects.get(no=user_id)
         attempts = Attempt.objects.filter(quiz=quiz, user=request.user)
-        remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
-        print(remaining.values('pk'))
+        user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
+
+        if skip == 1:
+            print("HELLO")
+            for user in user_team.participants.all():
+                result = QuizCompleted.objects.filter(
+                    user=user, quiz=quiz
+                )[0]
+                result.skipped += 1
+
+                value = result.remains
+                ll = value.split(',')
+                ll.append(ll.pop(0))
+                result.remains = ','.join(map(str, ll))
+                result.save()
+
+        # _____________________________________________________________________________________________________________
+        # LOGIC: Get Remains etc.
+
+        result = QuizCompleted.objects.filter(user=request.user, quiz=quiz)[0]
+        ll = result.remains.split(',')
+
+        # _____________________________________________________________________________________________________________
+        # LOGIC: Get Questions
+        # remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
+        # remaining = [remaining.get(pk=x) for x in questions_get]
 
         '''__QUESTION LOGIC WILL BE HERE__'''
-        question = remaining[0]
+        try:
+            question = Question.objects.get(pk=ll[0])
+        except ValueError:
+            messages.success(request=request, message="Your Quiz has been submitted successfully")
+            return redirect('application:quizes')
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
         [statements.append(x.statement) for x in question.questionstatement_set.filter(screen=screen)]
-        [images.append(y.image) if y.url is None else images.append(y.url) for y in
+        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
          question.questionimage_set.filter(screen=screen)]
-        [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
+        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
          question.questionaudio_set.filter(screen=screen)]
         [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
         [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
@@ -1280,6 +1311,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
             'statements': statements,
             'images': images,
             'audios': audios,
+            'questions': ll,
 
             'total': total,
             'attempts': attempts,
@@ -1288,7 +1320,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id):
         return JsonResponse(data=response, safe=False)
 
     else:
-        return JsonResponse(data=None)
+        return JsonResponse(data=None, safe=False)
 
 
 @csrf_exempt
@@ -1309,38 +1341,26 @@ def question_submission_json(request):
         users = team.participants.all()
         attempt = Attempt.objects.filter(user=request.user, question=question, quiz=quiz)
 
-        try:
-
-            quiz_complete = QuizCompleted.objects.get(quiz=quiz, user=request.user)
-            quiz_complete.passed += 1
-            if choice.is_correct:
-                quiz_complete.obtained += 1
-            quiz_complete.save()
-
-        except QuizCompleted.DoesNotExist:
-
-            if choice.is_correct:
-                quiz_complete = QuizCompleted(
-                    quiz=quiz,
-                    total=quiz.questions.count(),
-                    user=request.user,
-                    passed=1,
-                    obtained=1
-                ).save()
-            else:
-                quiz_complete = QuizCompleted(
-                    quiz=quiz,
-                    total=quiz.questions.count(),
-                    user=request.user,
-                    passed=1
-                ).save()
-
         for user in users:
+
             Attempt(
                 quiz=quiz, user=user, question=question, team=team,
                 start_time=request.POST['start_time'], end_time=request.POST['end_time'],
                 successful=choice.is_correct
             ).save()
+
+            quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=user)[0]
+            quiz_complete.passed += 1
+            u = quiz_complete.remains.split(',')
+            u = [int(i) for i in u]
+            u.pop(0)
+            u = ','.join([str(elem) for elem in u])
+            quiz_complete.remains = u
+
+            if choice.is_correct:
+                quiz_complete.obtained += 1
+
+            quiz_complete.save()
 
         response = {
             'success': 'true',
@@ -1364,16 +1384,15 @@ def next_question_json(request):
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
         question = Question.objects.get(pk=request.POST['question_id'])
 
-        if len(Attempt.objects.filter(user=request.user, question=question, quiz=quiz)) > 0:
+        if Attempt.objects.filter(user=request.user, question=question, quiz=quiz):
             success = True
-            message = "Question submitted Successfully"
         else:
             message = "Question is not submitted by you team"
 
         response = {
             'success': success,
             'message': message,
-            'end': request.POST['end'],
+            'end': request.POST['end']
         }
 
         return JsonResponse(data=response, safe=False)
