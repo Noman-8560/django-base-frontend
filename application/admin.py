@@ -74,7 +74,7 @@ class AppUpdateAdmin(admin.ModelAdmin):
 
 
 class QuizCompletedAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'quiz', 'user', 'total', 'obtained', 'passed', 'created']
+    list_display = ['pk', 'quiz', 'user', 'total', 'passed', 'skipped', 'obtained', 'remains', 'created']
 
 
 class LearningResourceResultAdmin(admin.ModelAdmin):

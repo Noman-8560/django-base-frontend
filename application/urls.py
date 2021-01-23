@@ -74,7 +74,7 @@ urlpatterns = [
     path('c/api/user/<str:username>/exists/', user_exists_json, name='capi_user_exists'),
     path('c/api/submit/question/', question_submission_json, name='capi_question_submission'),
     path('c/api/next/question/', next_question_json, name='capi_next_question'),
-    path('c/api/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/', quiz_access_question_json,
+    path('c/api/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/skip/<int:skip>/', quiz_access_question_json,
          name='capi_quiz_question_access'),
 
     path('c/api/learn/<int:quiz_id>/question/<int:question_id>/', learn_access_question_json,

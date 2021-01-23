@@ -50,6 +50,10 @@
                                             <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
                                             <div class="float-right" id="submission_control_div">
                                                 {% if submission_control == '1' %}
+                                                    <button class="btn btn btn-secondary" id="button_skip"><i
+                                                            class="fa fa-refresh"></i>
+                                                        Skip
+                                                    </button>
                                                     <button class="btn btn btn-primary" id="button_submit"><i
                                                             class="fa fa-check"></i>
                                                         Submit
@@ -137,7 +141,7 @@
                                     {# choices #}
                                     <div class="card border" id="main_choices_div">
                                         <div class="card-header">
-                                            <p class="card-title">CHOICE CONTROL</p>
+                                            <p class="card-title">CHOICES</p>
                                         </div>
                                         <div class="card-body">
 
@@ -166,7 +170,6 @@
                                             <p class="card-title">AUDIO HINT</p>
                                         </div>
                                         <div class="card-body">
-
                                             <div id="audios_div" class="mb-4">
 
                                             </div>
@@ -287,7 +290,10 @@
                 window.history.replaceState(null, null, window.location.href);
             }
 
+            skip = 0;
+
             active_async = false;
+            end_async = false;
             submission_control = {{ submission_control }};
 
             $(document).on("keydown", disableF5);
@@ -311,6 +317,7 @@
             choices_main_div = $('#main_choices_div');
 
             button_submit = $('#button_submit');
+            button_skip = $('#button_skip');
 
             question_ids = {{ question_ids }};
             question_div_id = parseInt(question_div.data('question'));
@@ -325,12 +332,19 @@
             function initialization() {
 
                 countdown();
-
                 x_accessor();
+
 
                 button_submit.click(function (event) {
                     event.preventDefault();
                     submit_question();
+                });
+
+                button_skip.click(function (event) {
+                    event.preventDefault();
+                    {#question_ids.shift();#}
+                    skip = 1;
+                    x_accessor();
                 });
 
             }
@@ -341,11 +355,12 @@
 
             function x_accessor() {
                 if (question_ids.length > 0) {
-                    $.get('/c/api/quiz/{{ quiz_id }}/question/' + question_ids[0] + '/num/{{ user_no }}/', function (data) {
+                    $.get('/c/api/quiz/{{ quiz_id }}/question/' + question_ids[0] + '/num/{{ user_no }}/skip/' + skip + '/', function (data) {
 
                         {# 1 > CLEANING ON EACH CALL #}
                         clean_all();
                         question_now = get_time_formatted();
+                        question_ids = data.questions;
 
                         total.text(data.total);
                         attempted.text(data.attempts);
@@ -361,7 +376,10 @@
                             }
                         } else {
                             choices_main_div.hide();
-                            async_question_next_sync();
+                            if (active_async == false) {
+                                active_async = true;
+                                async_question_next_sync();
+                            }
                         }
 
                         {# 4 > FETCHING STATEMENTS #}
@@ -442,7 +460,7 @@
             }
 
             function clean_all() {
-                question_ids.shift();
+                {#question_ids.shift();#}
                 statements_div.html('');
                 images_div.html('');
                 audios_div.html('');
@@ -451,7 +469,7 @@
 
             function is_next() {
                 let end = 'False';
-                if (question_ids.length === 0) {
+                if (question_ids == undefined) {
                     end = 'True';
                 }
 
@@ -460,11 +478,16 @@
                         quiz_id: {{ quiz_id }},
                         question_id: question_div.attr('data-question'),
                         team_id: {{ team_id }},
-                        end: end
-                    }, function (data, status) {
+                        end: end,
 
-                        if (data.success === true) {
-                            x_accessor();
+                    }, function (data, status) {
+                        if (data.end == 'True') {
+                            alert("Your quiz submitted successfully");
+                            window.location = {% url 'application:quizes' %};
+                        } else {
+                            if (data.success == true) {
+                                x_accessor();
+                            }
                         }
                     })
                 ;

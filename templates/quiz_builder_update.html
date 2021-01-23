@@ -111,7 +111,7 @@
                                     <th>Subject</th>
                                     <th>Type</th>
                                     <th>Difficulty</th>
-                                    <th>Remove</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -123,8 +123,16 @@
                                         <td class="text-warning">
                                             <i class="fa fa-star"></i>
                                         </td>
-                                        <td><a href="/delete/quiz/{{ quiz_id }}/question/{{ question.pk }}/" class="text-danger"><i
-                                                class="fa fa-trash"></i></a></td>
+                                        <td>
+                                            <a href="/delete/quiz/{{ quiz_id }}/question/{{ question.pk }}/"
+                                               class="text-danger"><i class="fa fa-trash"></i>
+                                            </a>&nbsp;
+                                            <a href="{% url 'application:update_question' question.pk %}"
+                                               class="text-primary"><i class="fa fa-edit"></i>
+                                            </a>&nbsp;
+                                            <a href="{% url 'application:question_builder_update' question.pk %}"
+                                               class="text-primary"><i class="fa fa-eye"></i></a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
 

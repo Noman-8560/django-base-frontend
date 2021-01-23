@@ -408,7 +408,9 @@ class QuizCompleted(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
     passed = models.PositiveIntegerField(default=0, null=False, blank=False)
+    remains = models.CharField(max_length=1000, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    skipped = models.PositiveIntegerField(null=False, blank=False, default=0)
     total = models.PositiveIntegerField(null=False, blank=False, default=0)
     obtained = models.PositiveIntegerField(null=False, blank=False, default=0)
 
@@ -473,7 +475,6 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
-        print("WELCOME")
         if instance.id is None:
             profile = Profile(user=User.objects.get(pk=instance.id))
             profile.save()
