@@ -1260,7 +1260,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
 
         if skip == 1:
-            print("HELLO")
             for user in user_team.participants.all():
                 result = QuizCompleted.objects.filter(
                     user=user, quiz=quiz
@@ -1377,6 +1376,7 @@ def next_question_json(request):
     success = False
     message = None
     end = False
+    change = False
 
     """ CHECK API CALL """
     if request.method == 'POST':
@@ -1384,12 +1384,18 @@ def next_question_json(request):
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
         question = Question.objects.get(pk=request.POST['question_id'])
 
+        quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=request.user)[0]
+        question_ids = request.POST['question_ids']
+        if question_ids != quiz_complete.remains:
+            change = True
+
         if Attempt.objects.filter(user=request.user, question=question, quiz=quiz):
             success = True
         else:
             message = "Question is not submitted by you team"
 
         response = {
+            'change': change,
             'success': success,
             'message': message,
             'end': request.POST['end']
