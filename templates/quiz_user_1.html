@@ -354,7 +354,7 @@
             {# ----------------------------------------------------------------------------------------------------- #}
 
             function x_accessor() {
-                if (question_ids.length > 0) {
+                if (question_ids.length > 1) {
                     $.get('/c/api/quiz/{{ quiz_id }}/question/' + question_ids[0] + '/num/{{ user_no }}/skip/' + skip + '/', function (data) {
 
                         {# 1 > CLEANING ON EACH CALL #}
@@ -473,11 +473,14 @@
                     end = 'True';
                 }
 
+
+
                 $.post("/c/api/next/question/",
                     {
                         quiz_id: {{ quiz_id }},
                         question_id: question_div.attr('data-question'),
                         team_id: {{ team_id }},
+                        question_ids : question_ids.toString(),
                         end: end,
 
                     }, function (data, status) {
@@ -485,7 +488,7 @@
                             alert("Your quiz submitted successfully");
                             window.location = {% url 'application:quizes' %};
                         } else {
-                            if (data.success == true) {
+                            if (data.change == true) {
                                 x_accessor();
                             }
                         }
