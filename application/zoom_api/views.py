@@ -3,6 +3,7 @@ import json
 
 import requests
 from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def get_access_token():
@@ -80,3 +81,11 @@ def delete_meeting():
 
 def zoom(request):
     return HttpResponse(create_meeting())
+
+
+def run(request):
+    return render(request=request, template_name='run.html')
+
+
+def meeting(request):
+    return render(request=request, template_name='meeting.html')

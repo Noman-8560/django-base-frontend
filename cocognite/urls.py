@@ -24,6 +24,8 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from application.wsite.views import home
 
+from agora.views import Agora
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
@@ -35,6 +37,10 @@ urlpatterns = [
     path('zoom/', include('application.zoom_api.urls', namespace='zoom_api')),
 
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path('agora/', Agora.as_view(
+        app_id='3a0052057f624f22ab2fb903f1b02d2d',
+        channel='marks_man'
+    )),
 ]
 
 if settings.DEBUG:
