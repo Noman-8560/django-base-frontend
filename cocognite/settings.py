@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     # TEMP
     'django_seed',
+    'agora',
 
     # AUTH_API
     'django.contrib.sites',
@@ -146,7 +147,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 if DEBUG:
-    TIME_ZONE = 'Asia/Karachi'
+    TIME_ZONE = 'Asia/Kolkata'
 else:
     TIME_ZONE = 'Asia/Kolkata'
 

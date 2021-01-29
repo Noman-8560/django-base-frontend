@@ -68,10 +68,6 @@
                             <ol class="m-0">
                                 {% for quiz in quizes_completed %}
                                     <li>Event <b>{{ quiz.quiz.title }}</b> was closed on <b>{{ quiz.quiz.end_time }}</b>
-                                        to check statistics
-                                        <a href="/dashboard/?quiz={{ quiz.quiz.pk }}" class="font-size-15">
-                                            Click here.
-                                        </a>
                                     </li>
                                 {% endfor %}
                             </ol>
