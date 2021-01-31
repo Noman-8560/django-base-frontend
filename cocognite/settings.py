@@ -42,8 +42,6 @@ INSTALLED_APPS = [
 
     # TEMP
     'django_seed',
-    'agora',
-
     # AUTH_API
     'django.contrib.sites',
     'allauth',

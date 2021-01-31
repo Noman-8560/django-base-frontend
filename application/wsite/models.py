@@ -69,6 +69,7 @@ class Website(models.Model):
         max_length=18, null=True, blank=True,
         help_text='Add your organization contact no, will be visible in footer.'
     )
+
     business_address = models.TextField(
         help_text='Add your organization or main office address, will be visible in footer.'
     )

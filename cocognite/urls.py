@@ -13,18 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import notifications.urls
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-
-import notifications.urls
-
-from . import settings
 from django.urls import path, include
-from django.views.generic import TemplateView
-from application.wsite.views import home
 
-from agora.views import Agora
+from application.wsite.views import home
+from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,10 +33,6 @@ urlpatterns = [
     path('zoom/', include('application.zoom_api.urls', namespace='zoom_api')),
 
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
-    path('agora/', Agora.as_view(
-        app_id='3a0052057f624f22ab2fb903f1b02d2d',
-        channel='marks_man'
-    )),
 ]
 
 if settings.DEBUG:
