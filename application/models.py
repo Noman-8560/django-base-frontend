@@ -285,6 +285,14 @@ class Quiz(models.Model):
             self.submission_control = Screen.objects.first()
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        teams = Team.objects.filter(quiz=self)
+        if teams:
+            for team in teams:
+                team.delete()
+
+        super(Quiz, self).delete(*args, **kwargs)
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
