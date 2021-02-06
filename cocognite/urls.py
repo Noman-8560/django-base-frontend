@@ -18,14 +18,13 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-
 from application.wsite.views import home
 from . import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    # path('login/', TemplateView.as_view(template_name="account/login.html")),
 
     path('', home, name='home'),
     path('', include('application.urls', namespace='application')),

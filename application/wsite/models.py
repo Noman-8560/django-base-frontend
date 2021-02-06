@@ -10,17 +10,19 @@ class Website(models.Model):
                   'visible in many places like footer and header etc.'
     )
     code = models.CharField(
-        max_length=50, null=False, blank=False,
+        max_length=1000, null=False, blank=False,
         help_text='Your code of business or lines that defines cocognito it is hero heading line text '
                   'will be visible on the top section of home page.'
     )
     description = models.TextField(
+
+        max_length=1000, null=False, blank=False,
         help_text='Small description about this system or your goal, it is hero description will be visible on '
                   'home page top section under hero heading.'
     )
 
-    hero_button_1_text = models.CharField(max_length=20, null=True, blank=True, help_text='Hero button 1')
-    hero_button_2_text = models.CharField(max_length=20, null=True, blank=True, help_text='Hero button 2')
+    hero_button_1_text = models.CharField(max_length=255, null=True, blank=True, help_text='Hero button 1')
+    hero_button_2_text = models.CharField(max_length=255, null=True, blank=True, help_text='Hero button 2')
 
     hero_button_1_url = models.URLField(
         null=True, blank=True,
