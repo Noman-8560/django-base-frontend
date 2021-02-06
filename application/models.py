@@ -254,7 +254,7 @@ class Quiz(models.Model):
 
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
-    subjects = models.ManyToManyField(Subject, blank=True, null=True)
+    subjects = models.ManyToManyField(Subject, blank=True)
     players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1')
     questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
     submission_control = models.ForeignKey(Screen, null=False, blank=True, on_delete=models.CASCADE)
@@ -489,4 +489,3 @@ def save_profile_on_user(sender, instance, created, **kwargs):
         else:
             profile = Profile(user=User.objects.get(pk=instance.id))
             profile.save()
-

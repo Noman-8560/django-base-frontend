@@ -70,7 +70,7 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',+
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
@@ -103,8 +103,13 @@ WSGI_APPLICATION = 'cocognite.wsgi.application'
 if os.name == 'nt':
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {'charset': 'utf8mb4'},
+            'NAME': 'cocognitodb',
+            'USER': 'umair_windows',
+            'PASSWORD': 'multi-mediaplus123',
+            'HOST': '139.59.45.36',
+            'PORT': '3306',
         }
     }
 elif os.name == 'posix':

@@ -15,6 +15,7 @@ class Website(models.Model):
                   'will be visible on the top section of home page.'
     )
     description = models.TextField(
+
         max_length=1000, null=False, blank=False,
         help_text='Small description about this system or your goal, it is hero description will be visible on '
                   'home page top section under hero heading.'
@@ -46,7 +47,6 @@ class Website(models.Model):
     )
 
     system_description = RichTextField(
-        null=True, blank=True,
         help_text='Detailed description for cocognito, leave it blank if not needed, REMEBER: if this does not '
                   'fulfills your requirements select the right most icon and add custom code, do at your own risk, '
                   'try to avoid dangerous scripts that may breach your security.'
@@ -71,8 +71,8 @@ class Website(models.Model):
         max_length=18, null=True, blank=True,
         help_text='Add your organization contact no, will be visible in footer.'
     )
+
     business_address = models.TextField(
-        null=False, blank=False,
         help_text='Add your organization or main office address, will be visible in footer.'
     )
     facebook = models.URLField(
@@ -110,8 +110,8 @@ class Website(models.Model):
                   'for this please contact cocognito development team for this.'
     )
     footer_description = models.TextField(
-        max_length=255, null=True, blank=True, help_text='Add a small description on your footer, information about '
-                                                         'cocognito / copyright or any other details'
+        help_text='Add a small description on your footer, information about '
+                  'cocognito / copyright or any other details'
     )
 
     full_footer_display = models.BooleanField(default=True, null=False, blank=False, help_text='Show complete footer')
@@ -128,7 +128,7 @@ class WebsiteModules(models.Model):
     sequence = models.PositiveIntegerField(null=False, blank=True, unique=True)
     pic = models.ImageField(null=False, blank=False, upload_to='project/images/modules/')
     heading = models.CharField(max_length=100, blank=False, null=False, unique=True)
-    description = RichTextField(blank=False, null=False, max_length=2000)
+    description = RichTextField()
     is_active = models.BooleanField(default=True)
 
     class Meta:
