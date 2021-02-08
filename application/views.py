@@ -1058,21 +1058,28 @@ def enroll(request, pk):
         team.participants.add(player_1, player_2, player_3)
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                   f'with team={team_name} as a caption of team.')
+
+        ps = [request.user.username]
+
         if player_2 is not None:
-            notify.send(request.user, recipient=player_2,
-                        verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
-                             f'{quiz.start_time}'
-                        )
+            ps.append(player_2.username)
 
         if player_3 is not None:
-            notify.send(request.user, recipient=player_2,
-                        verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
-                             f'{quiz.start_time}'
-                        )
-        notify.send(request.user, recipient=player_1,
-                    verb=f'You have been assigned to Quiz {quiz.title} your quiz will be started on '
-                         f'{quiz.start_time}'
-                    )
+            ps.append(player_3.username)
+
+        for user in ps:
+
+            desc = f"Hi {user} you have registered to take part in {quiz.title}, scheduled for {quiz.start_time} " \
+                   f"your team is {team.name} and members are {' '.join([str(elem) for elem in ps])}"
+
+            notify.send(
+                request.user,
+                recipient=User.objects.get(username=user),
+                verb=f'Enrolled to {quiz.title}',
+                level='info',
+                description=desc
+            )
+
         return HttpResponseRedirect(reverse('application:quizes'))
 
     # GET_METHOD
@@ -1100,6 +1107,7 @@ def quiz_start(request, quiz):
 
     try:
         user_quiz = Quiz.objects.get(pk=quiz)
+        questions = user_quiz.questions.all()
         user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
         if not user_team:
             messages.error(request=request,
@@ -1125,7 +1133,8 @@ def quiz_start(request, quiz):
         time_status = 'present'
 
         attempts = Attempt.objects.filter(quiz=user_quiz, user=request.user)
-        remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
+
+        remaining = questions.exclude(id__in=attempts.values_list('question', flat=True))
         for re in remaining:
             question_ids.append(re.pk)
         user_no = identify_user_in_team(user_team, request, user_quiz)
@@ -1277,6 +1286,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
 
         result = QuizCompleted.objects.filter(user=request.user, quiz=quiz)[0]
         ll = result.remains.split(',')
+        print(ll)
 
         # _____________________________________________________________________________________________________________
         # LOGIC: Get Questions
