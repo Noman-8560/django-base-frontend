@@ -21,7 +21,6 @@ function my_special_notification_callback(data) {
     let x = '';
     for (var i = 0; i < data.unread_list.length; i++) {
         content = data.unread_list[i];
-        console.log(content);
         x += `<a href="" class="text-reset notification-item">
                             <div class="media">
                                 <div class="avatar-xs mr-3">
@@ -33,7 +32,7 @@ function my_special_notification_callback(data) {
                                     <h6 class="mt-0 mb-1">${content.verb}</h6>
                                     <div class="font-size-12 text-muted">
                                         <p class="mb-1">${content.description}</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> ${prettyDate(content.timestamp)}</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> ${content.timestamp}</p>
                                     </div>
                                 </div>
                             </div>
