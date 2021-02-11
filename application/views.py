@@ -1068,15 +1068,14 @@ def enroll(request, pk):
             ps.append(player_3.username)
 
         for user in ps:
-
-            desc = f"Hi {user} you have registered to take part in {quiz.title}, scheduled for {quiz.start_time} " \
-                   f"your team is {team.name} and members are {' '.join([str(elem) for elem in ps])}"
+            desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, scheduled on <b>{quiz.start_time.ctime()}</b>" \
+                   f" your team is <b>{team.name}</b> and members are {', '.join([str(elem) for elem in ps])}."
 
             notify.send(
                 request.user,
                 recipient=User.objects.get(username=user),
                 verb=f'Enrolled to {quiz.title}',
-                level='info',
+                level='success',
                 description=desc
             )
 
@@ -1139,12 +1138,37 @@ def quiz_start(request, quiz):
             question_ids.append(re.pk)
         user_no = identify_user_in_team(user_team, request, user_quiz)
 
+        no_notify = False
+
         if not QuizCompleted.objects.filter(user=request.user, quiz=quiz):
             for user in user_team.participants.all():
                 QuizCompleted(
                     user=user, quiz=user_quiz, remains=','.join(map(str, question_ids)),
                     total=user_quiz.questions.count()
                 ).save()
+                if user != request.user:
+                    if user != request.user:
+                        notify.send(
+                            request.user,
+                            recipient=user,
+                            verb=f'Quiz {user_quiz.title} Started',
+                            level='info',
+                            description=f"<b>Hi {user.username}!</b> <b>{request.user}</b> "
+                                        f"has started the quiz join your teammates ASAP"
+                        )
+            no_notify = True
+
+        if not no_notify:
+            for user in user_team.participants.all():
+                if user != request.user:
+                    notify.send(
+                        request.user,
+                        recipient=user,
+                        verb=f'Teammate joined {user_quiz.title}',
+                        level='info',
+                        description=f"<b>Hi {user.username}!</b> your teammate <b>{request.user}</b> "
+                                    f"has joined the quiz"
+                    )
 
         if user_no == user_quiz.submission_control.no:
             submission = '1'
@@ -1286,7 +1310,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
 
         result = QuizCompleted.objects.filter(user=request.user, quiz=quiz)[0]
         ll = result.remains.split(',')
-        print(ll)
 
         # _____________________________________________________________________________________________________________
         # LOGIC: Get Questions
@@ -1370,6 +1393,16 @@ def question_submission_json(request):
                 quiz_complete.obtained += 1
 
             quiz_complete.save()
+
+            if int(request.POST['end']) == 1:
+
+                notify.send(
+                    request.user,
+                    recipient=request.user,
+                    verb=f'Quiz {quiz.title} submitted',
+                    level='info',
+                    description=f'<b>Hi {request.username}!</b> you can review your vs other teams performance on dashboard'
+                )
 
         response = {
             'success': 'true',
@@ -1476,7 +1509,7 @@ def learn_access_question_json(request, quiz_id, question_id):
     choices_keys = []
     choices_values = []
 
-    if request.method == 'GET' and request.is_ajax():
+    if request.method == 'GET':
 
         ''' __FETCHING BASE DATA__'''
         quiz = Quiz.objects.get(pk=quiz_id)
@@ -1488,7 +1521,7 @@ def learn_access_question_json(request, quiz_id, question_id):
 
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
         [statements.append(x.statement) for x in question.questionstatement_set.all()]
-        [images.append(y.image) if y.url is None else images.append(y.url) for y in
+        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
          question.questionimage_set.all()]
         [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
          question.questionaudio_set.all()]
@@ -1514,7 +1547,7 @@ def learn_access_question_json(request, quiz_id, question_id):
         }
         return JsonResponse(data=response, safe=False)
     else:
-        return JsonResponse(data=None)
+        return JsonResponse(data=None, safe=False)
 
 
 @csrf_exempt
