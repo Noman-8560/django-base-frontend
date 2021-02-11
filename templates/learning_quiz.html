@@ -11,9 +11,11 @@
     {% if allowed_to_start %}
 
         <div>
-            <p class="bg-warning p-2">You are allowed to practice any quiz for more then once, if you have attempted the
-                quiz before it will update your previous data, remember this is just for learning not for actual
-                quiz.</p>
+            <div class="bg-danger text-light text-center">
+                <p class="small p-2">You are allowed to practice any quiz for more then once, if you have attempted the
+                    quiz before it will update your previous data, remember this is just for learning not for actual
+                    quiz.</p>
+            </div>
         </div>
         <div class="my-5">
             <div class="container">
@@ -24,18 +26,17 @@
 
                         <div class="">
                             <div class="card">
-                                <div class="card-body">
-                                    <div class="clearfix">
-                                        <small class="h2 p-4 font-weight-bolder" id="count_down"></small>
+                                <div class="card-body py-0 pt-2">
+                                    <div class="clearfix pb-2 border-bottom" >
+                                        <small class="h3 font-weight-bolder" id="count_down"></small>
                                         <div class="float-right" id="submission_control_div">
 
-                                            <button class="btn btn btn-success" id="button_submit"><i
+                                            <button class="btn btn-sm btn-success" id="button_submit"><i
                                                     class="fa fa-check"></i>
                                                 Submit
                                             </button>
                                         </div>
                                     </div>
-                                    <hr>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class=" mini-stats-wid">
@@ -97,7 +98,7 @@
                             <div class="">
                                 {# STATEMENTS #}
                                 <div class="card border" id="main_statements_div">
-                                    <div class="card-header"><p class="card-title">STATEMENTS</p></div>
+                                    <div class="card-header"><p class="card-title">QUESTION STATEMENT</p></div>
                                     <div class="card-body">
 
                                         <div id="statements_div" class="mb-4">
@@ -161,18 +162,19 @@
             <div>
                 {% if time_status == 'past' %}
 
-                    <div class="alert alert-danger alert-dismissible fade show p-5" role="alert">
+                    <div class="alert alert-danger alert-dismissible fade show p-5" role="alert"
+                         style="background-color: #eb5e0b;" id="blink">
                     <div class="text-center">
-                        <p class="m-0 h1"><i class="fa fa-ban"></i></p>
-                        <p class="m-0"><strong>REQUEST EXPIRED! </strong></p>
-                        <p class="">You are not allowed to learn the quiz now.</p>
-                        <hr class="border border-danger">
+                        <p class="m-0 h1"><i class="fa fa-ban text-white"></i></p>
+                        <p class="m-0 h1 text-white"><strong>THE QUIZ HAS BEEN EXPIRED</strong></p>
+                        <hr class="border">
                         <div class="text-left">
-                            <ul class="">
+                            <ul class="text-white">
                                 <li>You requested quiz is not available now.</li>
                                 <li>Quiz was ended on <b>{{ quiz_end_date }}</b></li>
                                 <li>If you were registered and didn't attempted the quiz, quiz is expired now.</li>
-                                <li>If you want to see your previous results please go back to your <a href="#">Dashboard</a>.
+                                <li>If you want to see your previous results please go back to your <a
+                                        href="{% url 'application:dashboard' %}">Dashboard</a>.
                                 </li>
                                 <li>If you were not registered with this quiz and didn't attempted, it doesn't effect
                                     your
@@ -184,20 +186,29 @@
                                 <li>Need any help, you will found <a href="#">HERE</a>.</li>
                             </ul>
                         </div>
+                        <div class="text-left">
+                            <a href="{% url 'application:quizes' %}" class="btn btn-light"><i
+                                    class="fa fa-backward"></i> Back To Quizes</a>
+                        </div>
                     </div>
 
                 {% elif time_status == 'future' %}
-                    <div class="alert alert-warning alert-dismissible fade show p-5" role="alert">
+                    <div class="alert alert-warning text-white alert-dismissible fade show p-5" role="alert"
+                         style="background-color: #eb5e0b;" id="blink">
                         <div class="text-center">
-                            <p class="m-0 h1"><i class="fa fa-exclamation-triangle"></i></p>
-                            <p class="m-0"><strong>THE QUIZ HAS NOT STARTED YET!</strong></p>
-                            <p class="">You can not attempt the quiz right now.</p>
-                            <hr class="border border-warning">
+                            <p class="m-0 h1"><i class="fa fa-exclamation-triangle text-white"></i></p>
+                            <p class="m-0 h1 text-white"><strong>THE QUIZ HAS NOT STARTED YET!</strong></p>
+                            <p class="m-0 h2 text-white" id="future_time"><strong></strong></p>
+                            <hr class="border">
                             <div class="text-left">
                                 <ul class="">
                                     <li>The quiz will be available on <b>{{ quiz_start_date }}</b></li>
                                     <li>Need help? click <a href="#">here</a>.</li>
                                 </ul>
+                            </div>
+                            <div class="text-left">
+                                <a href="{% url 'application:quizes' %}" class="btn btn-light"><i
+                                        class="fa fa-backward"></i> Back To Quizes</a>
                             </div>
                         </div>
                     </div>
@@ -272,7 +283,6 @@
             function x_accessor() {
                 if (question_ids.length > 0) {
                     $.get('/c/api/learn/{{ quiz_id }}/question/' + question_ids[0] + '/', function (data) {
-                        console.log(data);
 
                         {# 1 > CLEANING ON EACH CALL #}
                         clean_all();
@@ -288,7 +298,12 @@
                         if (data.choices_keys.length > 0) {
                             choices_main_div.show();
                             for (let index = 0; index < data.choices_keys.length; index++) {
-                                choices_div.append(`<input type="radio" name="ans" id="ans" value="${data.choices_keys[index]}"> ${data.choices_values[index]} &nbsp;&nbsp;<br>`);
+                                choices_div.append(
+                                    `<input class="mb-2" type="radio" name="ans" id="ans"
+                                     value="${data.choices_keys[index]}">
+                                     <label for="ans">&nbsp;&nbsp;${data.choices_values[index]}</label><br>
+                                    `
+                                );
                             }
                         } else {
                             choices_main_div.hide();
@@ -401,15 +416,27 @@
                     // Find the distance between now and the count down date
                     var distance = countDownDate - now;
 
-                    // Time calculations for days, hours, minutes and seconds
+                    let s = '';
                     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
                     var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+                    if (days != 0) {
+                        s += days + "d "
+                    }
+                    if (hours != 0) {
+                        s += hours + "h "
+                    }
+                    if (minutes != 0) {
+                        s += minutes + "m "
+                    }
+                    if (seconds != 0) {
+                        s += seconds + "s "
+                    }
+
                     // Output the result in an element with id="demo"
-                    document.getElementById("count_down").innerHTML = days + "d " + hours + "h "
-                        + minutes + "m " + seconds + "s ";
+                    document.getElementById("count_down").innerHTML = s;
 
                     // If the count down is over, write some text
                     if (distance < 0) {

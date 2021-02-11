@@ -21,18 +21,15 @@ function my_special_notification_callback(data) {
     let x = '';
     for (var i = 0; i < data.unread_list.length; i++) {
         content = data.unread_list[i];
+
         x += `<a href="" class="text-reset notification-item">
                             <div class="media">
-                                <div class="avatar-xs mr-3">
-                                                <span class="avatar-title bg-success rounded-circle font-size-16">
-                                                    <i class="bx bx-badge-check"></i>
-                                                </span>
-                                </div>
+                              
                                 <div class="media-body">
                                     <h6 class="mt-0 mb-1">${content.verb}</h6>
                                     <div class="font-size-12 text-muted">
-                                        <p class="mb-1">${content.description}</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> ${content.timestamp}</p>
+                                        <p class="mb-1 font-size-11">${content.description}</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> ${timeSince(new Date(content.timestamp))} ago</p>
                                     </div>
                                 </div>
                             </div>
@@ -104,6 +101,34 @@ function fetch_api_data() {
     }
 }
 
+function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+}
+
 setTimeout(fetch_api_data, 1000);
 
 function timestampToString(timestamp, useMilliseconds) {
@@ -131,4 +156,11 @@ function timestampToString(timestamp, useMilliseconds) {
             return `${result}${num === 0 ? '' : str}`;
         }, '')
         .trim();
+}
+
+function unread_all_notifications() {
+
+    $.get('/inbox/notifications/mark-all-as-read/ ', function (data, status) {
+        location.reload();
+    });
 }

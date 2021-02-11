@@ -6,5 +6,5 @@ django-ckeditor
 pillow
 django-allauth
 django-notifications-hq
-django-model-utils
+# django-model-utils
 six

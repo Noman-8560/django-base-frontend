@@ -173,18 +173,14 @@
     <script>
         $(document).ready(function () {
 
+
             {# CHART 1 TIME STATISTICS#}
             let chart_time_states_total_options = {
-                series: [{
-                    name: 'Sum Maxi Time',
-                    data: {{ time_sum_of_max }}
-                }, {
-                    name: 'Sum Min Time',
-                    data: {{ time_sum_of_min }}
-                }, {
-                    name: 'Sum Avg Time',
-                    data: {{ time_sum_of_avg }}
-                }],
+                series: [
+                    {name: 'Sum Maxi Time', data: {{ time_sum_of_max }}},
+                    {name: 'Sum Min Time', data: {{ time_sum_of_min }}},
+                    {name: 'Sum Avg Time', data: {{ time_sum_of_avg }}}
+                    ],
                 chart: {
                     type: 'bar',
                     height: 350
