@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    #SESSION_APP
+    'preventconcurrentlogins',
+
     # USER_APPLICATIONS
     'application',
     'application.wsite',
@@ -67,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'preventconcurrentlogins.middleware.PreventConcurrentLoginsMiddleware'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -141,9 +145,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 if DEBUG:
-    TIME_ZONE = 'Asia/Karachi'
+    TIME_ZONE = 'Asia/Kolkata'
 else:
-    TIME_ZONE = 'Asia/Karachi'
+    TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

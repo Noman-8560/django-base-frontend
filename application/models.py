@@ -490,3 +490,6 @@ def save_profile_on_user(sender, instance, created, **kwargs):
             profile = Profile(user=User.objects.get(pk=instance.id))
             profile.save()
 
+
+
+

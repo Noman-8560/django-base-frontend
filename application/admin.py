@@ -1,6 +1,7 @@
 from django.contrib import admin
 from application.models import *
 from allauth.account.models import EmailConfirmation
+from django.contrib.sessions.models import Session
 
 admin.site.site_header = 'CoCognito | Admin'
 admin.site.site_title = 'CoCognito | Admin'
@@ -111,3 +112,4 @@ admin.site.register(LearningResourceAttempts, LearningResourceAttemptsAdmin)
 admin.site.register(LearningResourceResult, LearningResourceResultAdmin)
 
 admin.site.register(EmailConfirmation)
+admin.site.register(Session)

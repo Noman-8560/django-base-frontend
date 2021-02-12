@@ -8,3 +8,4 @@ django-allauth
 django-notifications-hq
 # django-model-utils
 six
+django-preventconcurrentlogins
