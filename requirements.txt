@@ -1,6 +1,6 @@
 Django
 # djangorestframework
-# django-seed
+django-seed
 django-crispy-forms
 django-ckeditor
 pillow

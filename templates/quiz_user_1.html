@@ -27,7 +27,8 @@
             <div class="bg-danger text-light text-center">
                 {% if quiz.players != '1' %}
                     <p class="p-2 small">
-                        quiz <strong>{{ quiz.title }}</strong> is a collaborative quiz. The question statements and answer choices appear divided among
+                        quiz <strong>{{ quiz.title }}</strong> is a collaborative quiz. The question statements and
+                        answer choices appear divided among
                         the participants. Please talk to your team members to know what is displayed on their screens
                         and then answer the question
                     </p>
@@ -50,7 +51,7 @@
                             <div class="">
                                 <div class="card">
                                     <div class="card-body py-0 pt-2">
-                                        <div class="clearfix pb-2 border-bottom" >
+                                        <div class="clearfix pb-2 border-bottom">
                                             <small class="h3 font-weight-bolder" id="count_down"></small>
                                             <div class="float-right" id="submission_control_div">
                                                 {% if submission_control == '1' %}
@@ -291,6 +292,22 @@
 {% block base_external_scripts %}
     <script>
 
+        let protection = true;
+        if (protection === true) {
+            window.onbeforeunload = function () {
+                return "Are you sure you want to leave?";
+            };
+
+            window.onbeforeunload = function () {
+                return "Are you sure you want to leave?";
+            };
+
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1);
+            };
+        }
+
 
         {% if allowed_to_start %}
 
@@ -431,7 +448,7 @@
                         }
                     });
                 } else {
-                    alert("Your quiz submitted successfully");
+                    alert("Your quiz submitted successfully x");
                     {#window.close();#}
                     window.location = {% url 'application:quizes' %};
                 }
@@ -444,6 +461,7 @@
 
                 if (question_ids.length == 1) {
                     end = 1;
+                    protection = false;
                 }
 
                 if (choice.length > 0) {
@@ -487,28 +505,25 @@
                 let end = 'False';
                 if (question_ids == undefined) {
                     end = 'True';
-                }
+                } else {
+                    $.post("/c/api/next/question/",
+                        {
+                            quiz_id: {{ quiz_id }},
+                            question_id: question_div.attr('data-question'),
+                            team_id: {{ team_id }},
+                            question_ids: question_ids.toString(),
+                            end: end,
 
-
-                $.post("/c/api/next/question/",
-                    {
-                        quiz_id: {{ quiz_id }},
-                        question_id: question_div.attr('data-question'),
-                        team_id: {{ team_id }},
-                        question_ids: question_ids.toString(),
-                        end: end,
-
-                    }, function (data, status) {
-                        if (data.end == 'True') {
-                            alert("Your quiz submitted successfully");
-                            window.location = {% url 'application:quizes' %};
-                        } else {
-                            if (data.change == true) {
-                                x_accessor();
+                        }, function (data, status) {
+                            if (data.end == 'True') {
+                            } else {
+                                if (data.change == true) {
+                                    x_accessor();
+                                }
                             }
-                        }
-                    })
-                ;
+                        })
+                    ;
+                }
             }
 
             function async_question_next_sync() {

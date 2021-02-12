@@ -1401,7 +1401,7 @@ def question_submission_json(request):
                     recipient=request.user,
                     verb=f'Quiz {quiz.title} submitted',
                     level='info',
-                    description=f'<b>Hi {request.username}!</b> you can review your vs other teams performance on dashboard'
+                    description=f'<b>Hi {request.user}!</b> you can review your vs other teams performance on dashboard'
                 )
 
         response = {
