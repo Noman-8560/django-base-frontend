@@ -79,7 +79,7 @@ AUTHENTICATION_BACKENDS = (
 
 ROOT_URLCONF = 'cocognite.urls'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-SITE_ID = 1
+SITE_ID = 2
 LOGIN_REDIRECT_URL = '/dashboard/'
 
 TEMPLATES = [
@@ -106,8 +106,13 @@ WSGI_APPLICATION = 'cocognite.wsgi.application'
 if os.name == 'nt':
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {'charset': 'utf8mb4'},
+            'NAME': 'cocognitodb',
+            'USER': 'umair_windows',
+            'PASSWORD': 'multi-mediaplus123',
+            'HOST': '139.59.45.36',
+            'PORT': '3306',
         }
     }
 elif os.name == 'posix':
