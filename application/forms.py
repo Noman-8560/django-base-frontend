@@ -81,6 +81,12 @@ class ProfileBasicForm(ModelForm):
         fields = ['first_name', 'last_name']
 
 
+class ProfileZoomForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['zoom_account']
+
+
 class ProfileOtherForm(ModelForm):
 
     class Meta:

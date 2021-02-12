@@ -20,14 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 's(l5vi&5nq2vnt(^t)ezh7twcbn#_z&a$@)2*k_20kl(phyzd!'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
-# Application definition
+ZOOM_API_KEY_JWT = 'cWmBJx-ZSIeN1eal8jQwuw'
+ZOOM_API_SECRET_JWT = 'orq6DM4OLD5XV8Eh0cY4udCMVfjuj7wgwme4'
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +49,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    #SESSION_APP
+    'preventconcurrentlogins',
+
     # USER_APPLICATIONS
     'application',
     'application.wsite',
@@ -67,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'preventconcurrentlogins.middleware.PreventConcurrentLoginsMiddleware'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -146,9 +149,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 if DEBUG:
-    TIME_ZONE = 'Asia/Karachi'
+    TIME_ZONE = 'Asia/Kolkata'
 else:
-    TIME_ZONE = 'Asia/Karachi'
+    TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

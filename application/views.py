@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from itertools import product
 
@@ -11,6 +12,8 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
+
+from application.zoom_api.views import zoom_create_meeting, zoom_check_user, zoom_delete_meeting
 
 from application.BusinessLogicLayer import identify_user_in_team
 from .forms import *
@@ -979,8 +982,9 @@ def team(request, pk):
 @never_cache
 def delete_team(request, pk):
     team = None
+
     try:
-        Team.objects.get(pk=pk)
+        team = Team.objects.get(pk=pk)
     except Team.DoesNotExist:
         messages.error(request=request, message="Requested Team Does not exists")
         return redirect('application:teams', permanent=True)
@@ -994,11 +998,13 @@ def delete_team(request, pk):
 
     if Team.objects.filter(quiz__in=completed):
         messages.error(request=request,
-                       message="you have attempted quiz with this team you are not allowed to delete this team ")
+                       message="you have attempted quiz with this team, you are not allowed to delete this team now")
         return redirect('application:teams', permanent=True)
-
-    messages.success(request=request,
-                     message="You have been removed from team")
+    else:
+        zoom_delete_meeting(team.zoom_meeting_id)
+        team.delete()
+        messages.success(request=request,
+                         message="Team Destroyed completely")
     return redirect('application:teams', permanent=True)
 
 
@@ -1052,18 +1058,43 @@ def enroll(request, pk):
             messages.error(request=request, message=f'Requested participant or participants does not exists.')
             return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
-        team = Team(name=team_name, quiz=quiz)
-        team.save()
+        # --------------------------------------------------------------------------------------------------------
+        # --------- MEETING
 
+        meeting_id = None
+        start_url = None
+        join_url = None
+
+        if int(quiz.players) > 1:
+            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                                           start_time=str(quiz.start_time))
+            if response.status_code != 201:
+                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+            meeting = json.loads(response.text)
+            meeting_id = meeting['id']
+            start_url = meeting['start_url']
+            join_url = meeting['join_url']
+
+        # --------- SAVE
+        team = Team(
+            name=team_name,
+            quiz=quiz,
+            created_by=request.user,
+            zoom_meeting_id=meeting_id,
+            zoom_start_url=start_url,
+            zoom_join_url=join_url,
+        )
+        team.save()
         team.participants.add(player_1, player_2, player_3)
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                   f'with team={team_name} as a caption of team.')
 
+        # --------- NOTIFY
         ps = [request.user.username]
-
         if player_2 is not None:
             ps.append(player_2.username)
-
         if player_3 is not None:
             ps.append(player_3.username)
 
@@ -1078,7 +1109,7 @@ def enroll(request, pk):
                 level='success',
                 description=desc
             )
-
+        # -----------------------------------------------------------------------------------------------------------
         return HttpResponseRedirect(reverse('application:quizes'))
 
     # GET_METHOD
@@ -1188,6 +1219,8 @@ def quiz_start(request, quiz):
         'quiz_end_date': user_quiz.end_time,
         'question_ids': question_ids,
         'team_id': user_team.pk,
+        'zoom_join_url': user_team.zoom_join_url,
+        'zoom_start_url': user_team.zoom_start_url,
         'quiz_id': user_quiz.pk,
         'user_no': user_no,
         'submission_control': submission,
@@ -1395,13 +1428,16 @@ def question_submission_json(request):
             quiz_complete.save()
 
             if int(request.POST['end']) == 1:
+                meeting_id = team.zoom_meeting_id
+                if meeting_id is not None or meeting_id == '':
+                    zoom_delete_meeting(meeting_id)
 
                 notify.send(
                     request.user,
                     recipient=request.user,
                     verb=f'Quiz {quiz.title} submitted',
                     level='info',
-                    description=f'<b>Hi {request.username}!</b> you can review your vs other teams performance on dashboard'
+                    description=f'<b>Hi {request.user}!</b> you can review your vs other teams performance on dashboard'
                 )
 
         response = {
@@ -1634,3 +1670,38 @@ def sent_mail(request):
     #     html_message='<h1><strong>HII</strong> man how are you<h2/>'
     # )
     pass
+
+
+@login_required
+def zoom_profile(request):
+
+    try:
+        account = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        if request.user.is_superuser or request.user.is_staff:
+            messages.info(
+                request,
+                f"Hi {request.user} you are a super user, you don't need it, this feature is for students"
+            )
+        else:
+            messages.error(
+                request,
+                f"Hi {request.user} there is some problem with your profile please contact administration"
+            )
+        return redirect('application:dashboard')
+
+    method = request.method
+    if method == 'POST':
+        form = ProfileZoomForm(request.POST or None, instance=account)
+        if form.is_valid():
+            form.save(commit=True)
+            # API_CALL_CHECK_ACCOUNT_STATUS
+            messages.success(request, 'Your account updated successfully')
+    else:
+        form = ProfileZoomForm(instance=account)
+
+    context = {
+        'form': form,
+        'verification': account.zoom_account_verification
+    }
+    return render(request=request, template_name='zoom_profile.html', context=context)

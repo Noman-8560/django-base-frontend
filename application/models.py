@@ -7,6 +7,9 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from django.utils.text import slugify
+from notifications.signals import notify
+
+from application.zoom_api.views import zoom_delete_meeting, zoom_create_meeting
 
 
 class AppUpdate(models.Model):
@@ -331,9 +334,18 @@ class Team(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
     quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
     participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
+
+    zoom_meeting_id = models.CharField(max_length=255, blank=True, null=True)
+    zoom_start_url = models.URLField(blank=True, null=True)
+    zoom_join_url = models.URLField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
     is_active = models.BooleanField(null=False, blank=False, default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Teams'
 
     def __str__(self):
         return self.name
@@ -341,8 +353,13 @@ class Team(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        verbose_name_plural = 'Teams'
+    def save(self, *args, **kwargs):
+        # ZOOM_API_CALL > create meet
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # ZOOM_API_CALL > delete meeting
+        super(Team, self).delete(*args, **kwargs)
 
 
 class Attempt(models.Model):
@@ -467,6 +484,11 @@ class Profile(models.Model):
     class_section = models.CharField(max_length=255, null=True, blank=True)
     school_email = models.CharField(max_length=255, null=True, blank=True)
     school_address = models.TextField(null=True, blank=True)
+    zoom_account = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"
+    )
+    zoom_account_verification = models.BooleanField(null=False, blank=False, default=False)
 
     guardian_first_name = models.CharField(max_length=255, null=True, blank=True)
     guardian_last_name = models.CharField(max_length=255, null=True, blank=True)
@@ -483,9 +505,18 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
+        user = User.objects.get(pk=instance.id)
         if instance.id is None:
-            profile = Profile(user=User.objects.get(pk=instance.id))
+            profile = Profile(user=user)
             profile.save()
         else:
-            profile = Profile(user=User.objects.get(pk=instance.id))
+            profile = Profile(user=user)
             profile.save()
+
+        notify.send(
+            user,
+            recipient=user,
+            verb=f'Zoom account required',
+            level='info',
+            description=f'<b>Hi {user}!</b> please add your zoom account to create and join meetings'
+        )

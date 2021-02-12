@@ -1,4 +1,5 @@
 {% load static %}
+{% load notifications_tags %}
 
 <header id="page-topbar" style="background-color: orangered;">
     <div class="navbar-header" style="background-color: orangered;">
@@ -83,7 +84,9 @@
                         id="page-header-notifications-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="bx bx-bell bx-tada"></i>
-                    <span class="badge badge-dark badge-pill">3</span>
+                    <span class="badge badge-dark badge-pill">
+                        {% live_notify_badge %}
+                    </span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                      aria-labelledby="page-header-notifications-dropdown">
@@ -93,64 +96,22 @@
                                 <h6 class="m-0"> Notifications </h6>
                             </div>
                             <div class="col-auto">
-                                <a href="#!" class="small"> View All</a>
+                                <a href="#" class="small"> View All</a>
                             </div>
                         </div>
                     </div>
                     <div data-simplebar style="max-height: 230px;">
-                        <a href="" class="text-reset notification-item">
-                            <div class="media">
-                                <div class="avatar-xs mr-3">
-                                                <span class="avatar-title bg-primary rounded-circle font-size-16">
-                                                    <i class="bx bx-cart"></i>
-                                                </span>
-                                </div>
-                                <div class="media-body">
-                                    <h6 class="mt-0 mb-1">Your order is placed</h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1">If several languages coalesce the grammar</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="" class="text-reset notification-item">
-                            <div class="media">
-                                <img src="{% static 'application/images/users/avatar-3.jpg' %}"
-                                     class="mr-3 rounded-circle avatar-xs" alt="user-pic">
-                                <div class="media-body">
-                                    <h6 class="mt-0 mb-1">James Lemire</h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1">It will seem like simplified English.</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 1 hours ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="" class="text-reset notification-item">
-                            <div class="media">
-                                <div class="avatar-xs mr-3">
-                                                <span class="avatar-title bg-success rounded-circle font-size-16">
-                                                    <i class="bx bx-badge-check"></i>
-                                                </span>
-                                </div>
-                                <div class="media-body">
-                                    <h6 class="mt-0 mb-1">Your item is shipped</h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1">If several languages coalesce the grammar</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                        <div id="notify_me_now">
 
-                    </div>
-                    <div class="p-2 border-top">
-                        <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="javascript:void(0)">
-                            <i class="mdi mdi-arrow-right-circle mr-1"></i> View More..
-                        </a>
+                        </div>
+                        <div class="p-2 border-top text-center">
+                            <button class="btn text-primary small" onclick="unread_all_notifications()">
+                                <i class="mdi mdi-arrow-right-circle mr-1"></i> Mark All as Read
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             {#            <div class="dropdown d-inline-block">#}
@@ -165,11 +126,11 @@
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user"
-                         {% if request.user.profile_set.first.profile %}
-                             src="/media/{{ request.user.profile_set.first.profile }}"
-                         {% else %}
-                             src="{% static 'application/images/users/avatar-7.jpg' %}"
-                         {% endif %}
+                            {% if request.user.profile_set.first.profile %}
+                         src="/media/{{ request.user.profile_set.first.profile }}"
+                            {% else %}
+                         src="{% static 'application/images/users/avatar-7.jpg' %}"
+                            {% endif %}
                          alt="Header Avatar">
                     <span class="d-none d-xl-inline-block ml-1">{{ request.user.username }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
@@ -205,7 +166,7 @@
 </header>
 <div class="topnav">
     <div class="container-fluid">
-        <nav class="navbar navbar-light navbar-expand-lg topnav-menu" >
+        <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
 
             <div class="collapse navbar-collapse" id="topnav-menu-content">
                 <ul class="navbar-nav">
@@ -219,19 +180,19 @@
 
 
                     {#DASHBOARD#}
-{#                    <li class="nav-item dropdown">#}
-{#                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dashboard" role="button"#}
-{#                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
-{#                            <i class="bx bx-user-circle mr-2"></i>Accounts#}
-{#                            <div class="arrow-down"></div>#}
-{#                        </a>#}
-{#                        <div class="dropdown-menu" aria-labelledby="topnav-dashboard">#}
-{##}
-{#                            <a href="{% url 'application:404' %}" class="dropdown-item text-danger">Students</a>#}
-{#                            <a href="{% url 'application:404' %}" class="dropdown-item text-danger">Parents</a>#}
-{#                            <a href="{% url 'application:404' %}" class="dropdown-item text-danger">Admins</a>#}
-{#                        </div>#}
-{#                    </li>#}
+                    {#                    <li class="nav-item dropdown">#}
+                    {#                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dashboard" role="button"#}
+                    {#                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+                    {#                            <i class="bx bx-user-circle mr-2"></i>Accounts#}
+                    {#                            <div class="arrow-down"></div>#}
+                    {#                        </a>#}
+                    {#                        <div class="dropdown-menu" aria-labelledby="topnav-dashboard">#}
+                    {##}
+                    {#                            <a href="{% url 'application:404' %}" class="dropdown-item text-danger">Students</a>#}
+                    {#                            <a href="{% url 'application:404' %}" class="dropdown-item text-danger">Parents</a>#}
+                    {#                            <a href="{% url 'application:404' %}" class="dropdown-item text-danger">Admins</a>#}
+                    {#                        </div>#}
+                    {#                    </li>#}
 
 
                     {# Apps #}
