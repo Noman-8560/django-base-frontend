@@ -1060,21 +1060,31 @@ def enroll(request, pk):
 
         # --------------------------------------------------------------------------------------------------------
         # --------- MEETING
-        response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}", start_time=str(datetime.utcnow()))
-        if response.status_code != 201:
-            messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
-            return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
-        meeting = json.loads(response.text)
+        meeting_id = None
+        start_url = None
+        join_url = None
+
+        if int(quiz.players) > 1:
+            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                                           start_time=str(quiz.start_time))
+            if response.status_code != 201:
+                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+            meeting = json.loads(response.text)
+            meeting_id = meeting['id']
+            start_url = meeting['start_url']
+            join_url = meeting['join_url']
 
         # --------- SAVE
         team = Team(
             name=team_name,
             quiz=quiz,
             created_by=request.user,
-            zoom_meeting_id=meeting['id'],
-            zoom_start_url=meeting['start_url'],
-            zoom_join_url=meeting['join_url'],
+            zoom_meeting_id=meeting_id,
+            zoom_start_url=start_url,
+            zoom_join_url=join_url,
         )
         team.save()
         team.participants.add(player_1, player_2, player_3)
@@ -1209,6 +1219,8 @@ def quiz_start(request, quiz):
         'quiz_end_date': user_quiz.end_time,
         'question_ids': question_ids,
         'team_id': user_team.pk,
+        'zoom_join_url': user_team.zoom_join_url,
+        'zoom_start_url': user_team.zoom_start_url,
         'quiz_id': user_quiz.pk,
         'user_no': user_no,
         'submission_control': submission,
@@ -1416,6 +1428,9 @@ def question_submission_json(request):
             quiz_complete.save()
 
             if int(request.POST['end']) == 1:
+                meeting_id = team.zoom_meeting_id
+                if meeting_id is not None or meeting_id == '':
+                    zoom_delete_meeting(meeting_id)
 
                 notify.send(
                     request.user,

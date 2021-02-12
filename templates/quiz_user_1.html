@@ -448,7 +448,7 @@
                         }
                     });
                 } else {
-                    alert("Your quiz submitted successfully x");
+                    alert("Your quiz submitted successfully");
                     {#window.close();#}
                     window.location = {% url 'application:quizes' %};
                 }
@@ -597,7 +597,7 @@
             }
 
             function openWin() {
-                myWindow = window.open("https://us04web.zoom.us/j/71319697821?pwd=YXhJaTh6YlFJNlJTTFZGWTVNb1BEZz09", "myWindow", "width=500,height=500");
+                myWindow = window.open("{{ zoom_join_url }}", "myWindow", "width=500,height=500");
             }
 
             function closeWin() {
