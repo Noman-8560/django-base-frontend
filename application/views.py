@@ -979,8 +979,9 @@ def team(request, pk):
 @never_cache
 def delete_team(request, pk):
     team = None
+
     try:
-        Team.objects.get(pk=pk)
+        team = Team.objects.get(pk=pk)
     except Team.DoesNotExist:
         messages.error(request=request, message="Requested Team Does not exists")
         return redirect('application:teams', permanent=True)
@@ -994,11 +995,12 @@ def delete_team(request, pk):
 
     if Team.objects.filter(quiz__in=completed):
         messages.error(request=request,
-                       message="you have attempted quiz with this team you are not allowed to delete this team ")
+                       message="you have attempted quiz with this team, you are not allowed to delete this team now")
         return redirect('application:teams', permanent=True)
-
-    messages.success(request=request,
-                     message="You have been removed from team")
+    else:
+        team.delete()
+        messages.success(request=request,
+                         message="Team Destroyed completely")
     return redirect('application:teams', permanent=True)
 
 
@@ -1634,3 +1636,38 @@ def sent_mail(request):
     #     html_message='<h1><strong>HII</strong> man how are you<h2/>'
     # )
     pass
+
+
+@login_required
+def zoom_profile(request):
+
+    try:
+        account = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        if request.user.is_superuser or request.user.is_staff:
+            messages.info(
+                request,
+                f"Hi {request.user} you are a super user, you don't need it, this feature is for students"
+            )
+        else:
+            messages.error(
+                request,
+                f"Hi {request.user} there is some problem with your profile please contact administration"
+            )
+        return redirect('application:dashboard')
+
+    method = request.method
+    if method == 'POST':
+        form = ProfileZoomForm(request.POST or None, instance=account)
+        if form.is_valid():
+            form.save(commit=True)
+            # API_CALL_CHECK_ACCOUNT_STATUS
+            messages.success(request, 'Your account updated successfully')
+    else:
+        form = ProfileZoomForm(instance=account)
+
+    context = {
+        'form': form,
+        'verification': account.zoom_account_verification
+    }
+    return render(request=request, template_name='zoom_profile.html', context=context)

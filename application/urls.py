@@ -14,6 +14,7 @@ urlpatterns = [
     path('delete/article/<int:pk>/', delete_article, name='delete_article'),
 
     path('profile/', profile_update, name='profile_update'),
+    path('zoom/profile/', zoom_profile, name='zoom_profile'),
 
     path('subjects/', subjects, name='subjects'),
     path('add/subject/', add_subject, name='add_subject'),

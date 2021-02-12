@@ -17,7 +17,7 @@ def get_access_token():
     return json.loads(response.text)
 
 
-def create_meeting():
+def zoom_create_meeting(user):
     # access = get_access_token()
     # bearer_token = access['access_token']
     url = "https://api.zoom.us/v2/users/donald.duck0762@gmail.com/meetings"
@@ -71,7 +71,7 @@ def create_meeting():
     return response
 
 
-def delete_meeting():
+def zoom_delete_meeting(user, meet):
     url = "https://api.zoom.us/v2/meetings/78193237508"
     headers = {
         'authorization': 'Bearer eyJhbGciOiJIUzUxMiIsInYiOiIyLjAiLCJraWQiOiI4ZDliNmZiMC1jYzMwLTQ3ODAtYjBjNS1lMWVjMDg3ZGQ3OGIifQ.eyJ2ZXIiOjcsImF1aWQiOiI5Y2Y1YjdmMzBlOWQxMzYwZjA1ZDk1OTQyNjA0MDc1YSIsImNvZGUiOiJaNHdTM2VsWHhkXzFyaFotZThyUzdpR2xnRjV1WFVreXciLCJpc3MiOiJ6bTpjaWQ6Z3JqSE1GYUJSMGFpR2tISzl5Q09aQSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiIxcmhaLWU4clM3aUdsZ0Y1dVhVa3l3IiwibmJmIjoxNjExNjg0ODA1LCJleHAiOjE2MTE2ODg0MDUsImlhdCI6MTYxMTY4NDgwNSwiYWlkIjoidzZ0OFdOOVRTRXlNSWJ0dFE0WDQwZyIsImp0aSI6ImUzNjdlZjY4LTBjNDAtNGY0MS04OWFkLWE2YmQxMDk3ZGNjMyJ9.Jii17dzrI-tkLIWwtFcOnDo7bKNzMow32gHpsTTJ4X34t3hI7pEDUn3z-Y5IpQ3fdu9mzW8XcpbWOQqmnGZzjw'}
@@ -79,11 +79,21 @@ def delete_meeting():
     print(response)
 
 
+def zoom_check_user(user=None):
+    url = "https://api.zoom.us/v2/users/ikram.khan0762@gmail.com"
+    headers = {
+        'authorization': 'Bearer eyJhbGciOiJIUzUxMiIsInYiOiIyLjAiLCJraWQiOiJiMjY2YmMxNy04YWYwLTQ5ZTUtOGZhMi1jOGUwY2I3MDY0ZTAifQ.eyJ2ZXIiOjcsImF1aWQiOiI5Y2Y1YjdmMzBlOWQxMzYwZjA1ZDk1OTQyNjA0MDc1YSIsImNvZGUiOiIzQkdBVkxSekVKXzFyaFotZThyUzdpR2xnRjV1WFVreXciLCJpc3MiOiJ6bTpjaWQ6Z3JqSE1GYUJSMGFpR2tISzl5Q09aQSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiIxcmhaLWU4clM3aUdsZ0Y1dVhVa3l3IiwibmJmIjoxNjEzMTE0Nzk3LCJleHAiOjE2MTMxMTgzOTcsImlhdCI6MTYxMzExNDc5NywiYWlkIjoidzZ0OFdOOVRTRXlNSWJ0dFE0WDQwZyIsImp0aSI6ImI2YjRiNTg2LTJkZTQtNDFkNi1hZjQwLTcxNWMxZjUxMjAyOCJ9.E8bDN7WcncEes35w0WkvsqLBAEIkKFJoHZ_y3lO1qx1KIhj7Ao-HZUT6qX52cGp1uWcuWcKtgNOz9S1IBdrNJg'}
+
+    response = requests.request("GET", url, headers=headers)
+    print(response.status_code)
+
+
 def zoom(request):
     return HttpResponse(create_meeting())
 
 
 def run(request):
+    check_user()
     return render(request=request, template_name='run.html')
 
 
