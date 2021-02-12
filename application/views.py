@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from itertools import product
 
@@ -11,6 +12,8 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
+
+from application.zoom_api.views import zoom_create_meeting, zoom_check_user, zoom_delete_meeting
 
 from application.BusinessLogicLayer import identify_user_in_team
 from .forms import *
@@ -998,6 +1001,7 @@ def delete_team(request, pk):
                        message="you have attempted quiz with this team, you are not allowed to delete this team now")
         return redirect('application:teams', permanent=True)
     else:
+        zoom_delete_meeting(team.zoom_meeting_id)
         team.delete()
         messages.success(request=request,
                          message="Team Destroyed completely")
@@ -1054,18 +1058,33 @@ def enroll(request, pk):
             messages.error(request=request, message=f'Requested participant or participants does not exists.')
             return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
-        team = Team(name=team_name, quiz=quiz)
-        team.save()
+        # --------------------------------------------------------------------------------------------------------
+        # --------- MEETING
+        response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}", start_time=str(datetime.utcnow()))
+        if response.status_code != 201:
+            messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+            return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
+        meeting = json.loads(response.text)
+
+        # --------- SAVE
+        team = Team(
+            name=team_name,
+            quiz=quiz,
+            created_by=request.user,
+            zoom_meeting_id=meeting['id'],
+            zoom_start_url=meeting['start_url'],
+            zoom_join_url=meeting['join_url'],
+        )
+        team.save()
         team.participants.add(player_1, player_2, player_3)
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                   f'with team={team_name} as a caption of team.')
 
+        # --------- NOTIFY
         ps = [request.user.username]
-
         if player_2 is not None:
             ps.append(player_2.username)
-
         if player_3 is not None:
             ps.append(player_3.username)
 
@@ -1080,7 +1099,7 @@ def enroll(request, pk):
                 level='success',
                 description=desc
             )
-
+        # -----------------------------------------------------------------------------------------------------------
         return HttpResponseRedirect(reverse('application:quizes'))
 
     # GET_METHOD

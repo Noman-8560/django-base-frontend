@@ -1,33 +1,62 @@
-import base64
+import datetime
 import json
 
+import jwt
 import requests
 from django.http import HttpResponse
 from django.shortcuts import render
+from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
 
 
-def get_access_token():
-    url = 'https://zoom.us/oauth/token?grant_type=client_credentials'
-    credentials = base64.b64encode('grjHMFaBR0aiGkHK9yCOZA:EMaxCD10j9jlUn0z6gn8lroTxrUuqItZ'.encode('ascii'))
-    headers = {
-        'content-type': "application/json",
-        'authorization': f"Basic Z3JqSE1GYUJSMGFpR2tISzl5Q09aQTpFTWF4Q0QxMGo5amxVbjB6NmduOGxyb1R4clV1cUl0Wg=="
+# COMPLETE AND WORKING
+def get_jwt():
+    payload = {
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30),
+        'iss': ZOOM_API_KEY_JWT
     }
-    response = requests.post(url, headers=headers)
-    return json.loads(response.text)
+    token = jwt.encode(payload, ZOOM_API_SECRET_JWT)
+    return token
 
 
-def zoom_create_meeting(user):
-    # access = get_access_token()
-    # bearer_token = access['access_token']
-    url = "https://api.zoom.us/v2/users/donald.duck0762@gmail.com/meetings"
+# NOT WORKING
+def o_auth_authorize():
+    """
+    https://zoom.us/oauth/authorize?response_type=code&client_id=7lstjK9NTyett_oeXtFiEQ&redirect_uri=https://yourapp.com
+    help_page: https://marketplace.zoom.us/docs/guides/auth/oauth
+    """
+    url = 'https://zoom.us/oauth/authorize'
+    headers = {
+        'response_type': 'json',
+        'client_id': '9718hiVcReaufC53hmezMg',
+        'redirect_uri': 'https://marketplace.zoom.us/docs/oauth/callback/success',
+    }
+    response = requests.get(url, headers=headers)
+    return response
+
+
+# NOT WORKING
+def o_auth_access_token():
+    """
+    https://zoom.us/oauth/token?grant_type=authorization_code&code=FROM_ABOVE_API&redirect_uri=REDIRECT_URL
+    help: https://marketplace.zoom.us/docs/guides/auth/oauth
+    """
+    url = 'https://zoom.us/oauth/token'
+    headers = {
+        'response_type': 'code',
+        'client_id': 'grjHMFaBR0aiGkHK9yCOZA',
+        'redirect_uri': '',
+    }
+    response = requests.get(url, headers=headers)
+    return response
+
+
+def zoom_create_meeting(name, start_time, host='donald.duck0762@gmail.com'):
+    bearer_token = get_jwt()
+    url = f"https://api.zoom.us/v2/users/{host}/meetings"
 
     payload = {
-        "created_at": "2019-09-05T16:54:14Z",
         "duration": 60,
-        "host_id": "donald.duck0762@gmail.com",
-        "id": 11000000,
-        "join_url": "https://zoom.us/j/11000000",
+        "host_id": host,
         "settings": {
             "alternative_hosts": "",
             "approval_type": 2,
@@ -52,50 +81,42 @@ def zoom_create_meeting(user):
             "watermark": False,
             "registrants_email_notification": True
         },
-        "start_time": "2019-08-30T22:00:00Z",
-        "start_url": "https://zoom.us/s/1100000?iIifQ.wfY2ldlb82SWo3TsR77lBiJjR53TNeFUiKbLyCvZZjw",
+        "start_time": start_time,  # FORMAT 2019-09-05T16:54:14Z
         "status": "waiting",
-        "timezone": "America/New_York",
-        "topic": "API Test",
-        "type": 2,
-        "uuid": "ng1MzyWNQaObxcf3+Gfm6A=="
+        "timezone": "Asia/Calcutta",
+        "topic": name,
+        "type": 2,  # MEANS _ schedule meeting.
     }
 
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer eyJhbGciOiJIUzUxMiIsInYiOiIyLjAiLCJraWQiOiI4ZDliNmZiMC1jYzMwLTQ3ODAtYjBjNS1lMWVjMDg3ZGQ3OGIifQ.eyJ2ZXIiOjcsImF1aWQiOiI5Y2Y1YjdmMzBlOWQxMzYwZjA1ZDk1OTQyNjA0MDc1YSIsImNvZGUiOiJaNHdTM2VsWHhkXzFyaFotZThyUzdpR2xnRjV1WFVreXciLCJpc3MiOiJ6bTpjaWQ6Z3JqSE1GYUJSMGFpR2tISzl5Q09aQSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiIxcmhaLWU4clM3aUdsZ0Y1dVhVa3l3IiwibmJmIjoxNjExNjg0ODA1LCJleHAiOjE2MTE2ODg0MDUsImlhdCI6MTYxMTY4NDgwNSwiYWlkIjoidzZ0OFdOOVRTRXlNSWJ0dFE0WDQwZyIsImp0aSI6ImUzNjdlZjY4LTBjNDAtNGY0MS04OWFkLWE2YmQxMDk3ZGNjMyJ9.Jii17dzrI-tkLIWwtFcOnDo7bKNzMow32gHpsTTJ4X34t3hI7pEDUn3z-Y5IpQ3fdu9mzW8XcpbWOQqmnGZzjw"
+        'authorization': f"Bearer {bearer_token}"
     }
 
     response = requests.post(url=url, json=payload, headers=headers)
-    print(response.text)
     return response
 
 
-def zoom_delete_meeting(user, meet):
-    url = "https://api.zoom.us/v2/meetings/78193237508"
+def zoom_delete_meeting(meeting_id):
+    bearer_token = get_jwt()
+    url = f"https://api.zoom.us/v2/meetings/{meeting_id}"
+
     headers = {
-        'authorization': 'Bearer eyJhbGciOiJIUzUxMiIsInYiOiIyLjAiLCJraWQiOiI4ZDliNmZiMC1jYzMwLTQ3ODAtYjBjNS1lMWVjMDg3ZGQ3OGIifQ.eyJ2ZXIiOjcsImF1aWQiOiI5Y2Y1YjdmMzBlOWQxMzYwZjA1ZDk1OTQyNjA0MDc1YSIsImNvZGUiOiJaNHdTM2VsWHhkXzFyaFotZThyUzdpR2xnRjV1WFVreXciLCJpc3MiOiJ6bTpjaWQ6Z3JqSE1GYUJSMGFpR2tISzl5Q09aQSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiIxcmhaLWU4clM3aUdsZ0Y1dVhVa3l3IiwibmJmIjoxNjExNjg0ODA1LCJleHAiOjE2MTE2ODg0MDUsImlhdCI6MTYxMTY4NDgwNSwiYWlkIjoidzZ0OFdOOVRTRXlNSWJ0dFE0WDQwZyIsImp0aSI6ImUzNjdlZjY4LTBjNDAtNGY0MS04OWFkLWE2YmQxMDk3ZGNjMyJ9.Jii17dzrI-tkLIWwtFcOnDo7bKNzMow32gHpsTTJ4X34t3hI7pEDUn3z-Y5IpQ3fdu9mzW8XcpbWOQqmnGZzjw'}
+        'authorization': f"Bearer {bearer_token}"
+    }
     response = requests.delete(url=url, headers=headers)
-    print(response)
+    return response.status_code
 
 
-def zoom_check_user(user=None):
-    url = "https://api.zoom.us/v2/users/ikram.khan0762@gmail.com"
+def zoom_check_user(user='donald.duck0762@gmail.com'):
+    bearer_token = get_jwt()
+    url = f"https://api.zoom.us/v2/users/{user}"
     headers = {
-        'authorization': 'Bearer eyJhbGciOiJIUzUxMiIsInYiOiIyLjAiLCJraWQiOiJiMjY2YmMxNy04YWYwLTQ5ZTUtOGZhMi1jOGUwY2I3MDY0ZTAifQ.eyJ2ZXIiOjcsImF1aWQiOiI5Y2Y1YjdmMzBlOWQxMzYwZjA1ZDk1OTQyNjA0MDc1YSIsImNvZGUiOiIzQkdBVkxSekVKXzFyaFotZThyUzdpR2xnRjV1WFVreXciLCJpc3MiOiJ6bTpjaWQ6Z3JqSE1GYUJSMGFpR2tISzl5Q09aQSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiIxcmhaLWU4clM3aUdsZ0Y1dVhVa3l3IiwibmJmIjoxNjEzMTE0Nzk3LCJleHAiOjE2MTMxMTgzOTcsImlhdCI6MTYxMzExNDc5NywiYWlkIjoidzZ0OFdOOVRTRXlNSWJ0dFE0WDQwZyIsImp0aSI6ImI2YjRiNTg2LTJkZTQtNDFkNi1hZjQwLTcxNWMxZjUxMjAyOCJ9.E8bDN7WcncEes35w0WkvsqLBAEIkKFJoHZ_y3lO1qx1KIhj7Ao-HZUT6qX52cGp1uWcuWcKtgNOz9S1IBdrNJg'}
-
+        'authorization': f"Bearer {bearer_token}"
+    }
     response = requests.request("GET", url, headers=headers)
-    print(response.status_code)
+    return response
 
 
 def zoom(request):
-    return HttpResponse(create_meeting())
-
-
-def run(request):
-    check_user()
-    return render(request=request, template_name='run.html')
-
-
-def meeting(request):
-    return render(request=request, template_name='meeting.html')
+    return HttpResponse()

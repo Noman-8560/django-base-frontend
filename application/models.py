@@ -9,6 +9,8 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from notifications.signals import notify
 
+from application.zoom_api.views import zoom_delete_meeting, zoom_create_meeting
+
 
 class AppUpdate(models.Model):
     UPDATE_STATUS = (
@@ -332,9 +334,18 @@ class Team(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
     quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
     participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
+
+    zoom_meeting_id = models.CharField(max_length=255, blank=True, null=True)
+    zoom_start_url = models.URLField(blank=True, null=True)
+    zoom_join_url = models.URLField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
     is_active = models.BooleanField(null=False, blank=False, default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Teams'
 
     def __str__(self):
         return self.name
@@ -342,8 +353,13 @@ class Team(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        verbose_name_plural = 'Teams'
+    def save(self, *args, **kwargs):
+        # ZOOM_API_CALL > create meet
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # ZOOM_API_CALL > delete meeting
+        super(Team, self).delete(*args, **kwargs)
 
 
 class Attempt(models.Model):
