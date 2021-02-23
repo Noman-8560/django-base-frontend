@@ -77,10 +77,7 @@ def dashboard(request):
     if request.GET.get('quiz'):
         try:
             allow = True
-            quiz = Quiz.objects.get(pk=request.GET.get('quiz'))
-
-            if quiz in completed:
-                print("COMPLETED")
+            quiz = Quiz.objects.get(pk=int(request.GET.get('quiz')))
 
             questions = quiz.questions.all()
             user = User.objects.get(username=request.user.username)
@@ -139,8 +136,8 @@ def dashboard(request):
                 time_min.append(int(_min_time))
                 time_avg.append(_all_time_sum / count)
 
-                my_team_attempts = _attempts.filter(user=user).exists()
-                if my_team_attempts:
+                my_team_attempts = Attempt.objects.filter(question=question, user=user)
+                if my_team_attempts.exists():
                     for a in my_team_attempts:
                         my_team_time.append(int((a.end_time - a.start_time).total_seconds()))
                 else:
@@ -769,7 +766,6 @@ def search_question(request, quiz_pk):
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
 
-    # TODO: Block already present questions
     if not quiz.learning_purpose:
         questions_models = questions_models.filter(question_type=quiz.players)
 

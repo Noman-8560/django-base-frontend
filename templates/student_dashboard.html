@@ -43,34 +43,34 @@
                     <!-- Tab panes -->
                     <div class="tab-content p-3">
                         <div class="tab-pane active" id="live_events" role="tabpanel">
-                            <ol class="m-0 list-unstyled">
+                            <ul class="m-0 list-unstyled">
                                 {% for quiz in quizes_available %}
                                     <li>Event <b>{{ quiz.title }}</b> started on
-                                        <b>{{ quiz.start_time }}</b> and closes on
-                                        <b>{{ quiz.end_time }}</b>
-                                        <a href="#" class="font-size-15">
-                                            Click to go live.
+                                        {{ quiz.start_time }}and closes on
+                                        {{ quiz.end_time }}
+                                        <a href="#" class="text-dark">
+                                            <b>click to go live</b>
                                         </a>
                                     </li>
                                 {% endfor %}
-                            </ol>
+                            </ul>
                         </div>
                         <div class="tab-pane" id="enrolled_events" role="tabpanel">
-                            <ol class="m-0">
+                            <ul class="m-0">
                                 {% for quiz in quizes_enrolled %}
                                     <li>Event <b>{{ quiz.title }}</b> will be started
-                                        <b>{{ quiz.start_time }}</b> and closes on <b>{{ quiz.end_time }}</b>.
+                                        {{ quiz.start_time }} and closes on {{ quiz.end_time }}.
                                     </li>
                                 {% endfor %}
-                            </ol>
+                            </ul>
                         </div>
                         <div class="tab-pane" id="completed_events" role="tabpanel">
-                            <ol class="m-0">
+                            <ul class="m-0">
                                 {% for quiz in quizes_completed %}
-                                    <li>Event <b>{{ quiz.quiz.title }}</b> was closed on <b>{{ quiz.quiz.end_time }}</b>
+                                    <li>Event <b>{{ quiz.quiz.title }}</b> was closed on {{ quiz.quiz.end_time }}<a class="text-dark" href="/dashboard/?quiz={{ quiz.quiz_id }}"><b>click to views stats</b></a>
                                     </li>
                                 {% endfor %}
-                            </ol>
+                            </ul>
                         </div>
                     </div>
 
