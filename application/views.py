@@ -96,16 +96,16 @@ def dashboard(request):
             # OVER_ALL_REQUIREMENTS
             correct_attempts_all = []
             incorrect_attempts_all = []
+
             average_correct_attempts_all = []
             average_incorrect_attempts_all = []
             pass_attempts_all = []
             average_pass_attempts_all = []
 
-            time_sum_of_all = []
-            time_sum_of_max = []
-            time_sum_of_min = []
-            time_sum_of_avg = []
-            time_sum_of_pas = []
+            time_max = []
+            time_min = []
+            time_avg = []
+            my_team_time = []
 
             for question in questions:
                 pass_attempts_all.append(1)
@@ -117,15 +117,10 @@ def dashboard(request):
 
                 # GET TIMES -------------------------------------------------------------------------------------
                 _all_time_sum = 0
-                _min_time_sum = 0
-                _max_time_sum = 0
-                _avg_time_sum = 0
-
                 _max_time = 0
                 _min_time = 1000
                 count = 0
                 for v in _attempts.values('start_time', 'end_time', 'team', 'question'):
-
                     current = (v['end_time'] - v['start_time']).total_seconds()
                     if current < _max_time:
                         _max_time = _max_time
@@ -139,14 +134,17 @@ def dashboard(request):
                     count += 1
 
                     _all_time_sum += int(current)
-                    _max_time_sum += int(_max_time)
-                    _min_time_sum += int(_min_time)
 
-                time_sum_of_all.append(int(_all_time_sum))
-                time_sum_of_max.append(int(_max_time_sum))
-                time_sum_of_min.append(int(_min_time_sum))
-                time_sum_of_avg.append(_all_time_sum / count)
+                time_max.append(int(_max_time))
+                time_min.append(int(_min_time))
+                time_avg.append(_all_time_sum / count)
 
+                my_team_attempts = _attempts.filter(user=user).exists()
+                if my_team_attempts:
+                    for a in my_team_attempts:
+                        my_team_time.append(int((a.end_time - a.start_time).total_seconds()))
+                else:
+                    my_team_time.append(0)
                 # -----------------------------------------------------------------------------------------------
 
                 # CORRECT ALL and IN_CORRECT ALL ----------------------------------------------------------------
@@ -185,9 +183,10 @@ def dashboard(request):
                 'incorrect_attempts_all': incorrect_attempts_all,
                 'pass_attempts_all': pass_attempts_all,
 
-                'time_sum_of_max': time_sum_of_max,
-                'time_sum_of_min': time_sum_of_min,
-                'time_sum_of_avg': time_sum_of_avg,
+                'time_max': time_max,
+                'time_min': time_min,
+                'time_avg': time_avg,
+                'my_team_time': my_team_time,
 
                 'average_correct_attempts_all': average_correct_attempts_all,
                 'average_incorrect_attempts_all': average_incorrect_attempts_all,
@@ -196,7 +195,7 @@ def dashboard(request):
                 'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
                 'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
                 'quizes_enrolled': enrolled_quizes,
-                # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+                # QUIZ=> REQUIRED(upcoming, not_attempted) [CHECK_MODEL = QuizCompleted]
                 'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
             }
         except Quiz.DoesNotExist:
@@ -421,7 +420,6 @@ def question_builder_update(request, pk):
         'form_question_image': QuestionImageForm,
         'form_question_audio': QuestionAudioForm,
         'form_question_statement': QuestionStatementForm,
-
         'data_question_statements': QuestionStatement.objects.filter(question=Question.objects.get(pk=pk)),
         'data_question_images': QuestionImage.objects.filter(question=Question.objects.get(pk=pk)),
         'data_question_audios': QuestionAudio.objects.filter(question=Question.objects.get(pk=pk)),
@@ -1674,7 +1672,6 @@ def sent_mail(request):
 
 @login_required
 def zoom_profile(request):
-
     try:
         account = Profile.objects.get(user=request.user)
     except Profile.DoesNotExist:

@@ -1,10 +1,9 @@
 import datetime
-import json
 
 import jwt
 import requests
 from django.http import HttpResponse
-from django.shortcuts import render
+
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
 
 
