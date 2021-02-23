@@ -13,8 +13,8 @@
 
 {% block page_heading %}
     Quiz ID {{ quiz_id }}<br><br>
-{#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
-{#        anyone.</p>#}
+    {#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
+    {#        anyone.</p>#}
     <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
             class="fa fa-trash"></i> Remove</a>
     <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i
@@ -195,6 +195,7 @@
                     url: "/search/questions/for/quiz/{{ quiz_id }}/?search=" + search,
                     type: 'GET',
                     success: function (response) {
+                        console.log(response)
                         for (let i = 0; i < response['length']; i++) {
                             $('#search_list_product').append(
                                 '<li class="p-2" id="' + response[i].question + '">' +
