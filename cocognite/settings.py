@@ -24,7 +24,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 ZOOM_API_KEY_JWT = 'cWmBJx-ZSIeN1eal8jQwuw'
-ZOOM_API_SECRET_JWT = 'orq6DM4OLD5XV8Eh0cY4udCMVfjuj7wgwme4'
+ZOOM_API_SECRET_JWT = 'ML900IMjtZ2ymh6YCk8tCxtE792xIIsd0TNi'
 
 # Application definition
 INSTALLED_APPS = [

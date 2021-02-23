@@ -108,7 +108,7 @@ def zoom_delete_meeting(meeting_id):
     return response.status_code
 
 
-def zoom_check_user(user='donald.duck0762@gmail.com'):
+def zoom_check_user(user='ikram.khan0762@gmail.com'):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{user}"
     headers = {

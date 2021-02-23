@@ -771,8 +771,8 @@ def search_question(request, quiz_pk):
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
 
-    # TODO: Block already present questions
-    questions_models = questions_models.filter(question_type=quiz.players)
+    if not quiz.learning_purpose:
+        questions_models = questions_models.filter(question_type=quiz.players)
 
     dict_out = {}
     count = 0
