@@ -22,6 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 's(l5vi&5nq2vnt(^t)ezh7twcbn#_z&a$@)2*k_20kl(phyzd!'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
+SERVER_ACTIVE = True
 
 ZOOM_API_KEY_JWT = 'cWmBJx-ZSIeN1eal8jQwuw'
 ZOOM_API_SECRET_JWT = 'ML900IMjtZ2ymh6YCk8tCxtE792xIIsd0TNi'
@@ -79,7 +80,6 @@ AUTHENTICATION_BACKENDS = (
 
 ROOT_URLCONF = 'cocognite.urls'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-SITE_ID = 3
 LOGIN_REDIRECT_URL = '/dashboard/'
 
 TEMPLATES = [
@@ -103,7 +103,8 @@ WSGI_APPLICATION = 'cocognite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if os.name == 'nt':
+if SERVER_ACTIVE:
+    SITE_ID = 3
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -115,26 +116,14 @@ if os.name == 'nt':
             'PORT': '3306',
         }
     }
-elif os.name == 'posix':
-    if not DEBUG:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {'charset': 'utf8mb4'},
-                'NAME': 'cocognitodb',
-                'USER': 'umair',
-                'PASSWORD': 'multi-mediaplus123',
-                'HOST': 'localhost',
-                'PORT': '3306',
-            }
+else:
+    SITE_ID = 1
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-            }
-        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
