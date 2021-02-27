@@ -516,10 +516,10 @@ def save_profile_on_user(sender, instance, created, **kwargs):
         from application.zoom_api.views import create_zoom_user
         if create_zoom_user(user=user):
             verb = f'Zoom profile created'
-            description = f'Hi <b>{user}</b>, Your profile User was created, so you can join and/or start meetings.'
+            description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
         else:
             verb = f'Failed to create Zoom profile'
-            description = f'Hi <b>{user}</b>, Failed to create your Zoom account, please contact the administrators.'
+            description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
 
         notify.send(
             user,
