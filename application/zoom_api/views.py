@@ -75,7 +75,7 @@ def zoom_create_meeting(name, start_time, host='cocognito20@gmail.com'):
             "mute_upon_entry": False,
             "participant_video": False,
             "registrants_confirmation_email": True,
-            "use_pmi": True,
+            "use_pmi": False,
             "waiting_room": False,
             "watermark": False,
             "registrants_email_notification": True
@@ -93,6 +93,7 @@ def zoom_create_meeting(name, start_time, host='cocognito20@gmail.com'):
     }
 
     response = requests.post(url=url, json=payload, headers=headers)
+    print(response.text)
     return response
 
 

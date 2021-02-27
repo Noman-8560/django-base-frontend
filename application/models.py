@@ -336,8 +336,8 @@ class Team(models.Model):
     participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
 
     zoom_meeting_id = models.CharField(max_length=255, blank=True, null=True)
-    zoom_start_url = models.URLField(blank=True, null=True)
-    zoom_join_url = models.URLField(blank=True, null=True)
+    zoom_start_url = models.TextField(blank=True, null=True)
+    zoom_join_url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     is_active = models.BooleanField(null=False, blank=False, default=True)
