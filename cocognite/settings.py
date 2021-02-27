@@ -105,17 +105,30 @@ WSGI_APPLICATION = 'cocognite.wsgi.application'
 
 if SERVER_ACTIVE:
     SITE_ID = 3
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {'charset': 'utf8mb4'},
-            'NAME': 'cocognitodb',
-            'USER': 'umair_windows',
-            'PASSWORD': 'multi-mediaplus123',
-            'HOST': '139.59.45.36',
-            'PORT': '3306',
+    if os.name == 'posix':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'OPTIONS': {'charset': 'utf8mb4'},
+                'NAME': 'cocognitodb',
+                'USER': 'umair',
+                'PASSWORD': 'multi-mediaplus123',
+                'HOST': 'localhost',
+                'PORT': '3306',
+            }
         }
-    }
+    elif os.name == 'nt':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'OPTIONS': {'charset': 'utf8mb4'},
+                'NAME': 'cocognitodb',
+                'USER': 'umair_windows',
+                'PASSWORD': 'multi-mediaplus123',
+                'HOST': '139.59.45.36',
+                'PORT': '3306',
+            }
+        }
 else:
     SITE_ID = 1
     DATABASES = {
