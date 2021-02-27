@@ -50,7 +50,7 @@ def o_auth_access_token():
     return response
 
 
-def zoom_create_meeting(name, start_time, host='cocognito20@gmail.com'):
+def zoom_create_meeting(name, start_time, host):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{host}/meetings"
 
