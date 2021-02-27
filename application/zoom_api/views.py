@@ -2,6 +2,7 @@ import datetime
 
 import jwt
 import requests
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
@@ -119,7 +120,7 @@ def zoom_check_user(user='cocognito20@gmail.com'):
     return response
 
 
-def create_zoom_user():
+def create_zoom_user(user: User):
     bearer_token = get_jwt()
     url = 'https://api.zoom.us/v2/users'
     headers = {
@@ -129,15 +130,15 @@ def create_zoom_user():
     json = {
         'action': 'custCreate',
         'user_info': {
-            'email': 'umair_mnz105@yahoo.com',
+            'email': user.email,
             'type': 1,
-            'first_name': 'Umair',
-            'last_name': 'Manzoor'
+            'first_name': user.first_name,
+            'last_name': user.last_name
         }
     }
     response = requests.post(url, headers=headers, json=json)
     print(response.text)
-    return response
+    return response.status_code == 201
 
 
 def zoom(request):
