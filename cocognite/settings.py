@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 's(l5vi&5nq2vnt(^t)ezh7twcbn#_z&a$@)2*k_20kl(phyzd!'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
-SERVER_ACTIVE = True
+SERVER_ACTIVE = False
 
 ZOOM_API_KEY_JWT = 'cWmBJx-ZSIeN1eal8jQwuw'
 ZOOM_API_SECRET_JWT = 'ML900IMjtZ2ymh6YCk8tCxtE792xIIsd0TNi'
