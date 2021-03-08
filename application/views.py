@@ -1060,17 +1060,17 @@ def enroll(request, pk):
         start_url = None
         join_url = None
         # Replace with user account #
-        if int(quiz.players) > 1:
-            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
-                                           start_time=str(quiz.start_time), host="cocognito20@gmail.com")
-            if response.status_code != 201:
-                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
-                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-
-            meeting = json.loads(response.text)
-            meeting_id = meeting['id']
-            start_url = meeting['start_url']
-            join_url = meeting['join_url']
+        # if int(quiz.players) > 1:
+        #     response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+        #                                    start_time=str(quiz.start_time), host="cocognito20@gmail.com")
+        #     if response.status_code != 201:
+        #         messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+        #         return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+        #
+        #     meeting = json.loads(response.text)
+        #     meeting_id = meeting['id']
+        #     start_url = meeting['start_url']
+        #     join_url = meeting['join_url']
 
         # --------- SAVE
         team = Team(
@@ -1429,10 +1429,10 @@ def question_submission_json(request):
 
                 notify.send(
                     request.user,
-                    recipient=request.user,
+                    recipient=user,
                     verb=f'Quiz {quiz.title} submitted',
                     level='info',
-                    description=f'<b>Hi {request.user}!</b> you can review your vs other teams performance on dashboard'
+                    description=f'<b>Hi {user}!</b> you can review your vs other teams performance on dashboard'
                 )
 
         response = {

@@ -137,12 +137,10 @@
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title mt-0">How to Create or Join Team</h5>
-                                    <p class="card-text">{{ request.user.username }}! You are not associated to any team
-                                        until
-                                        now,
-                                        you can create your own team by selecting <a
-                                                href="{% url 'application:quizes' %}">Quiz</a>
-                                        from available quizes or you can join someone team, give them your username:
+                                    <p class="card-text">There are no records for expired
+                                        events you have been a part of. You can create your own team by selecting <a
+                                                href="{% url 'application:quizes' %}">Quiz</a> from available quizzes or
+                                        you can join someone team, give them your username:
                                         <b>{{ request.user.username }}</b> and ask them to add.</p>
                                 </div>
                             </div>
