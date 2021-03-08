@@ -2,6 +2,7 @@ import datetime
 
 import jwt
 import requests
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
@@ -10,10 +11,10 @@ from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
 # COMPLETE AND WORKING
 def get_jwt():
     payload = {
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30),
-        'iss': ZOOM_API_KEY_JWT
+        'iss': ZOOM_API_KEY_JWT,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     }
-    token = jwt.encode(payload, ZOOM_API_SECRET_JWT)
+    token = jwt.encode(payload, ZOOM_API_SECRET_JWT).decode('utf-8')
     return token
 
 
@@ -49,7 +50,7 @@ def o_auth_access_token():
     return response
 
 
-def zoom_create_meeting(name, start_time, host='donald.duck0762@gmail.com'):
+def zoom_create_meeting(name, start_time, host):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{host}/meetings"
 
@@ -75,7 +76,7 @@ def zoom_create_meeting(name, start_time, host='donald.duck0762@gmail.com'):
             "mute_upon_entry": False,
             "participant_video": False,
             "registrants_confirmation_email": True,
-            "use_pmi": True,
+            "use_pmi": False,
             "waiting_room": False,
             "watermark": False,
             "registrants_email_notification": True
@@ -93,6 +94,7 @@ def zoom_create_meeting(name, start_time, host='donald.duck0762@gmail.com'):
     }
 
     response = requests.post(url=url, json=payload, headers=headers)
+    print(response.text)
     return response
 
 
@@ -107,14 +109,36 @@ def zoom_delete_meeting(meeting_id):
     return response.status_code
 
 
-def zoom_check_user(user='ikram.khan0762@gmail.com'):
+def zoom_check_user(user='cocognito20@gmail.com'):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{user}"
     headers = {
         'authorization': f"Bearer {bearer_token}"
     }
     response = requests.request("GET", url, headers=headers)
+    print(response.text)
     return response
+
+
+def create_zoom_user(user: User):
+    bearer_token = get_jwt()
+    url = 'https://api.zoom.us/v2/users'
+    headers = {
+        'content-type': 'application/json',
+        'authorization': f"Bearer {bearer_token}"
+    }
+    json = {
+        'action': 'custCreate',
+        'user_info': {
+            'email': user.email,
+            'type': 1,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        }
+    }
+    response = requests.post(url, headers=headers, json=json)
+    print(response.text)
+    return response.status_code == 201
 
 
 def zoom(request):
