@@ -201,9 +201,9 @@
                                     <div class="mt-4">
                                         <p class="card-title">Resources</p>
                                         <div class="btn-group-vertical btn-block">
-                                            <a href="{% url 'application:dashboard' %}" class="btn btn-info">Go to My
+                                            <a href="{% url 'application:dashboard' %}" target="_blank" class="btn btn-info">Go to My
                                                 Dashboard</a>
-                                            <a href="{% url 'application:dashboard' %}" class="btn btn-secondary">Go to
+                                            <a href="/dashboard/?live={{ quiz_id }}" target="_blank" class="btn btn-secondary">Go to
                                                 Event
                                                 Dashboard</a>
 
@@ -298,10 +298,6 @@
                 return "Are you sure you want to leave?";
             };
 
-            window.onbeforeunload = function () {
-                return "Are you sure you want to leave?";
-            };
-
             history.pushState(null, null, location.href);
             window.onpopstate = function () {
                 history.go(1);
@@ -316,6 +312,7 @@
             }
 
             skip = 0;
+            let end_quiz = false;
 
             active_async = false;
             end_async = false;
@@ -448,8 +445,10 @@
                         }
                     });
                 } else {
-                    alert("Your quiz submitted successfully");
-                    {#window.close();#}
+                    if(end_quiz === false){
+                        alert("Your quiz submitted successfully -- DONE");
+                        end_quiz = true;
+                    }
                     window.location = {% url 'application:quizes' %};
                 }
             }
@@ -529,7 +528,7 @@
             function async_question_next_sync() {
                 setInterval(function () {
                     is_next();
-                }, 3000);
+                }, 1000);
             }
 
             {# ----------------------------------------------------------------------------------------------------- #}
