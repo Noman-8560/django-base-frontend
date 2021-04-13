@@ -96,7 +96,7 @@
                 </div>
             </div>
 
-            {% if questions %}
+            {% if qs %}
 
 
                 {# Statements details #}
@@ -116,25 +116,67 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for question in questions %}
+                                {% for q in qs %}
                                     <tr>
-                                        <td> {{ question.questionstatement_set.first }} </td>
-                                        <td> {{ question.subject.title }}</td>
-                                        <td> {{ question.get_question_type_display }}</td>
+                                        <td> {{ q.question.questionstatement_set.first }} </td>
+                                        <td> {{ q.question.subject.title }}</td>
+                                        <td> {{ q.question.get_question_type_display }}</td>
                                         <td class="text-warning">
                                             <i class="fa fa-star"></i>
                                         </td>
                                         <td>
-                                            {{ question.quizquestion_set }}
+                                            {% if q.quiz.players == '1' %}
+                                                {{ q.submission_control }}
+                                            {% else %}
+                                                <select name="select_screen" data-question="{{ q.pk }}" id="select_screen">
+                                                    {% if q.quiz.players == '3' %}
+
+                                                        {% if q.submission_control.no == 1 %}
+
+                                                            <option value="1" selected>User Screen 1</option>
+                                                            <option value="2">User Screen 2</option>
+                                                            <option value="3">User Screen 3</option>
+
+                                                        {% elif q.submission_control.no == 2 %}
+
+                                                            <option value="1">User Screen 1</option>
+                                                            <option value="2" selected>User Screen 2</option>
+                                                            <option value="3">User Screen 3</option>
+
+                                                        {% else %}
+
+                                                            <option value="1">User Screen 1</option>
+                                                            <option value="2">User Screen 2</option>
+                                                            <option value="3" selected>User Screen 3</option>
+
+                                                        {% endif %}
+
+                                                    {% else %}
+
+                                                        {% if q.submission_control.no == 1 %}
+
+                                                            <option value="1" selected>User Screen 1</option>
+                                                            <option value="2">User Screen 2</option>
+
+                                                        {% else %}
+
+                                                            <option value="1">User Screen 1</option>
+                                                            <option value="2" selected>User Screen 2</option>
+
+                                                        {% endif %}
+
+                                                    {% endif %}
+                                                </select>
+                                            {% endif %}
                                         </td>
                                         <td>
-                                            <a href="/delete/quiz/{{ quiz_id }}/question/{{ question.pk }}/"
+                                            <a href="/delete/quiz/{{ quiz_id }}/question/{{ q.question.pk }}/"
                                                class="text-danger"><i class="fa fa-trash"></i>
                                             </a>&nbsp;
-                                            <a href="{% url 'application:update_question' question.pk %}"
+                                            <a href="{% url 'application:update_question' q.question.pk %}"
                                                class="text-primary"><i class="fa fa-edit"></i>
                                             </a>&nbsp;
-                                            <a href="{% url 'application:question_builder_update' question.pk %}"
+                                            <a href="{% url 'application:question_builder_update' q.question.pk %}"
                                                class="text-primary"><i class="fa fa-eye"></i></a>
                                         </td>
                                     </tr>
@@ -172,6 +214,19 @@
 {% block base_external_scripts %}
     <script>
         $(document).ready(function () {
+
+            let select_screen = $('select');
+
+            select_screen.change(function (event) {
+
+                let option = parseInt($(this).val());
+                let id = parseInt($(this).data('question'));
+
+                $.get('/update/screen/option/'+option+'/question/'+id+'/', function (data, status) {
+                    console.log(data.message);
+                });
+
+            });
 
             $('#search-filter').keyup(function () {
 
