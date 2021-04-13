@@ -113,3 +113,4 @@ admin.site.register(LearningResourceResult, LearningResourceResultAdmin)
 
 admin.site.register(EmailConfirmation)
 admin.site.register(Session)
+admin.site.register(QuizQuestion)
