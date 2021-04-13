@@ -49,6 +49,11 @@ urlpatterns = [
     path('delete/question/<int:pk>/', delete_question, name='delete_question'),
     path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
 
+    path(
+        'update/screen/option/<int:option>/question/<int:question>/',
+        quiz_builder_question_submission_control,
+        name='quiz_builder_question_submission_control'
+    ),
     path('search/questions/for/quiz/<int:quiz_pk>/', search_question, name='search_question'),
     path('add/statement/for/question/<int:question>/', question_statement_add, name='question_statement_add'),
     path('add/question_statement/', add_question_statement, name='add_question_statement'),

@@ -692,8 +692,9 @@ def quiz_builder_update(request, pk):
         messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
+
     context = {
-        'questions': quiz.questions.all(),
+        'qs': quiz.quizquestion_set.all(),
         'subjects': quiz.subjects.all(),
         'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
         'quiz_id': pk,
@@ -709,8 +710,28 @@ def quiz_builder_update(request, pk):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def quiz_builder_question_submission_control(pk):
-    pass
+def quiz_builder_question_submission_control(request, option, question):
+
+    error = True
+    message = "Unable to update - you dont have a permission"
+
+    if request.user.is_superuser:
+        quiz_question = QuizQuestion.objects.get(pk=question)
+        if option == 1:
+            quiz_question.submission_control = Screen.objects.first()
+        elif option == 2:
+            quiz_question.submission_control = Screen.objects.all()[1]
+        else:
+            quiz_question.submission_control = Screen.objects.last()
+        quiz_question.save()
+        error = False
+        message = "Question Submission screen updated successfully"
+
+    context = {
+        'error': error,
+        'message': message
+    }
+    return JsonResponse(context, safe=False)
 
 
 @user_passes_test(lambda u: u.is_superuser)
