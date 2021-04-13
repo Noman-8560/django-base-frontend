@@ -137,7 +137,6 @@ class Question(models.Model):
         ('3', 'Three Player'),
     )
 
-    quiz = models.ManyToManyField('Quiz', blank=True, related_name='quiz')
     level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL, blank=False, null=False)
     submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                            related_name='submitted_by')
@@ -259,8 +258,8 @@ class Quiz(models.Model):
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     subjects = models.ManyToManyField(Subject, blank=True)
     players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1')
-    questions = models.ManyToManyField('Question', blank=True, related_name='questions+')
-    submission_control = models.ForeignKey(Screen, null=False, blank=True, on_delete=models.CASCADE)
+    questions = models.ManyToManyField(Question, through="QuizQuestion")
+    submission_control = models.ForeignKey(Screen, null=True, blank=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -295,6 +294,16 @@ class Quiz(models.Model):
                 team.delete()
 
         super(Quiz, self).delete(*args, **kwargs)
+
+
+class QuizQuestion(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    # TODO: Please solve this problem to avoid failure when the first screen id is not 1
+    submission_control = models.ForeignKey(Screen, on_delete=models.CASCADE, default=1)
+
+    def __str__(self):
+        return self.quiz.title
 
 
 class Student(models.Model):
@@ -514,17 +523,17 @@ def save_profile_on_user(sender, instance, created, **kwargs):
             profile.save()
 
         from application.zoom_api.views import create_zoom_user
-        if create_zoom_user(user=user):
-            verb = f'Zoom profile created'
-            description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
-        else:
-            verb = f'Failed to create Zoom profile'
-            description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
+        # if create_zoom_user(user=user):
+        #     verb = f'Zoom profile created'
+        #     description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
+        # else:
+        #     verb = f'Failed to create Zoom profile'
+        #     description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
 
-        notify.send(
-            user,
-            recipient=user,
-            verb=verb,
-            level='info',
-            description=description
-        )
+        # notify.send(
+        #     user,
+        #     recipient=user,
+        #     verb=verb,
+        #     level='info',
+        #     description=description
+        # )

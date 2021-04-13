@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block page_heading %}
-    Quiz ID {{ quiz_id }}<br><br>
+    Quiz : {{ quiz_title }}<br><br>
     {#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
     {#        anyone.</p>#}
     <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
@@ -111,6 +111,7 @@
                                     <th>Subject</th>
                                     <th>Type</th>
                                     <th>Difficulty</th>
+                                    <th>submission Control</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -122,6 +123,9 @@
                                         <td> {{ question.get_question_type_display }}</td>
                                         <td class="text-warning">
                                             <i class="fa fa-star"></i>
+                                        </td>
+                                        <td>
+                                            {{ question.quizquestion_set }}
                                         </td>
                                         <td>
                                             <a href="/delete/quiz/{{ quiz_id }}/question/{{ question.pk }}/"

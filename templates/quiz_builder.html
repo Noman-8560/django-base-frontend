@@ -56,15 +56,9 @@
 
             let players_div = $('#div_id_players');
             let submission_div = $('#div_id_submission_control');
-            let submission_control = $('#id_submission_control');
 
-            check_selection($('#id_players').children("option:selected").val());
             check_resource($('#id_learning_purpose').is(':checked'));
 
-            $('#id_players').change(function () {
-                let option = $(this).children("option:selected").val();
-                check_selection(option);
-            });
 
             $('#id_learning_purpose').change(function () {
                 check_resource(this.checked);
@@ -77,18 +71,6 @@
                 format: 'Y-m-d H:i:s',
             });
 
-            function check_selection(option) {
-                if (option == 1) {
-                    $(submission_control).children("option[value='2']").hide();
-                    $(submission_control).children("option[value='3']").hide();
-                } else if (option == 2) {
-                    $(submission_control).children("option[value='2']").show();
-                    $(submission_control).children("option[value='3']").hide();
-                } else if (option == 3) {
-                    $(submission_control).children("option[value='2']").show();
-                    $(submission_control).children("option[value='3']").show();
-                }
-            }
 
             function check_resource(check) {
                 if (check) {

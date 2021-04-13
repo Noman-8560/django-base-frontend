@@ -1,6 +1,3 @@
-import json
-from datetime import datetime
-from itertools import product
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -11,9 +8,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from notifications.signals import notify
-
-from application.zoom_api.views import zoom_create_meeting, zoom_check_user, zoom_delete_meeting
 
 from application.BusinessLogicLayer import identify_user_in_team
 from .forms import *
@@ -221,9 +215,6 @@ def delete_article(request, pk):
     return HttpResponseRedirect(reverse('application:articles'))
 
 
-from django.db.models import Min, Max, Avg
-
-
 def help_view(request):
     return render(request=request, template_name='project.html')
 
@@ -330,10 +321,6 @@ def profile_update(request):
     return render(request=request, template_name='profile_update.html', context=context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def quiz_builder(request):
-    return render(request=request, template_name='quiz_builder.html')
-
 
 ''' QUESTION BUILDER VIEWS _______________________________________________________________'''
 
@@ -405,7 +392,7 @@ def question_builder_update(request, pk):
         if request.method == 'POST':
             if question_form.is_valid():
                 question_form.save(commit=True)
-    except:
+    except Question.DoesNotExist:
         messages.error(request=request, message=f'Requested Question [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:question_builder'))
 
@@ -708,7 +695,9 @@ def quiz_builder_update(request, pk):
     context = {
         'questions': quiz.questions.all(),
         'subjects': quiz.subjects.all(),
+        'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
         'quiz_id': pk,
+        'quiz_title': quiz.title,
         'total': quiz.questions.count(),
         'remaining': 00,
         'selected': 00,
@@ -717,6 +706,11 @@ def quiz_builder_update(request, pk):
         'easy': 00,
     }
     return render(request=request, template_name='quiz_builder_update.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def quiz_builder_question_submission_control(pk):
+    pass
 
 
 @user_passes_test(lambda u: u.is_superuser)
