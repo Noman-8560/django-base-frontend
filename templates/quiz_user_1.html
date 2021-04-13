@@ -316,7 +316,6 @@
 
             active_async = false;
             end_async = false;
-            submission_control = {{ submission_control }};
 
             $(document).on("keydown", disableF5);
 
@@ -393,7 +392,7 @@
                         {# 2 > SUBMISSION_CONTROL_CHECK #}
                         question_div.attr('data-question', data.question);
 
-                        if (submission_control == '1') {
+                        if (data.submission === 1) {
                             choices_main_div.show();
                             for (let index = 0; index < data.choices_keys.length; index++) {
                                 choices_div.append(

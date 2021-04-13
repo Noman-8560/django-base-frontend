@@ -692,7 +692,6 @@ def quiz_builder_update(request, pk):
         messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
-
     context = {
         'qs': quiz.quizquestion_set.all(),
         'subjects': quiz.subjects.all(),
@@ -1211,10 +1210,8 @@ def quiz_start(request, quiz):
                                     f"has joined the quiz"
                     )
 
-        if user_no == user_quiz.submission_control.no:
-            submission = '1'
-        else:
-            submission = '0'
+
+        submission = '1'
 
     else:
         if user_quiz.start_time > timezone.now():
@@ -1362,6 +1359,7 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         '''__QUESTION LOGIC WILL BE HERE__'''
         try:
             question = Question.objects.get(pk=ll[0])
+            qquestion = QuizQuestion.objects.get(pk=ll[0])
         except ValueError:
             messages.success(request=request, message="Your Quiz has been submitted successfully")
             return redirect('application:quizes')
@@ -1378,9 +1376,21 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
         remains = total - attempts
 
+        control = qquestion.submission_control.no
+        submission = 0
+
+        user_no = identify_user_in_team(user_team, request, quiz)
+        if user_no == control:
+            submission = 1
+
+        print(user_no, " - ", qquestion.submission_control)
+        print(submission)
+        print(user_team.participants.all())
+
         ''' __GENERATING RESPONSES__'''
         response = {
             'question': question.pk,
+            'submission': submission,
             'choices_keys': choices_keys,
             'choices_values': choices_values,
             'statements': statements,
