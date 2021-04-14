@@ -55,14 +55,18 @@
                                             <small class="h3 font-weight-bolder" id="count_down"></small>
                                             <div class="float-right" id="submission_control_div">
                                                 {% if submission_control == '1' %}
-                                                    <button class="btn btn-sm btn-secondary small" id="button_skip"><i
-                                                            class="fa fa-refresh"></i>
-                                                        Skip
-                                                    </button>
-                                                    <button class="btn btn-sm btn-primary small" id="button_submit"><i
-                                                            class="fa fa-check"></i>
-                                                        Submit
-                                                    </button>
+                                                    <div id="submission_permission_div">
+                                                        <button class="btn btn-sm btn-secondary small" id="button_skip">
+                                                            <i
+                                                                    class="fa fa-refresh"></i>
+                                                            Skip
+                                                        </button>
+                                                        <button class="btn btn-sm btn-primary small" id="button_submit">
+                                                            <i
+                                                                    class="fa fa-check"></i>
+                                                            Submit
+                                                        </button>
+                                                    </div>
                                                 {% endif %}
                                                 <a class="btn btn-danger btn-sm" id="button_end"
                                                    href="{% url 'application:quizes' %}"><i
@@ -132,7 +136,8 @@
                                 <div class="">
                                     {# STATEMENTS #}
                                     <div class="card border" id="main_statements_div">
-                                        <div class="card-header"><p class="card-title">QUESTION <b id="question_no"></b> STATEMENT</p></div>
+                                        <div class="card-header"><p class="card-title">QUESTION <b id="question_no"></b>
+                                            STATEMENT</p></div>
                                         <div class="card-body">
 
                                             <div id="statements_div" class="mb-4">
@@ -201,9 +206,11 @@
                                     <div class="mt-4">
                                         <p class="card-title">Resources</p>
                                         <div class="btn-group-vertical btn-block">
-                                            <a href="{% url 'application:dashboard' %}" target="_blank" class="btn btn-info">Go to My
+                                            <a href="{% url 'application:dashboard' %}" target="_blank"
+                                               class="btn btn-info">Go to My
                                                 Dashboard</a>
-                                            <a href="/dashboard/?live={{ quiz_id }}" target="_blank" class="btn btn-secondary">Go to
+                                            <a href="/dashboard/?live={{ quiz_id }}" target="_blank"
+                                               class="btn btn-secondary">Go to
                                                 Event
                                                 Dashboard</a>
 
@@ -340,6 +347,7 @@
 
             button_submit = $('#button_submit');
             button_skip = $('#button_skip');
+            submission_permission_div = $('#submission_permission_div')
 
             question_ids = {{ question_ids }};
             question_div_id = parseInt(question_div.data('question'));
@@ -393,6 +401,7 @@
                         question_div.attr('data-question', data.question);
 
                         if (data.submission === 1) {
+                            submission_permission_div.show();
                             choices_main_div.show();
                             for (let index = 0; index < data.choices_keys.length; index++) {
                                 choices_div.append(
@@ -403,6 +412,7 @@
                                 );
                             }
                         } else {
+                            submission_permission_div.hide();
                             choices_main_div.hide();
                             if (active_async == false) {
                                 active_async = true;
@@ -444,7 +454,7 @@
                         }
                     });
                 } else {
-                    if(end_quiz === false){
+                    if (end_quiz === false) {
                         alert("Your quiz submitted successfully -- DONE");
                         end_quiz = true;
                     }
