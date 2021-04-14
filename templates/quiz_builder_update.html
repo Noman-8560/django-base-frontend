@@ -96,6 +96,13 @@
                 </div>
             </div>
 
+            {# Search details #}
+            <div class="p-0 p-sm-0">
+                <input type="search" class="form-control" placeholder="Search Question" id="search-filter">
+                <ul class="searchlist list-unstyled  border-top-0 card" id="search_list_product">
+                </ul>
+            </div>
+
             {% if qs %}
 
 
@@ -128,7 +135,8 @@
                                             {% if q.quiz.players == '1' %}
                                                 {{ q.submission_control }}
                                             {% else %}
-                                                <select name="select_screen" data-question="{{ q.pk }}" id="select_screen">
+                                                <select name="select_screen" data-question="{{ q.pk }}"
+                                                        id="select_screen">
                                                     {% if q.quiz.players == '3' %}
 
                                                         {% if q.submission_control.no == 1 %}
@@ -191,12 +199,7 @@
                 </div>
             {% endif %}
 
-            {# Search details #}
-            <div class="p-0 p-sm-0">
-                <input type="search" class="form-control" placeholder="Search Question" id="search-filter">
-                <ul class="searchlist list-unstyled  border-top-0 card" id="search_list_product">
-                </ul>
-            </div>
+
         </div>
 
 
@@ -222,7 +225,7 @@
                 let option = parseInt($(this).val());
                 let id = parseInt($(this).data('question'));
 
-                $.get('/update/screen/option/'+option+'/question/'+id+'/', function (data, status) {
+                $.get('/update/screen/option/' + option + '/question/' + id + '/', function (data, status) {
                     console.log(data.message);
                 });
 
