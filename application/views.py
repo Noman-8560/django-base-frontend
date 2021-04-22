@@ -321,7 +321,6 @@ def profile_update(request):
     return render(request=request, template_name='profile_update.html', context=context)
 
 
-
 ''' QUESTION BUILDER VIEWS _______________________________________________________________'''
 
 
@@ -333,20 +332,46 @@ def questions(request):
     return render(request=request, template_name='questions.html', context=context)
 
 
+@csrf_exempt
 @user_passes_test(lambda u: u.is_superuser)
 def question_builder(request):
-    # ADD/GET FORM
-    if request.method == 'POST':
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            out = form.save(commit=True)
-            messages.success(request=request,
-                             message=f"Question {out.pk} added successfully.")
-            return redirect('application:question_builder_update', out.pk, permanent=True)
-    else:
-        form = QuestionForm()
+    question_subjects = Subject.objects.all()
 
-    context = {'form': form}
+    if request.method == 'POST' and request.is_ajax:
+
+        question = Question.objects.create(
+            age_limit=request.POST['age'],
+            subject=Subject.objects.get(pk=request.POST['subject_id']),
+        )
+
+        for statement in request.POST.getlist('statements[]'):
+            QuestionStatement.objects.create(
+                statement=statement,
+                question=question
+            )
+
+        corrects = request.POST.getlist('corrects[]')
+        options = request.POST.getlist('options[]')
+
+        for index, value in enumerate(options):
+
+            choice = False
+            if corrects[index] == '1':
+                choice = True
+
+            QuestionChoice.objects.create(
+                text=options[index],
+                is_correct=choice,
+                question=question
+            )
+
+        return redirect('application:questions')
+    else:
+        pass
+
+    context = {
+        'subjects': question_subjects
+    }
     return render(request=request, template_name='question_builder.html', context=context)
 
 
