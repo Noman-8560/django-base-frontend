@@ -365,7 +365,6 @@ def question_builder(request):
                 question=question
             )
 
-        return redirect('application:questions')
     else:
         pass
 
@@ -378,11 +377,15 @@ def question_builder(request):
 @user_passes_test(lambda u: u.is_superuser)
 def update_question(request, pk):
     # UPDATE/ GET UPDATE FORM
-    question = None
+    question = Question.objects.get(pk=pk)
     try:
         question = Question.objects.get(pk=pk)
     except Question.DoesNotExist:
-        return HttpResponseRedirect(reverse('application:question_builder'))
+        return HttpResponseRedirect(reverse('application:questions'))
+
+    question_subjects = Subject.objects.all()
+    question_choices = QuestionChoice.objects.filter(question=question)
+    question_statements = QuestionStatement.objects.filter(question=question)
 
     if request.method == 'POST':
         form = QuestionForm(request.POST or None, instance=question)
@@ -391,12 +394,14 @@ def update_question(request, pk):
             messages.success(request=request,
                              message=f"Question {question.pk} updated successfully.")
             return redirect('application:question_builder_update', question.pk, permanent=True)
-    else:
-        form = QuestionForm(instance=question)
+
     context = {
-        'form': form,
+        'question': question,
+        'subjects': question_subjects,
+        'statements': question_statements,
+        'choices': question_choices,
     }
-    return render(request=request, template_name='question_builder.html', context=context)
+    return render(request=request, template_name='question_update.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
