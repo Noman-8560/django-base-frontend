@@ -136,51 +136,54 @@
                                             <i class="fa fa-star"></i>
                                         </td>
                                         <td>
-                                            {% if q.quiz.players == '1' %}
-                                                {{ q.submission_control }}
-                                            {% else %}
-                                                <select name="select_screen" data-question="{{ q.pk }}"
-                                                        id="select_screen">
-                                                    {% if q.quiz.players == '3' %}
-
-                                                        {% if q.submission_control.no == 1 %}
-
-                                                            <option value="1" selected>User Screen 1</option>
-                                                            <option value="2">User Screen 2</option>
-                                                            <option value="3">User Screen 3</option>
-
-                                                        {% elif q.submission_control.no == 2 %}
-
-                                                            <option value="1">User Screen 1</option>
-                                                            <option value="2" selected>User Screen 2</option>
-                                                            <option value="3">User Screen 3</option>
-
-                                                        {% else %}
-
-                                                            <option value="1">User Screen 1</option>
-                                                            <option value="2">User Screen 2</option>
-                                                            <option value="3" selected>User Screen 3</option>
-
-                                                        {% endif %}
-
-                                                    {% else %}
-
-                                                        {% if q.submission_control.no == 1 %}
-
-                                                            <option value="1" selected>User Screen 1</option>
-                                                            <option value="2">User Screen 2</option>
-
-                                                        {% else %}
-
-                                                            <option value="1">User Screen 1</option>
-                                                            <option value="2" selected>User Screen 2</option>
-
-                                                        {% endif %}
-
-                                                    {% endif %}
-                                                </select>
-                                            {% endif %}
+                                            {{ q.submission_control }}
                                         </td>
+{#                                        <td>#}
+{#                                            {% if q.quiz.players == '1' %}#}
+{#                                                {{ q.submission_control }}#}
+{#                                            {% else %}#}
+{#                                                <select name="select_screen" data-question="{{ q.pk }}"#}
+{#                                                        id="select_screen">#}
+{#                                                    {% if q.quiz.players == '3' %}#}
+{##}
+{#                                                        {% if q.submission_control.no == 1 %}#}
+{##}
+{#                                                            <option value="1" selected>User Screen 1</option>#}
+{#                                                            <option value="2">User Screen 2</option>#}
+{#                                                            <option value="3">User Screen 3</option>#}
+{##}
+{#                                                        {% elif q.submission_control.no == 2 %}#}
+{##}
+{#                                                            <option value="1">User Screen 1</option>#}
+{#                                                            <option value="2" selected>User Screen 2</option>#}
+{#                                                            <option value="3">User Screen 3</option>#}
+{##}
+{#                                                        {% else %}#}
+{##}
+{#                                                            <option value="1">User Screen 1</option>#}
+{#                                                            <option value="2">User Screen 2</option>#}
+{#                                                            <option value="3" selected>User Screen 3</option>#}
+{##}
+{#                                                        {% endif %}#}
+{##}
+{#                                                    {% else %}#}
+{##}
+{#                                                        {% if q.submission_control.no == 1 %}#}
+{##}
+{#                                                            <option value="1" selected>User Screen 1</option>#}
+{#                                                            <option value="2">User Screen 2</option>#}
+{##}
+{#                                                        {% else %}#}
+{##}
+{#                                                            <option value="1">User Screen 1</option>#}
+{#                                                            <option value="2" selected>User Screen 2</option>#}
+{##}
+{#                                                        {% endif %}#}
+{##}
+{#                                                    {% endif %}#}
+{#                                                </select>#}
+{#                                            {% endif %}#}
+{#                                        </td>#}
                                         <td>
                                             <a href="/delete/quiz/{{ quiz_id }}/question/{{ q.question.pk }}/"
                                                class="text-danger"><i class="fa fa-trash"></i>
@@ -198,6 +201,7 @@
                         </div>
                     </div>
                 </div>
+
             {% endif %}
 
 
@@ -221,16 +225,16 @@
 
             let select_screen = $('select');
 
-            select_screen.change(function (event) {
-
-                let option = parseInt($(this).val());
-                let id = parseInt($(this).data('question'));
-
-                $.get('/update/screen/option/' + option + '/question/' + id + '/', function (data, status) {
-                    console.log(data.message);
-                });
-
-            });
+            {#select_screen.change(function (event) {#}
+            {##}
+            {#    let option = parseInt($(this).val());#}
+            {#    let id = parseInt($(this).data('question'));#}
+            {##}
+            {#    $.get('/update/screen/option/' + option + '/question/' + id + '/', function (data, status) {#}
+            {#        console.log(data.message);#}
+            {#    });#}
+            {##}
+            {#});#}
 
             $('#search-filter').keyup(function () {
 

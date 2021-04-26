@@ -685,11 +685,13 @@ def quiz_builder_update(request, pk):
 def quiz_question_statements(request, quiz_id, question_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     question = Question.objects.get(pk=question_id)
+
     context = {
-        'quiz': quiz,
-        'question': question,
+        'quiz': quiz.pk,
+        'question': question.pk,
+        'players': quiz.players
     }
-    return render(request=request, template_name='quiz_builder_update_statements.html')
+    return render(request=request, template_name='quiz_builder_update_statements.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -784,7 +786,6 @@ def search_question(request, quiz_pk):
 @user_passes_test(lambda u: u.is_superuser)
 @never_cache
 def quiz_question_add(request, quiz, question):
-    print("HELLO")
     quiz_model = None
     question_model = None
 
