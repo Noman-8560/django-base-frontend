@@ -128,7 +128,7 @@
             <div class="row">
                 {% if blog %}
                     {% for article in blog %}
-                        <div class="col-xl-4 col-sm-6">
+                        <div class="col-xl-3 col-sm-6">
                             <div class="blog-box mb-4 mb-xl-0">
                                 {#                                <div class="position-relative">#}
                                 {#                                                            <img src="{% static 'tarbazar/images/logo-dark.png' %}" alt=""#}
@@ -178,7 +178,11 @@
                                 <div class="card text-center team-box">
                                     <div class="card-body">
                                         <div>
-                                            <img src="{{ team_member.image.url }}" alt="" class="rounded">
+                                            {% if team_member.image %}
+                                                <img src="{{ team_member.image.url }}" alt="" class="rounded">
+                                            {% else %}
+                                                <img src="{% static 'images/user.jpg' %}" alt="" class="rounded">
+                                            {% endif %}
                                         </div>
 
                                         <div class="mt-3">

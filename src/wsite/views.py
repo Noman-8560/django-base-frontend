@@ -13,7 +13,7 @@ def home(request):
         'site': Website.objects.filter().first(),
         'team_members': WebsiteTeam.objects.filter(is_active=True),
         'events': WebsiteEvents.objects.filter(is_active=True).order_by('sequence'),
-        'blog': Article.objects.filter(active=True).order_by('-created_at')[0:3]
+        'blog': Article.objects.filter(active=True).order_by('-created_at')[0:4]
     }
     return render(request=request, template_name='wsite/home.html', context=context)
 

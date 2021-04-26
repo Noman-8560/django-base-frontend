@@ -89,6 +89,6 @@ urlpatterns = [
          name='capi_learn_question_access'),
     path('c/api/learn/submit/question/', learn_question_submission_json, name='capi_learn_question_submission'),
 
-    path('/c/api/change/quiz/<int:quiz_id>/question/<int:question_id>/statement/status/',
+    path('c/api/change/quiz/<int:quiz_id>/question/<int:question_id>/statement/status/',
          change_question_statement_status, name='capi_change_question_statement_status'),
 ]
