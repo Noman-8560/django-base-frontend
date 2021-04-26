@@ -27,7 +27,7 @@
                                 <th>created</th>
                                 <th>Level</th>
                                 <th>View</th>
-                                <th>Edit</th>
+{#                                <th>Edit</th>#}
                                 <th>Delete</th>
                             </tr>
                             </thead>
@@ -55,9 +55,9 @@
                                     <td><a href="{% url 'application:question_builder_update' question.pk %}">
                                         <i class="fa fa-clipboard"></i> View</a>
                                     </td>
-                                    <td><a href="{% url 'application:update_question' question.pk %}">
-                                        <i class="fa fa-edit"></i> Edit</a>
-                                    </td>
+{#                                    <td><a href="{% url 'application:update_question' question.pk %}">#}
+{#                                        <i class="fa fa-edit"></i> Edit</a>#}
+{#                                    </td>#}
                                     <td><a class="text-danger"
                                            href="{% url 'application:delete_question' question.pk %}">
                                         <i class="fa fa-trash"></i> Delete</a>
