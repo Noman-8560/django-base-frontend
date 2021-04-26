@@ -18,7 +18,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from application.wsite.views import home
+from src.wsite.views import home
 from . import settings
 
 
@@ -26,10 +26,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
 
-    path('', home, name='home'),
-    path('', include('application.urls', namespace='application')),
-    path('site/', include('application.wsite.urls', namespace='wsite')),
-    path('zoom/', include('application.zoom_api.urls', namespace='zoom_api')),
+    path('home/', home, name='home'),
+    path('', include('src.application.urls', namespace='application')),
+    path('site/', include('src.wsite.urls', namespace='wsite')),
+    path('zoom/', include('src.zoom_api.urls', namespace='zoom_api')),
 
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]

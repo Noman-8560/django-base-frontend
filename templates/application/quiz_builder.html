@@ -1,0 +1,86 @@
+{% extends 'application/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Quiz Builder{% endblock %}
+
+{% block base_links %}
+    <!-- XDSoft DateTimePicker -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+          integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
+{% endblock %}
+
+{% block page_heading %}
+    Quiz Builder Application
+{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-7 col-12">
+                <div class="card">
+                    {#                <div class="card-header text-center p-4">#}
+                    {#                    <p class="card-title m-0">Basic Details</p>#}
+                    {##}
+                    {#                </div>#}
+                    <div class="card-body">
+                        <br>
+
+                        <div class="p-4">
+                            <form autocomplete="off" method="post" action="">
+                                {% csrf_token %}
+                                {{ form | crispy }}
+                                <button type="submit" class="btn btn-success"> > Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    </div>
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
+            integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+
+            let players_div = $('#div_id_players');
+            let submission_div = $('#div_id_submission_control');
+
+            check_resource($('#id_learning_purpose').is(':checked'));
+
+
+            $('#id_learning_purpose').change(function () {
+                check_resource(this.checked);
+            });
+
+            $('#id_start_time').datetimepicker({
+                format: 'Y-m-d H:i:s',
+            });
+            $('#id_end_time').datetimepicker({
+                format: 'Y-m-d H:i:s',
+            });
+
+
+            function check_resource(check) {
+                if (check) {
+                    players_div.hide();
+                    submission_div.hide();
+                } else {
+                    players_div.show();
+                    submission_div.show();
+                }
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'application/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}My Teams {% endblock %}
+{% block page_heading %} My Teams {% endblock %}
+
+{% block base_links %}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+{% endblock %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-body">
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#all"><i class="fa fa-list"></i> All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#expired"><i class="fa fa-ban"></i> Expired</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#available"><i class="fa fa-pen"></i> Available</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="all">
+                    {% if teams %}
+                        <div class="table-responsive py-4">
+                            <table class="table table-hover table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>SNO</th>
+                                    <th>Name</th>
+                                    <th>Quiz</th>
+                                    <th>Quiz Type</th>
+                                    <th>Participants</th>
+                                    <th>Created</th>
+                                </tr>
+                                </thead>
+                                <tbody class="">
+
+                                {% for team in teams %}
+                                    <tr>
+                                        <td>{{ team.pk }}</td>
+                                        <td>{{ team.name }}</td>
+                                        <td>{{ team.quiz.title }}</td>
+                                        <td>{{ team.quiz.get_players_display }}</td>
+                                        <td>
+                                            {% for player in team.participants.all %}
+                                                <span
+                                                        class="badge badge-pill badge-soft-primary">{{ player.username }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ team.created_at }}</td>
+
+
+                                    </tr>
+
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="py-4">
+                            <div class="card border border-warning">
+                                <div class="card-header bg-transparent border-warning">
+                                    <h5 class="my-0 text-warning">
+                                        <i class="mdi mdi-alert-outline mr-3"></i>Team Help</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title mt-0">How to Create or Join Team</h5>
+                                    <p class="card-text">{{ request.user.username }}! You are not associated to any team
+                                        until
+                                        now,
+                                        you can create your own team by selecting <a
+                                                href="{% url 'application:quizes' %}">Quiz</a>
+                                        from available quizes or you can join someone team, give them your username:
+                                        <b>{{ request.user.username }}</b> and ask them to add.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="tab-pane fade show" id="expired">
+                    {% if ex_teams %}
+                        <div class="table-responsive py-4">
+                            <table class="table table-hover table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>SNO</th>
+                                    <th>Name</th>
+                                    <th>Quiz</th>
+                                    <th>Quiz Type</th>
+                                    <th>Participants</th>
+                                    <th>Created</th>
+                                </tr>
+                                </thead>
+                                <tbody class="">
+
+                                {% for team in ex_teams %}
+                                    <tr>
+                                        <td>{{ team.pk }}</td>
+                                        <td>{{ team.name }}</td>
+                                        <td>{{ team.quiz.title }}</td>
+                                        <td>{{ team.quiz.get_players_display }}</td>
+                                        <td>
+                                            {% for player in team.participants.all %}
+                                                <span
+                                                        class="badge badge-pill badge-soft-primary">{{ player.username }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ team.created_at }}</td>
+
+
+                                    </tr>
+
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="py-4">
+                            <div class="card border border-warning">
+                                <div class="card-header bg-transparent border-warning">
+                                    <h5 class="my-0 text-warning">
+                                        <i class="mdi mdi-alert-outline mr-3"></i>Team Help</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title mt-0">How to Create or Join Team</h5>
+                                    <p class="card-text">There are no records for expired
+                                        events you have been a part of. You can create your own team by selecting <a
+                                                href="{% url 'application:quizes' %}">Quiz</a> from available quizzes or
+                                        you can join someone team, give them your username:
+                                        <b>{{ request.user.username }}</b> and ask them to add.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="tab-pane fade show" id="available">
+                    {% if av_teams %}
+                        <div class="table-responsive py-4">
+                            <table class="table table-hover table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>SNO</th>
+                                    <th>Name</th>
+                                    <th>Quiz</th>
+                                    <th>Quiz Type</th>
+                                    <th>Participants</th>
+                                    <th>Created</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody class="">
+
+                                {% for team in av_teams %}
+                                    <tr>
+                                        <td>{{ team.pk }}</td>
+                                        <td>{{ team.name }}</td>
+                                        <td>{{ team.quiz.title }}</td>
+                                        <td>{{ team.quiz.get_players_display }}</td>
+                                        <td>
+                                            {% for player in team.participants.all %}
+                                                <span
+                                                        class="badge badge-pill badge-soft-primary">{{ player.username }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ team.created_at }}</td>
+
+                                        <td><a class="text-danger" href="{% url 'application:delete_team' team.pk %}"><i
+                                                class="fa fa-trash"></i>
+                                            Leave</a>
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="py-4">
+                            <div class="card border border-warning">
+                                <div class="card-header bg-transparent border-warning">
+                                    <h5 class="my-0 text-warning">
+                                        <i class="mdi mdi-alert-outline mr-3"></i>Team Help</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title mt-0">How to Create or Join Team</h5>
+                                    <p class="card-text">{{ request.user.username }}! You are not associated to any team
+                                        until now, you can create your own team by selecting <a
+                                                href="{% url 'application:quizes' %}">Quiz</a>
+                                        from available quizes or you can join someone team, give them your username:
+                                        <b>{{ request.user.username }}</b> and ask them to add.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+
+            $('table').DataTable();
+
+        });
+    </script>
+{% endblock %}

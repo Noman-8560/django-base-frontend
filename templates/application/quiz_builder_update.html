@@ -1,0 +1,288 @@
+{% extends 'application/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Quiz Builder{% endblock %}
+
+{% block base_links %}
+    <!-- XDSoft DateTimePicker -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+          integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
+{% endblock %}
+
+{% block page_heading %}
+    Quiz : {{ quiz_title }}<br><br>
+    {#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
+    {#        anyone.</p>#}
+    <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
+            class="fa fa-trash"></i> Remove</a>
+    <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i
+            class="fa fa-edit"></i> Edit</a>
+    <a href="{% url 'application:quiz_builder' %}" class="btn btn-sm btn-link text-primary"><i
+            class="fa fa-plus"></i> Add New</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+    <div class="">
+        <div class="">
+            <div class="card">
+                <div class="card-header text-left"><p class="lead m-0">Quiz Statistics</p></div>
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <div class="row justify-content-center">
+                                <div>
+                                    <div>
+                                        <p class="m-0">Quiz Subjects</p>
+                                    </div>
+                                    <ul class="list-unstyled text-primary">
+                                        {% for subject in subjects %}
+                                            <li>{{ subject.title }}</li>
+                                        {% endfor %}
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row justify-content-center">
+                                <div>
+                                    <div>
+                                        <p class="m-0">Quiz Questions</p>
+                                    </div>
+                                    <ul class="list-unstyled text-primary">
+                                        <li>TOTAL: {{ total }}</li>
+                                        <li>SELECTED: {{ selected }}</li>
+                                        <li>REMAINING: {{ remaining }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row justify-content-center">
+                                <div>
+                                    <div>
+                                        <p class="m-0 ">Quiz Level</p>
+                                    </div>
+                                    <ul class="list-unstyled">
+                                        <li class="text-danger">
+                                            40
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+
+                                        </li>
+                                        <li style="color: darkorange;">
+                                            25
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+
+                                        </li>
+                                        <li class="text-warning">
+                                            10
+                                            <i class="fa fa-star"></i>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Search details #}
+            <div class="p-0 p-sm-0">
+                <input type="search" class="form-control" placeholder="Search Question" id="search-filter">
+                <ul class="searchlist list-unstyled  border-top-0 card" id="search_list_product">
+                </ul>
+            </div>
+
+            {% if qs %}
+
+
+                {# Statements details #}
+                <div class="card">
+                    <div class="card-header text-left"><p class="lead m-0">Quiz Questions</p></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Text</th>
+                                    <th>Subject</th>
+                                    <th>Type</th>
+                                    <th>Difficulty</th>
+                                    <th>submission Control</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for q in qs %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'application:quiz_question_statements' quiz_id q.question.pk %}">
+                                                {{ q.question.questionstatement_set.first }}
+                                            </a>
+                                        </td>
+                                        <td> {{ q.question.subject.title }}</td>
+                                        <td> {{ q.question.get_question_type_display }}</td>
+                                        <td class="text-warning">
+                                            <i class="fa fa-star"></i>
+                                        </td>
+                                        <td>
+                                            {{ q.submission_control }}
+                                        </td>
+{#                                        <td>#}
+{#                                            {% if q.quiz.players == '1' %}#}
+{#                                                {{ q.submission_control }}#}
+{#                                            {% else %}#}
+{#                                                <select name="select_screen" data-question="{{ q.pk }}"#}
+{#                                                        id="select_screen">#}
+{#                                                    {% if q.quiz.players == '3' %}#}
+{##}
+{#                                                        {% if q.submission_control.no == 1 %}#}
+{##}
+{#                                                            <option value="1" selected>User Screen 1</option>#}
+{#                                                            <option value="2">User Screen 2</option>#}
+{#                                                            <option value="3">User Screen 3</option>#}
+{##}
+{#                                                        {% elif q.submission_control.no == 2 %}#}
+{##}
+{#                                                            <option value="1">User Screen 1</option>#}
+{#                                                            <option value="2" selected>User Screen 2</option>#}
+{#                                                            <option value="3">User Screen 3</option>#}
+{##}
+{#                                                        {% else %}#}
+{##}
+{#                                                            <option value="1">User Screen 1</option>#}
+{#                                                            <option value="2">User Screen 2</option>#}
+{#                                                            <option value="3" selected>User Screen 3</option>#}
+{##}
+{#                                                        {% endif %}#}
+{##}
+{#                                                    {% else %}#}
+{##}
+{#                                                        {% if q.submission_control.no == 1 %}#}
+{##}
+{#                                                            <option value="1" selected>User Screen 1</option>#}
+{#                                                            <option value="2">User Screen 2</option>#}
+{##}
+{#                                                        {% else %}#}
+{##}
+{#                                                            <option value="1">User Screen 1</option>#}
+{#                                                            <option value="2" selected>User Screen 2</option>#}
+{##}
+{#                                                        {% endif %}#}
+{##}
+{#                                                    {% endif %}#}
+{#                                                </select>#}
+{#                                            {% endif %}#}
+{#                                        </td>#}
+                                        <td>
+                                            <a href="/delete/quiz/{{ quiz_id }}/question/{{ q.question.pk }}/"
+                                               class="text-danger"><i class="fa fa-trash"></i>
+                                            </a>&nbsp;
+                                            <a href="{% url 'application:question_builder_update' q.question.pk %}"
+                                               class="text-primary"><i class="fa fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
+            integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+
+            /*
+
+            let select_screen = $('select');
+            select_screen.change(function (event) {
+
+                let option = parseInt($(this).val());
+                let id = parseInt($(this).data('question'));
+
+                $.get('/update/screen/option/' + option + '/question/' + id + '/', function (data, status) {
+                    console.log(data.message);
+                });
+
+            });
+
+            */
+
+            $('#search-filter').keyup(function () {
+
+                $('#search_list_product').html('');
+
+                let search = $('#search-filter').val();
+                if (search != '') {
+                    search_questions(search);
+                } else {
+                    $('#search_list_product').html('');
+                }
+            });
+
+            $('#id_start_time').datetimepicker({
+                format: 'Y-m-d H:i:s',
+            });
+
+            $('#id_end_time').datetimepicker({
+                format: 'Y-m-d H:i:s',
+            });
+
+            // FUNCTIONS
+            function search_questions(search) {
+                $.ajax({
+                    url: "/search/questions/for/quiz/{{ quiz_id }}/?search=" + search,
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response)
+                        for (let i = 0; i < response['length']; i++) {
+                            $('#search_list_product').append(
+                                '<li class="p-2" id="' + response[i].question + '">' +
+                                '<a class="text-secondary" href="/add/quiz/{{ quiz_id }}/question/' + response[i].question + '/">' +
+                                '' + response[i].subject + ' | ' + response[i].statement + '' +
+                                '</a>' +
+                                '</li>'
+                            );
+                        }
+                    },
+                    error: function (response) {
+                        $('#search_list_product').html('');
+                    }
+                });
+            }
+        });
+    </script>
+
+{% endblock %}
+
