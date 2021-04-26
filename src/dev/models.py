@@ -96,7 +96,7 @@ class DevelopmentDiscussion(models.Model):
         verbose_name_plural = 'Discussion Board'
 
     def __str__(self):
-        return self.question
+        return self.topic
 
 
 class DevelopmentDiscussionAnswer(models.Model):
@@ -115,4 +115,4 @@ class DevelopmentDiscussionAnswer(models.Model):
         verbose_name_plural = 'Discussion Answers'
 
     def __str__(self):
-        return self.discussion.question
+        return self.discussion.topic
