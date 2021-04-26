@@ -132,4 +132,7 @@ dmypy.json
 assets
 assets/
 
+/media
+media/
+
 .gitignore
