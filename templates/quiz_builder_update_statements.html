@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_title %}Quiz Question Setup{% endblock %}
+
+{% block page_heading %}
+    Quiz: Question Setup
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+
+                            <th>ID</th>
+                            <th>Statement</th>
+                            <th>Screens</th>
+
+                            </thead>
+                            <tbody>
+
+                            {% for index in '123456'|make_list %}
+                                <tr id="statement-div">
+                                    <td id="id">{{ forloop.counter }}</td>
+                                    <td id="statement">{% lorem 15 w %}</td>
+                                    <td id="screens">
+                                        <input type="checkbox" checked id="screen" data-id="{{ index }}"
+                                               data-screen="1">
+                                        <input type="checkbox" id="screen" data-id="{{ index }}" data-screen="2">
+                                        <input type="checkbox" id="screen" data-id="{{ index }}" data-screen="3">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <p class="font-weight-bolder">Submission Control</p>
+                            <input type="radio" name="submission_control" id="submission_control" checked> Screen
+                            1<br>
+                            <input type="radio" name="submission_control" id="submission_control"> Screen 2<br>
+                            <input type="radio" name="submission_control" id="submission_control"> Screen 3 <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#statement-div #screen').click(function () {
+
+                let statement_id = $(this).data('id');
+                let screen_id = $(this).data('id');
+                let is_checked = $(this).is(":checked");
+
+                $.post("/c/api/change/quiz/{{ q }}/question/3/statement/status/",
+                    {
+                        statement_id: statement_id,
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+
+                    }, function (data, status) {
+                        alert(data.message);
+                    })
+                ;
+            })
+        });
+    </script>
+{% endblock %}
+

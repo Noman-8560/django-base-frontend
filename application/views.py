@@ -682,6 +682,17 @@ def quiz_builder_update(request, pk):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+def quiz_question_statements(request, quiz_id, question_id):
+    quiz = Quiz.objects.get(pk=quiz_id)
+    question = Question.objects.get(pk=question_id)
+    context = {
+        'quiz': quiz,
+        'question': question,
+    }
+    return render(request=request, template_name='quiz_builder_update_statements.html')
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def quiz_builder_question_submission_control(request, option, question):
 
     error = True
@@ -752,9 +763,6 @@ def search_question(request, quiz_pk):
     search = str(request.GET['search'])
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
-
-    if not quiz.learning_purpose:
-        questions_models = questions_models.filter(question_type=quiz.players)
 
     dict_out = {}
     count = 0
@@ -1697,3 +1705,21 @@ def zoom_profile(request):
         'verification': account.zoom_account_verification
     }
     return render(request=request, template_name='zoom_profile.html', context=context)
+
+
+@login_required
+def change_question_statement_status(request, quiz_id, question_id):
+
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        quiz = Quiz.objects.get(pk=quiz_id)
+        question = Question.objects.get(pk=question_id)
+        statement = QuestionStatement.objects.get(pk=int(request.POST['statement_id']))
+
+    context = {
+        'success': success, 'message': message
+    }
+    return JsonResponse(data=context, safe=False)

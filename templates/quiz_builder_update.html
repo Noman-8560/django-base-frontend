@@ -125,7 +125,11 @@
                                 <tbody>
                                 {% for q in qs %}
                                     <tr>
-                                        <td> {{ q.question.questionstatement_set.first }} </td>
+                                        <td>
+                                            <a href="{% url 'application:quiz_question_statements' quiz_id q.question.pk %}">
+                                                {{ q.question.questionstatement_set.first }}
+                                            </a>
+                                        </td>
                                         <td> {{ q.question.subject.title }}</td>
                                         <td> {{ q.question.get_question_type_display }}</td>
                                         <td class="text-warning">
@@ -180,9 +184,6 @@
                                         <td>
                                             <a href="/delete/quiz/{{ quiz_id }}/question/{{ q.question.pk }}/"
                                                class="text-danger"><i class="fa fa-trash"></i>
-                                            </a>&nbsp;
-                                            <a href="{% url 'application:update_question' q.question.pk %}"
-                                               class="text-primary"><i class="fa fa-edit"></i>
                                             </a>&nbsp;
                                             <a href="{% url 'application:question_builder_update' q.question.pk %}"
                                                class="text-primary"><i class="fa fa-eye"></i></a>
