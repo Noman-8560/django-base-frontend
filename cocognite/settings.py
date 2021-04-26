@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/edn/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 's(l5vi&5nq2vnt(^t)ezh7twcbn#_z&a$@)2*k_20kl(phyzd!'
+SECRET_KEY = 's(l5vi&5nq3619gdskadhgjaksd981234hlaskhjdlasd'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 SERVER_ACTIVE = False
@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     'preventconcurrentlogins',
 
     # USER_APPLICATIONS
-    'application',
-    'application.wsite',
-    'application.zoom_api',
+    'src.application',
+    'src.wsite',
+    'src.zoom_api',
 
     # MUST BE AT THE END
     'notifications'
