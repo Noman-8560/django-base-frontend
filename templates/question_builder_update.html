@@ -6,11 +6,12 @@
 
 {% block page_heading %}
     Question ID {{ question_id }}<br><br>
-{#    <p class="small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this question if this is used in any#}
-{#        quiz.</p>#}
-    <a href="{% url 'application:delete_question' question_id %}" class="btn btn-sm btn-link text-danger"><i class="fa fa-trash"></i> Remove</a>
-    <a href="{% url 'application:update_question' question_id %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-edit"></i> Edit</a>
-    <a href="{% url 'application:question_builder' %}" class="btn btn-sm btn-link text-primary"><i class="fa fa-plus"></i> Add Another</a>
+    {#    <p class="small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this question if this is used in any#}
+    {#        quiz.</p>#}
+    <a href="{% url 'application:delete_question' question_id %}" class="btn btn-sm btn-link text-danger"><i
+            class="fa fa-trash"></i> Remove</a>
+    <a href="{% url 'application:question_builder' %}" class="btn btn-sm btn-link text-primary"><i
+            class="fa fa-plus"></i> Add Another</a>
 
 {% endblock %}
 
@@ -35,7 +36,7 @@
                                         <thead>
                                         <tr>
                                             <th>Text</th>
-                                            <th>Screen</th>
+                                            {#                                            <th>Screen</th>#}
                                             <th>Remove</th>
                                         </tr>
                                         </thead>
@@ -44,7 +45,7 @@
                                         {% for statement in data_question_statements %}
                                             <tr>
                                                 <td> {{ statement.statement }} </td>
-                                                <td> {{ statement.screen }} </td>
+                                                {#                                                <td> {{ statement.screen }} </td>#}
                                                 <td class="text-danger">
                                                     <a href="" class="delete-statement text-danger"
                                                        id={{ statement.pk }}>
@@ -227,130 +228,25 @@
     </div>
 
 
-
-    {# MODELS #}
-    <div>
-        <!-- STATEMENT Modal -->
-        <div class="modal fade" id="statement_model" tabindex="-1" role="dialog" aria-labelledby="statement_modelLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form autocomplete="off" id="form_statement" method="post"
-                          action="{% url 'application:question_statement_add' question=question_id %}">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">ADD Statement.</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            {{ form_question_statement | crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" id="form_statement_btn">ADD</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- IMAGE Modal -->
-        <div class="modal fade" id="image_model" tabindex="-1" role="dialog" aria-labelledby="image_modelLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form method="post" autocomplete="off" enctype="multipart/form-data"
-                          action="{% url 'application:question_image_add' question=question_id %}">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">ADD Image Hint.</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            {{ form_question_image | crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">ADD</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- audio Modal -->
-        <div class="modal fade" id="audio_model" tabindex="-1" role="dialog" aria-labelledby="audio_modelLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form method="post" autocomplete="off" enctype="multipart/form-data"
-                          action="{% url 'application:question_audio_add' question=question_id %}">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">ADD Audio Hint.</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            {{ form_question_audio | crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">ADD</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- choice Modal -->
-        <div class="modal fade" id="choice_model" tabindex="-1" role="dialog" aria-labelledby="choice_modelLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form method="post" autocomplete="off"
-                          action="{% url 'application:question_choice_add' question=question_id %}">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">ADD New Option.</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            {{ form_question_choice | crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">ADD</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
 {% endblock %}
 
 {% block base_external_scripts %}
 
     <script>
+        /*
 
+        <div class="input-group-prepend">
+                                <select class="custom-select" id="screen_select" class="form-control" id="inputGroupSelect01">
+            <option value="1">Screen 1</option>
+            <option value="2">Screen 2</option>
+            <option value="3">Screen 3</option>
+          </select>
+                        </div>
+
+         */
         let statement_add = `
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                        <select class="custom-select" id="screen_select" class="form-control" id="inputGroupSelect01">
-    <option value="1">Screen 1</option>
-    <option value="2">Screen 2</option>
-    <option value="3">Screen 3</option>
-  </select>
-                </div>
+
                 <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
                 <div class="input-group-append">
                     <button class="btn btn-primary" id="add-statement" type="button">add</button>
@@ -388,14 +284,14 @@
             $("#div_choices").append(choice_add);
 
             let question_type = {{ question.question_type }};
-
-            if (question_type === 1){
-                $("option[value='2']").remove();
-                $("option[value='3']").remove();
-            }else if (question_type == 2){
-                $("option[value='3']").remove();
-            }
-
+            /*
+                        if (question_type === 1){
+                            $("option[value='2']").remove();
+                            $("option[value='3']").remove();
+                        }else if (question_type == 2){
+                            $("option[value='3']").remove();
+                        }
+            */
             let input_field_statement = $('#statement-text');
             let input_field_is_correct = $('#is-correct');
             let input_field_choice = $('#choice-text');
@@ -450,9 +346,9 @@
 
         function saveStatement() {
             let input_field = $('#statement-text');
-            let input_screen = $('#screen_select');
+            {#let input_screen = $('#screen_select');#}
             let txt = input_field.val();
-            let screen = input_screen.val();
+            {#let screen = input_screen.val();#}
             if (txt === "") {
                 input_field.addClass("border-danger");
                 return
@@ -461,7 +357,7 @@
             input_field.addClass("border");
             $.post("/add/question_statement/", {
                 'pk': {{ question_id }},
-                'screen': screen,
+                {#'screen': screen,#}
                 'text': txt
             }, function (data, status) {
                 window.location.reload();

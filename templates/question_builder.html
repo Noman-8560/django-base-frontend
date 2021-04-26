@@ -136,55 +136,55 @@
                 let subject = $('#subject').val();
                 let age = parseInt($('#age').val());
 
+                if (!isNaN(age) && age > 0 && age <= 18) {
+                    $('#statements > #statement').each(function () {
+                        let statement = $(this).find('textarea').val();
+                        if (statement !== '') {
+                            statements.push(statement);
+                        }
+                    });
 
-                $('#statements > #statement').each(function () {
-                    let statement = $(this).find('textarea').val();
-                    if (statement !== '') {
-                        statements.push(statement);
-                    }
-                });
+                    $('#options > #option').each(function () {
+                        let option = $(this).find('input').val();
+                        if (option !== '') {
+                            options.push(option);
+                        }
+                    });
 
-                $('#options > #option').each(function () {
-                    let option = $(this).find('input').val();
-                    if (option !== '') {
-                        options.push(option);
-                    }
-                });
+                    $('#options > #choice').each(function () {
+                        let correct = $(this).find('input');
+                        if (correct.is(":checked")) {
+                            corrects.push(1);
+                        } else {
+                            corrects.push(0);
+                        }
+                    });
 
-                $('#options > #choice').each(function () {
-                    let correct = $(this).find('input');
-                    if (correct.is(":checked")) {
-                        corrects.push(1);
-                    }else {
-                        corrects.push(0);
-                    }
-                });
+                    console.log(corrects);
 
-                console.log(corrects);
+                    let data = {
+                        subject_id: subject,
+                        age: age,
+                        statements: statements,
+                        options: options,
+                        corrects: corrects,
+                    };
 
-                let data = {
-                    subject_id: subject,
-                    age: age,
-                    statements: statements,
-                    options: options,
-                    corrects: corrects,
-                };
+                    $.ajax({
+                        url: '/question/builder/',
+                        type: 'POST',
+                        data: data,
+                    }).then(function (data, status) {
+                        if(data.message === 'success'){
+                            location.href = "/question/"+data.question+"/"
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                } else {
+                    alert("Please provide age must be greater than 0 and less then 19")
+                }
 
-                $.ajax({
-                    url: '/question/builder/',
-                    type: 'POST',
-                    data: data,
-                }).then(function (data, status) {
-                    console.log(status);
-                }).catch(function (err) {
-                    console.log(err);
-                });
-
-                /*
-                if (!isNaN(age) && age>0 && age<=18){
-
-                }else { alert("Please provide age must be greater than 0 and less then 19") }
-                */
             });
         });
     </script>

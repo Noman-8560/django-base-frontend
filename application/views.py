@@ -365,6 +365,8 @@ def question_builder(request):
                 question=question
             )
 
+        return JsonResponse(data={'message': 'success', 'question': question.pk}, safe=False)
+
     else:
         pass
 
@@ -372,36 +374,6 @@ def question_builder(request):
         'subjects': question_subjects
     }
     return render(request=request, template_name='question_builder.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def update_question(request, pk):
-    # UPDATE/ GET UPDATE FORM
-    question = Question.objects.get(pk=pk)
-    try:
-        question = Question.objects.get(pk=pk)
-    except Question.DoesNotExist:
-        return HttpResponseRedirect(reverse('application:questions'))
-
-    question_subjects = Subject.objects.all()
-    question_choices = QuestionChoice.objects.filter(question=question)
-    question_statements = QuestionStatement.objects.filter(question=question)
-
-    if request.method == 'POST':
-        form = QuestionForm(request.POST or None, instance=question)
-        if form.is_valid():
-            out = form.save(commit=True)
-            messages.success(request=request,
-                             message=f"Question {question.pk} updated successfully.")
-            return redirect('application:question_builder_update', question.pk, permanent=True)
-
-    context = {
-        'question': question,
-        'subjects': question_subjects,
-        'statements': question_statements,
-        'choices': question_choices,
-    }
-    return render(request=request, template_name='question_update.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -442,45 +414,16 @@ def question_builder_update(request, pk):
     return render(request=request, template_name='question_builder_update.html', context=context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def question_statement_add(request, question):
-    if request.method == 'POST':
-
-        form = QuestionStatementForm(request.POST)
-        if form.is_valid():
-            question_ref = Question.objects.get(pk=question)
-            statement = form.cleaned_data['statement']
-            screen = form.cleaned_data['screen']
-
-            question_statement = QuestionStatement.objects.create(
-                question=question_ref, statement=statement, screen=screen
-            )
-
-            response_data = {
-                "pk": question_statement.pk,
-                "statement": question_statement.statement,
-                "screen": question_statement.screen.name,
-            }
-
-            messages.success(request=request,
-                             message="Statements added to question Successfully - Redirected to Question Description.")
-            return redirect('application:question_builder_update', question, permanent=True)
-            # return JsonResponse(response_data, safe=False)
-
-    messages.error(request=request, message=f'Error in adding statement')
-    return HttpResponseRedirect(reverse('application:question_builder'))
-
-
 @csrf_exempt
 @user_passes_test(lambda u: u.is_superuser)
 def add_question_statement(request):
     if request.method == 'POST':
         text = request.POST['text']
-        screen = request.POST['screen']
+        # screen = request.POST['screen']
         question_id = request.POST['pk']
         statement = QuestionStatement()
         statement.statement = text
-        statement.screen = Screen.objects.get(no=screen)
+        # statement.screen = Screen.objects.get(no=screen)
         statement.question = Question.objects.get(pk=question_id)
         statement.save()
         response = {

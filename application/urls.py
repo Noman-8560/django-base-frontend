@@ -45,7 +45,6 @@ urlpatterns = [
     # --- QUESTION BUILDER
     path('questions/', questions, name='questions'),
     path('question/builder/', question_builder, name='question_builder'),
-    path('update/question/<int:pk>/', update_question, name='update_question'),
     path('delete/question/<int:pk>/', delete_question, name='delete_question'),
     path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
 
@@ -55,7 +54,6 @@ urlpatterns = [
         name='quiz_builder_question_submission_control'
     ),
     path('search/questions/for/quiz/<int:quiz_pk>/', search_question, name='search_question'),
-    path('add/statement/for/question/<int:question>/', question_statement_add, name='question_statement_add'),
     path('add/question_statement/', add_question_statement, name='add_question_statement'),
     path('add/question_choice/', add_question_choice, name='add_question_choice'),
     path('delete/question_statement/<int:pk>/', delete_question_statement, name='delete_question_statement'),
