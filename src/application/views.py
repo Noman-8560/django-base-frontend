@@ -761,6 +761,8 @@ def search_question(request, quiz_pk):
     search = str(request.GET['search'])
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
+    selected_questions = quiz.quizquestion_set.all()
+    questions_models=questions_models.exclude(pk__in=selected_questions.values_list('question_id', flat=True))
 
     dict_out = {}
     count = 0
