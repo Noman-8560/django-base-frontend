@@ -69,7 +69,7 @@ urlpatterns = [
     path('add/audio/for/question/<int:question>/', question_audio_add, name='question_audio_add'),
     path('delete/audio/<int:pk>/', question_audio_delete, name='question_audio_delete'),
 
-    path('add/quiz/<int:quiz>/question/<int:question>/', quiz_question_add, name='quiz_question_add'),
+    path('add/quiz/<int:quiz_id>/question/<int:question_id>/', quiz_question_add, name='quiz_question_add'),
     path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
 
     path('coming_soon/', coming_soon, name='coming_soon'),
