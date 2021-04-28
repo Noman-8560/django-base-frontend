@@ -26,7 +26,7 @@ urlpatterns = [
     path('update/statements/quiz/<int:quiz_id>/question/<int:question_id>/',
          quiz_question_statements,
          name='quiz_question_statements'
-    ),
+         ),
 
     path('delete/quiz/<int:pk>/', delete_quiz, name='delete_quiz'),
     path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
@@ -89,6 +89,10 @@ urlpatterns = [
          name='capi_learn_question_access'),
     path('c/api/learn/submit/question/', learn_question_submission_json, name='capi_learn_question_submission'),
 
-    path('c/api/change/quiz/<int:quiz_id>/question/<int:question_id>/statement/status/',
+    path('c/api/change/quiz/question/statement/status/<int:pk>/',
          change_question_statement_status, name='capi_change_question_statement_status'),
+    path('c/api/change/quiz/question/choice/status/<int:pk>/',
+         change_question_choice_status, name='capi_change_question_choice_status'),
+    path('c/api/change/quiz/question/submission/status/<int:pk>/',
+         change_question_submission_control, name='capi_change_question_submission_control'),
 ]
