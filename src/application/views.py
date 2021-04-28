@@ -683,8 +683,15 @@ def quiz_question_statements(request, quiz_id, question_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     question = Question.objects.get(pk=question_id)
 
+    question_statements = StatementVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz)
+    question_choices = ChoiceVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz)
     context = {
         'quiz': quiz.pk,
+        'quiz_question': QuizQuestion.objects.filter(quiz=quiz, question=question)[0].pk,
+        'question_statements': question_statements,
+        'question_choices': question_choices,
+        'question_submission_control':
+            int(QuizQuestion.objects.filter(quiz=quiz, question=question)[0].submission_control.no),
         'question': question.pk,
         'players': quiz.players
     }
@@ -1720,17 +1727,100 @@ def zoom_profile(request):
     return render(request=request, template_name='application/zoom_profile.html', context=context)
 
 
+@csrf_exempt
 @login_required
-def change_question_statement_status(request, quiz_id, question_id):
+def change_question_statement_status(request, pk):
     success = False
     message = "Failed to update record"
 
     if request.method == 'POST' and request.is_ajax():
-        quiz = Quiz.objects.get(pk=quiz_id)
-        question = Question.objects.get(pk=question_id)
-        statement = QuestionStatement.objects.get(pk=int(request.POST['statement_id']))
 
-    context = {
-        'success': success, 'message': message
-    }
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+
+        if status == 'true':
+            status = True
+        else:
+            status = False
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        statement_visibility = StatementVisibility.objects.get(pk=pk)
+        if screen_id == '1':
+            statement_visibility.screen_1 = status
+        elif screen_id == '2':
+            statement_visibility.screen_2 = status
+        elif screen_id == '3':
+            statement_visibility.screen_3 = status
+        statement_visibility.save()
+
+        # EXTRA DATA HERE -------------------------------------------
+        message = "Record updated successfully"
+        success = True
+
+    context = {'success': success, 'message': message}
+    return JsonResponse(data=context, safe=False)
+
+
+@csrf_exempt
+@login_required
+def change_question_choice_status(request, pk):
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+
+        if status == 'true':
+            status = True
+        else:
+            status = False
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        choice_visibility = ChoiceVisibility.objects.get(pk=pk)
+        if screen_id == '1':
+            choice_visibility.screen_1 = status
+        elif screen_id == '2':
+            choice_visibility.screen_2 = status
+        elif screen_id == '3':
+            choice_visibility.screen_3 = status
+        choice_visibility.save()
+
+        # EXTRA DATA HERE -------------------------------------------
+        message = "Record updated successfully"
+        success = True
+
+    context = {'success': success, 'message': message}
+    return JsonResponse(data=context, safe=False)
+
+
+@csrf_exempt
+@login_required
+def change_question_submission_control(request, pk):
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        question = QuizQuestion.objects.get(pk=pk)
+        if screen_id == '1':
+            question.submission_control = Screen.objects.first()
+        elif screen_id == '2':
+            question.submission_control = Screen.objects.all()[1]
+        elif screen_id == '3':
+            question.submission_control = Screen.objects.last()
+        question.save()
+
+        # EXTRA DATA HERE -------------------------------------------
+        message = "Record updated successfully"
+        success = True
+
+    context = {'success': success, 'message': message}
     return JsonResponse(data=context, safe=False)

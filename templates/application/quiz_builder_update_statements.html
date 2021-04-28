@@ -26,22 +26,28 @@
                             </thead>
                             <tbody>
 
-                            {% for index in '123456'|make_list %}
+                            {% for question_statement in question_statements %}
                                 <tr id="statement-div">
-                                    <td id="id">{{ forloop.counter }}</td>
-                                    <td id="statement">{% lorem 15 w %}</td>
+                                    <td id="id">{{ question_statement.pk }}</td>
+                                    <td id="statement">{{ question_statement.statement.statement }}</td>
                                     <td id="screens">
-                                        <input type="checkbox" checked id="screen" data-id="{{ index }}"
+                                        <input type="checkbox" {% if question_statement.screen_1 %}checked{% endif %}
+                                               id="screen" data-id="{{ question_statement.pk }}"
                                                data-screen="1">
                                         {% if players == '2' or players == '3' %}
-                                            <input type="checkbox" id="screen" data-id="{{ index }}" data-screen="2">
+                                            <input type="checkbox"
+                                                   {% if question_statement.screen_2 %}checked{% endif %} id="screen"
+                                                   data-id="{{ question_statement.pk }}" data-screen="2">
                                         {% endif %}
                                         {% if players == '3' %}
-                                            <input type="checkbox" id="screen" data-id="{{ index }}" data-screen="3">
+                                            <input type="checkbox"
+                                                   {% if question_statement.screen_3 %}checked{% endif %} id="screen"
+                                                   data-id="{{ question_statement.pk }}" data-screen="3">
                                         {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
+
 
                             </tbody>
                         </table>
@@ -69,21 +75,30 @@
                             </thead>
                             <tbody>
 
-                            {% for index in '1234'|make_list %}
-                                <tr id="statement-div">
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{% lorem 2 w %}</td>
+                            {% for question_choice in question_choices %}
+                                <tr id="choices-div">
+                                    <td>{{ question_choice.pk }}</td>
+                                    <td>{{ question_choice.choice.text }}</td>
                                     <td>
-                                        <input type="checkbox" checked>
+                                        <input id="screen" type="checkbox"
+                                               {% if question_choice.screen_1 %}checked{% endif %}
+                                               data-id="{{ question_choice.pk }}"
+                                               data-screen="1">
                                     </td>
                                     {% if players == '2' or players == '3' %}
                                         <td>
-                                            <input type="checkbox">
+                                            <input id="screen" type="checkbox"
+                                                   {% if question_choice.screen_2 %}checked{% endif %}
+                                                   data-id="{{ question_choice.pk }}"
+                                                   data-screen="2">
                                         </td>
                                     {% endif %}
                                     {% if players == '3' %}
                                         <td>
-                                            <input type="checkbox">
+                                            <input id="screen" type="checkbox"
+                                                   {% if question_choice.screen_3 %}checked{% endif %}
+                                                   data-id="{{ question_choice.pk }}"
+                                                   data-screen="3">
                                         </td>
                                     {% endif %}
                                 </tr>
@@ -100,10 +115,20 @@
                     <p class="card-title h4 mb-2">Question Submission control</p>
                     <div class="row">
                         <div class="col">
-                            <input type="radio" name="submission_control" id="submission_control" checked> Screen
-                            1<br>
-                            <input type="radio" name="submission_control" id="submission_control"> Screen 2<br>
-                            <input type="radio" name="submission_control" id="submission_control"> Screen 3 <br>
+
+                            <input type="radio" value="1" name="submission_control" id="submission_control"
+                                   {% if question_submission_control == 1 %}checked{% endif %}> Screen 1<br>
+
+                            {% if players == '2' or players == '3' %}
+                                <input type="radio" value="2" name="submission_control" id="submission_control"
+                                       {% if question_submission_control == 2 %}checked{% endif %}> Screen 2<br>
+                            {% endif %}
+
+                            {% if players == '3' %}
+                                <input type="radio" value="3" name="submission_control" id="submission_control"
+                                       {% if question_submission_control == 3 %}checked{% endif %}> Screen 3 <br>
+                            {% endif %}
+
                         </div>
                     </div>
                     <br>
@@ -119,23 +144,58 @@
 {% block base_external_scripts %}
     <script>
         $(document).ready(function () {
-            $('#statement-div #screen').click(function () {
 
+            $('#statement-div #screen').click(function () {
                 let statement_id = $(this).data('id');
-                let screen_id = $(this).data('id');
+                let screen_id = $(this).data('screen');
                 let is_checked = $(this).is(":checked");
 
-                $.post("/c/api/change/quiz/{{ q }}/question/3/statement/status/",
+                $.post("/c/api/change/quiz/question/statement/status/" + statement_id + "/",
                     {
-                        statement_id: statement_id,
                         screen_id: screen_id,
                         is_checked: is_checked,
 
                     }, function (data, status) {
-                        alert(data.message);
-                    })
+                    if (data.success === "False") {
+                            alert("Failed to update record: make sure everything is correct");
+                        }
+                    });
                 ;
-            })
+            });
+
+            $('#choices-div #screen').click(function () {
+                let choice_id = $(this).data('id');
+                let screen_id = $(this).data('screen');
+                let is_checked = $(this).is(":checked");
+
+                $.post("/c/api/change/quiz/question/choice/status/" + choice_id + "/",
+                    {
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+
+                    }, function (data, status) {
+                    if (data.success === "False") {
+                            alert("Failed to update record: make sure everything is correct");
+                        }
+                    });
+                ;
+            });
+
+            $('input[name=submission_control]').click(function () {
+                let screen_id = $(this).val();
+
+                $.post("/c/api/change/quiz/question/submission/status/{{ quiz_question }}/",
+                    {
+                        screen_id: screen_id,
+                    }, function (data, status) {
+                        if (data.success === "False") {
+                            alert("Failed to update record: make sure everything is correct");
+                        }
+                    });
+                ;
+            });
+
+
         });
     </script>
 {% endblock %}
