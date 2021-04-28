@@ -162,8 +162,7 @@ class Question(models.Model):
 
 
 class QuestionStatement(models.Model):
-    statement = models.TextField(null=False, blank=False,
-                                 help_text='add your question statement/defination here you can add multiple statements to.')
+    statement = models.TextField(null=False, blank=False, help_text='add your question statement/defination here you can add multiple statements to.')
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=True, blank=True)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
@@ -301,6 +300,36 @@ class QuizQuestion(models.Model):
 
     def __str__(self):
         return self.quiz.title
+
+
+class StatementVisibility(models.Model):
+    statement = models.ForeignKey(QuestionStatement, on_delete=models.CASCADE)
+    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    screen_1 = models.BooleanField(default=True)
+    screen_2 = models.BooleanField(default=False)
+    screen_3 = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Statement Visibility'
+        verbose_name_plural = 'Statements Visibility'
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class ChoiceVisibility(models.Model):
+    choice = models.ForeignKey(QuestionChoice, on_delete=models.CASCADE)
+    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    screen_1 = models.BooleanField(default=True)
+    screen_2 = models.BooleanField(default=False)
+    screen_3 = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'choice Visibility'
+        verbose_name_plural = 'Choices Visibility'
+
+    def __str__(self):
+        return str(self.pk)
 
 
 class Student(models.Model):

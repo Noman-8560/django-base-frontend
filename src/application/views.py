@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
@@ -694,7 +693,6 @@ def quiz_question_statements(request, quiz_id, question_id):
 
 @user_passes_test(lambda u: u.is_superuser)
 def quiz_builder_question_submission_control(request, option, question):
-
     error = True
     message = "Unable to update - you dont have a permission"
 
@@ -764,7 +762,7 @@ def search_question(request, quiz_pk):
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
     selected_questions = quiz.quizquestion_set.all()
-    questions_models=questions_models.exclude(pk__in=selected_questions.values_list('question_id', flat=True))
+    questions_models = questions_models.exclude(pk__in=selected_questions.values_list('question_id', flat=True))
 
     dict_out = {}
     count = 0
@@ -785,27 +783,42 @@ def search_question(request, quiz_pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 @never_cache
-def quiz_question_add(request, quiz, question):
-    quiz_model = None
-    question_model = None
-
+def quiz_question_add(request, quiz_id, question_id):
+    # CHECK QUIZ AND QUESTION EXISTS ----------------------------
     try:
-        quiz_model = Quiz.objects.get(pk=quiz)
-        question_model = Question.objects.get(pk=question)
+        quiz = Quiz.objects.get(pk=quiz_id)
+        question = Question.objects.get(pk=question_id)
 
     except [Quiz.DoesNotExist, Question.DoesNotExist]:
         messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
-    if quiz_model.questions.filter(pk=question):
+    # ALREADY ASSOCIATED OR NOT ---------------------------------
+    if quiz.questions.filter(pk=question_id):
         messages.warning(request=request,
-                         message=f'Failed to add > Requested Question [ID: {question}] already associated with this quiz.')
+                         message=f'Failed to add > Requested Question [ID: {question_id}] already associated with this quiz.')
     else:
-        messages.success(request=request, message=f'Requested Question [ID: {question}] added successfully.')
-        quiz_model.questions.add(question_model)
-        quiz_model.save()
+        messages.success(request=request, message=f'Requested Question [ID: {question_id}] added successfully.')
 
-    return redirect('application:quiz_builder_update', quiz, permanent=True)
+        # STEP1 => Add Question to Quiz
+        quiz.questions.add(question)
+        quiz.save()
+
+        quiz_question = QuizQuestion.objects.get(question=question)
+
+        # STEP2 => Add Statements Visibility
+        for statement in question.questionstatement_set.all():
+            StatementVisibility(
+                quiz_question=quiz_question, statement=statement
+            ).save()
+
+        # STEP3 => Add Choices Visibility
+        for choice in question.questionchoice_set.all():
+            ChoiceVisibility(
+                quiz_question=quiz_question, choice=choice
+            ).save()
+
+    return redirect('application:quiz_builder_update', quiz_id, permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -1191,7 +1204,6 @@ def quiz_start(request, quiz):
                         description=f"<b>Hi {user.username}!</b> your teammate <b>{request.user}</b> "
                                     f"has joined the quiz"
                     )
-
 
         submission = '1'
 
@@ -1710,12 +1722,10 @@ def zoom_profile(request):
 
 @login_required
 def change_question_statement_status(request, quiz_id, question_id):
-
     success = False
     message = "Failed to update record"
 
     if request.method == 'POST' and request.is_ajax():
-
         quiz = Quiz.objects.get(pk=quiz_id)
         question = Question.objects.get(pk=question_id)
         statement = QuestionStatement.objects.get(pk=int(request.POST['statement_id']))
