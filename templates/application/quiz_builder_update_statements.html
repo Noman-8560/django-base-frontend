@@ -26,22 +26,28 @@
                             </thead>
                             <tbody>
 
-                            {% for index in '123456'|make_list %}
+                            {% for question_statement in question_statements %}
                                 <tr id="statement-div">
-                                    <td id="id">{{ forloop.counter }}</td>
-                                    <td id="statement">{% lorem 15 w %}</td>
+                                    <td id="id">{{ question_statement.pk }}</td>
+                                    <td id="statement">{{ question_statement.statement.statement }}</td>
                                     <td id="screens">
-                                        <input type="checkbox" checked id="screen" data-id="{{ index }}"
+                                        <input type="checkbox" {% if question_statement.screen_1 %}checked{% endif %}
+                                               id="screen" data-id="{{ question_statement.pk }}"
                                                data-screen="1">
                                         {% if players == '2' or players == '3' %}
-                                            <input type="checkbox" id="screen" data-id="{{ index }}" data-screen="2">
+                                            <input type="checkbox"
+                                                   {% if question_statement.screen_2 %}checked{% endif %} id="screen"
+                                                   data-id="{{ question_statement.pk }}" data-screen="2">
                                         {% endif %}
                                         {% if players == '3' %}
-                                            <input type="checkbox" id="screen" data-id="{{ index }}" data-screen="3">
+                                            <input type="checkbox"
+                                                   {% if question_statement.screen_3 %}checked{% endif %} id="screen"
+                                                   data-id="{{ question_statement.pk }}" data-screen="3">
                                         {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
+
 
                             </tbody>
                         </table>
@@ -69,21 +75,21 @@
                             </thead>
                             <tbody>
 
-                            {% for index in '1234'|make_list %}
+                            {% for question_choice in question_choices %}
                                 <tr id="statement-div">
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{% lorem 2 w %}</td>
+                                    <td>{{ question_choice.pk }}</td>
+                                    <td>{{ question_choice.choice.text }}</td>
                                     <td>
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox" {% if question_choice.screen_1 %}checked{% endif %}>
                                     </td>
                                     {% if players == '2' or players == '3' %}
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="checkbox" {% if question_choice.screen_2 %}checked{% endif %}>
                                         </td>
                                     {% endif %}
                                     {% if players == '3' %}
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="checkbox" {% if question_choice.screen_3 %}checked{% endif %}>
                                         </td>
                                     {% endif %}
                                 </tr>
@@ -100,10 +106,17 @@
                     <p class="card-title h4 mb-2">Question Submission control</p>
                     <div class="row">
                         <div class="col">
-                            <input type="radio" name="submission_control" id="submission_control" checked> Screen
-                            1<br>
-                            <input type="radio" name="submission_control" id="submission_control"> Screen 2<br>
-                            <input type="radio" name="submission_control" id="submission_control"> Screen 3 <br>
+
+                            <input type="radio" name="submission_control" id="submission_control" {% if question_submission_control == 1 %}checked{% endif %}> Screen 1<br>
+
+                            {% if players == '2' or players == '3' %}
+                                <input type="radio" name="submission_control" id="submission_control" {% if question_submission_control == 2 %}checked{% endif %}> Screen 2<br>
+                            {% endif %}
+
+                            {% if players == '3' %}
+                                <input type="radio" name="submission_control" id="submission_control" {% if question_submission_control == 3 %}checked{% endif %}> Screen 3 <br>
+                            {% endif %}
+
                         </div>
                     </div>
                     <br>

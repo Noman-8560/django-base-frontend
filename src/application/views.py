@@ -683,8 +683,14 @@ def quiz_question_statements(request, quiz_id, question_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     question = Question.objects.get(pk=question_id)
 
+    question_statements = StatementVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz)
+    question_choices = ChoiceVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz)
     context = {
         'quiz': quiz.pk,
+        'question_statements': question_statements,
+        'question_choices': question_choices,
+        'question_submission_control':
+            int(QuizQuestion.objects.filter(quiz=quiz, question=question)[0].submission_control.no),
         'question': question.pk,
         'players': quiz.players
     }
