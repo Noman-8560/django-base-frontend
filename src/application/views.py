@@ -1360,33 +1360,53 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         '''__QUESTION LOGIC WILL BE HERE__'''
         try:
             question = Question.objects.get(pk=ll[0])
-            qquestion = QuizQuestion.objects.get(pk=ll[0])
+            qquestion = QuizQuestion.objects.get(question=question, quiz=quiz)
         except ValueError:
             messages.success(request=request, message="Your Quiz has been submitted successfully")
             return redirect('application:quizes')
+
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
-        [statements.append(x.statement) for x in question.questionstatement_set.filter(screen=screen)]
-        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
-         question.questionimage_set.filter(screen=screen)]
-        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
-         question.questionaudio_set.filter(screen=screen)]
-        [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
-        [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
 
-        total = quiz.questions.count()
-        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
-        remains = total - attempts
-
+        # CONTROL
         control = qquestion.submission_control.no
         submission = 0
-
         user_no = identify_user_in_team(user_team, request, quiz)
         if user_no == control:
             submission = 1
 
-        print(user_no, " - ", qquestion.submission_control)
-        print(submission)
-        print(user_team.participants.all())
+        print(control)
+        print(user_no)
+
+        # STATEMENTS
+        for statement in qquestion.statementvisibility_set.all():
+            if user_no == 3 and statement.screen_3:
+                statements.append(statement.statement.statement)
+            elif user_no == 2 and statement.screen_2:
+                statements.append(statement.statement.statement)
+            elif user_no == 1 and statement.screen_1:
+                statements.append(statement.statement.statement)
+
+        # CHOICES
+        for choice in qquestion.choicevisibility_set.all():
+            if user_no == 3 and choice.screen_3:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+            elif user_no == 2 and choice.screen_2:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+            elif user_no == 1 and choice.screen_1:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+
+        # IMAGES AND AUDIOS
+        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
+         question.questionimage_set.filter(screen=screen)]
+        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
+         question.questionaudio_set.filter(screen=screen)]
+
+        total = quiz.questions.count()
+        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
+        remains = total - attempts
 
         ''' __GENERATING RESPONSES__'''
         response = {

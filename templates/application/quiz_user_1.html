@@ -402,18 +402,8 @@
 
                         if (data.submission === 1) {
                             submission_permission_div.show();
-                            choices_main_div.show();
-                            for (let index = 0; index < data.choices_keys.length; index++) {
-                                choices_div.append(
-                                    `<input class="mb-2" type="radio" name="ans" id="ans"
-                                     value="${data.choices_keys[index]}">
-                                     <label for="ans">&nbsp;&nbsp;${data.choices_values[index]}</label><br>
-                                    `
-                                );
-                            }
                         } else {
                             submission_permission_div.hide();
-                            choices_main_div.hide();
                             if (active_async == false) {
                                 active_async = true;
                                 async_question_next_sync();
@@ -428,6 +418,22 @@
                             }
                         } else {
                             statements_main_div.hide();
+                        }
+
+                        {# 3 > CHOICES FETCHING #}
+                        if (data.statements.length > 0) {
+                            statements_main_div.show();
+                            choices_main_div.show();
+                            for (let index = 0; index < data.choices_keys.length; index++) {
+                                choices_div.append(
+                                    `<input class="mb-2" type="radio" name="ans" id="ans"
+                                     value="${data.choices_keys[index]}">
+                                     <label for="ans">&nbsp;&nbsp;${data.choices_values[index]}</label><br>
+                                    `
+                                );
+                            }
+                        } else {
+                            choices_main_div.hide();
                         }
 
                         {# 5 > FETCHING IMAGES #}
