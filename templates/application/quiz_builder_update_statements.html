@@ -64,6 +64,7 @@
 
                             <th>ID</th>
                             <th>Choice</th>
+                            <th>Correct</th>
                             <th>Screen 1</th>
                             {% if players == '2' or players == '3' %}
                                 <th>Screen 2</th>
@@ -79,6 +80,13 @@
                                 <tr id="choices-div">
                                     <td>{{ question_choice.pk }}</td>
                                     <td>{{ question_choice.choice.text }}</td>
+                                    <td>
+                                        {% if question_choice.choice.is_correct %}
+                                            <i class="fa fa-check-circle text-success"></i>
+                                        {% else %}
+                                            <i class="fa fa-times-circle text-danger"></i>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <input id="screen" type="checkbox"
                                                {% if question_choice.screen_1 %}checked{% endif %}
