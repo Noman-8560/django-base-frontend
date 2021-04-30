@@ -421,8 +421,7 @@
                         }
 
                         {# 3 > CHOICES FETCHING #}
-                        if (data.statements.length > 0) {
-                            statements_main_div.show();
+                        if (data.choices_keys.length > 0) {
                             choices_main_div.show();
                             for (let index = 0; index < data.choices_keys.length; index++) {
                                 choices_div.append(
