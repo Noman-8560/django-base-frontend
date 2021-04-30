@@ -811,7 +811,7 @@ def quiz_question_add(request, quiz_id, question_id):
         quiz.questions.add(question)
         quiz.save()
 
-        quiz_question = QuizQuestion.objects.get(question=question)
+        quiz_question = QuizQuestion.objects.filter(question=question, quiz=quiz)[0]
 
         # STEP2 => Add Statements Visibility
         for statement in question.questionstatement_set.all():
