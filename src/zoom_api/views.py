@@ -109,13 +109,13 @@ def zoom_delete_meeting(meeting_id):
     return response.status_code
 
 
-def zoom_check_user(user='cocognito20@gmail.com'):
+def zoom_check_user(user='cocognito2020@gmail.com'):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{user}"
     headers = {
         'authorization': f"Bearer {bearer_token}"
     }
-    response = requests.request("GET", url, headers=headers)
+    response = requests.get(url, headers=headers)
     print(response.text)
     return response
 
