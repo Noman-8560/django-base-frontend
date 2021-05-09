@@ -51,82 +51,47 @@
                             <div class="">
                                 <div class="card">
                                     <div class="card-body py-0 pt-2">
-                                        <div class="clearfix pb-2 border-bottom">
-                                            <small class="h3 font-weight-bolder" id="count_down"></small>
-                                            <div class="float-right" id="submission_control_div">
-                                                {% if submission_control == '1' %}
-                                                    <div id="submission_permission_div">
-                                                        <button class="btn btn-sm btn-secondary small" id="button_skip">
-                                                            <i
-                                                                    class="fa fa-refresh"></i>
-                                                            Skip
-                                                        </button>
-                                                        <button class="btn btn-sm btn-primary small" id="button_submit">
-                                                            <i
-                                                                    class="fa fa-check"></i>
-                                                            Submit
-                                                        </button>
+                                        <div class="pb-2 border-bottom">
+
+                                            <div class="row">
+                                                <div class="col">
+                                                    <small class="h5 font-weight-bolder" id="count_down"></small><br>
+                                                    <small class="text-muted" id="">Total time left</small>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="float-right" id="submission_control_div">
+                                                        <a class="btn btn-danger btn-sm btn-block" id="button_end"
+                                                           href="{% url 'application:quizes' %}"><i
+                                                                class="fa fa-times"></i>
+                                                            Cancel
+                                                        </a>
                                                     </div>
-                                                {% endif %}
-                                                <a class="btn btn-danger btn-sm" id="button_end"
-                                                   href="{% url 'application:quizes' %}"><i
-                                                        class="fa fa-times"></i>
-                                                    Cancel
-                                                </a>
+                                                </div>
                                             </div>
+
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col">
                                                 <div class=" mini-stats-wid">
-                                                    <div class="card-body">
-                                                        <div class="media">
-                                                            <div class="media-body">
-                                                                <p class="text-muted font-weight-medium">Total</p>
-                                                                <h5 class="mb-0" id="total">00</h5>
-                                                            </div>
-
-                                                            <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
-                                                        <span class="avatar-title">
-                                                            <i class="bx bx-flag font-size-24"></i>
-                                                        </span>
-                                                            </div>
-                                                        </div>
+                                                    <div class="card-body text-center">
+                                                        <p class="font-weight-bolder">Total</p>
+                                                        <h4 class="mb-0 mt-1" id="total">00</h4>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col">
                                                 <div class="mini-stats-wid">
-                                                    <div class="card-body">
-                                                        <div class="media">
-                                                            <div class="media-body">
-                                                                <p class="text-muted font-weight-medium">Attempted</p>
-                                                                <h4 class="mb-0" id="total_attempted">00</h4>
-                                                            </div>
-
-                                                            <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
-                                                        <span class="avatar-title rounded-circle bg-success">
-                                                            <i class="bx bx-check-circle font-size-24"></i>
-                                                        </span>
-                                                            </div>
-                                                        </div>
+                                                    <div class="card-body text-center">
+                                                        <p class="font-weight-bolder">Attempted</p>
+                                                        <h4 class="mb-0 mt-1" id="total_attempted">00</h4>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col">
                                                 <div class="mini-stats-wid">
-                                                    <div class="card-body">
-                                                        <div class="media">
-                                                            <div class="media-body">
-                                                                <p class="text-muted font-weight-medium">Remaining</p>
-                                                                <h4 class="mb-0" id="total_remains">00</h4>
-                                                            </div>
-
-                                                            <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
-                                                        <span class="avatar-title rounded-circle bg-danger">
-                                                            <i class="bx bx-rotate-left font-size-24"></i>
-                                                        </span>
-                                                            </div>
-                                                        </div>
+                                                    <div class="card-body text-center">
+                                                        <p class="font-weight-bolder">Remaining</p>
+                                                        <h4 class="mb-0" id="total_remains">00</h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,8 +101,9 @@
                                 <div class="">
                                     {# STATEMENTS #}
                                     <div class="card border" id="main_statements_div">
-                                        <div class="card-header"><p class="card-title">QUESTION <b id="question_no"></b>
-                                            STATEMENT</p></div>
+                                        <div class="card-header">
+                                            <p class="card-title">QUESTION <b id="question_no"></b>
+                                        </div>
                                         <div class="card-body">
 
                                             <div id="statements_div" class="mb-4">
@@ -150,7 +116,7 @@
                                     {# choices #}
                                     <div class="card border" id="main_choices_div">
                                         <div class="card-header">
-                                            <p class="card-title">CHOICES</p>
+                                            <p class="card-title">ANSWER CHOICES</p>
                                         </div>
                                         <div class="card-body">
 
@@ -182,6 +148,27 @@
                                             <div id="audios_div" class="mb-4">
 
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card border" id="submission_permission_div">
+                                        <div class="card-body">
+                                            {% if submission_control == '1' %}
+                                                <div id="">
+                                                    <button class="btn btn-sm btn-secondary small"
+                                                            id="button_skip">
+                                                        <i
+                                                                class="fa fa-refresh"></i>
+                                                        Skip
+                                                    </button>
+                                                    <button class="btn btn-sm btn-primary small"
+                                                            id="button_submit">
+                                                        <i
+                                                                class="fa fa-check"></i>
+                                                        Submit
+                                                    </button>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     </div>
 
@@ -396,24 +383,15 @@
                         total.text(data.total);
                         attempted.text(data.attempts);
                         remains.text(data.remains);
+                        $('#question_no').html(data.attempts + 1);
 
                         {# 2 > SUBMISSION_CONTROL_CHECK #}
                         question_div.attr('data-question', data.question);
 
                         if (data.submission === 1) {
                             submission_permission_div.show();
-                            choices_main_div.show();
-                            for (let index = 0; index < data.choices_keys.length; index++) {
-                                choices_div.append(
-                                    `<input class="mb-2" type="radio" name="ans" id="ans"
-                                     value="${data.choices_keys[index]}">
-                                     <label for="ans">&nbsp;&nbsp;${data.choices_values[index]}</label><br>
-                                    `
-                                );
-                            }
                         } else {
                             submission_permission_div.hide();
-                            choices_main_div.hide();
                             if (active_async == false) {
                                 active_async = true;
                                 async_question_next_sync();
@@ -428,6 +406,21 @@
                             }
                         } else {
                             statements_main_div.hide();
+                        }
+
+                        {# 3 > CHOICES FETCHING #}
+                        if (data.choices_keys.length > 0) {
+                            choices_main_div.show();
+                            for (let index = 0; index < data.choices_keys.length; index++) {
+                                choices_div.append(
+                                    `<input class="mb-2" type="radio" name="ans" id="ans"
+                                     value="${data.choices_keys[index]}">
+                                     <label for="ans">&nbsp;&nbsp;${data.choices_values[index]}</label><br>
+                                    `
+                                );
+                            }
+                        } else {
+                            choices_main_div.hide();
                         }
 
                         {# 5 > FETCHING IMAGES #}

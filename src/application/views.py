@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
@@ -8,7 +7,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from notifications.signals import notify
 
+from src.zoom_api.views import zoom_delete_meeting
 from .BusinessLogicLayer import identify_user_in_team
 from .forms import *
 from .models import *
@@ -682,8 +683,15 @@ def quiz_question_statements(request, quiz_id, question_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     question = Question.objects.get(pk=question_id)
 
+    question_statements = StatementVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz)
+    question_choices = ChoiceVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz)
     context = {
         'quiz': quiz.pk,
+        'quiz_question': QuizQuestion.objects.filter(quiz=quiz, question=question)[0].pk,
+        'question_statements': question_statements,
+        'question_choices': question_choices,
+        'question_submission_control':
+            int(QuizQuestion.objects.filter(quiz=quiz, question=question)[0].submission_control.no),
         'question': question.pk,
         'players': quiz.players
     }
@@ -692,7 +700,6 @@ def quiz_question_statements(request, quiz_id, question_id):
 
 @user_passes_test(lambda u: u.is_superuser)
 def quiz_builder_question_submission_control(request, option, question):
-
     error = True
     message = "Unable to update - you dont have a permission"
 
@@ -761,6 +768,8 @@ def search_question(request, quiz_pk):
     search = str(request.GET['search'])
     questions_models = Question.objects.filter(subject__in=quiz_subjects).filter(
         questionstatement__statement__icontains=search).distinct()
+    selected_questions = quiz.quizquestion_set.all()
+    questions_models = questions_models.exclude(pk__in=selected_questions.values_list('question_id', flat=True))
 
     dict_out = {}
     count = 0
@@ -781,27 +790,42 @@ def search_question(request, quiz_pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 @never_cache
-def quiz_question_add(request, quiz, question):
-    quiz_model = None
-    question_model = None
-
+def quiz_question_add(request, quiz_id, question_id):
+    # CHECK QUIZ AND QUESTION EXISTS ----------------------------
     try:
-        quiz_model = Quiz.objects.get(pk=quiz)
-        question_model = Question.objects.get(pk=question)
+        quiz = Quiz.objects.get(pk=quiz_id)
+        question = Question.objects.get(pk=question_id)
 
     except [Quiz.DoesNotExist, Question.DoesNotExist]:
         messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
-    if quiz_model.questions.filter(pk=question):
+    # ALREADY ASSOCIATED OR NOT ---------------------------------
+    if quiz.questions.filter(pk=question_id):
         messages.warning(request=request,
-                         message=f'Failed to add > Requested Question [ID: {question}] already associated with this quiz.')
+                         message=f'Failed to add > Requested Question [ID: {question_id}] already associated with this quiz.')
     else:
-        messages.success(request=request, message=f'Requested Question [ID: {question}] added successfully.')
-        quiz_model.questions.add(question_model)
-        quiz_model.save()
+        messages.success(request=request, message=f'Requested Question [ID: {question_id}] added successfully.')
 
-    return redirect('application:quiz_builder_update', quiz, permanent=True)
+        # STEP1 => Add Question to Quiz
+        quiz.questions.add(question)
+        quiz.save()
+
+        quiz_question = QuizQuestion.objects.filter(question=question, quiz=quiz)[0]
+
+        # STEP2 => Add Statements Visibility
+        for statement in question.questionstatement_set.all():
+            StatementVisibility(
+                quiz_question=quiz_question, statement=statement
+            ).save()
+
+        # STEP3 => Add Choices Visibility
+        for choice in question.questionchoice_set.all():
+            ChoiceVisibility(
+                quiz_question=quiz_question, choice=choice
+            ).save()
+
+    return redirect('application:quiz_builder_update', quiz_id, permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -1188,7 +1212,6 @@ def quiz_start(request, quiz):
                                     f"has joined the quiz"
                     )
 
-
         submission = '1'
 
     else:
@@ -1337,33 +1360,53 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         '''__QUESTION LOGIC WILL BE HERE__'''
         try:
             question = Question.objects.get(pk=ll[0])
-            qquestion = QuizQuestion.objects.get(pk=ll[0])
+            qquestion = QuizQuestion.objects.get(question=question, quiz=quiz)
         except ValueError:
             messages.success(request=request, message="Your Quiz has been submitted successfully")
             return redirect('application:quizes')
+
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
-        [statements.append(x.statement) for x in question.questionstatement_set.filter(screen=screen)]
-        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
-         question.questionimage_set.filter(screen=screen)]
-        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
-         question.questionaudio_set.filter(screen=screen)]
-        [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
-        [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
 
-        total = quiz.questions.count()
-        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
-        remains = total - attempts
-
+        # CONTROL
         control = qquestion.submission_control.no
         submission = 0
-
         user_no = identify_user_in_team(user_team, request, quiz)
         if user_no == control:
             submission = 1
 
-        print(user_no, " - ", qquestion.submission_control)
-        print(submission)
-        print(user_team.participants.all())
+        print(control)
+        print(user_no)
+
+        # STATEMENTS
+        for statement in qquestion.statementvisibility_set.all():
+            if user_no == 3 and statement.screen_3:
+                statements.append(statement.statement.statement)
+            elif user_no == 2 and statement.screen_2:
+                statements.append(statement.statement.statement)
+            elif user_no == 1 and statement.screen_1:
+                statements.append(statement.statement.statement)
+
+        # CHOICES
+        for choice in qquestion.choicevisibility_set.all():
+            if user_no == 3 and choice.screen_3:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+            elif user_no == 2 and choice.screen_2:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+            elif user_no == 1 and choice.screen_1:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+
+        # IMAGES AND AUDIOS
+        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
+         question.questionimage_set.filter(screen=screen)]
+        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
+         question.questionaudio_set.filter(screen=screen)]
+
+        total = quiz.questions.count()
+        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
+        remains = total - attempts
 
         ''' __GENERATING RESPONSES__'''
         response = {
@@ -1704,19 +1747,100 @@ def zoom_profile(request):
     return render(request=request, template_name='application/zoom_profile.html', context=context)
 
 
+@csrf_exempt
 @login_required
-def change_question_statement_status(request, quiz_id, question_id):
-
+def change_question_statement_status(request, pk):
     success = False
     message = "Failed to update record"
 
     if request.method == 'POST' and request.is_ajax():
 
-        quiz = Quiz.objects.get(pk=quiz_id)
-        question = Question.objects.get(pk=question_id)
-        statement = QuestionStatement.objects.get(pk=int(request.POST['statement_id']))
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
 
-    context = {
-        'success': success, 'message': message
-    }
+        if status == 'true':
+            status = True
+        else:
+            status = False
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        statement_visibility = StatementVisibility.objects.get(pk=pk)
+        if screen_id == '1':
+            statement_visibility.screen_1 = status
+        elif screen_id == '2':
+            statement_visibility.screen_2 = status
+        elif screen_id == '3':
+            statement_visibility.screen_3 = status
+        statement_visibility.save()
+
+        # EXTRA DATA HERE -------------------------------------------
+        message = "Record updated successfully"
+        success = True
+
+    context = {'success': success, 'message': message}
+    return JsonResponse(data=context, safe=False)
+
+
+@csrf_exempt
+@login_required
+def change_question_choice_status(request, pk):
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+
+        if status == 'true':
+            status = True
+        else:
+            status = False
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        choice_visibility = ChoiceVisibility.objects.get(pk=pk)
+        if screen_id == '1':
+            choice_visibility.screen_1 = status
+        elif screen_id == '2':
+            choice_visibility.screen_2 = status
+        elif screen_id == '3':
+            choice_visibility.screen_3 = status
+        choice_visibility.save()
+
+        # EXTRA DATA HERE -------------------------------------------
+        message = "Record updated successfully"
+        success = True
+
+    context = {'success': success, 'message': message}
+    return JsonResponse(data=context, safe=False)
+
+
+@csrf_exempt
+@login_required
+def change_question_submission_control(request, pk):
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        question = QuizQuestion.objects.get(pk=pk)
+        if screen_id == '1':
+            question.submission_control = Screen.objects.first()
+        elif screen_id == '2':
+            question.submission_control = Screen.objects.all()[1]
+        elif screen_id == '3':
+            question.submission_control = Screen.objects.last()
+        question.save()
+
+        # EXTRA DATA HERE -------------------------------------------
+        message = "Record updated successfully"
+        success = True
+
+    context = {'success': success, 'message': message}
     return JsonResponse(data=context, safe=False)

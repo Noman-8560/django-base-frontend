@@ -90,6 +90,16 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['pk', 'user', 'is_guardian', 'gender', 'phone']
 
 
+class ChoiceVisibilityAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'quiz_question', 'choice', 'screen_1', 'screen_2', 'screen_3']
+
+
+class StatementVisibilityAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'quiz_question', 'statement', 'screen_1', 'screen_2', 'screen_3']
+
+
+admin.site.register(StatementVisibility, StatementVisibilityAdmin)
+admin.site.register(ChoiceVisibility, ChoiceVisibilityAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
