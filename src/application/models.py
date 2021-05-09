@@ -7,6 +7,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from django.utils.text import slugify
+from notifications.signals import notify
 
 
 class AppUpdate(models.Model):
@@ -162,7 +163,8 @@ class Question(models.Model):
 
 
 class QuestionStatement(models.Model):
-    statement = models.TextField(null=False, blank=False, help_text='add your question statement/defination here you can add multiple statements to.')
+    statement = models.TextField(null=False, blank=False,
+                                 help_text='add your question statement/defination here you can add multiple statements to.')
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=True, blank=True)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
@@ -548,18 +550,18 @@ def save_profile_on_user(sender, instance, created, **kwargs):
             profile = Profile(user=user)
             profile.save()
 
-        # from application.zoom_api.views import create_zoom_user
-        # if create_zoom_user(user=user):
-        #     verb = f'Zoom profile created'
-        #     description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
-        # else:
-        #     verb = f'Failed to create Zoom profile'
-        #     description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
-        #
-        # notify.send(
-        #     user,
-        #     recipient=user,
-        #     verb=verb,
-        #     level='info',
-        #     description=description
-        # )
+        from application.zoom_api.views import create_zoom_user
+        if create_zoom_user(user=user):
+            verb = f'Zoom profile created'
+            description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
+        else:
+            verb = f'Failed to create Zoom profile'
+            description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
+
+        notify.send(
+            user,
+            recipient=user,
+            verb=verb,
+            level='info',
+            description=description
+        )
