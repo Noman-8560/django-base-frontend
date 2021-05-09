@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 's(l5vi&5nq3619gdskadhgjaksd981234hlaskhjdlasd'
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 SERVER_ACTIVE = False
 
-ZOOM_API_KEY_JWT = 'rhJ30W6nSaiilf3KQIN44Q'
-ZOOM_API_SECRET_JWT = 'qPMvmN8Rxs8bTYVs8gXBc2xSvUSA0aZYhgsM'
+ZOOM_API_KEY_JWT = 'EBB0k1HnRN6hlD5dvrkAyw'
+ZOOM_API_SECRET_JWT = '1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF'
 
 # Application definition
 INSTALLED_APPS = [
