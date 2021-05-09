@@ -365,13 +365,9 @@ def question_builder(request):
             )
 
         return JsonResponse(data={'message': 'success', 'question': question.pk}, safe=False)
-
     else:
         pass
-
-    context = {
-        'subjects': question_subjects
-    }
+    context = {'subjects': question_subjects}
     return render(request=request, template_name='application/question_builder.html', context=context)
 
 
@@ -1071,8 +1067,7 @@ def enroll(request, pk):
             messages.error(request=request, message=f'Requested participant or participants does not exists.')
             return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
-        # --------------------------------------------------------------------------------------------------------
-        # --------- MEETING
+        #  --------- MEETING --------- #
 
         meeting_id = None
         start_url = None
@@ -1080,7 +1075,8 @@ def enroll(request, pk):
 
         if int(quiz.players) > 1:
             response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
-                                           start_time=str(quiz.start_time), host=request.user.email)
+                                           start_time=quiz.start_time, end_time=quiz.end_time,
+                                           host=request.user.email)
             if response.status_code != 201:
                 messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
                 return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
@@ -1090,7 +1086,8 @@ def enroll(request, pk):
             start_url = meeting['start_url']
             join_url = meeting['join_url']
 
-        # --------- SAVE
+        # --------- SAVE --------- #
+
         team = Team(
             name=team_name,
             quiz=quiz,
@@ -1099,6 +1096,7 @@ def enroll(request, pk):
             zoom_start_url=start_url,
             zoom_join_url=join_url,
         )
+
         team.save()
         team.participants.add(player_1, player_2, player_3)
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '

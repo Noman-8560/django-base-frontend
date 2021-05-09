@@ -10,6 +10,12 @@ from django.http import HttpResponse
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
 
 
+def get_time_duration_in_minutes(start_time: datetime, end_time: datetime) -> float:
+    duration: datetime = end_time - start_time
+    duration_in_s = duration.total_seconds()
+    return divmod(duration_in_s, 60)[0]
+
+
 # COMPLETE AND WORKING
 def get_jwt():
     payload = {
@@ -52,12 +58,12 @@ def o_auth_access_token():
     return response
 
 
-def zoom_create_meeting(name, start_time, host):
+def zoom_create_meeting(name, start_time, end_time, host):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{host}/meetings"
 
     payload = {
-        "duration": 60,
+        "duration": int(get_time_duration_in_minutes(start_time=start_time, end_time=end_time)),
         "host_id": host,
         "settings": {
             "alternative_hosts": "",
@@ -68,15 +74,13 @@ def zoom_create_meeting(name, start_time, host):
             "cn_meeting": False,
             "enforce_login": False,
             "enforce_login_domains": "",
-            "global_dial_in_countries": [
-            ],
-            "global_dial_in_numbers": [
-            ],
+            "global_dial_in_countries": [],
+            "global_dial_in_numbers": [],
             "host_video": False,
             "in_meeting": False,
             "join_before_host": True,
             "mute_upon_entry": False,
-            "participant_video": False,
+            "participant_video": True,
             "registrants_confirmation_email": True,
             "use_pmi": False,
             "waiting_room": False,
