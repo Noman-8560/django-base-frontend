@@ -1,8 +1,10 @@
 import datetime
 
 import jwt
+import json
 import requests
 from django.contrib.auth.models import User
+from src.application.models import Profile
 from django.http import HttpResponse
 
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
@@ -127,7 +129,7 @@ def create_zoom_user(user: User):
         'content-type': 'application/json',
         'authorization': f"Bearer {bearer_token}"
     }
-    json = {
+    data = {
         'action': 'custCreate',
         'user_info': {
             'email': user.email,
@@ -136,7 +138,11 @@ def create_zoom_user(user: User):
             'last_name': user.last_name
         }
     }
-    response = requests.post(url, headers=headers, json=json)
+    response = requests.post(url, headers=headers, json=data)
+    profile = Profile.objects.get(user=user)
+    r_data = json.loads(response)
+    profile.zoom_user_id = r_data['id']
+    profile.save()
     print(response.text)
     return response.status_code == 201
 

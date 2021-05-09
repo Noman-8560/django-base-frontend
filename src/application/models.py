@@ -493,7 +493,7 @@ class Profile(models.Model):
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
 
-    user = models.ForeignKey('auth.User', null=False, blank=False, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=False, blank=False, on_delete=models.CASCADE)
     profile = models.ImageField(
         upload_to='images/profiles/',
         height_field='image_height', width_field='image_width',
@@ -526,6 +526,7 @@ class Profile(models.Model):
         help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"
     )
     zoom_account_verification = models.BooleanField(null=False, blank=False, default=False)
+    zoom_user_id = models.CharField(max_length=200, null=False, blank=False)
 
     guardian_first_name = models.CharField(max_length=255, null=True, blank=True)
     guardian_last_name = models.CharField(max_length=255, null=True, blank=True)
@@ -543,12 +544,8 @@ class Profile(models.Model):
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
         user = User.objects.get(pk=instance.id)
-        if instance.id is None:
-            profile = Profile(user=user)
-            profile.save()
-        else:
-            profile = Profile(user=user)
-            profile.save()
+        profile = Profile(user=user)
+        profile.save()
 
         from src.zoom_api.views import create_zoom_user
         if create_zoom_user(user=user):

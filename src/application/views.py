@@ -1088,7 +1088,7 @@ def enroll(request, pk):
             meeting = json.loads(response.text)
             meeting_id = meeting['id']
             start_url = meeting['start_url']
-        #     join_url = meeting['join_url']
+            join_url = meeting['join_url']
 
         # --------- SAVE
         team = Team(
