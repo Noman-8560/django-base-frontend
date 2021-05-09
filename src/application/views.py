@@ -1080,7 +1080,7 @@ def enroll(request, pk):
 
         if int(quiz.players) > 1:
             response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
-                                           start_time=str(quiz.start_time), host="cocognito20@gmail.com")
+                                           start_time=str(quiz.start_time), host=request.user.email)
             if response.status_code != 201:
                 messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
                 return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
