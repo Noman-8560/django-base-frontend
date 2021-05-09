@@ -1,3 +1,5 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
@@ -9,7 +11,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
 
-from src.zoom_api.views import zoom_delete_meeting
+from src.zoom_api.views import zoom_delete_meeting, zoom_create_meeting
 from .BusinessLogicLayer import identify_user_in_team
 from .forms import *
 from .models import *
@@ -1075,17 +1077,17 @@ def enroll(request, pk):
         meeting_id = None
         start_url = None
         join_url = None
-        # Replace with user account #
-        # if int(quiz.players) > 1:
-        #     response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
-        #                                    start_time=str(quiz.start_time), host="cocognito20@gmail.com")
-        #     if response.status_code != 201:
-        #         messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
-        #         return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-        #
-        #     meeting = json.loads(response.text)
-        #     meeting_id = meeting['id']
-        #     start_url = meeting['start_url']
+
+        if int(quiz.players) > 1:
+            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                                           start_time=str(quiz.start_time), host="cocognito20@gmail.com")
+            if response.status_code != 201:
+                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+            meeting = json.loads(response.text)
+            meeting_id = meeting['id']
+            start_url = meeting['start_url']
         #     join_url = meeting['join_url']
 
         # --------- SAVE
