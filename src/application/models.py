@@ -550,7 +550,7 @@ def save_profile_on_user(sender, instance, created, **kwargs):
             profile = Profile(user=user)
             profile.save()
 
-        from application.zoom_api.views import create_zoom_user
+        from src.zoom_api.views import create_zoom_user
         if create_zoom_user(user=user):
             verb = f'Zoom profile created'
             description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
