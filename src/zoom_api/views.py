@@ -12,7 +12,7 @@ from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
 
 def get_time_duration_in_minutes(start_time: int, end_time: int) -> float:
     duration = end_time - start_time
-    return (duration / 1000) / 60
+    return duration / 60
 
 
 # COMPLETE AND WORKING
