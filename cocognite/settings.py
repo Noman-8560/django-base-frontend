@@ -160,9 +160,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 if DEBUG:
-    TIME_ZONE = 'Asia/Kolkata'
+    TIME_ZONE = 'Asia/Tashkent'
 else:
-    TIME_ZONE = 'Asia/Kolkata'
+    TIME_ZONE = 'Asia/Calcutta'
 
 USE_I18N = True
 
