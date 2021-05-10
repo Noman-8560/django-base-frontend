@@ -86,9 +86,9 @@ def zoom_create_meeting(name, start_time, end_time, host):
             "watermark": False,
             "registrants_email_notification": True
         },
-        "start_time": start_time,  # FORMAT 2019-09-05T16:54:14Z
+        "start_time": str(datetime.datetime.utcfromtimestamp(start_time)),  # FORMAT 2019-09-05T16:54:14Z
         "status": "waiting",
-        "timezone": "Asia/Calcutta",
+        "timezone": "Asia/Tashkent",
         "topic": name,
         "type": 2,  # MEANS _ schedule meeting.
     }
