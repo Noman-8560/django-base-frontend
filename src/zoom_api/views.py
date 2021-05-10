@@ -78,6 +78,7 @@ def zoom_create_meeting(name, start_time, end_time, host):
             "host_video": False,
             "in_meeting": False,
             "join_before_host": True,
+            "jbh_time": 0,
             "mute_upon_entry": False,
             "participant_video": True,
             "registrants_confirmation_email": True,
