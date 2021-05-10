@@ -10,10 +10,9 @@ from django.http import HttpResponse
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
 
 
-def get_time_duration_in_minutes(start_time: datetime, end_time: datetime) -> float:
-    duration: datetime = end_time - start_time
-    duration_in_s = duration.total_seconds()
-    return divmod(duration_in_s, 60)[0]
+def get_time_duration_in_minutes(start_time: int, end_time: int) -> float:
+    duration = end_time - start_time
+    return (duration / 1000) / 60
 
 
 # COMPLETE AND WORKING
