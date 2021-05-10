@@ -144,7 +144,7 @@ def create_zoom_user(user: User):
     }
     response = requests.post(url, headers=headers, json=data)
     profile = Profile.objects.get(user=user)
-    r_data = json.loads(response)
+    r_data = json.loads(response.text)
     profile.zoom_user_id = r_data['id']
     profile.save()
     print(response.text)
