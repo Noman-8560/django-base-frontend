@@ -262,7 +262,6 @@ class Quiz(models.Model):
     end_time = models.DateTimeField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-
     learning_purpose = models.BooleanField(default=False,
                                            help_text='By checking Learning purpose some changes will be applied '
                                                      'to this quiz, it will only visible for learning resource, '
