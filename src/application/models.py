@@ -7,6 +7,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from django.utils.text import slugify
+from notifications.signals import notify
 
 
 class AppUpdate(models.Model):
@@ -162,7 +163,8 @@ class Question(models.Model):
 
 
 class QuestionStatement(models.Model):
-    statement = models.TextField(null=False, blank=False, help_text='add your question statement/defination here you can add multiple statements to.')
+    statement = models.TextField(null=False, blank=False,
+                                 help_text='add your question statement/defination here you can add multiple statements to.')
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=True, blank=True)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
@@ -260,7 +262,6 @@ class Quiz(models.Model):
     end_time = models.DateTimeField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-
     learning_purpose = models.BooleanField(default=False,
                                            help_text='By checking Learning purpose some changes will be applied '
                                                      'to this quiz, it will only visible for learning resource, '
@@ -491,7 +492,7 @@ class Profile(models.Model):
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
 
-    user = models.ForeignKey('auth.User', null=False, blank=False, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=False, blank=False, on_delete=models.CASCADE)
     profile = models.ImageField(
         upload_to='images/profiles/',
         height_field='image_height', width_field='image_width',
@@ -524,6 +525,7 @@ class Profile(models.Model):
         help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"
     )
     zoom_account_verification = models.BooleanField(null=False, blank=False, default=False)
+    zoom_user_id = models.CharField(max_length=200, null=False, blank=False)
 
     guardian_first_name = models.CharField(max_length=255, null=True, blank=True)
     guardian_last_name = models.CharField(max_length=255, null=True, blank=True)
@@ -541,25 +543,21 @@ class Profile(models.Model):
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
         user = User.objects.get(pk=instance.id)
-        if instance.id is None:
-            profile = Profile(user=user)
-            profile.save()
-        else:
-            profile = Profile(user=user)
-            profile.save()
+        profile = Profile(user=user)
+        profile.save()
 
-        # from application.zoom_api.views import create_zoom_user
-        # if create_zoom_user(user=user):
-        #     verb = f'Zoom profile created'
-        #     description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
-        # else:
-        #     verb = f'Failed to create Zoom profile'
-        #     description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
-        #
-        # notify.send(
-        #     user,
-        #     recipient=user,
-        #     verb=verb,
-        #     level='info',
-        #     description=description
-        # )
+        from src.zoom_api.views import create_zoom_user
+        if create_zoom_user(user=user):
+            verb = f'Zoom profile created'
+            description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
+        else:
+            verb = f'Failed to create Zoom profile'
+            description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
+
+        notify.send(
+            user,
+            recipient=user,
+            verb=verb,
+            level='info',
+            description=description
+        )

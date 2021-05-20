@@ -1,3 +1,5 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
@@ -9,7 +11,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
 
-from src.zoom_api.views import zoom_delete_meeting
+from src.zoom_api.views import zoom_delete_meeting, zoom_create_meeting
 from .BusinessLogicLayer import identify_user_in_team
 from .forms import *
 from .models import *
@@ -363,13 +365,9 @@ def question_builder(request):
             )
 
         return JsonResponse(data={'message': 'success', 'question': question.pk}, safe=False)
-
     else:
         pass
-
-    context = {
-        'subjects': question_subjects
-    }
+    context = {'subjects': question_subjects}
     return render(request=request, template_name='application/question_builder.html', context=context)
 
 
@@ -1069,26 +1067,27 @@ def enroll(request, pk):
             messages.error(request=request, message=f'Requested participant or participants does not exists.')
             return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
 
-        # --------------------------------------------------------------------------------------------------------
-        # --------- MEETING
+        #  --------- MEETING --------- #
 
         meeting_id = None
         start_url = None
         join_url = None
-        # Replace with user account #
-        # if int(quiz.players) > 1:
-        #     response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
-        #                                    start_time=str(quiz.start_time), host="cocognito20@gmail.com")
-        #     if response.status_code != 201:
-        #         messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
-        #         return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-        #
-        #     meeting = json.loads(response.text)
-        #     meeting_id = meeting['id']
-        #     start_url = meeting['start_url']
-        #     join_url = meeting['join_url']
 
-        # --------- SAVE
+        if int(quiz.players) > 1:
+            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                                           start_time=quiz.start_time.timestamp(),
+                                           end_time=quiz.end_time.timestamp(), host=request.user.email)
+            if response.status_code != 201:
+                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+            meeting = json.loads(response.text)
+            meeting_id = meeting['id']
+            start_url = meeting['start_url']
+            join_url = meeting['join_url']
+
+        # --------- SAVE --------- #
+
         team = Team(
             name=team_name,
             quiz=quiz,
@@ -1097,6 +1096,7 @@ def enroll(request, pk):
             zoom_start_url=start_url,
             zoom_join_url=join_url,
         )
+
         team.save()
         team.participants.add(player_1, player_2, player_3)
         messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
@@ -1227,7 +1227,7 @@ def quiz_start(request, quiz):
         'quiz_end_date': user_quiz.end_time,
         'question_ids': question_ids,
         'team_id': user_team.pk,
-        'zoom_join_url': user_team.zoom_join_url,
+        'zoom_join_url': user_team.zoom_start_url if user_team.created_by == request.user else user_team.zoom_join_url,
         'zoom_start_url': user_team.zoom_start_url,
         'quiz_id': user_quiz.pk,
         'user_no': user_no,

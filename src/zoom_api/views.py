@@ -1,11 +1,18 @@
 import datetime
 
 import jwt
+import json
 import requests
 from django.contrib.auth.models import User
+from src.application.models import Profile
 from django.http import HttpResponse
 
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
+
+
+def get_time_duration_in_minutes(start_time: int, end_time: int) -> float:
+    duration = end_time - start_time
+    return duration / 60
 
 
 # COMPLETE AND WORKING
@@ -50,12 +57,12 @@ def o_auth_access_token():
     return response
 
 
-def zoom_create_meeting(name, start_time, host):
+def zoom_create_meeting(name, start_time, end_time, host):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{host}/meetings"
 
     payload = {
-        "duration": 60,
+        "duration": int(get_time_duration_in_minutes(start_time=start_time, end_time=end_time)),
         "host_id": host,
         "settings": {
             "alternative_hosts": "",
@@ -66,24 +73,23 @@ def zoom_create_meeting(name, start_time, host):
             "cn_meeting": False,
             "enforce_login": False,
             "enforce_login_domains": "",
-            "global_dial_in_countries": [
-            ],
-            "global_dial_in_numbers": [
-            ],
+            "global_dial_in_countries": [],
+            "global_dial_in_numbers": [],
             "host_video": False,
             "in_meeting": False,
             "join_before_host": True,
+            "jbh_time": 0,
             "mute_upon_entry": False,
-            "participant_video": False,
+            "participant_video": True,
             "registrants_confirmation_email": True,
             "use_pmi": False,
             "waiting_room": False,
             "watermark": False,
             "registrants_email_notification": True
         },
-        "start_time": start_time,  # FORMAT 2019-09-05T16:54:14Z
+        "start_time": str(datetime.datetime.utcfromtimestamp(start_time)),  # FORMAT 2019-09-05T16:54:14Z
         "status": "waiting",
-        "timezone": "Asia/Calcutta",
+        "timezone": "Asia/Tashkent",
         "topic": name,
         "type": 2,  # MEANS _ schedule meeting.
     }
@@ -109,13 +115,13 @@ def zoom_delete_meeting(meeting_id):
     return response.status_code
 
 
-def zoom_check_user(user='cocognito20@gmail.com'):
+def zoom_check_user(user='cocognito2020@gmail.com'):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{user}"
     headers = {
         'authorization': f"Bearer {bearer_token}"
     }
-    response = requests.request("GET", url, headers=headers)
+    response = requests.get(url, headers=headers)
     print(response.text)
     return response
 
@@ -127,7 +133,7 @@ def create_zoom_user(user: User):
         'content-type': 'application/json',
         'authorization': f"Bearer {bearer_token}"
     }
-    json = {
+    data = {
         'action': 'custCreate',
         'user_info': {
             'email': user.email,
@@ -136,7 +142,11 @@ def create_zoom_user(user: User):
             'last_name': user.last_name
         }
     }
-    response = requests.post(url, headers=headers, json=json)
+    response = requests.post(url, headers=headers, json=data)
+    profile = Profile.objects.get(user=user)
+    r_data = json.loads(response.text)
+    profile.zoom_user_id = r_data['id']
+    profile.save()
     print(response.text)
     return response.status_code == 201
 
