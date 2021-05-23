@@ -1223,6 +1223,13 @@ def quiz_start(request, quiz):
     zoom_start_url = f"https://zoom.us/wc/{user_team.zoom_meeting_id}/join?prefer=0&un={Profile.objects.get(user=request.user).zoom_user_id}"
     zoom_join_url = f"https://zoom.us/j/{user_team.zoom_meeting_id}"
 
+    if user_team.created_by == request.user:
+        print("START URL")
+        print(zoom_start_url)
+    else:
+        print("JOIN URL")
+        print(zoom_join_url)
+
     context = {
         'time_status': time_status,
         'allowed_to_start': allowed_to_start,
