@@ -21,7 +21,7 @@ def get_jwt():
         'iss': ZOOM_API_KEY_JWT,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     }
-    token = jwt.encode(payload, ZOOM_API_SECRET_JWT).decode('utf-8')
+    token = jwt.encode(payload, ZOOM_API_SECRET_JWT)
     return token
 
 
