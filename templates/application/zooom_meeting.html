@@ -1,43 +1,70 @@
 {% load static %}
 <html>
-    <head>
-        <title>Zoom WebSDK</title>
-    <meta charset="utf-8" />
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.5/css/bootstrap.css" />
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.5/css/react-select.css" />
+<head>
+    <title>Zoom WebSDK</title>
+    <meta charset="utf-8"/>
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.5/css/bootstrap.css"/>
+    <link rel="stylesheet" href="{% static 'application/css/bootstrap.min.css' %}">
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.5/css/react-select.css"/>
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+    <style>
+        #zmmtg-root {
+            display: flex;
+        }
+    </style>
 
-    </head>
-    <body>
+</head>
+<body>
 
-
-    {#    <div id="zmmtg-root"></div>#}
-    {#    <div id="aria-notify-area"></div>#}
-
-
-    <!-- import ZoomMtg dependencies -->
-    <script src="https://source.zoom.us/1.9.5/lib/vendor/react.min.js"></script>
-    <script src="https://source.zoom.us/1.9.5/lib/vendor/react-dom.min.js"></script>
-    <script src="https://source.zoom.us/1.9.5/lib/vendor/redux.min.js"></script>
-    <script src="https://source.zoom.us/1.9.5/lib/vendor/redux-thunk.min.js"></script>
-    <script src="https://source.zoom.us/1.9.5/lib/vendor/lodash.min.js"></script>
-
-    <!-- import ZoomMtg -->
-    <script src="https://source.zoom.us/zoom-meeting-1.9.5.min.js"></script>
-    <script src="{% static "zoom/tool.js" %}"></script>
-    <script src="{% static "zoom/vconsole.min.js" %}"></script>
-
-    <div class="row">
-        <div class="container">
-            <div class="">
-                 {% lorem 100 w %}
-            </div>
+<div class="row">
+    <div class="col-12">
+        <div>
+            <h1>Ikram Khan</h1>
+            <p>{% lorem 5 p %}</p>
         </div>
     </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-12">
+        <div>
+            <div id="zmmtg-root"></div>
+        <div id="aria-notify-area"></div>
 
-    </body>
+        <!-- added on meeting init -->
+
+        <div class="ReactModalPortal"></div>
+        <div class="ReactModalPortal"></div>
+        <div class="ReactModalPortal"></div>
+        <div class="global-pop-up-box"></div>
+        <div class="sharer-controlbar-container sharer-controlbar-container--hidden"></div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- added on import -->
+
+
+<!-- import ZoomMtg dependencies -->
+<script src="https://source.zoom.us/1.9.5/lib/vendor/react.min.js"></script>
+<script src="https://source.zoom.us/1.9.5/lib/vendor/react-dom.min.js"></script>
+<script src="https://source.zoom.us/1.9.5/lib/vendor/redux.min.js"></script>
+<script src="https://source.zoom.us/1.9.5/lib/vendor/redux-thunk.min.js"></script>
+<script src="https://source.zoom.us/1.9.5/lib/vendor/lodash.min.js"></script>
+
+<script src="{% static 'application/libs/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'application/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- import ZoomMtg -->
+<script src="https://source.zoom.us/zoom-meeting-1.9.5.min.js"></script>
+<script src="{% static "zoom/tool.js" %}"></script>
+<script src="{% static "zoom/vconsole.min.js" %}"></script>
+
+</body>
 </html>
 <script>
 
@@ -54,61 +81,59 @@
 
     init();
 
-    function init(){
+    function init() {
         zoom_initialization();
 
         design_initialization();
     }
 
-    function design_initialization(){
+    function design_initialization() {
         const zoomMeeting = document.getElementById("zmmtg-root");
     }
 
 
-
-
-    function zoom_initialization(){
+    function zoom_initialization() {
         var SIGNATURE = ZoomMtg.generateSignature({
-        meetingNumber: MEEETING_NO,
-        apiKey: API_KEY,
-        apiSecret: API_SECRET,
-        role: 1,
+            meetingNumber: MEEETING_NO,
+            apiKey: API_KEY,
+            apiSecret: API_SECRET,
+            role: 1,
 
-        success: res => {
-            console.log("Successfully launched");
-        }
+            success: res => {
+                console.log("Successfully launched");
+            }
 
-    });
+        });
 
         ZoomMtg.init({
-        leaveUrl: 'http://127.0.0.1:8000/', //required
-        debug:false,
-        isSupportAV: true,
-        success: (success_main) =>{
+            leaveUrl: 'http://127.0.0.1:8000/', //required
+            debug: false,
+            isSupportAV: true,
+            success: (success_main) => {
 
-            ZoomMtg.join({
-                meetingNumber: MEEETING_NO,
-                userName: USER_NAME,
-                signature: SIGNATURE,
-                apiKey: API_KEY,
-                userEmail: USER_EMAIL,
-                passWord: "123456",
+                ZoomMtg.join({
+                    meetingNumber: MEEETING_NO,
+                    userName: USER_NAME,
+                    signature: SIGNATURE,
+                    apiKey: API_KEY,
+                    userEmail: USER_EMAIL,
+                    passWord: "123456",
 
-                success: (success_message) => {
-                    console.log("JOINED: "+success_message);
-                },
-                error: (error) =>{
-                    console.log("JOIN MEETING: "+error);
-                }
+                    success: (success_message) => {
+                        console.log("JOINED: " + success_message);
+                    },
+                    error: (error) => {
+                        console.log("JOIN MEETING: " + error);
+                    }
 
-            });
+                });
 
 
-        },
-        error: (main_error) => {
-            console.log("ERROR MAIN: "+main_error);
-        }
-    });
+            },
+            error: (main_error) => {
+                console.log("ERROR MAIN: " + main_error);
+            }
+        });
     }
 
 
