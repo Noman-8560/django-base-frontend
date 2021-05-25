@@ -13,9 +13,9 @@
     <body>
 
 
+    {#    <div id="zmmtg-root"></div>#}
+    {#    <div id="aria-notify-area"></div>#}
 
-{#    <div id="zmmtg-root"></div>#}
-{#    <div id="aria-notify-area"></div>#}
 
     <!-- import ZoomMtg dependencies -->
     <script src="https://source.zoom.us/1.9.5/lib/vendor/react.min.js"></script>
@@ -41,8 +41,6 @@
 </html>
 <script>
 
-    console.log("HI");
-
     ZoomMtg.setZoomJSLib('https://source.zoom.us/1.9.5/lib', '/av');
     ZoomMtg.preLoadWasm();
     ZoomMtg.prepareWebSDK();
@@ -54,36 +52,39 @@
     var USER_EMAIL = "std1@exarth.com";
     var MEEETING_NO = "85797828851";
 
-    var SIGNATURE = ZoomMtg.generateSignature({
+    init();
+
+    function init(){
+        zoom_initialization();
+
+        design_initialization();
+    }
+
+    function design_initialization(){
+        const zoomMeeting = document.getElementById("zmmtg-root");
+    }
+
+
+
+
+    function zoom_initialization(){
+        var SIGNATURE = ZoomMtg.generateSignature({
         meetingNumber: MEEETING_NO,
         apiKey: API_KEY,
         apiSecret: API_SECRET,
         role: 1,
 
         success: res => {
-            console.log("SIGNATURE: "+res.result);
+            console.log("Successfully launched");
         }
 
     });
 
-    var meetingconfig = {
-        apiKey: API_KEY,
-        meetingNumber: MEEETING_NO,
-        userName: USER_NAME,
-        leaveUrl: "/",
-        signature: SIGNATURE
-    };
-
-    ZoomMtg.init({
+        ZoomMtg.init({
         leaveUrl: 'http://127.0.0.1:8000/', //required
-        debug:true,
+        debug:false,
         isSupportAV: true,
-        loginWindow: {  // optional,
-      width: 400,
-      height: 380
-    },
         success: (success_main) =>{
-            console.log("INITALIZATION: "+success_main);
 
             ZoomMtg.join({
                 meetingNumber: MEEETING_NO,
@@ -108,7 +109,7 @@
             console.log("ERROR MAIN: "+main_error);
         }
     });
-
+    }
 
 
 </script>
