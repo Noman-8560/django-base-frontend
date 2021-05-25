@@ -12,20 +12,41 @@
     </head>
     <body>
 
+
+
+{#    <div id="zmmtg-root"></div>#}
+{#    <div id="aria-notify-area"></div>#}
+
+    <!-- import ZoomMtg dependencies -->
     <script src="https://source.zoom.us/1.9.5/lib/vendor/react.min.js"></script>
     <script src="https://source.zoom.us/1.9.5/lib/vendor/react-dom.min.js"></script>
     <script src="https://source.zoom.us/1.9.5/lib/vendor/redux.min.js"></script>
     <script src="https://source.zoom.us/1.9.5/lib/vendor/redux-thunk.min.js"></script>
     <script src="https://source.zoom.us/1.9.5/lib/vendor/lodash.min.js"></script>
+
+    <!-- import ZoomMtg -->
     <script src="https://source.zoom.us/zoom-meeting-1.9.5.min.js"></script>
     <script src="{% static "zoom/tool.js" %}"></script>
     <script src="{% static "zoom/vconsole.min.js" %}"></script>
+
+    <div class="row">
+        <div class="container">
+            <div class="">
+                 {% lorem 100 w %}
+            </div>
+        </div>
+    </div>
+
     </body>
 </html>
 <script>
 
+    console.log("HI");
+
+    ZoomMtg.setZoomJSLib('https://source.zoom.us/1.9.5/lib', '/av');
     ZoomMtg.preLoadWasm();
-    ZoomMtg.prepareJssdk();
+    ZoomMtg.prepareWebSDK();
+    {#ZoomMtg.checkSystemRequirements();#}
 
     var API_KEY = "EBB0k1HnRN6hlD5dvrkAyw";
     var API_SECRET = "1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF";
@@ -37,10 +58,10 @@
         meetingNumber: MEEETING_NO,
         apiKey: API_KEY,
         apiSecret: API_SECRET,
-        role: 0,
+        role: 1,
 
         success: res => {
-            console.log(res.result);
+            console.log("SIGNATURE: "+res.result);
         }
 
     });
@@ -51,30 +72,40 @@
         userName: USER_NAME,
         leaveUrl: "/",
         signature: SIGNATURE
-    }
+    };
 
     ZoomMtg.init({
-        leaveUrl: 'http://www.zoom.us', //required
-        succes: res =>{
+        leaveUrl: 'http://127.0.0.1:8000/', //required
+        debug:true,
+        isSupportAV: true,
+        loginWindow: {  // optional,
+      width: 400,
+      height: 380
+    },
+        success: (success_main) =>{
+            console.log("INITALIZATION: "+success_main);
+
             ZoomMtg.join({
                 meetingNumber: MEEETING_NO,
                 userName: USER_NAME,
                 signature: SIGNATURE,
                 apiKey: API_KEY,
                 userEmail: USER_EMAIL,
+                passWord: "123456",
 
-
-                success: res =>{
-                    console.log(res);
+                success: (success_message) => {
+                    console.log("JOINED: "+success_message);
                 },
-                error: res =>{
-                    console.log(res.result);
+                error: (error) =>{
+                    console.log("JOIN MEETING: "+error);
                 }
 
             });
+
+
         },
-        error: res => {
-            console.log(res.result);
+        error: (main_error) => {
+            console.log("ERROR MAIN: "+main_error);
         }
     });
 
