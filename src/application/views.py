@@ -11,6 +11,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
 
+from cocognite import settings
 from src.zoom_api.views import zoom_delete_meeting, zoom_create_meeting
 from .BusinessLogicLayer import identify_user_in_team
 from .forms import *
@@ -1131,7 +1132,6 @@ def enroll(request, pk):
     return render(request=request, template_name='application/add_team.html', context=context)
 
 
-@login_required
 @never_cache
 def quiz_start(request, quiz):
     user_team = None
@@ -1239,6 +1239,51 @@ def quiz_start(request, quiz):
     }
 
     return render(request=request, template_name='application/quiz_user_1.html', context=context)
+
+
+import hashlib
+import hmac
+import base64
+import time
+
+
+def generate_signature(data):
+    ts = int(round(time.time() * 1000)) - 30000
+    msg = data['apiKey'] + str(data['meetingNumber']) + str(ts) + str(data['role'])
+    message = base64.b64encode(bytes(msg, 'utf-8'))
+    # message = message.decode("utf-8");
+    secret = bytes(data['apiSecret'], 'utf-8')
+    hash = hmac.new(secret, message, hashlib.sha256)
+    hash = base64.b64encode(hash.digest())
+    hash = hash.decode("utf-8")
+    tmpString = "%s.%s.%s.%s.%s" % (data['apiKey'], str(data['meetingNumber']), str(ts), str(data['role']), hash)
+    signature = base64.b64encode(bytes(tmpString, "utf-8"))
+    signature = signature.decode("utf-8")
+    return signature.rstrip("=")
+
+
+@login_required
+@never_cache
+def zoom(request, quiz):
+    user_quiz = Quiz.objects.get(pk=quiz)
+    user_team = Team.objects.filter(quiz=user_quiz, participants=request.user)[0]
+    data = {
+        'apiKey': "EBB0k1HnRN6hlD5dvrkAyw",
+        'apiSecret': "1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF",
+        'meetingNumber': user_team.zoom_meeting_id,
+        'role': 1
+    }
+    signature = generate_signature(data)
+
+    context = {
+        'meeting': user_team.zoom_meeting_id,
+        'signature': signature,
+        'user_name': request.user.username,
+        'user_email': request.user.email,
+        'api_key': settings.ZOOM_API_KEY_JWT,
+    }
+
+    return render(request=request, template_name='application/zooom_meeting.html', context=context)
 
 
 @login_required

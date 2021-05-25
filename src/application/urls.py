@@ -5,6 +5,7 @@ app_name = 'application'
 urlpatterns = [
     #  --- HELP_PAGE
     path('dashboard/', dashboard, name='dashboard'),
+    path('zoom/<int:quiz>/', zoom, name='zoom'),
 
     path('articles/', articles, name='articles'),
     path('add/article/', add_article, name='add_article'),
