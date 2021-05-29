@@ -4,46 +4,88 @@
     <title>Zoom WebSDK</title>
     <meta charset="utf-8"/>
     <link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.5/css/bootstrap.css"/>
-    <link rel="stylesheet" href="{% static 'application/css/bootstrap.min.css' %}">
+    {#    <link rel="stylesheet" href="{% static 'application/css/bootstrap.min.css' %}">#}
     <link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.5/css/react-select.css"/>
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+
     <style>
-        #zmmtg-root {
-            display: flex;
+        #zmmtg-root, .meeting-client, .meeting-client-inner {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            background-color: #FFF0F0;
+        }
+
+        #wc-content {
+            height: auto;
+            position: inherit;
+            overflow: hidden;
+        }
+
+        #wc-footer {
+            bottom: auto !important;
+            width: 100% !important;
+        }
+
+        #dialog-join {
+            width: 1000px !important;
+        }
+
+        #sv-active-video, .active-main, #sv-active-speaker-view, .main-layout {
+            height: 500px !important;
+            width: 1000px !important;
+        }
+
+        .suspension-window {
+            transform: translate(-444px, 10px) !important;
+        }
+
+        #dialog-invite {
+            display: none;
+        }
+
+        .gallery-video-container__wrap {
+            background-color: #FFF0F0;
+        }
+
+        #remains{
+            position: absolute;
+            top: 800px;
         }
     </style>
-
 </head>
 <body>
-
-<div class="row">
-    <div class="col-12">
-        <div>
-            <h1>Ikram Khan</h1>
-            <p>{% lorem 5 p %}</p>
-        </div>
-    </div>
-</div>
+<div id="zmmtg-root" style=""></div>
 <br>
-<div class="row">
-    <div class="col-12">
-        <div>
-            <div id="zmmtg-root"></div>
-        <div id="aria-notify-area"></div>
+<div class="p-4" id="remains"><h1>I am Ikram</h1>
+<p>
+    Hey @ninhkhong,
 
-        <!-- added on meeting init -->
+Happy to help!
 
-        <div class="ReactModalPortal"></div>
-        <div class="ReactModalPortal"></div>
-        <div class="ReactModalPortal"></div>
-        <div class="global-pop-up-box"></div>
-        <div class="sharer-controlbar-container sharer-controlbar-container--hidden"></div>
-        </div>
-    </div>
+Can you clarify? You have 2 external cameras plugged into your computer? What do you mean by big camera, small camera, and partner camera? I am guessing partner camera is video of participant who joined meeting?
+To re position the floating self view camera screen you can use this css,
+
+.suspension-window {
+   transform: translate(-444px, 10px) !important;
+}
+To customize the size of the video / Zoom Web UI use the following css (feel free to customize width / height sizing)
+#zmmtg-root, .meeting-client, .meeting-client-inner {
+  width: 1000px;
+  height: 500px;
+  position: relative;
+}
+
+#wc-footer {
+  bottom: auto !important;
+  width: 1000px !important;
+}
+
+#dialog-join {
+</p>
 </div>
-
 
 
 <!-- added on import -->
