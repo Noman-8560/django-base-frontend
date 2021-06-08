@@ -152,6 +152,18 @@
                                     </div>
 
 
+                                    {% if not quiz.learning_purpose %}
+                                        {# Zoom Meeting #}
+                                        <div class="card border">
+                                            <div class="card-body">
+                                                <iframe style="border: none; height: 600px; width: 100%;"
+                                                        src="{{ zoom_join_url }}"
+                                                        sandbox="allow-forms allow-scripts allow-same-origin"
+                                                        allow="microphone; camera"></iframe>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
                                     <div class="card border" id="submission_permission_div">
                                         <div class="card-body">
                                             {% if submission_control == '1' %}
