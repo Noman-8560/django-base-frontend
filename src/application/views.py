@@ -1220,15 +1220,8 @@ def quiz_start(request, quiz):
         elif timezone.now() > user_quiz.end_time:
             time_status = 'past'
 
-    zoom_start_url = f"https://zoom.us/wc/{user_team.zoom_meeting_id}/join?prefer=0&un={Profile.objects.get(user=request.user).zoom_user_id}"
-    zoom_join_url = f"https://zoom.us/j/{user_team.zoom_meeting_id}"
-
-    if user_team.created_by == request.user:
-        print("START URL")
-        print(zoom_start_url)
-    else:
-        print("JOIN URL")
-        print(zoom_join_url)
+    zoom_start_url = f"https://zoom.us/s/{ user_team.zoom_meeting_id }"
+    zoom_join_url = f"https://zoom.us/j/{ user_team.zoom_meeting_id }"
 
     context = {
         'time_status': time_status,
