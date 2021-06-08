@@ -186,9 +186,8 @@
                                 <div class="card-body">
                                     <div>
                                         <p class="card-title">Zoom Meeting For Quiz</p>
-                                        <button class="btn btn-block btn-light" onclick="openWin()">Start Your Meeting
-                                            in New
-                                            window
+                                        <button class="btn btn-block btn-light" onclick="openWin()">
+                                            Start Meeting Here
                                         </button>
                                     </div>
                                     <div class="mt-4">
@@ -532,7 +531,7 @@
             function async_question_next_sync() {
                 setInterval(function () {
                     is_next();
-                }, 1000);
+                }, 2000);
             }
 
             {# ----------------------------------------------------------------------------------------------------- #}
@@ -600,7 +599,7 @@
             }
 
             function openWin() {
-                myWindow = window.open("", "myWindow", "width=500,height=500");
+                myWindow = window.open("/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
             }
 
             function closeWin() {
