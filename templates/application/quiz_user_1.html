@@ -173,6 +173,15 @@
                                         </div>
                                     </div>
 
+                                    {% if quiz.players != '1' %}
+                                        <div class="text-center">
+                                            <p>Your meeting will be started automatically if in case any issues
+                                                <button class="btn btn-link" onclick="openWin()">Click Here</button>
+                                                to start meeting
+                                            </p>
+                                        </div>
+                                    {% endif %}
+
                                 </div>
 
                             </div>
@@ -184,24 +193,16 @@
                         <div class="col-sm-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <div>
-                                        <p class="card-title">Zoom Meeting For Quiz</p>
-                                        <button class="btn btn-block btn-light" onclick="openWin()">
-                                            Start Meeting Here
-                                        </button>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p class="card-title">Resources</p>
-                                        <div class="btn-group-vertical btn-block">
-                                            <a href="{% url 'application:dashboard' %}" target="_blank"
-                                               class="btn btn-info">Go to My
-                                                Dashboard</a>
-                                            <a href="/dashboard/?live={{ quiz_id }}" target="_blank"
-                                               class="btn btn-secondary">Go to
-                                                Event
-                                                Dashboard</a>
+                                    <p class="card-title">Resources</p>
+                                    <div class="btn-group-vertical btn-block">
+                                        <a href="{% url 'application:dashboard' %}" target="_blank"
+                                           class="btn btn-info">Go to My
+                                            Dashboard</a>
+                                        <a href="/dashboard/?live={{ quiz_id }}" target="_blank"
+                                           class="btn btn-secondary">Go to
+                                            Event
+                                            Dashboard</a>
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -275,12 +276,14 @@
     {% endif %}
 {% endblock %}
 
+
 {% if allowed_to_start %}
     {% block base_internal_scripts %}
         <script src="{% static 'js/refresh.js' %}"></script>
         <script src="{% static 'js/right_click.js' %}"></script>
         <script src="{% static 'js/back_click.js' %}"></script>
         <script src="{% static 'js/moments.js' %}"></script>
+        <script src="{% static 'application/js/x-notify.min.js' %}"></script>
     {% endblock %}
 {% endif %}
 
@@ -348,6 +351,14 @@
             {# ----------------------------------------------------------------------------------------------------- #}
 
             function initialization() {
+                {% if quiz.players != '1' %}
+                    myWindow = window.open("/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
+                    const Notify = new XNotify();
+                    Notify.success({
+                        title: "Team Meeting",
+                        description: "Your team meeting started in new tab."
+                    });
+                {% endif %}
 
                 countdown();
                 x_accessor();
