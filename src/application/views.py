@@ -394,6 +394,8 @@ def question_builder_update(request, pk):
         messages.error(request=request, message=f'Requested Question [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:question_builder'))
 
+
+
     context = {
         'question_id': pk,
         'question': Question.objects.get(pk=pk),
@@ -660,6 +662,12 @@ def quiz_builder_update(request, pk):
     except Quiz.DoesNotExist:
         messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+    questions = Question.objects.filter(subject__in=quiz.subjects.all(), question_type=quiz.NO_OF_PLAYERS)
+    quiz_questions = quiz.questions.all()
+
+    print(questions)
+    print(quiz_questions)
 
     context = {
         'qs': quiz.quizquestion_set.all(),
