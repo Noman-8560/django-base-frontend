@@ -30,7 +30,7 @@
 
     <div class="">
         <div class="">
-            <div class="card">
+            <div class="card" hidden>
                 <div class="card-header text-left"><p class="lead m-0">Quiz Statistics</p></div>
                 <div class="card-body">
                     <div class="row justify-content-center">
@@ -97,7 +97,7 @@
             </div>
 
             {# Search details #}
-            <div class="p-0 p-sm-0">
+            <div class="p-0 p-sm-0" hidden>
                 <input type="search" class="form-control" placeholder="Search Question" id="search-filter">
                 <ul class="searchlist list-unstyled  border-top-0 card" id="search_list_product">
                 </ul>
@@ -106,102 +106,199 @@
             {% if qs %}
 
 
-                {# Statements details #}
-                <div class="card">
-                    <div class="card-header text-left"><p class="lead m-0">Quiz Questions</p></div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Text</th>
-                                    <th>Subject</th>
-                                    <th>Type</th>
-                                    <th>Difficulty</th>
-                                    <th>submission Control</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for q in qs %}
+                {% for q in questionDS %}
+                    <div class="card">
+                        <div class="card-body">
+
+                            {# QUESTION #}
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-nowrap mb-0">
+                                    <tbody>
+
                                     <tr>
                                         <td>
-                                            <a href="{% url 'application:quiz_question_statements' quiz_id q.question.pk %}">
-                                                {{ q.question.questionstatement_set.first }}
-                                            </a>
+                                            SNO
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       id="question{{ q.id }}">
+                                                <label class="custom-control-label"
+                                                       for="customCheck3">Question {{ forloop.counter }}</label>
+                                            </div>
                                         </td>
-                                        <td> {{ q.question.subject.title }}</td>
-                                        <td> {{ q.question.get_question_type_display }}</td>
-                                        <td class="text-warning">
+                                        <td>
+                                            Subject
+                                            <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                          class="text-dark">{{ q.subject }}</a>
+                                            </h5>
+                                        </td>
+                                        <td>
+                                            Level<br>
                                             <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+
                                         </td>
                                         <td>
-                                            {{ q.submission_control }}
+                                            Age Limit
+                                            <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                          class="text-dark">{{ q.age_limit }}</a>
+                                            </h5>
                                         </td>
-{#                                        <td>#}
-{#                                            {% if q.quiz.players == '1' %}#}
-{#                                                {{ q.submission_control }}#}
-{#                                            {% else %}#}
-{#                                                <select name="select_screen" data-question="{{ q.pk }}"#}
-{#                                                        id="select_screen">#}
-{#                                                    {% if q.quiz.players == '3' %}#}
-{##}
-{#                                                        {% if q.submission_control.no == 1 %}#}
-{##}
-{#                                                            <option value="1" selected>User Screen 1</option>#}
-{#                                                            <option value="2">User Screen 2</option>#}
-{#                                                            <option value="3">User Screen 3</option>#}
-{##}
-{#                                                        {% elif q.submission_control.no == 2 %}#}
-{##}
-{#                                                            <option value="1">User Screen 1</option>#}
-{#                                                            <option value="2" selected>User Screen 2</option>#}
-{#                                                            <option value="3">User Screen 3</option>#}
-{##}
-{#                                                        {% else %}#}
-{##}
-{#                                                            <option value="1">User Screen 1</option>#}
-{#                                                            <option value="2">User Screen 2</option>#}
-{#                                                            <option value="3" selected>User Screen 3</option>#}
-{##}
-{#                                                        {% endif %}#}
-{##}
-{#                                                    {% else %}#}
-{##}
-{#                                                        {% if q.submission_control.no == 1 %}#}
-{##}
-{#                                                            <option value="1" selected>User Screen 1</option>#}
-{#                                                            <option value="2">User Screen 2</option>#}
-{##}
-{#                                                        {% else %}#}
-{##}
-{#                                                            <option value="1">User Screen 1</option>#}
-{#                                                            <option value="2" selected>User Screen 2</option>#}
-{##}
-{#                                                        {% endif %}#}
-{##}
-{#                                                    {% endif %}#}
-{#                                                </select>#}
-{#                                            {% endif %}#}
-{#                                        </td>#}
-                                        <td>
-                                            <a href="/delete/quiz/{{ quiz_id }}/question/{{ q.question.pk }}/"
-                                               class="text-danger"><i class="fa fa-trash"></i>
-                                            </a>&nbsp;
-                                            <a href="{% url 'application:question_builder_update' q.question.pk %}"
-                                               class="text-primary"><i class="fa fa-eye"></i></a>
+                                        <td class="">
+                                            Submission Control
+                                            <div class="custom-control custom-checkbox">
+                                                <label class="custom-control-label"
+                                                       for="submission{{ q.id }}">Screen1</label>
+                                                <input type="checkbox" class="custom-control-input"
+                                                       id="submission{{ q.id }}">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <label class="custom-control-label"
+                                                       for="submission{{ q.id }}">Screen2</label>
+                                                <input type="checkbox" class="custom-control-input"
+                                                       id="submission{{ q.id }}">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <label class="custom-control-label"
+                                                       for="submission{{ q.id }}">Screen3</label>
+                                                <input type="checkbox" class="custom-control-input"
+                                                       id="submission{{ q.id }}">
+                                            </div>
                                         </td>
                                     </tr>
-                                {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {# DESC #}
+                            <div>
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <tr class="border-top">
+                                            <th>Statement</th>
+                                            <th>Screen 1</th>
+                                            <th>Screen 2</th>
+                                            <th>Screen 3</th>
+                                        </tr>
+
+                                        {# STATEMENTS #}
+                                        {% for desc in q.statements %}
+                                            <tr>
+                                                <td>{{ desc.description }}</td>
+                                                <td>
+                                                    {% if desc.screen1 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+
+                                                <td>
+                                                    {% if desc.screen2 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+
+                                                <td>
+                                                    {% if desc.screen3 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        <tr class="border-top">
+                                            <th>Choice</th>
+                                            <th>Screen 1</th>
+                                            <th>Screen 2</th>
+                                            <th>Screen 3</th>
+                                        </tr>
+
+                                        {# CHOICES #}
+                                        {% for desc in q.choices %}
+                                            <tr>
+                                                <td>{{ desc.description }}</td>
+                                                <td>
+                                                    {% if desc.screen1 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+
+                                                <td>
+                                                    {% if desc.screen2 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+
+                                                <td>
+                                                    {% if desc.screen3 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        <tr class="border-top">
+                                            <th>Image</th>
+                                            <th>Screen 1</th>
+                                            <th>Screen 2</th>
+                                            <th>Screen 3</th>
+                                        </tr>
+                                        {# IMAGE #}
+                                        {% for v in '123'|make_list %}
+                                            <tr>
+                                                <td><a href="{% static "images/apples.png" %}"><img
+                                                        class="img-responsive" height="50"
+                                                        src="{% static "images/apples.png" %}"></a></td>
+                                                <td><input type="checkbox"></td>
+                                                <td><input type="checkbox"></td>
+                                                <td><input type="checkbox"></td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        <tr class="border-top">
+                                            <th>Audio</th>
+                                            <th>Screen 1</th>
+                                            <th>Screen 2</th>
+                                            <th>Screen 3</th>
+                                        </tr>
+
+                                        {# AUDIO #}
+                                        {% for v in '123'|make_list %}
+                                            <tr>
+                                                <td>
+                                                    <audio controls>
+                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"
+                                                                type="audio/mpeg">
+                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"
+                                                                type="audio/ogg">
+                                                        Your browser does not support the audio tag.
+                                                    </audio>
+                                                </td>
+                                                <td><input type="checkbox"></td>
+                                                <td><input type="checkbox"></td>
+                                                <td><input type="checkbox"></td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
 
-                                </tbody>
-
-                            </table>
                         </div>
                     </div>
-                </div>
-
+                {% endfor %}
             {% endif %}
 
 

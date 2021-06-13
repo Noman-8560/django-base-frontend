@@ -653,7 +653,7 @@ def quiz_builder(request):
     }
     return render(request=request, template_name='application/quiz_builder.html', context=context)
 
-
+from .dll import ChoiceDS, QuestionDS, StatementDS
 @user_passes_test(lambda u: u.is_superuser)
 def quiz_builder_update(request, pk):
     quiz = None
@@ -663,13 +663,34 @@ def quiz_builder_update(request, pk):
         messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
-    questions = Question.objects.filter(subject__in=quiz.subjects.all(), question_type=quiz.NO_OF_PLAYERS)
     quiz_questions = quiz.questions.all()
+    questions = Question.objects.filter(subject__in=quiz.subjects.all())
 
-    print(questions)
-    print(quiz_questions)
+    questionsDS = []
+    for question in questions:
+
+        questionDS = QuestionDS(
+            id=question.pk, level=question.level, subject=question.subject, question_type=question.question_type,
+            age_limit=question.age_limit, submission_control=question.submission_control
+        )
+
+        for choice_v in ChoiceVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz):
+            questionDS.add_choice(
+                id=choice_v.id, description=choice_v.choice.text,is_correct=choice_v.choice.is_correct,
+                screen1=choice_v.screen_1, screen2=choice_v.screen_2, screen3=choice_v.screen_3
+            )
+
+        for statement_v in StatementVisibility.objects.filter(quiz_question__question=question, quiz_question__quiz=quiz):
+            questionDS.add_statment(
+                id=statement_v.id, description=statement_v.statement.statement,
+                screen1=statement_v.screen_1, screen2=statement_v.screen_2, screen3=statement_v.screen_3
+            )
+
+        questionsDS.append(questionDS)
+
 
     context = {
+        'questionDS': questionsDS,
         'qs': quiz.quizquestion_set.all(),
         'subjects': quiz.subjects.all(),
         'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
