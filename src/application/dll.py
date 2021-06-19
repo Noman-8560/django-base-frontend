@@ -4,7 +4,7 @@ class StatementDS:
         self.description = description
         self.screen1 = screen1
         self.screen2 = screen2
-        self.screen2 = screen3
+        self.screen3 = screen3
 
 
 class ChoiceDS:
@@ -14,7 +14,7 @@ class ChoiceDS:
         self.is_correct = is_correct
         self.screen1 = screen1
         self.screen2 = screen2
-        self.screen2 = screen3
+        self.screen3 = screen3
 
 
 class QuestionDS:

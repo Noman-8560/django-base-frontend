@@ -28,282 +28,242 @@
 {% block content %}
 
 
+    {# MAIN DIVISION #}
     <div class="">
-        <div class="">
-            <div class="card" hidden>
-                <div class="card-header text-left"><p class="lead m-0">Quiz Statistics</p></div>
-                <div class="card-body">
-                    <div class="row justify-content-center">
-                        <div class="col">
-                            <div class="row justify-content-center">
-                                <div>
-                                    <div>
-                                        <p class="m-0">Quiz Subjects</p>
-                                    </div>
-                                    <ul class="list-unstyled text-primary">
-                                        {% for subject in subjects %}
-                                            <li>{{ subject.title }}</li>
-                                        {% endfor %}
 
-                                    </ul>
-                                </div>
-                            </div>
+        {% if questionDS %}
+            {% for q in questionDS %}
+                <div class="card">
+                    <div class="card-body">
+
+                        {# QUESTION-MAIN HEADER ----------------------------------------------------------------- #}
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-nowrap mb-0">
+                                <tbody id="submission_control_body">
+
+                                <tr>
+                                    <td>
+                                        SNO ({{ q.id }})
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   id="question{{ q.pk }}">
+                                            <label class="custom-control-label"
+                                                   for="customCheck3">Question {{ forloop.counter }}</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Subject
+                                        <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                      class="text-dark">{{ q.subject }}</a>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        Level<br>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+
+                                    </td>
+                                    <td>
+                                        Age Limit
+                                        <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                      class="text-dark">{{ q.age_limit }}</a>
+                                        </h5>
+                                    </td>
+                                    <td class="">
+                                        Submission Control
+                                        <div class="">
+
+                                            <input type="radio"
+                                                   name="submission_control_{{ q.id }}" id="submission_control"
+                                                   value="1"
+                                                   data-questionid="{{ q.id }}"
+                                                   {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
+                                            > Screen 1
+
+                                            {% if players == '2' or players == '3' %}
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="2"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 2 %}checked{% endif %}
+                                                > Screen 2
+                                            {% endif %}
+
+                                            {% if players == '3' %}
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="3"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 3 %}checked{% endif %}
+                                                >
+                                            {% endif %}
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col">
-                            <div class="row justify-content-center">
-                                <div>
-                                    <div>
-                                        <p class="m-0">Quiz Questions</p>
-                                    </div>
-                                    <ul class="list-unstyled text-primary">
-                                        <li>TOTAL: {{ total }}</li>
-                                        <li>SELECTED: {{ selected }}</li>
-                                        <li>REMAINING: {{ remaining }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="row justify-content-center">
-                                <div>
-                                    <div>
-                                        <p class="m-0 ">Quiz Level</p>
-                                    </div>
-                                    <ul class="list-unstyled">
-                                        <li class="text-danger">
-                                            40
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
 
-                                        </li>
-                                        <li style="color: darkorange;">
-                                            25
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-
-                                        </li>
-                                        <li class="text-warning">
-                                            10
-                                            <i class="fa fa-star"></i>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {# Search details #}
-            <div class="p-0 p-sm-0" hidden>
-                <input type="search" class="form-control" placeholder="Search Question" id="search-filter">
-                <ul class="searchlist list-unstyled  border-top-0 card" id="search_list_product">
-                </ul>
-            </div>
-
-            {% if qs %}
-
-
-                {% for q in questionDS %}
-                    <div class="card">
-                        <div class="card-body">
-
-                            {# QUESTION #}
+                        {# QUESTION-DESC ------------------------------------------------------------------------ #}
+                        <div id="desc-div">
                             <div class="table-responsive">
-                                <table class="table table-borderless table-nowrap mb-0">
-                                    <tbody>
-
-                                    <tr>
-                                        <td>
-                                            SNO
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="question{{ q.id }}">
-                                                <label class="custom-control-label"
-                                                       for="customCheck3">Question {{ forloop.counter }}</label>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            Subject
-                                            <h5 class="text-truncate font-size-14 m-0"><a href="#"
-                                                                                          class="text-dark">{{ q.subject }}</a>
-                                            </h5>
-                                        </td>
-                                        <td>
-                                            Level<br>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-
-                                        </td>
-                                        <td>
-                                            Age Limit
-                                            <h5 class="text-truncate font-size-14 m-0"><a href="#"
-                                                                                          class="text-dark">{{ q.age_limit }}</a>
-                                            </h5>
-                                        </td>
-                                        <td class="">
-                                            Submission Control
-                                            <div class="custom-control custom-checkbox">
-                                                <label class="custom-control-label"
-                                                       for="submission{{ q.id }}">Screen1</label>
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="submission{{ q.id }}">
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <label class="custom-control-label"
-                                                       for="submission{{ q.id }}">Screen2</label>
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="submission{{ q.id }}">
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <label class="custom-control-label"
-                                                       for="submission{{ q.id }}">Screen3</label>
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="submission{{ q.id }}">
-                                            </div>
-                                        </td>
+                                <table class="table table-borderless">
+                                    <tr class="border-top">
+                                        <th>Statement</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
                                     </tr>
+
+                                    {# STATEMENTS #}
+                                    {% for desc in q.statements %}
+                                        <tr>
+                                            <td>{{ desc.description }}</td>
+                                            <td>
+                                                {% if desc.screen1 %}
+                                                    <input type="checkbox" checked>
+                                                {% else %}
+                                                    <input type="checkbox">
+                                                {% endif %}
+                                            </td>
+
+                                            {% if players == '2' or players == '3' %}
+                                                <td>
+                                                    {% if desc.screen2 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
+
+                                            {% if players == '3' %}
+                                                <td>
+                                                    {% if desc.screen3 %}
+                                                        <input type="checkbox" checked>
+                                                    {% else %}
+                                                        <input type="checkbox">
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+
+                                    <tr class="border-top">
+                                        <th>Choice</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
+                                    </tr>
+
+                                    {# CHOICES #}
+                                    {% for desc in q.choices %}
+                                        <tr>
+                                            <td>{{ desc.description }}</td>
+                                            <td>
+                                                <input type="checkbox" id="choice_control" data-question="{{ q.id }}"
+                                                       data-choice="{{ desc.id }}"
+                                                {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                            </td>
+
+                                            {% if players == '2' or players == '3' %}
+                                                <td>
+                                                    <input type="checkbox" id="choice_control" data-question="{{ q.id }}"
+                                                       data-choice="{{ desc.id }}"
+                                                {% if desc.screen2 %} checked {% endif %} data-screen="2">
+                                                </td>
+                                            {% endif %}
+
+                                            {% if players == '3' %}
+                                                <td>
+                                                    <input type="checkbox" id="choice_control" data-question="{{ q.id }}"
+                                                       data-choice="{{ desc.id }}"
+                                                {% if desc.screen3 %} checked {% endif %} data-screen="3">
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+
+                                    <tr class="border-top">
+                                        <th>Image</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
+                                    </tr>
+                                    {# IMAGE #}
+                                    {% for v in '123'|make_list %}
+                                        <tr>
+                                            <td><a href="{% static "images/apples.png" %}"><img
+                                                    class="img-responsive" height="50"
+                                                    src="{% static "images/apples.png" %}"></a></td>
+                                            <td><input type="checkbox"></td>
+                                            {% if players == '2' or players == '3' %}
+                                                <td><input type="checkbox"></td>
+                                            {% endif %}
+                                            {% if players == '3' %}
+                                                <td><input type="checkbox"></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+
+                                    <tr class="border-top">
+                                        <th>Audio</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
+                                    </tr>
+
+                                    {# AUDIO #}
+                                    {% for v in '123'|make_list %}
+                                        <tr>
+                                            <td>
+                                                <audio controls>
+                                                    <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"
+                                                            type="audio/mpeg">
+                                                    <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"
+                                                            type="audio/ogg">
+                                                    Your browser does not support the audio tag.
+                                                </audio>
+                                            </td>
+                                            <td><input type="checkbox"></td>
+                                            {% if players == '2' or players == '3' %}
+                                                <td><input type="checkbox"></td>
+                                            {% endif %}
+                                            {% if players == '3' %}
+                                                <td><input type="checkbox"></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
 
                                     </tbody>
                                 </table>
                             </div>
-
-                            {# DESC #}
-                            <div>
-                                <div class="table-responsive">
-                                    <table class="table table-borderless">
-                                        <tr class="border-top">
-                                            <th>Statement</th>
-                                            <th>Screen 1</th>
-                                            <th>Screen 2</th>
-                                            <th>Screen 3</th>
-                                        </tr>
-
-                                        {# STATEMENTS #}
-                                        {% for desc in q.statements %}
-                                            <tr>
-                                                <td>{{ desc.description }}</td>
-                                                <td>
-                                                    {% if desc.screen1 %}
-                                                        <input type="checkbox" checked>
-                                                    {% else %}
-                                                        <input type="checkbox">
-                                                    {% endif %}
-                                                </td>
-
-                                                <td>
-                                                    {% if desc.screen2 %}
-                                                        <input type="checkbox" checked>
-                                                    {% else %}
-                                                        <input type="checkbox">
-                                                    {% endif %}
-                                                </td>
-
-                                                <td>
-                                                    {% if desc.screen3 %}
-                                                        <input type="checkbox" checked>
-                                                    {% else %}
-                                                        <input type="checkbox">
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-
-                                        <tr class="border-top">
-                                            <th>Choice</th>
-                                            <th>Screen 1</th>
-                                            <th>Screen 2</th>
-                                            <th>Screen 3</th>
-                                        </tr>
-
-                                        {# CHOICES #}
-                                        {% for desc in q.choices %}
-                                            <tr>
-                                                <td>{{ desc.description }}</td>
-                                                <td>
-                                                    {% if desc.screen1 %}
-                                                        <input type="checkbox" checked>
-                                                    {% else %}
-                                                        <input type="checkbox">
-                                                    {% endif %}
-                                                </td>
-
-                                                <td>
-                                                    {% if desc.screen2 %}
-                                                        <input type="checkbox" checked>
-                                                    {% else %}
-                                                        <input type="checkbox">
-                                                    {% endif %}
-                                                </td>
-
-                                                <td>
-                                                    {% if desc.screen3 %}
-                                                        <input type="checkbox" checked>
-                                                    {% else %}
-                                                        <input type="checkbox">
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-
-                                        <tr class="border-top">
-                                            <th>Image</th>
-                                            <th>Screen 1</th>
-                                            <th>Screen 2</th>
-                                            <th>Screen 3</th>
-                                        </tr>
-                                        {# IMAGE #}
-                                        {% for v in '123'|make_list %}
-                                            <tr>
-                                                <td><a href="{% static "images/apples.png" %}"><img
-                                                        class="img-responsive" height="50"
-                                                        src="{% static "images/apples.png" %}"></a></td>
-                                                <td><input type="checkbox"></td>
-                                                <td><input type="checkbox"></td>
-                                                <td><input type="checkbox"></td>
-                                            </tr>
-                                        {% endfor %}
-
-                                        <tr class="border-top">
-                                            <th>Audio</th>
-                                            <th>Screen 1</th>
-                                            <th>Screen 2</th>
-                                            <th>Screen 3</th>
-                                        </tr>
-
-                                        {# AUDIO #}
-                                        {% for v in '123'|make_list %}
-                                            <tr>
-                                                <td>
-                                                    <audio controls>
-                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"
-                                                                type="audio/mpeg">
-                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"
-                                                                type="audio/ogg">
-                                                        Your browser does not support the audio tag.
-                                                    </audio>
-                                                </td>
-                                                <td><input type="checkbox"></td>
-                                                <td><input type="checkbox"></td>
-                                                <td><input type="checkbox"></td>
-                                            </tr>
-                                        {% endfor %}
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
                         </div>
+
+
                     </div>
-                {% endfor %}
-            {% endif %}
-
-
-        </div>
-
+                </div>
+            {% endfor %}
+        {% endif %}
 
     </div>
 
@@ -320,59 +280,38 @@
     <script>
         $(document).ready(function () {
 
-            /*
+            $('#submission_control_body #submission_control').click(function () {
+                let question = $(this).data('questionid');
+                let value = $(this).val();
 
-            let select_screen = $('select');
-            select_screen.change(function (event) {
-
-                let option = parseInt($(this).val());
-                let id = parseInt($(this).data('question'));
-
-                $.get('/update/screen/option/' + option + '/question/' + id + '/', function (data, status) {
-                    console.log(data.message);
-                });
-
-            });
-
-
-
-            $('#search-filter').keyup(function () {
-
-                $('#search_list_product').html('');
-
-                let search = $('#search-filter').val();
-                if (search != '') {
-                    search_questions(search);
-                } else {
-                    $('#search_list_product').html('');
-                }
-            });
-
-
-            // FUNCTIONS
-            function search_questions(search) {
-                $.ajax({
-                    url: "/search/questions/for/quiz/__quiz_id__/?search=" + search,
-                    type: 'GET',
-                    success: function (response) {
-                        console.log(response)
-                        for (let i = 0; i < response['length']; i++) {
-                            $('#search_list_product').append(
-                                '<li class="p-2" id="' + response[i].question + '">' +
-                                '<a class="text-secondary" href="/add/quiz/__quiz_id__/question/' + response[i].question + '/">' +
-                                '' + response[i].subject + ' | ' + response[i].statement + '' +
-                                '</a>' +
-                                '</li>'
-                            );
+                $.post("/c/api/change/quiz/question/submission/status/" + question + "/",
+                    {
+                        screen_id: value,
+                    }, function (data, status) {
+                        if (data.success === "False") {
+                            alert("Failed to update record: make sure everything is correct");
                         }
-                    },
-                    error: function (response) {
-                        $('#search_list_product').html('');
-                    }
-                });
-            }
+                    });
+                ;
+            });
 
-            */
+            $('#desc-div #choice_control').click(function () {
+                let choice_id = $(this).data('choice');
+                let screen_id = $(this).data('screen');
+                let is_checked = $(this).is(":checked");
+
+                $.post("/c/api/change/quiz/question/choice/status/" + choice_id + "/",
+                    {
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+
+                    }, function (data, status) {
+                        if (data.success === "False") {
+                            alert("Failed to update record: make sure everything is correct");
+                        }
+                    });
+                ;
+            });
 
         });
     </script>
