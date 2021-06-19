@@ -43,12 +43,14 @@
 
                                 <tr>
                                     <td>
-                                        SNO ({{ q.id }})
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   id="question{{ q.pk }}">
-                                            <label class="custom-control-label"
-                                                   for="customCheck3">Question {{ forloop.counter }}</label>
+                                        SNO ({{ q.question_id }})
+                                        <div class="">
+                                            <input type="checkbox" id="question_submission" data-quiz="{{ quiz_id }}"
+                                                   data-question="{{ q.question_id }}" data-quizquestion="{{ q.id }}"
+                                                    {% if q.question_exists %} checked {% endif %}>
+                                            <b class="text-success">
+                                                Associated
+                                            </b>
                                         </div>
                                     </td>
                                     <td>
@@ -96,7 +98,7 @@
                                                        value="3"
                                                        data-questionid="{{ q.id }}"
                                                        {% if q.submission_control.no == 3 %}checked{% endif %}
-                                                >
+                                                > Screen 3
                                             {% endif %}
 
                                         </div>
@@ -129,22 +131,24 @@
                                             <td>
                                                 <input type="checkbox" id="statement_control" data-question="{{ q.id }}"
                                                        data-statement="{{ desc.id }}"
-                                                {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                                        {% if desc.screen1 %} checked {% endif %} data-screen="1">
                                             </td>
 
                                             {% if players == '2' or players == '3' %}
                                                 <td>
-                                                    <input type="checkbox" id="statement_control" data-question="{{ q.id }}"
-                                                       data-statement="{{ desc.id }}"
-                                                {% if desc.screen2 %} checked {% endif %} data-screen="2">
+                                                    <input type="checkbox" id="statement_control"
+                                                           data-question="{{ q.id }}"
+                                                           data-statement="{{ desc.id }}"
+                                                            {% if desc.screen2 %} checked {% endif %} data-screen="2">
                                                 </td>
                                             {% endif %}
 
                                             {% if players == '3' %}
                                                 <td>
-                                                    <input type="checkbox" id="statement_control" data-question="{{ q.id }}"
-                                                       data-statement="{{ desc.id }}"
-                                                {% if desc.screen3 %} checked {% endif %} data-screen="3">
+                                                    <input type="checkbox" id="statement_control"
+                                                           data-question="{{ q.id }}"
+                                                           data-statement="{{ desc.id }}"
+                                                            {% if desc.screen3 %} checked {% endif %} data-screen="3">
                                                 </td>
                                             {% endif %}
                                         </tr>
@@ -168,22 +172,24 @@
                                             <td>
                                                 <input type="checkbox" id="choice_control" data-question="{{ q.id }}"
                                                        data-choice="{{ desc.id }}"
-                                                {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                                        {% if desc.screen1 %} checked {% endif %} data-screen="1">
                                             </td>
 
                                             {% if players == '2' or players == '3' %}
                                                 <td>
-                                                    <input type="checkbox" id="choice_control" data-question="{{ q.id }}"
-                                                       data-choice="{{ desc.id }}"
-                                                {% if desc.screen2 %} checked {% endif %} data-screen="2">
+                                                    <input type="checkbox" id="choice_control"
+                                                           data-question="{{ q.id }}"
+                                                           data-choice="{{ desc.id }}"
+                                                            {% if desc.screen2 %} checked {% endif %} data-screen="2">
                                                 </td>
                                             {% endif %}
 
                                             {% if players == '3' %}
                                                 <td>
-                                                    <input type="checkbox" id="choice_control" data-question="{{ q.id }}"
-                                                       data-choice="{{ desc.id }}"
-                                                {% if desc.screen3 %} checked {% endif %} data-screen="3">
+                                                    <input type="checkbox" id="choice_control"
+                                                           data-question="{{ q.id }}"
+                                                           data-choice="{{ desc.id }}"
+                                                            {% if desc.screen3 %} checked {% endif %} data-screen="3">
                                                 </td>
                                             {% endif %}
                                         </tr>
@@ -200,20 +206,20 @@
                                         {% endif %}
                                     </tr>
                                     {# IMAGE #}
-{#                                    {% for v in '123'|make_list %}#}
-{#                                        <tr>#}
-{#                                            <td><a href="{% static "images/apples.png" %}"><img#}
-{#                                                    class="img-responsive" height="50"#}
-{#                                                    src="{% static "images/apples.png" %}"></a></td>#}
-{#                                            <td><input type="checkbox"></td>#}
-{#                                            {% if players == '2' or players == '3' %}#}
-{#                                                <td><input type="checkbox"></td>#}
-{#                                            {% endif %}#}
-{#                                            {% if players == '3' %}#}
-{#                                                <td><input type="checkbox"></td>#}
-{#                                            {% endif %}#}
-{#                                        </tr>#}
-{#                                    {% endfor %}#}
+                                    {#                                    {% for v in '123'|make_list %}#}
+                                    {#                                        <tr>#}
+                                    {#                                            <td><a href="{% static "images/apples.png" %}"><img#}
+                                    {#                                                    class="img-responsive" height="50"#}
+                                    {#                                                    src="{% static "images/apples.png" %}"></a></td>#}
+                                    {#                                            <td><input type="checkbox"></td>#}
+                                    {#                                            {% if players == '2' or players == '3' %}#}
+                                    {#                                                <td><input type="checkbox"></td>#}
+                                    {#                                            {% endif %}#}
+                                    {#                                            {% if players == '3' %}#}
+                                    {#                                                <td><input type="checkbox"></td>#}
+                                    {#                                            {% endif %}#}
+                                    {#                                        </tr>#}
+                                    {#                                    {% endfor %}#}
 
                                     <tr class="border-top">
                                         <th>Audio</th>
@@ -227,26 +233,26 @@
                                     </tr>
 
                                     {# AUDIO #}
-{#                                    {% for v in '123'|make_list %}#}
-{#                                        <tr>#}
-{#                                            <td>#}
-{#                                                <audio controls>#}
-{#                                                    <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"#}
-{#                                                            type="audio/mpeg">#}
-{#                                                    <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"#}
-{#                                                            type="audio/ogg">#}
-{#                                                    Your browser does not support the audio tag.#}
-{#                                                </audio>#}
-{#                                            </td>#}
-{#                                            <td><input type="checkbox"></td>#}
-{#                                            {% if players == '2' or players == '3' %}#}
-{#                                                <td><input type="checkbox"></td>#}
-{#                                            {% endif %}#}
-{#                                            {% if players == '3' %}#}
-{#                                                <td><input type="checkbox"></td>#}
-{#                                            {% endif %}#}
-{#                                        </tr>#}
-{#                                    {% endfor %}#}
+                                    {#                                    {% for v in '123'|make_list %}#}
+                                    {#                                        <tr>#}
+                                    {#                                            <td>#}
+                                    {#                                                <audio controls>#}
+                                    {#                                                    <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"#}
+                                    {#                                                            type="audio/mpeg">#}
+                                    {#                                                    <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"#}
+                                    {#                                                            type="audio/ogg">#}
+                                    {#                                                    Your browser does not support the audio tag.#}
+                                    {#                                                </audio>#}
+                                    {#                                            </td>#}
+                                    {#                                            <td><input type="checkbox"></td>#}
+                                    {#                                            {% if players == '2' or players == '3' %}#}
+                                    {#                                                <td><input type="checkbox"></td>#}
+                                    {#                                            {% endif %}#}
+                                    {#                                            {% if players == '3' %}#}
+                                    {#                                                <td><input type="checkbox"></td>#}
+                                    {#                                            {% endif %}#}
+                                    {#                                        </tr>#}
+                                    {#                                    {% endfor %}#}
 
                                     </tbody>
                                 </table>
@@ -256,6 +262,70 @@
 
                     </div>
                 </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if questions %}
+            {% for q in questions %}
+
+                <div class="card">
+                    <div class="card-body">
+
+                        {# QUESTION-MAIN HEADER ----------------------------------------------------------------- #}
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-nowrap mb-0">
+                                <tbody id="submission_control_body">
+
+                                <tr>
+
+                                    <td>
+                                        SNO ({{ q.id }})
+                                        <div class="">
+                                            <input type="checkbox" class="mt-2" id="question_submission"
+                                                   data-quiz="{{ quiz_id }}"
+                                                   data-question="{{ q.id }}">
+                                            <b class="text-danger">
+                                                Not-Associated
+                                            </b>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        Subject
+                                        <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                      class="text-dark">{{ q.subject }}</a>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        Level<br>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+
+                                    </td>
+                                    <td>
+                                        Age Limit
+                                        <h5 class="text-truncate font-size-14 m-0">
+                                            <b class="text-dark">{{ q.age_limit }}</b>
+                                        </h5>
+                                    </td>
+                                    <td class="">
+                                        Submission Control
+                                        <div class="">
+
+
+                                            <b class="text-danger">Question is not assocoated with quiz </b>
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             {% endfor %}
         {% endif %}
 
@@ -300,14 +370,14 @@
                         is_checked: is_checked,
 
                     }, function (data, status) {
-                        if (data.success === "False") {
-                            alert("Failed to update record: make sure everything is correct");
+                        if (data.success == "False") {
+                            alert(data.message);
                         }
                     });
                 ;
             });
 
-             $('#desc-div #statement_control').click(function () {
+            $('#desc-div #statement_control').click(function () {
                 let statement_id = $(this).data('statement');
                 let screen_id = $(this).data('screen');
                 let is_checked = $(this).is(":checked");
@@ -318,11 +388,29 @@
                         is_checked: is_checked,
 
                     }, function (data, status) {
-                    if (data.success === "False") {
-                            alert("Failed to update record: make sure everything is correct");
+                        if (data.success == "False") {
+                            alert(data.message);
                         }
                     });
                 ;
+            });
+
+            $('#submission_control_body #question_submission').click(function () {
+                let quiz = $(this).data('quiz');
+                let question = $(this).data('question');
+                let is_checked = $(this).is(":checked");
+                let add_url = "/add/quiz/" + quiz + "/question/" + question + "/";
+                let del_url = "/delete/quiz/" + quiz + "/question/" + question + "/";
+
+                if (is_checked) {
+                    $.get(add_url, function (data) {
+                        location.reload();
+                    });
+                } else {
+                    $.get(del_url, function (data) {
+                        location.reload();
+                    });
+                }
             });
 
         });

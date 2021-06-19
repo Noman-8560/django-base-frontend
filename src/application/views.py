@@ -665,12 +665,18 @@ def quiz_builder_update(request, pk):
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
     quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
+    questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
+    questions = questions.exclude(id__in=quiz_questions.values_list('question__id', flat=True))
 
     questionsDS = []
     for quiz_question in quiz_questions:
 
+        question_exists = False
+        if quiz_question.question in quiz.questions.all():
+            question_exists = True
+
         questionDS = QuestionDS(
-            id=quiz_question.pk, level=quiz_question.question.level, subject=quiz_question.question.subject,
+            id=quiz_question.pk, question_id=quiz_question.question.pk, question_exists=question_exists, level=quiz_question.question.level, subject=quiz_question.question.subject,
             question_type=quiz_question.question.question_type, age_limit=quiz_question.question.age_limit,
             submission_control=quiz_question.submission_control
         )
@@ -694,7 +700,7 @@ def quiz_builder_update(request, pk):
 
     context = {
         'questionDS': questionsDS,
-        'qs': quiz.quizquestion_set.all(),
+        'questions': questions,
         'subjects': quiz.subjects.all(),
         'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
         'quiz_id': pk,
@@ -830,7 +836,7 @@ def quiz_question_add(request, quiz_id, question_id):
 
     except [Quiz.DoesNotExist, Question.DoesNotExist]:
         messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-        return HttpResponseRedirect(reverse('application:quiz_builder'))
+        return redirect('application:quiz_builder')
 
     # ALREADY ASSOCIATED OR NOT ---------------------------------
     if quiz.questions.filter(pk=question_id):
@@ -1846,18 +1852,21 @@ def change_question_statement_status(request, pk):
             status = False
 
         # STATEMENT VISIBILITY CHANGE ------------------------------
-        statement_visibility = StatementVisibility.objects.get(pk=pk)
-        if screen_id == '1':
-            statement_visibility.screen_1 = status
-        elif screen_id == '2':
-            statement_visibility.screen_2 = status
-        elif screen_id == '3':
-            statement_visibility.screen_3 = status
-        statement_visibility.save()
+        try:
+            statement_visibility = StatementVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                statement_visibility.screen_1 = status
+            elif screen_id == '2':
+                statement_visibility.screen_2 = status
+            elif screen_id == '3':
+                statement_visibility.screen_3 = status
+            statement_visibility.save()
 
-        # EXTRA DATA HERE -------------------------------------------
-        message = "Record updated successfully"
-        success = True
+            message = "Record updated successfully"
+            success = True
+        except StatementVisibility.DoesNotExist:
+            message = "This question is not associated with Quiz"
+            success = False
 
     context = {'success': success, 'message': message}
     return JsonResponse(data=context, safe=False)
@@ -1880,19 +1889,22 @@ def change_question_choice_status(request, pk):
         else:
             status = False
 
+        try:
+            choice_visibility = ChoiceVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                choice_visibility.screen_1 = status
+            elif screen_id == '2':
+                choice_visibility.screen_2 = status
+            elif screen_id == '3':
+                choice_visibility.screen_3 = status
+            choice_visibility.save()
 
-        # STATEMENT VISIBILITY CHANGE ------------------------------
-        choice_visibility = ChoiceVisibility.objects.get(pk=pk)
-        if screen_id == '1':
-            choice_visibility.screen_1 = status
-        elif screen_id == '2':
-            choice_visibility.screen_2 = status
-        elif screen_id == '3':
-            choice_visibility.screen_3 = status
-        choice_visibility.save()
-        # EXTRA DATA HERE -------------------------------------------
-        message = "Record updated successfully"
-        success = True
+            message = "Record updated successfully"
+            success = True
+
+        except ChoiceVisibility.DoesNotExist:
+            message = "This question is not associated with quiz"
+            success = False
 
     context = {'success': success, 'message': message}
     return JsonResponse(data=context, safe=False)
@@ -1908,11 +1920,9 @@ def change_question_submission_control(request, pk):
 
         # POST METHOD HERE -----------------------------------------
         screen_id = request.POST['screen_id']
-        print(type(screen_id))
 
         # STATEMENT VISIBILITY CHANGE ------------------------------
         question = QuizQuestion.objects.get(pk=pk)
-        print(question.submission_control)
         if screen_id == '1':
             question.submission_control = Screen.objects.first()
         elif screen_id == '2':

@@ -18,8 +18,10 @@ class ChoiceDS:
 
 
 class QuestionDS:
-    def __init__(self, id, level, subject, question_type, submission_control, age_limit):
+    def __init__(self, id, question_id, question_exists, level, subject, question_type, submission_control, age_limit):
         self.id = id
+        self.question_id = question_id
+        self.question_exists = question_exists
         self.level = level
         self.subject = subject
         self.question_type = question_type
