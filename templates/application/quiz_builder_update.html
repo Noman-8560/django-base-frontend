@@ -334,7 +334,7 @@
 
             });
 
-            */
+
 
             $('#search-filter').keyup(function () {
 
@@ -348,25 +348,18 @@
                 }
             });
 
-            $('#id_start_time').datetimepicker({
-                format: 'Y-m-d H:i:s',
-            });
-
-            $('#id_end_time').datetimepicker({
-                format: 'Y-m-d H:i:s',
-            });
 
             // FUNCTIONS
             function search_questions(search) {
                 $.ajax({
-                    url: "/search/questions/for/quiz/{{ quiz_id }}/?search=" + search,
+                    url: "/search/questions/for/quiz/__quiz_id__/?search=" + search,
                     type: 'GET',
                     success: function (response) {
                         console.log(response)
                         for (let i = 0; i < response['length']; i++) {
                             $('#search_list_product').append(
                                 '<li class="p-2" id="' + response[i].question + '">' +
-                                '<a class="text-secondary" href="/add/quiz/{{ quiz_id }}/question/' + response[i].question + '/">' +
+                                '<a class="text-secondary" href="/add/quiz/__quiz_id__/question/' + response[i].question + '/">' +
                                 '' + response[i].subject + ' | ' + response[i].statement + '' +
                                 '</a>' +
                                 '</li>'
@@ -378,6 +371,9 @@
                     }
                 });
             }
+
+            */
+
         });
     </script>
 
