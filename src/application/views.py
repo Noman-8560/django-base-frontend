@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core import serializers
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
@@ -385,27 +385,17 @@ def delete_question(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def question_builder_update(request, pk):
-    try:
-        question_form = QuestionForm(request.POST or None, instance=Question.objects.get(pk=pk))
-        if request.method == 'POST':
-            if question_form.is_valid():
-                question_form.save(commit=True)
-    except Question.DoesNotExist:
-        messages.error(request=request, message=f'Requested Question [ID: {pk}] Does not Exists.')
-        return HttpResponseRedirect(reverse('application:question_builder'))
+
+    question = get_object_or_404(Question, pk=pk)
+    if request.method == 'POST':
+        pass
 
     context = {
-        'question_id': pk,
-        'question': Question.objects.get(pk=pk),
-        'form_question': question_form,
-        'form_question_choice': QuestionChoiceForm,
-        'form_question_image': QuestionImageForm,
-        'form_question_audio': QuestionAudioForm,
-        'form_question_statement': QuestionStatementForm,
-        'data_question_statements': QuestionStatement.objects.filter(question=Question.objects.get(pk=pk)),
-        'data_question_images': QuestionImage.objects.filter(question=Question.objects.get(pk=pk)),
-        'data_question_audios': QuestionAudio.objects.filter(question=Question.objects.get(pk=pk)),
-        'data_question_choices': QuestionChoice.objects.filter(question=Question.objects.get(pk=pk)),
+        'statements': QuestionStatement.objects.filter(question=question),
+        'choices': QuestionChoice.objects.filter(question=question),
+        'question_id': question.pk,
+        'question': question,
+        'subjects': Subject.objects.all()
     }
     return render(request=request, template_name='application/question_builder_update.html', context=context)
 
