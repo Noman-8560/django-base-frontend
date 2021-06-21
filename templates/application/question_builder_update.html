@@ -2,367 +2,263 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block base_title %}Question Builder{% endblock %}
+{% block base_title %}Question Builder Update{% endblock %}
 
 {% block page_heading %}
-    Question ID {{ question_id }}<br><br>
-    {#    <p class="small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this question if this is used in any#}
-    {#        quiz.</p>#}
-    <a href="{% url 'application:delete_question' question_id %}" class="btn btn-sm btn-link text-danger"><i
-            class="fa fa-trash"></i> Remove</a>
-    <a href="{% url 'application:question_builder' %}" class="btn btn-sm btn-link text-primary"><i
-            class="fa fa-plus"></i> Add Another</a>
-
+    Question builder Update
 {% endblock %}
-
 {% block content %}
 
-    <div class="">
-        <div class="row">
-            <div class="col-sm-12">
+    <div class="container">
 
 
-                {# Statements details #}
+        <div class="row justify-content-center">
+            <div class="col-sm-8">
+
                 <div class="card">
-                    <div class="card-header">
-                        <p class="lead m-0">Question statements</p>
-                    </div>
-                    <div class="card-body" id="div_statements">
-                        {% csrf_token %}
-                        <div>
-                            {% if data_question_statements %}
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>Text</th>
-                                            {#                                            <th>Screen</th>#}
-                                            <th>Remove</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-
-                                        {% for statement in data_question_statements %}
-                                            <tr>
-                                                <td> {{ statement.statement }} </td>
-                                                {#                                                <td> {{ statement.screen }} </td>#}
-                                                <td class="text-danger">
-                                                    <a href="" class="delete-statement text-danger"
-                                                       id={{ statement.pk }}>
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            {% else %}
-
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="mdi mdi-block-helper mr-2"></i>
-                                    No statements available yet - add below.
-                                </div>
-                            {% endif %}
-
-                        </div>
-                    </div>
-                </div>
-
-                {# choices #}
-                <div class="card">
-                    <div class="card-header">
-                        <p class="lead m-0">Question choices</p>
-                    </div>
-                    <div class="card-body" id="div_choices">
-                        {% csrf_token %}
-                        <div>
-
-                            {% if data_question_choices %}
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>Choice</th>
-                                            <th>Correct</th>
-                                            <th>Remove</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-
-                                        {% for choice in data_question_choices %}
-                                            <tr>
-                                                <td> {{ choice.text }} </td>
-                                                <td>
-                                                    {% if choice.is_correct %}
-                                                        <i class="fa fa-check text-success"></i>
-                                                    {% else %}
-                                                        <i class="fa fa-times text-danger"></i>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-danger">
-                                                    <a href="" class="delete-choice text-danger" id={{ choice.pk }}>
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            {% else %}
-
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="mdi mdi-block-helper mr-2"></i>
-                                    No choices available yet - add below.
-                                </div>
-                            {% endif %}
-
-                        </div>
-                    </div>
-                </div>
-
-                {# Images details #}
-                <div class="card">
-                    <div class="card-header">
-                        <p class="lead m-0">Images Here</p>
-                        <p class="text-muted small text-left m-0">
-                            You can upload and link images for this question while image is just a hint for this
-                            question so size of image less then 500*500 pixels and format must be jpg, jpeg, png and
-                            other image formats only.
-                        </p>
-                    </div>
                     <div class="card-body">
-                        <div>
 
-                            {% if data_question_images %}
-                                <div class="row">
-                                    {% for image in data_question_images %}
-                                        <div class="col">
-                                            <a class="btn btn-link"
-                                               href="{% url 'application:question_image_delete' pk=image.pk %}"><i
-                                                    class="fa fa-trash-o"></i> Remove</a>
-                                            <br>
+                        <form class="outer-repeater">
+                            <div data-repeater-list="outer-group" class="outer">
+                                <div data-repeater-item="" class="outer">
 
-                                            {% if image.url %}
-                                                <a href="{{ image.url }}">
-                                                    <img src="{{ image.url }}" class="img" height="100px">
-                                                </a>
-                                            {% else %}
-                                                <a href="/media/{{ image.image }}">
-                                                    <img src="/media/{{ image.image }}" class="img" height="100px">
-                                                </a>
-                                            {% endif %}
-
-
-                                        </div>
-                                    {% endfor %}
-                                </div>
-
-                            {% else %}
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="mdi mdi-block-helper mr-2"></i>
-                                    No images available yet - add below.
-                                </div>
-                            {% endif %}
-                            <hr>
-                            <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#image_model">
-                                <i class="fa fa-picture-o"></i> Add New Image Hint.
-                            </button>
-
-
-                        </div>
-                    </div>
-                </div>
-
-
-                {# Audio details #}
-                <div class="card">
-                    <div class="card-header">
-                        <p class="lead m-0">Audio Here</p>
-                        <p class="text-muted small text-left m-0">
-                            While adding audio keep in mind that audio is just a hint for this question size of audio
-                            less then 5MB and format must be mp3, ogg and other audio formats only.
-                        </p>
-                    </div>
-                    <div class="card-body">
-                        <div>
-
-
-                            {% if data_question_audios %}
-                                <div class="row">
-                                    {% for audio in data_question_audios %}
-                                        <div class="col">
-                                            <a class="btn btn-link"
-                                               href="{% url 'application:question_audio_delete' pk=audio.pk %}"><i
-                                                    class="fa fa-trash-o"></i> Remove</a>
-                                            <audio controls>
-                                                {% if audio.url %}
-                                                    <source src="{{ audio.url }}"/>
+                                    {# NORMAL --> FIELDS #}
+                                    <div class="form-group">
+                                        <label for="subject">Subject</label>
+                                        <select class="form-control" id="subject" name="subject">
+                                            {% for subject in subjects %}
+                                                {% if question.subject.pk == subject.pk %}
+                                                    <option value="{{ subject.pk }}"
+                                                            selected>{{ subject.title }}</option>
                                                 {% else %}
-                                                    <source src="/media/{{ audio.audio }}"/>
+                                                    <option value="{{ subject.pk }}">{{ subject.title }}</option>
                                                 {% endif %}
-                                            </audio>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="age">Age</label>
+                                        <input type="number" value="{{ question.age_limit }}" class="form-control"
+                                               id="age" name="age"
+                                               placeholder="Targeted age">
+                                    </div>
+
+                                    {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
+                                    <div id="statements-global">
+                                        <p class="font-weight-bolder mt-2">Statements</p>
+
+                                        {# STATEMENTS -- GET -------------------------------------------------------- #}
+                                        {% if statements %}
+                                            <div class="statements-div-get">
+                                                {% for statement in statements %}
+
+
+                                                    <div class="form-row mb-3">
+                                                        <div class="col-md-11 col-10" id="statement-get">
+                                                        <textarea data-statement-id="{{ statement.pk }}"
+                                                                  class="form-control" rows="3">
+                                                            {{ statement.statement }}
+                                                        </textarea>
+                                                        </div>
+                                                        <div class="col-md-1 col-2">
+                                                            <button type="button"
+                                                                    class="btn btn-outline-danger">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                        {# STATEMENTS -- REPEAT #}
+                                        <div class="inner-repeater mb-4">
+                                            <div data-repeater-list="inner-group" class="inner form-group">
+
+                                                <div data-repeater-item="" class="inner mb-3 row" style=""
+                                                     id="statements">
+                                                    <div class="col-md-11 col-10" id="statement">
+                                                        <textarea class="inner form-control" rows="5"></textarea>
+                                                    </div>
+                                                    <div class="col-md-1 col-2">
+                                                        <button data-repeater-delete="" type="button"
+                                                                class="btn btn-outline-danger inner">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <button data-repeater-create="" type="button"
+                                                    class="btn btn-outline-success inner">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+
                                         </div>
-                                    {% endfor %}
-                                </div>
+                                    </div>
+                                    {# ============================================================================== #}
 
-                            {% else %}
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="mdi mdi-block-helper mr-2"></i> No audios available yet.
-                                </div>
-                            {% endif %}
+                                    {# OPTIONS -- GLOBAL ------------------------------------------------------------ #}
+                                    <div>
+                                        <p class="font-weight-bolder mt-2">Options</p>
 
-                            <hr>
-                            <button class=" btn btn-sm btn-link" data-toggle="modal" data-target="#audio_model">
-                                <i class="fa fa-music"></i> Add New Audio Hint.
-                            </button>
-                        </div>
+                                        {# OPTIONS -- GET ----------------------------------------------------------- #}
+                                        {% if choices %}
+                                            <div class="statements-div-get">
+                                                {% for choice in choices %}
+                                                    <div class="form-row mb-3">
+                                                        <div class="col-md-10 col-8" id="option">
+                                                            <input type="text" class="form-control"
+                                                                   placeholder="option" value="{{ choice.text }}">
+                                                        </div>
+                                                        <div class="col-md-1 col-2" id="choice">
+                                                            {% if choice.is_correct %}
+                                                                <input type="checkbox" class="form-control" checked>
+                                                            {% else %}
+                                                                <input type="checkbox" class="form-control">
+                                                            {% endif %}
+
+                                                        </div>
+                                                        <div class="col-md-1 col-2">
+                                                            <button type="button"
+                                                                    class="btn btn-outline-danger">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                        {# OPTIONS -- REPEAT ------------------------------------------------------- #}
+                                        <div class="inner-repeater">
+                                            <div data-repeater-list="inner-group" class="inner form-group">
+
+                                                <div data-repeater-item="" class="inner mb-3 row" style="" id="options">
+                                                    <div class="col-md-10 col-8" id="option">
+                                                        <input type="text" class="inner form-control"
+                                                               placeholder="option">
+                                                    </div>
+                                                    <div class="col-md-1 col-2" id="choice">
+                                                        <input type="checkbox" class="inner form-control">
+                                                    </div>
+                                                    <div class="col-md-1 col-2">
+                                                        <button data-repeater-delete="" type="button"
+                                                                class="btn btn-outline-danger inner">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <button data-repeater-create="" type="button"
+                                                    class="btn btn-outline-success inner">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {# ============================================================================== #}
+
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </div>
 
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-muted"><b>NOTE: </b>This is a complete question form, feel free to add
+                            statements and options, you can change it later whereas screen selection will be on
+                            quiz builder during question selection.
+                        </p>
+                        <button class="btn btn-primary" id="submit_button">
+                            <i class="fa fa-check-circle"></i> Save
+                        </button>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-
-
 {% endblock %}
 
+{% block base_internal_scripts %}
+    <script src="{% static 'application/libs/jquery.repeater/jquery.repeater.min.js' %}"></script>
+    <script src="{% static 'application/js/pages/form-repeater.int.js' %}"></script>
+{% endblock %}
+
+
 {% block base_external_scripts %}
-
     <script>
-        /*
-
-        <div class="input-group-prepend">
-                                <select class="custom-select" id="screen_select" class="form-control" id="inputGroupSelect01">
-            <option value="1">Screen 1</option>
-            <option value="2">Screen 2</option>
-            <option value="3">Screen 3</option>
-          </select>
-                        </div>
-
-         */
-        let statement_add = `
-            <div class="input-group mb-3">
-
-                <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" id="add-statement" type="button">add</button>
-                </div>
-            </div>
-    `;
-
-        let statement_adds = `
-<div class="input-group">
-  <input type="text" class="form-control" id="statement-text"  placeholder="Question statment" aria-label="Question statment" aria-describedby="button-addon2">
-  <div class="input-group-append">
-    <button class="btn btn-primary" id="add-statement" type="button">add</button>
-  </div>
-</div>`
-
-        let choice_add = `<form>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        <input type="checkbox" id="is-correct" aria-label="checkbox fro option">
-                    </div>
-                </div>
-                <input id="choice-text" type="text" class="form-control" placeholder="Choice here" aria-label="Text input with Option">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" id="add-choice" type="button">add</button>
-                </div>
-            </div>
-         </form>
-        `;
-
 
         $(document).ready(function () {
+            let submit_button = $('#submit_button');
+            let statements_div = $('#statements');
+            let options_div = $('#options');
+            let statements = [];
+            let options = [];
+            let corrects = [];
 
-            $("#div_statements").append(statement_add);
-            $("#div_choices").append(choice_add);
+            submit_button.click(function (event) {
+                let subject = $('#subject').val();
+                let age = parseInt($('#age').val());
 
-            let question_type = {{ question.question_type }};
-            /*
-                        if (question_type === 1){
-                            $("option[value='2']").remove();
-                            $("option[value='3']").remove();
-                        }else if (question_type == 2){
-                            $("option[value='3']").remove();
+                if (!isNaN(age) && age > 0 && age <= 18) {
+                    $('#statements > #statement').each(function () {
+                        let statement = $(this).find('textarea').val();
+                        if (statement !== '') {
+                            statements.push(statement);
                         }
-            */
-            let input_field_statement = $('#statement-text');
-            let input_field_is_correct = $('#is-correct');
-            let input_field_choice = $('#choice-text');
+                    });
 
-            $('#add-statement').click(saveStatement);
-            $('#add-choice').click(saveChoice);
+                    $('#options > #option').each(function () {
+                        let option = $(this).find('input').val();
+                        if (option !== '') {
+                            options.push(option);
+                        }
+                    });
 
-            $('.delete-statement').click(deleteStatement);
-            $('.delete-choice').click(deleteChoice);
+                    $('#options > #choice').each(function () {
+                        let correct = $(this).find('input');
+                        if (correct.is(":checked")) {
+                            corrects.push(1);
+                        } else {
+                            corrects.push(0);
+                        }
+                    });
 
-            input_field_statement.removeClass("border-danger");
-            input_field_statement.addClass("border");
+                    console.log(corrects);
 
-            input_field_choice.removeClass("border-danger");
-            input_field_choice.addClass("border");
-            input_field_is_correct.prop('checked', false);
+                    let data = {
+                        subject_id: subject,
+                        age: age,
+                        statements: statements,
+                        options: options,
+                        corrects: corrects,
+                    };
+
+                    $.ajax({
+                        url: '/question/builder/',
+                        type: 'POST',
+                        data: data,
+                    }).then(function (data, status) {
+                        if (data.message === 'success') {
+                            location.href = "/question/" + data.question + "/"
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                } else {
+                    alert("Please provide age must be greater than 0 and less then 19")
+                }
+
+            });
         });
-
-        function deleteStatement() {
-            let id = $(this).attr('id');
-            $.get("/delete/question_statement/" + id + "/", function () {
-                window.location.reload()
-            });
-        }
-
-        function deleteChoice() {
-            let id = $(this).attr('id');
-            $.get("/delete/question_choice/" + id + "/", function () {
-                window.location.reload()
-            });
-        }
-
-        function saveChoice() {
-            let input_field = $('#choice-text');
-            let txt = input_field.val();
-            if (txt === "") {
-                input_field.addClass("border-danger");
-                return
-            }
-            input_field.removeClass("border-danger");
-            input_field.addClass("border");
-
-            let is_correct = $('#is-correct').is(":checked");
-            $.post("/add/question_choice/", {
-                'pk': {{ question_id }},
-                'text': txt,
-                'is_correct': is_correct
-            }, function (data, status) {
-                window.location.reload();
-            });
-        }
-
-        function saveStatement() {
-            let input_field = $('#statement-text');
-            {#let input_screen = $('#screen_select');#}
-            let txt = input_field.val();
-            {#let screen = input_screen.val();#}
-            if (txt === "") {
-                input_field.addClass("border-danger");
-                return
-            }
-            input_field.removeClass("border-danger");
-            input_field.addClass("border");
-            $.post("/add/question_statement/", {
-                'pk': {{ question_id }},
-                {#'screen': screen,#}
-                'text': txt
-            }, function (data, status) {
-                window.location.reload();
-            });
-        }
-
     </script>
 {% endblock %}

@@ -333,6 +333,46 @@ class ChoiceVisibility(models.Model):
         return str(self.pk)
 
 
+class AudioVisibility(models.Model):
+    url = models.URLField(null=True, blank=True)
+    audio = models.FileField(
+        upload_to='application/quizes/audios/projects/',
+        null=True, blank=True,
+        help_text='size of audio less then 5MB and format must be mps, ogg etc'
+    )
+    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    screen_1 = models.BooleanField(default=True)
+    screen_2 = models.BooleanField(default=False)
+    screen_3 = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Audio Visibility'
+        verbose_name_plural = 'Audios Visibility'
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class ImageVisibility(models.Model):
+    url = models.URLField(null=True, blank=True)
+    image = models.ImageField(
+        upload_to='application/quizes/images/projects/',
+        null=True, blank=True,
+        help_text='size of image less then 500*500 and format must be png, jpg or jpeg image file - '
+    )
+    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    screen_1 = models.BooleanField(default=True)
+    screen_2 = models.BooleanField(default=False)
+    screen_3 = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Image Visibility'
+        verbose_name_plural = 'Images Visibility'
+
+    def __str__(self):
+        return str(self.pk)
+
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
     guardian = models.ForeignKey('Guardian', on_delete=models.DO_NOTHING, related_name='guardian+')
