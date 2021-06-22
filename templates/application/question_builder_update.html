@@ -25,7 +25,7 @@
                                     {# NORMAL --> FIELDS #}
                                     <div class="form-group">
                                         <label for="subject">Subject</label>
-                                        <select class="form-control" id="subject" name="subject">
+                                        <select class="form-control bg-light border-0"" id="subject" name="subject">
                                             {% for subject in subjects %}
                                                 {% if question.subject.pk == subject.pk %}
                                                     <option value="{{ subject.pk }}"
@@ -40,8 +40,8 @@
 
                                     <div class="form-group">
                                         <label for="age">Age</label>
-                                        <input type="number" value="{{ question.age_limit }}" class="form-control"
-                                               id="age" name="age"
+                                        <input type="number" value="{{ question.age_limit }}"
+                                               class="form-control bg-light border-0" id="age" name="age"
                                                placeholder="Targeted age">
                                     </div>
 
@@ -58,7 +58,7 @@
                                                         <div class="form-row mb-3">
                                                             <div class="col-md-11 col-10" id="statement-get">
                                                                 <textarea data-statement-id="{{ statement.pk }}"
-                                                                          class="form-control" rows="3">
+                                                                          class="form-control bg-light border-0" rows="3">
                                                                   {{ statement.statement }}
                                                                 </textarea>
                                                             </div>
@@ -88,7 +88,7 @@
 
                                                 <div class="form-row mb-3">
                                                     <div class="col-md-11 col-10" id="statement-get">
-                                                        <textarea id="statement-add-text" class="form-control"
+                                                        <textarea id="statement-add-text" class="form-control bg-light border-0"
                                                                   rows="3"></textarea>
                                                     </div>
                                                     <div class="col-md-1 col-2">
@@ -117,7 +117,7 @@
                                                     {% for choice in choices %}
                                                         <div class="form-row mb-3">
                                                             <div class="col-md-10 col-8" id="option">
-                                                                <input type="text" class="form-control"
+                                                                <input type="text" class="form-control bg-light border-0"
                                                                        placeholder="option" value="{{ choice.text }}">
                                                             </div>
                                                             <div class="col-md-1 col-2" id="choice">
@@ -145,11 +145,11 @@
                                             {% endif %}
                                             <div class="form-row mb-3">
                                                 <div class="col-md-10 col-6" id="option">
-                                                    <input type="text" class="form-control" id="choice-add-text"
+                                                    <input type="text" class="form-control bg-light border-0" id="choice-add-text"
                                                            placeholder="option">
                                                 </div>
                                                 <div class="col-md-1 col-2" id="choice">
-                                                    <input type="checkbox" class="form-control" id="choice-add-correct">
+                                                    <input type="checkbox" class="form-control border-0" id="choice-add-correct">
                                                 </div>
                                                 <div class="col-md-1 col-2">
                                                     <button type="button" id="choices-add-btn"
@@ -180,11 +180,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block base_internal_scripts %}
-    <script src="{% static 'application/libs/jquery.repeater/jquery.repeater.min.js' %}"></script>
-    <script src="{% static 'application/js/pages/form-repeater.int.js' %}"></script>
 {% endblock %}
 
 
