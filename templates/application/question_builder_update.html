@@ -46,121 +46,118 @@
                                     </div>
 
                                     {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
-                                    <div id="statements-global">
+                                    <div id="statements">
                                         <p class="font-weight-bolder mt-2">Statements</p>
 
                                         {# STATEMENTS -- GET -------------------------------------------------------- #}
-                                        {% if statements %}
-                                            <div class="statements-div-get">
-                                                {% for statement in statements %}
+                                        <div class="statements-div">
+                                            {% if statements %}
+                                                <div class="statements-div-get">
+                                                    {% for statement in statements %}
 
+                                                        <div class="form-row mb-3">
+                                                            <div class="col-md-11 col-10" id="statement-get">
+                                                                <textarea data-statement-id="{{ statement.pk }}"
+                                                                          class="form-control" rows="3">
+                                                                  {{ statement.statement }}
+                                                                </textarea>
+                                                            </div>
+                                                            <div class="col-md-1 col-2">
+                                                                <div class="btn-group-vertical">
 
-                                                    <div class="form-row mb-3">
-                                                        <div class="col-md-11 col-10" id="statement-get">
-                                                        <textarea data-statement-id="{{ statement.pk }}"
-                                                                  class="form-control" rows="3">
-                                                            {{ statement.statement }}
-                                                        </textarea>
+                                                                    <button type="button"
+                                                                            data-statement-id="{{ statement.id }}"
+                                                                            id="statement-update"
+                                                                            class="btn btn-primary">
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </button>
+                                                                    <button type="button"
+                                                                            data-statement-id="{{ statement.id }}"
+                                                                            id="statement-delete"
+                                                                            class="btn btn-danger">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-md-1 col-2">
-                                                            <button type="button"
-                                                                    class="btn btn-outline-danger">
-                                                                <i class="fa fa-trash"></i>
+
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="statements-div-set">
+
+                                                <div class="form-row mb-3">
+                                                    <div class="col-md-11 col-10" id="statement-get">
+                                                        <textarea id="statement-add-text" class="form-control"
+                                                                  rows="3"></textarea>
+                                                    </div>
+                                                    <div class="col-md-1 col-2">
+                                                        <div class="btn-group-vertical">
+                                                            <button id="statement-add-btn" type="button"
+                                                                    class="btn btn-success">
+                                                                <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
                                                     </div>
-
-
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-
-                                        {# STATEMENTS -- REPEAT #}
-                                        <div class="inner-repeater mb-4">
-                                            <div data-repeater-list="inner-group" class="inner form-group">
-
-                                                <div data-repeater-item="" class="inner mb-3 row" style=""
-                                                     id="statements">
-                                                    <div class="col-md-11 col-10" id="statement">
-                                                        <textarea class="inner form-control" rows="5"></textarea>
-                                                    </div>
-                                                    <div class="col-md-1 col-2">
-                                                        <button data-repeater-delete="" type="button"
-                                                                class="btn btn-outline-danger inner">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </div>
-
                                                 </div>
-                                            </div>
-                                            <button data-repeater-create="" type="button"
-                                                    class="btn btn-outline-success inner">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
 
+                                            </div>
                                         </div>
                                     </div>
                                     {# ============================================================================== #}
 
-                                    {# OPTIONS -- GLOBAL ------------------------------------------------------------ #}
-                                    <div>
+                                    {# CHOICES -- GLOBAL ------------------------------------------------------------ #}
+                                    <div id="choices">
                                         <p class="font-weight-bolder mt-2">Options</p>
 
-                                        {# OPTIONS -- GET ----------------------------------------------------------- #}
-                                        {% if choices %}
-                                            <div class="statements-div-get">
-                                                {% for choice in choices %}
-                                                    <div class="form-row mb-3">
-                                                        <div class="col-md-10 col-8" id="option">
-                                                            <input type="text" class="form-control"
-                                                                   placeholder="option" value="{{ choice.text }}">
+                                        {# CHOICES -- GET ----------------------------------------------------------- #}
+                                        <div class="choices-div">
+                                            {% if choices %}
+                                                <div class="choices-div-get">
+                                                    {% for choice in choices %}
+                                                        <div class="form-row mb-3">
+                                                            <div class="col-md-10 col-8" id="option">
+                                                                <input type="text" class="form-control"
+                                                                       placeholder="option" value="{{ choice.text }}">
+                                                            </div>
+                                                            <div class="col-md-1 col-2" id="choice">
+
+                                                                {% if choice.is_correct %}
+                                                                    <input type="checkbox" class="form-control" checked>
+                                                                {% else %}
+                                                                    <input type="checkbox" class="form-control">
+                                                                {% endif %}
+
+                                                            </div>
+
+                                                            <div class="col-md-1 col-2">
+                                                                <button type="button" data-choice-id="{{ choice.id }}"
+                                                                        id="choice-delete"
+                                                                        class="btn btn-danger">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-md-1 col-2" id="choice">
-                                                            {% if choice.is_correct %}
-                                                                <input type="checkbox" class="form-control" checked>
-                                                            {% else %}
-                                                                <input type="checkbox" class="form-control">
-                                                            {% endif %}
-
-                                                        </div>
-                                                        <div class="col-md-1 col-2">
-                                                            <button type="button"
-                                                                    class="btn btn-outline-danger">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
 
 
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-
-                                        {# OPTIONS -- REPEAT ------------------------------------------------------- #}
-                                        <div class="inner-repeater">
-                                            <div data-repeater-list="inner-group" class="inner form-group">
-
-                                                <div data-repeater-item="" class="inner mb-3 row" style="" id="options">
-                                                    <div class="col-md-10 col-8" id="option">
-                                                        <input type="text" class="inner form-control"
-                                                               placeholder="option">
-                                                    </div>
-                                                    <div class="col-md-1 col-2" id="choice">
-                                                        <input type="checkbox" class="inner form-control">
-                                                    </div>
-                                                    <div class="col-md-1 col-2">
-                                                        <button data-repeater-delete="" type="button"
-                                                                class="btn btn-outline-danger inner">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </div>
-
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-row mb-3">
+                                                <div class="col-md-10 col-6" id="option">
+                                                    <input type="text" class="form-control" id="choice-add-text"
+                                                           placeholder="option">
+                                                </div>
+                                                <div class="col-md-1 col-2" id="choice">
+                                                    <input type="checkbox" class="form-control" id="choice-add-correct">
+                                                </div>
+                                                <div class="col-md-1 col-2">
+                                                    <button type="button" id="choices-add-btn"
+                                                            class="btn btn-success">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <button data-repeater-create="" type="button"
-                                                    class="btn btn-outline-success inner">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
                                         </div>
                                     </div>
                                     {# ============================================================================== #}
@@ -173,13 +170,10 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <p class="text-muted"><b>NOTE: </b>This is a complete question form, feel free to add
-                            statements and options, you can change it later whereas screen selection will be on
+                        <p class="text-muted"><b>NOTE: </b>This is a complete update question form, feel free to add, update
+                            statements options images and audios, you can change it later whereas screen selection will be on
                             quiz builder during question selection.
                         </p>
-                        <button class="btn btn-primary" id="submit_button">
-                            <i class="fa fa-check-circle"></i> Save
-                        </button>
                     </div>
                 </div>
 
@@ -198,67 +192,70 @@
     <script>
 
         $(document).ready(function () {
-            let submit_button = $('#submit_button');
-            let statements_div = $('#statements');
-            let options_div = $('#options');
-            let statements = [];
-            let options = [];
-            let corrects = [];
 
-            submit_button.click(function (event) {
-                let subject = $('#subject').val();
-                let age = parseInt($('#age').val());
 
-                if (!isNaN(age) && age > 0 && age <= 18) {
-                    $('#statements > #statement').each(function () {
-                        let statement = $(this).find('textarea').val();
-                        if (statement !== '') {
-                            statements.push(statement);
-                        }
-                    });
-
-                    $('#options > #option').each(function () {
-                        let option = $(this).find('input').val();
-                        if (option !== '') {
-                            options.push(option);
-                        }
-                    });
-
-                    $('#options > #choice').each(function () {
-                        let correct = $(this).find('input');
-                        if (correct.is(":checked")) {
-                            corrects.push(1);
-                        } else {
-                            corrects.push(0);
-                        }
-                    });
-
-                    console.log(corrects);
-
-                    let data = {
-                        subject_id: subject,
-                        age: age,
-                        statements: statements,
-                        options: options,
-                        corrects: corrects,
-                    };
-
-                    $.ajax({
-                        url: '/question/builder/',
-                        type: 'POST',
-                        data: data,
-                    }).then(function (data, status) {
-                        if (data.message === 'success') {
-                            location.href = "/question/" + data.question + "/"
-                        }
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-                } else {
-                    alert("Please provide age must be greater than 0 and less then 19")
-                }
-
+            $('#statements #statement-delete').click(function () {
+                let id = $(this).data('statement-id');
+                deleteStatement(id);
             });
+
+            $('#statements #statement-add-btn').click(function () {
+                saveStatement();
+            });
+
+            $('#choices #choice-delete').click(function () {
+                let id = $(this).data('choice-id');
+                deleteChoice(id);
+            });
+
+            $('#choices #choices-add-btn').click(function () {
+                saveChoice();
+            });
+
+
+            function deleteStatement(id) {
+                $.get("/delete/question_statement/" + id + "/", function () {
+                    window.location.reload()
+                });
+            }
+
+            function deleteChoice(id) {
+                $.get("/delete/question_choice/" + id + "/", function () {
+                    window.location.reload()
+                });
+            }
+
+            function saveChoice() {
+                let text = $('#choice-add-text').val();
+                let is_correct = $('#choice-add-correct').is(":checked");
+                if (text == "") {
+                    alert("Choice field must not be empty");
+                } else {
+
+                    $.post("/add/question_choice/", {
+                        'pk': {{ question_id }},
+                        'text': text,
+                        'is_correct': is_correct
+                    }, function (data, status) {
+                        window.location.reload();
+                    });
+                }
+            }
+
+            function saveStatement() {
+                let text = $('#statement-add-text').val();
+                if (text == "") {
+                    alert("Statement field must not be empty");
+                } else {
+                    $.post("/add/question_statement/", {
+                        'pk': {{ question_id }},
+                        'text': text
+                    }, function (data, status) {
+                        window.location.reload();
+                    });
+                }
+            }
+
         });
     </script>
 {% endblock %}
