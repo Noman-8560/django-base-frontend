@@ -94,6 +94,10 @@ urlpatterns = [
          change_question_statement_status, name='capi_change_question_statement_status'),
     path('c/api/change/quiz/question/choice/status/<int:pk>/',
          change_question_choice_status, name='capi_change_question_choice_status'),
+    path('c/api/change/quiz/question/image/status/<int:pk>/',
+         change_question_image_status, name='capi_change_question_image_status'),
+    path('c/api/change/quiz/question/audio/status/<int:pk>/',
+         change_question_audio_status, name='capi_change_question_audio_status'),
     path('c/api/change/quiz/question/submission/status/<int:pk>/',
          change_question_submission_control, name='capi_change_question_submission_control'),
 ]

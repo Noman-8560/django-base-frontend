@@ -187,7 +187,6 @@ class QuestionImage(models.Model):
         null=True, blank=True,
         help_text='size of image less then 500*500 and format must be png, jpg or jpeg image file - '
     )
-    screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):
@@ -209,7 +208,6 @@ class QuestionAudio(models.Model):
         null=True, blank=True,
         help_text='size of audio less then 5MB and format must be mps, ogg etc'
     )
-    screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):
@@ -334,12 +332,7 @@ class ChoiceVisibility(models.Model):
 
 
 class AudioVisibility(models.Model):
-    url = models.URLField(null=True, blank=True)
-    audio = models.FileField(
-        upload_to='application/quizes/audios/projects/',
-        null=True, blank=True,
-        help_text='size of audio less then 5MB and format must be mps, ogg etc'
-    )
+    audio = models.ForeignKey(QuestionAudio, on_delete=models.CASCADE)
     quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
     screen_1 = models.BooleanField(default=True)
     screen_2 = models.BooleanField(default=False)
@@ -354,12 +347,7 @@ class AudioVisibility(models.Model):
 
 
 class ImageVisibility(models.Model):
-    url = models.URLField(null=True, blank=True)
-    image = models.ImageField(
-        upload_to='application/quizes/images/projects/',
-        null=True, blank=True,
-        help_text='size of image less then 500*500 and format must be png, jpg or jpeg image file - '
-    )
+    image = models.ForeignKey(QuestionImage, on_delete=models.CASCADE)
     quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
     screen_1 = models.BooleanField(default=True)
     screen_2 = models.BooleanField(default=False)

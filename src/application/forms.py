@@ -24,13 +24,13 @@ class QuestionStatementForm(ModelForm):
 class QuestionImageForm(ModelForm):
     class Meta:
         model = QuestionImage
-        fields = ['url', 'image', 'screen']
+        fields = ['url', 'image']
 
 
 class QuestionAudioForm(ModelForm):
     class Meta:
         model = QuestionAudio
-        fields = ['url', 'audio', 'screen']
+        fields = ['url', 'audio']
 
 
 class QuestionChoiceForm(ModelForm):

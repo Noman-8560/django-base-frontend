@@ -385,7 +385,6 @@ def delete_question(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def question_builder_update(request, pk):
-
     question = get_object_or_404(Question, pk=pk)
     if request.method == 'POST':
         pass
@@ -393,9 +392,13 @@ def question_builder_update(request, pk):
     context = {
         'statements': QuestionStatement.objects.filter(question=question),
         'choices': QuestionChoice.objects.filter(question=question),
+        'images': QuestionImage.objects.filter(question=question),
+        'audios': QuestionAudio.objects.filter(question=question),
         'question_id': question.pk,
         'question': question,
-        'subjects': Subject.objects.all()
+        'subjects': Subject.objects.all(),
+        'image_form': QuestionImageForm(),
+        'audio_form': QuestionAudioForm(),
     }
     return render(request=request, template_name='application/question_builder_update.html', context=context)
 
@@ -541,20 +544,17 @@ def question_image_add(request, question):
             question_ref = Question.objects.get(pk=question)
             url = form.cleaned_data['url']
             image = form.cleaned_data['image']
-            screen = form.cleaned_data['screen']
 
             question_image = QuestionImage.objects.create(
-                url=url, image=image, screen=screen, question=question_ref
+                url=url, image=image, question=question_ref
             )
-
-        response_data = {}
-        messages.success(
-            request=request, message="Image attached to question Successfully - Redirected to Question Description."
-        )
-        return redirect('application:question_builder_update', question, permanent=True)
-        # return JsonResponse(response_data, safe=False)
-    messages.error(request=request, message=f'Error in adding images')
-    return HttpResponseRedirect(reverse('application:question_builder'))
+            question_image.save()
+            messages.success(
+                request=request, message="Image attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+    return redirect('application:question_builder_update', question, permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -566,10 +566,10 @@ def question_image_delete(request, pk):
 
         messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
         return redirect('application:question_builder_update', question_id, permanent=True)
-    except:
+    except QuestionImage.DoesNotExist:
         messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
 
-    return redirect('application:question_builder', permanent=True)
+    return redirect('application:questions', permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -581,20 +581,17 @@ def question_audio_add(request, question):
             question_ref = Question.objects.get(pk=question)
             url = form.cleaned_data['url']
             audio = form.cleaned_data['audio']
-            screen = form.cleaned_data['screen']
 
             question_audio = QuestionAudio.objects.create(
-                url=url, audio=audio, screen=screen, question=question_ref
+                url=url, audio=audio, question=question_ref
             )
-
-        response_data = {}
-        messages.success(
-            request=request, message="Audio attached to question Successfully - Redirected to Question Description."
-        )
-        return redirect('application:question_builder_update', question, permanent=True)
-        # return JsonResponse(response_data, safe=False)
-    messages.error(request=request, message=f'Error in adding audios')
-    return HttpResponseRedirect(reverse('application:question_builder'))
+            question_audio.save()
+            messages.success(
+                request=request, message="Audio attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+    return redirect('application:question_builder_update', question, permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -666,14 +663,14 @@ def quiz_builder_update(request, pk):
             question_exists = True
 
         questionDS = QuestionDS(
-            id=quiz_question.pk, question_id=quiz_question.question.pk, question_exists=question_exists, level=quiz_question.question.level, subject=quiz_question.question.subject,
+            id=quiz_question.pk, question_id=quiz_question.question.pk, question_exists=question_exists,
+            level=quiz_question.question.level, subject=quiz_question.question.subject,
             question_type=quiz_question.question.question_type, age_limit=quiz_question.question.age_limit,
             submission_control=quiz_question.submission_control
         )
 
         for choice_v in ChoiceVisibility.objects.filter(
                 quiz_question=quiz_question, quiz_question__quiz=quiz):
-
             questionDS.add_choice(
                 id=choice_v.id, description=choice_v.choice.text, is_correct=choice_v.choice.is_correct,
                 screen1=choice_v.screen_1, screen2=choice_v.screen_2, screen3=choice_v.screen_3
@@ -685,6 +682,32 @@ def quiz_builder_update(request, pk):
                 id=statement_v.id, description=statement_v.statement.statement,
                 screen1=statement_v.screen_1, screen2=statement_v.screen_2, screen3=statement_v.screen_3
             )
+
+        for image_v in ImageVisibility.objects.filter(
+                quiz_question=quiz_question, quiz_question__quiz=quiz):
+            if image_v.image.image:
+                questionDS.add_image(
+                    id=image_v.id, url=image_v.image.url, image=image_v.image.image.url,
+                    screen1=image_v.screen_1, screen2=image_v.screen_2, screen3=image_v.screen_3
+                )
+            else:
+                questionDS.add_image(
+                    id=image_v.id, url=image_v.image.url, image=None,
+                    screen1=image_v.screen_1, screen2=image_v.screen_2, screen3=image_v.screen_3
+                )
+
+        for audio_v in AudioVisibility.objects.filter(
+                quiz_question=quiz_question, quiz_question__quiz=quiz):
+            if audio_v.audio.audio:
+                questionDS.add_audio(
+                    id=audio_v.id, url=audio_v.audio.url, audio=audio_v.audio.audio.url,
+                    screen1=audio_v.screen_1, screen2=audio_v.screen_2, screen3=audio_v.screen_3
+                )
+            else:
+                questionDS.add_audio(
+                    id=audio_v.id, url=audio_v.audio.url, audio=None,
+                    screen1=audio_v.screen_1, screen2=audio_v.screen_2, screen3=audio_v.screen_3
+                )
 
         questionsDS.append(questionDS)
 
@@ -851,6 +874,18 @@ def quiz_question_add(request, quiz_id, question_id):
         for choice in question.questionchoice_set.all():
             ChoiceVisibility(
                 quiz_question=quiz_question, choice=choice
+            ).save()
+
+        # STEP3 => Add Images Visibility
+        for image in question.questionimage_set.all():
+            ImageVisibility(
+                quiz_question=quiz_question, image=image
+            ).save()
+
+        # STEP4 => Add audios Visibility
+        for audio in question.questionaudio_set.all():
+            AudioVisibility(
+                quiz_question=quiz_question, audio=audio
             ).save()
 
     return redirect('application:quiz_builder_update', quiz_id, permanent=True)
@@ -1893,6 +1928,82 @@ def change_question_choice_status(request, pk):
             success = True
 
         except ChoiceVisibility.DoesNotExist:
+            message = "This question is not associated with quiz"
+            success = False
+
+    context = {'success': success, 'message': message}
+    return JsonResponse(data=context, safe=False)
+
+
+@csrf_exempt
+@login_required
+def change_question_audio_status(request, pk):
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+
+        if status == 'true':
+            status = True
+        else:
+            status = False
+
+        # STATEMENT VISIBILITY CHANGE ------------------------------
+        try:
+            audio_visibility = AudioVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                audio_visibility.screen_1 = status
+            elif screen_id == '2':
+                audio_visibility.screen_2 = status
+            elif screen_id == '3':
+                audio_visibility.screen_3 = status
+            audio_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except AudioVisibility.DoesNotExist:
+            message = "This question is not associated with Quiz"
+            success = False
+
+    context = {'success': success, 'message': message}
+    return JsonResponse(data=context, safe=False)
+
+
+@csrf_exempt
+@login_required
+def change_question_image_status(request, pk):
+    success = False
+    message = "Failed to update record"
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # POST METHOD HERE -----------------------------------------
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+
+        if status == 'true':
+            status = True
+        else:
+            status = False
+
+        try:
+            image_visibility = ImageVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                image_visibility.screen_1 = status
+            elif screen_id == '2':
+                image_visibility.screen_2 = status
+            elif screen_id == '3':
+                image_visibility.screen_3 = status
+            image_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+
+        except ImageVisibility.DoesNotExist:
             message = "This question is not associated with quiz"
             success = False
 
