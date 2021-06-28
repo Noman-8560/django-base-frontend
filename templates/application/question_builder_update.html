@@ -25,15 +25,15 @@
                                     {# NORMAL --> FIELDS #}
                                     <div class="form-group">
                                         <label for="subject">Subject</label>
-                                        <select class="form-control bg-light border-0"" id="subject" name="subject">
-                                            {% for subject in subjects %}
-                                                {% if question.subject.pk == subject.pk %}
-                                                    <option value="{{ subject.pk }}"
-                                                            selected>{{ subject.title }}</option>
-                                                {% else %}
-                                                    <option value="{{ subject.pk }}">{{ subject.title }}</option>
-                                                {% endif %}
-                                            {% endfor %}
+                                        <select class="form-control" id="subject" name="subject">
+                                        {% for subject in subjects %}
+                                            {% if question.subject.pk == subject.pk %}
+                                                <option value="{{ subject.pk }}"
+                                                        selected>{{ subject.title }}</option>
+                                            {% else %}
+                                                <option value="{{ subject.pk }}">{{ subject.title }}</option>
+                                            {% endif %}
+                                        {% endfor %}
 
                                         </select>
                                     </div>
@@ -41,13 +41,13 @@
                                     <div class="form-group">
                                         <label for="age">Age</label>
                                         <input type="number" value="{{ question.age_limit }}"
-                                               class="form-control bg-light border-0" id="age" name="age"
+                                               class="form-control" id="age" name="age"
                                                placeholder="Targeted age">
                                     </div>
 
                                     {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
                                     <div id="statements">
-                                        <p class="font-weight-bolder mt-2">Statements</p>
+                                        <p class="font-weight-bolder mt-4 h4">QUESTION STATEMENTS</p>
 
                                         {# STATEMENTS -- GET -------------------------------------------------------- #}
                                         <div class="statements-div">
@@ -58,7 +58,8 @@
                                                         <div class="form-row mb-3">
                                                             <div class="col-md-11 col-10" id="statement-get">
                                                                 <textarea data-statement-id="{{ statement.pk }}"
-                                                                          class="form-control bg-light border-0" rows="3">
+                                                                          class="form-control"
+                                                                          rows="3">
                                                                   {{ statement.statement }}
                                                                 </textarea>
                                                             </div>
@@ -88,7 +89,8 @@
 
                                                 <div class="form-row mb-3">
                                                     <div class="col-md-11 col-10" id="statement-get">
-                                                        <textarea id="statement-add-text" class="form-control bg-light border-0"
+                                                        <textarea id="statement-add-text"
+                                                                  class="form-control"
                                                                   rows="3"></textarea>
                                                     </div>
                                                     <div class="col-md-1 col-2">
@@ -108,7 +110,7 @@
 
                                     {# CHOICES -- GLOBAL ------------------------------------------------------------ #}
                                     <div id="choices">
-                                        <p class="font-weight-bolder mt-2">Options</p>
+                                        <p class="font-weight-bolder mt-4 h4">QUESTION CHOICES</p>
 
                                         {# CHOICES -- GET ----------------------------------------------------------- #}
                                         <div class="choices-div">
@@ -117,7 +119,8 @@
                                                     {% for choice in choices %}
                                                         <div class="form-row mb-3">
                                                             <div class="col-md-10 col-8" id="option">
-                                                                <input type="text" class="form-control bg-light border-0"
+                                                                <input type="text"
+                                                                       class="form-control"
                                                                        placeholder="option" value="{{ choice.text }}">
                                                             </div>
                                                             <div class="col-md-1 col-2" id="choice">
@@ -145,11 +148,13 @@
                                             {% endif %}
                                             <div class="form-row mb-3">
                                                 <div class="col-md-10 col-6" id="option">
-                                                    <input type="text" class="form-control bg-light border-0" id="choice-add-text"
+                                                    <input type="text" class="form-control"
+                                                           id="choice-add-text"
                                                            placeholder="option">
                                                 </div>
                                                 <div class="col-md-1 col-2" id="choice">
-                                                    <input type="checkbox" class="form-control border-0" id="choice-add-correct">
+                                                    <input type="checkbox" class="form-control"
+                                                           id="choice-add-correct">
                                                 </div>
                                                 <div class="col-md-1 col-2">
                                                     <button type="button" id="choices-add-btn"
@@ -162,6 +167,75 @@
                                     </div>
                                     {# ============================================================================== #}
 
+
+                                    {# IMAGES AND AUDIOS -- GLOBAL ------------------------------------------------------------ #}
+                                    <div id="images">
+                                        <p class="font-weight-bolder mt-4 h4">QUESTION IMAGES</p>
+
+                                        {# CHOICES -- GET ----------------------------------------------------------- #}
+                                        <div id="images-div">
+                                            {% if statements %}
+                                                <div id="images-div-get" class="row">
+                                                    {% for x in '123'|make_list %}
+                                                        <div class="col-xl-4 col-sm-6">
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <div class="product-img position-relative">
+                                                                        <img src="{% static 'images/user.jpg' %}"
+                                                                             alt="" class="img-fluid mx-auto d-block">
+                                                                    </div>
+                                                                    <div class="mt-4 text-center">
+                                                                        <button class="btn btn-danger"><i
+                                                                                class="fa fa-trash"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {# ============================================================================== #}
+
+                                    {# IMAGES AND AUDIOS -- GLOBAL ------------------------------------------------------------ #}
+                                    <div id="images">
+                                        <p class="font-weight-bolder mt-4 h4">QUESTION AUDIOS</p>
+
+                                        {# CHOICES -- GET ----------------------------------------------------------- #}
+                                        <div id="images-div">
+                                            {% if statements %}
+                                                <div id="images-div-get" class="table-responsive">
+                                                    <table class="table table-borderless">
+                                                        <tbody>
+                                                        {% for x in '123'|make_list %}
+
+                                                            <tr>
+                                                                <td>
+                                                                    <audio controls>
+                                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"
+                                                                                type="audio/mpeg">
+                                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"
+                                                                                type="audio/ogg">
+                                                                        Your browser does not support the audio tag.
+                                                                    </audio>
+                                                                </td>
+                                                                <td>
+                                                                    <button class="btn btn-danger">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {# ============================================================================== #}
+
                                 </div>
                             </div>
                         </form>
@@ -170,10 +244,18 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <p class="text-muted"><b>NOTE: </b>This is a complete update question form, feel free to add, update
-                            statements options images and audios, you can change it later whereas screen selection will be on
+                        <p class="text-muted"><b>NOTE: </b>This is a complete update question form, feel free to add,
+                            update
+                            statements options images and audios, you can change it later whereas screen selection will
+                            be on
                             quiz builder during question selection.
                         </p>
+                        <button class="btn btn-primary">
+                            <i class="fa fa-file-audio"></i> Add Audio hint
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="fa fa-images"></i> Add Image hint
+                        </button>
                     </div>
                 </div>
 
