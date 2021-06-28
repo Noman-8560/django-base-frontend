@@ -393,9 +393,13 @@ def question_builder_update(request, pk):
     context = {
         'statements': QuestionStatement.objects.filter(question=question),
         'choices': QuestionChoice.objects.filter(question=question),
+        'images': QuestionImage.objects.filter(question=question),
+        'audios': QuestionAudio.objects.filter(question=question),
         'question_id': question.pk,
         'question': question,
-        'subjects': Subject.objects.all()
+        'subjects': Subject.objects.all(),
+        'image_form': QuestionImageForm(),
+        'audio_form': QuestionAudioForm(),
     }
     return render(request=request, template_name='application/question_builder_update.html', context=context)
 
@@ -541,20 +545,17 @@ def question_image_add(request, question):
             question_ref = Question.objects.get(pk=question)
             url = form.cleaned_data['url']
             image = form.cleaned_data['image']
-            screen = form.cleaned_data['screen']
 
             question_image = QuestionImage.objects.create(
-                url=url, image=image, screen=screen, question=question_ref
+                url=url, image=image, question=question_ref
             )
-
-        response_data = {}
-        messages.success(
-            request=request, message="Image attached to question Successfully - Redirected to Question Description."
-        )
-        return redirect('application:question_builder_update', question, permanent=True)
-        # return JsonResponse(response_data, safe=False)
-    messages.error(request=request, message=f'Error in adding images')
-    return HttpResponseRedirect(reverse('application:question_builder'))
+            question_image.save()
+            messages.success(
+                request=request, message="Image attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+    return redirect('application:question_builder_update', question, permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -566,10 +567,10 @@ def question_image_delete(request, pk):
 
         messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
         return redirect('application:question_builder_update', question_id, permanent=True)
-    except:
+    except QuestionImage.DoesNotExist:
         messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
 
-    return redirect('application:question_builder', permanent=True)
+    return redirect('application:questions', permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -581,20 +582,17 @@ def question_audio_add(request, question):
             question_ref = Question.objects.get(pk=question)
             url = form.cleaned_data['url']
             audio = form.cleaned_data['audio']
-            screen = form.cleaned_data['screen']
 
             question_audio = QuestionAudio.objects.create(
-                url=url, audio=audio, screen=screen, question=question_ref
+                url=url, audio=audio, question=question_ref
             )
-
-        response_data = {}
-        messages.success(
-            request=request, message="Audio attached to question Successfully - Redirected to Question Description."
-        )
-        return redirect('application:question_builder_update', question, permanent=True)
-        # return JsonResponse(response_data, safe=False)
-    messages.error(request=request, message=f'Error in adding audios')
-    return HttpResponseRedirect(reverse('application:question_builder'))
+            question_audio.save()
+            messages.success(
+                request=request, message="Audio attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+    return redirect('application:question_builder_update', question, permanent=True)
 
 
 @user_passes_test(lambda u: u.is_superuser)

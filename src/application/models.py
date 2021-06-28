@@ -187,7 +187,6 @@ class QuestionImage(models.Model):
         null=True, blank=True,
         help_text='size of image less then 500*500 and format must be png, jpg or jpeg image file - '
     )
-    screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):
@@ -209,7 +208,6 @@ class QuestionAudio(models.Model):
         null=True, blank=True,
         help_text='size of audio less then 5MB and format must be mps, ogg etc'
     )
-    screen = models.ForeignKey('Screen', on_delete=models.CASCADE, null=False, blank=False)
     question = models.ForeignKey('Question', on_delete=models.CASCADE, null=False, blank=False)
 
     def __str__(self):

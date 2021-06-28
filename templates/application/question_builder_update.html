@@ -26,14 +26,14 @@
                                     <div class="form-group">
                                         <label for="subject">Subject</label>
                                         <select class="form-control" id="subject" name="subject">
-                                        {% for subject in subjects %}
-                                            {% if question.subject.pk == subject.pk %}
-                                                <option value="{{ subject.pk }}"
-                                                        selected>{{ subject.title }}</option>
-                                            {% else %}
-                                                <option value="{{ subject.pk }}">{{ subject.title }}</option>
-                                            {% endif %}
-                                        {% endfor %}
+                                            {% for subject in subjects %}
+                                                {% if question.subject.pk == subject.pk %}
+                                                    <option value="{{ subject.pk }}"
+                                                            selected>{{ subject.title }}</option>
+                                                {% else %}
+                                                    <option value="{{ subject.pk }}">{{ subject.title }}</option>
+                                                {% endif %}
+                                            {% endfor %}
 
                                         </select>
                                     </div>
@@ -169,61 +169,85 @@
 
 
                                     {# IMAGES AND AUDIOS -- GLOBAL ------------------------------------------------------------ #}
-                                    <div id="images">
-                                        <p class="font-weight-bolder mt-4 h4">QUESTION IMAGES</p>
+                                    {% if images %}
+                                        <div id="images">
+                                            <p class="font-weight-bolder mt-4 h4">QUESTION IMAGES</p>
 
-                                        {# CHOICES -- GET ----------------------------------------------------------- #}
-                                        <div id="images-div">
-                                            {% if statements %}
+                                            {# CHOICES -- GET ----------------------------------------------------------- #}
+                                            <div id="images-div">
                                                 <div id="images-div-get" class="row">
-                                                    {% for x in '123'|make_list %}
+                                                    {% for image in images %}
                                                         <div class="col-xl-4 col-sm-6">
                                                             <div class="card">
                                                                 <div class="card-body">
                                                                     <div class="product-img position-relative">
-                                                                        <img src="{% static 'images/user.jpg' %}"
-                                                                             alt="" class="img-fluid mx-auto d-block">
+                                                                        {% if image.url %}
+                                                                            <img src="{{ image.url }}"
+                                                                                 alt="" class="mx-auto d-block"
+                                                                                 height="150">
+                                                                        {% elif image.image %}
+                                                                            <img src="{{ image.image.url }}"
+                                                                                 alt="" class="mx-auto d-block"
+                                                                                 height="150">
+                                                                        {% else %}
+                                                                            <img src="{% static 'images/no_content.png' %}"
+                                                                                 alt="" class="mx-auto d-block"
+                                                                                 height="150">
+                                                                        {% endif %}
                                                                     </div>
                                                                     <div class="mt-4 text-center">
-                                                                        <button class="btn btn-danger"><i
-                                                                                class="fa fa-trash"></i></button>
+                                                                        <a class="btn btn-danger"
+                                                                           href="{% url 'application:question_image_delete' image.id %}">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </a>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     {% endfor %}
                                                 </div>
-                                            {% endif %}
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                     {# ============================================================================== #}
 
                                     {# IMAGES AND AUDIOS -- GLOBAL ------------------------------------------------------------ #}
-                                    <div id="images">
-                                        <p class="font-weight-bolder mt-4 h4">QUESTION AUDIOS</p>
+                                    {% if audios %}
+                                        <div id="audios">
+                                            <p class="font-weight-bolder mt-4 h4">QUESTION AUDIOS</p>
 
-                                        {# CHOICES -- GET ----------------------------------------------------------- #}
-                                        <div id="images-div">
-                                            {% if statements %}
-                                                <div id="images-div-get" class="table-responsive">
+                                            {# CHOICES -- GET ----------------------------------------------------------- #}
+                                            <div id="audios-div">
+                                                <div id="audios-div-get" class="table-responsive">
                                                     <table class="table table-borderless">
                                                         <tbody>
-                                                        {% for x in '123'|make_list %}
+                                                        {% for audio in audios %}
 
                                                             <tr>
                                                                 <td>
-                                                                    <audio controls>
-                                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.mp3"
-                                                                                type="audio/mpeg">
-                                                                        <source src="https://tutorialehtml.com/assets_tutorials/media/Loreena_Mckennitt_Snow_56bit.ogg"
-                                                                                type="audio/ogg">
-                                                                        Your browser does not support the audio tag.
-                                                                    </audio>
+
+                                                                    {% if audio.url %}
+                                                                        <audio controls>
+                                                                            <source src="{{ audio.url }}"
+                                                                                    type="audio/mpeg">
+                                                                            Your browser does not support the audio tag.
+                                                                        </audio>
+                                                                    {% elif audio.audio %}
+                                                                        <audio controls>
+                                                                            <source src="{{ audio.audio.url }}"
+                                                                                    type="audio/mpeg">
+                                                                            Your browser does not support the audio tag.
+                                                                        </audio>
+                                                                    {% else %}
+                                                                        <h5 class="text-danger font-weight-bolder">No
+                                                                            resource found!</h5>
+                                                                    {% endif %}
                                                                 </td>
                                                                 <td>
-                                                                    <button class="btn btn-danger">
+                                                                    <a class="btn btn-danger"
+                                                                       href="{% url 'application:question_audio_delete' audio.id %}">
                                                                         <i class="fa fa-trash"></i>
-                                                                    </button>
+                                                                    </a>
                                                                 </td>
                                                             </tr>
 
@@ -231,9 +255,9 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
-                                            {% endif %}
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                     {# ============================================================================== #}
 
                                 </div>
@@ -250,10 +274,10 @@
                             be on
                             quiz builder during question selection.
                         </p>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#audioModel">
                             <i class="fa fa-file-audio"></i> Add Audio hint
                         </button>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#imageModel">
                             <i class="fa fa-images"></i> Add Image hint
                         </button>
                     </div>
@@ -262,6 +286,54 @@
             </div>
         </div>
     </div>
+
+    {# AUDIO FORM #}
+    <div class="modal fade" id="audioModel" tabindex="-1" role="dialog" aria-labelledby="audioModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="audioModalLabel"><i class="fa fa-music"></i> Audio Hint form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'application:question_audio_add' question_id %}" method="post"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ audio_form|crispy }}
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check-circle"></i> Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# IMAGE FORM #}
+    <div class="modal fade" id="imageModel" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel"><i class="fa fa-music"></i> Image Hint form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'application:question_image_add' question_id %}" method="post"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ image_form|crispy }}
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check-circle"></i> Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 

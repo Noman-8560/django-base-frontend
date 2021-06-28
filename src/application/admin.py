@@ -59,11 +59,11 @@ class QuestionTypeAdmin(admin.ModelAdmin):
 
 
 class QuestionAudioAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'url', 'audio', 'screen', 'question']
+    list_display = ['pk', 'url', 'audio', 'question']
 
 
 class QuestionImageAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'url', 'image', 'screen', 'question']
+    list_display = ['pk', 'url', 'image', 'question']
 
 
 class ArticleAdmin(admin.ModelAdmin):
