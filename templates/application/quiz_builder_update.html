@@ -72,37 +72,7 @@
                                                                                       class="text-dark">{{ q.age_limit }}</a>
                                         </h5>
                                     </td>
-                                    <td class="">
-                                        Submission Control
-                                        <div class="">
 
-                                            <input type="radio"
-                                                   name="submission_control_{{ q.id }}" id="submission_control"
-                                                   value="1"
-                                                   data-questionid="{{ q.id }}"
-                                                   {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
-                                            > Screen 1
-
-                                            {% if players == '2' or players == '3' %}
-                                                <input type="radio"
-                                                       name="submission_control_{{ q.id }}" id="submission_control"
-                                                       value="2"
-                                                       data-questionid="{{ q.id }}"
-                                                       {% if q.submission_control.no == 2 %}checked{% endif %}
-                                                > Screen 2
-                                            {% endif %}
-
-                                            {% if players == '3' %}
-                                                <input type="radio"
-                                                       name="submission_control_{{ q.id }}" id="submission_control"
-                                                       value="3"
-                                                       data-questionid="{{ q.id }}"
-                                                       {% if q.submission_control.no == 3 %}checked{% endif %}
-                                                > Screen 3
-                                            {% endif %}
-
-                                        </div>
-                                    </td>
                                 </tr>
 
                                 </tbody>
@@ -114,6 +84,51 @@
                             <div class="table-responsive">
                                 <table class="table table-borderless">
 
+                                    {# SUBMISSION CONTROL ----------------------------------------------------------- #}
+                                    <tr class="border-top">
+                                        <th>Submission Control</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td>Submission Control</td>
+                                        <td>
+                                            <input type="radio"
+                                                   name="submission_control_{{ q.id }}" id="submission_control"
+                                                   value="1"
+                                                   data-questionid="{{ q.id }}"
+                                                   {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
+                                            >
+                                        </td>
+
+                                        {% if players == '2' or players == '3' %}
+                                            <td>
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="2"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 2 %}checked{% endif %}
+                                                >
+                                            </td>
+                                        {% endif %}
+
+                                        {% if players == '3' %}
+                                            <td>
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="3"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 3 %}checked{% endif %}
+                                                >
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                
                                     {# STATEMENTS ------------------------------------------------------------------ #}
                                     {% if q.statements %}
                                         <tr class="border-top">
@@ -422,7 +437,7 @@
     <script>
         $(document).ready(function () {
 
-            $('#submission_control_body #submission_control').click(function () {
+            $('#desc-div #submission_control').click(function () {
                 let question = $(this).data('questionid');
                 let value = $(this).val();
 
