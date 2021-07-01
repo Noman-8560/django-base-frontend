@@ -84,6 +84,10 @@
                             <div class="table-responsive">
                                 <table class="table table-borderless">
 
+                                    <colgroup>
+                                        <col span="1" style="width: 50%;">
+                                    </colgroup>
+
                                     {# SUBMISSION CONTROL ----------------------------------------------------------- #}
                                     <tr class="border-top">
                                         <th>Submission Control</th>
@@ -128,7 +132,7 @@
                                             </td>
                                         {% endif %}
                                     </tr>
-                                
+
                                     {# STATEMENTS ------------------------------------------------------------------ #}
                                     {% if q.statements %}
                                         <tr class="border-top">
@@ -144,7 +148,7 @@
 
                                         {% for desc in q.statements %}
                                             <tr>
-                                                <td>{{ desc.description }}</td>
+                                                <td>{{ desc.description }} {% lorem 20 w %}</td>
                                                 <td>
                                                     <input type="checkbox" id="statement_control"
                                                            data-question="{{ q.id }}"
@@ -243,7 +247,7 @@
 
                                         {% for desc in q.images %}
                                             <tr>
-                                                <td>
+                                                <td class="">
                                                     {% if desc.url %}
                                                         <a href="{{ desc.url }}" target="_blank">
                                                             <img src="{{ desc.url }}" height="50">
@@ -303,7 +307,7 @@
                                             <tr>
                                                 <td>
                                                     {% if desc.url %}
-                                                        <audio controls>
+                                                        <audio controls class="">
                                                             <source src="{{ desc.url }}"
                                                                     type="audio/mpeg">
                                                             Your browser does not support the audio tag.
@@ -401,15 +405,6 @@
                                         <h5 class="text-truncate font-size-14 m-0">
                                             <b class="text-dark">{{ q.age_limit }}</b>
                                         </h5>
-                                    </td>
-                                    <td class="">
-                                        Submission Control
-                                        <div class="">
-
-
-                                            <b class="text-danger">Question is not assocoated with quiz </b>
-
-                                        </div>
                                     </td>
                                 </tr>
 
