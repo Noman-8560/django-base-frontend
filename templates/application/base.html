@@ -165,7 +165,7 @@
 <script src="{% static 'application/js/app.js' %}"></script>
 
 <script src="{% static 'js/notify.js' %}" type="text/javascript"></script>
-{#{% register_notify_callbacks callbacks='fill_notification_badge,my_special_notification_callback' %}#}
+{% register_notify_callbacks callbacks='fill_notification_badge,my_special_notification_callback' %}
 
 
 {# BASE INTERNAL SCRIPTS OR LINKS THAT ARE REQUIRED IN PAGE #}
