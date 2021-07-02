@@ -652,6 +652,7 @@ def quiz_builder_update(request, pk):
 
     quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
     questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
+    total = questions.count()
     questions = questions.exclude(id__in=quiz_questions.values_list('question__id', flat=True))
 
     questionsDS = []
@@ -717,13 +718,10 @@ def quiz_builder_update(request, pk):
         'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
         'quiz_id': pk,
         'quiz_title': quiz.title,
-        'total': quiz.questions.count(),
+        'total': total,
+        'selected': quiz.questions.count(),
+        'remaining': questions.count(),
         'players': quiz.players,
-        'remaining': 00,
-        'selected': 00,
-        'hard': 00,
-        'normal': 00,
-        'easy': 00,
     }
     return render(request=request, template_name='application/quiz_builder_update.html', context=context)
 
