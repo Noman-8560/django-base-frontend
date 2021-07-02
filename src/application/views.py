@@ -280,7 +280,6 @@ def profile_update(request):
     image_form = ProfileImageForm(instance=profile)
     other_form = ProfileOtherForm(instance=profile)
 
-    print(request.user.profile_set.first().profile)
 
     if request.method == 'POST':
         action = request.GET.get('action')
@@ -1486,9 +1485,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         if user_no == control:
             submission = 1
 
-        print(control)
-        print(user_no)
-
         # STATEMENTS
         for statement in qquestion.statementvisibility_set.all():
             if user_no == 3 and statement.screen_3:
@@ -1510,11 +1506,23 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
                 choices_keys.append(choice.choice.pk)
                 choices_values.append(choice.choice.text)
 
+        for image in qquestion.imagevisibility_set.all():
+            if user_no == 3 and image.screen_3:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+            elif user_no == 2 and image.screen_2:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+            elif user_no == 1 and image.screen_1:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+
+        for audio in qquestion.audiovisibility_set.all():
+            if user_no == 3 and audio.screen_3:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else images.append(audio.audio.url)]
+            elif user_no == 2 and audio.screen_2:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
+            elif user_no == 1 and audio.screen_1:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
+
         # IMAGES AND AUDIOS
-        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
-         question.questionimage_set.filter(screen=screen)]
-        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
-         question.questionaudio_set.filter(screen=screen)]
 
         total = quiz.questions.count()
         attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()

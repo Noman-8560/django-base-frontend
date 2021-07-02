@@ -11,22 +11,23 @@
           integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
 {% endblock %}
 
-{% block page_heading %}
-    Quiz : {{ quiz_title }}<br><br>
-    {#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
-    {#        anyone.</p>#}
-    <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
-            class="fa fa-trash"></i> Remove</a>
-    <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i
-            class="fa fa-edit"></i> Edit</a>
-    <a href="{% url 'application:quiz_builder' %}" class="btn btn-sm btn-link text-primary"><i
-            class="fa fa-plus"></i> Add New</a>
-
-{% endblock %}
-
 
 {% block content %}
 
+    <div class="row mb-2 px-2">
+        <div class="col-7">
+            <a href="{% url 'application:delete_quiz' quiz_id %}" class="bt btn-link text-danger"><i
+                    class="fa fa-trash"></i> Remove</a>
+            <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-link text-primary"><i
+                    class="fa fa-edit"></i> Edit</a>
+            <a href="{% url 'application:quiz_builder' %}" class="btn btn-link text-primary"><i
+                    class="fa fa-plus"></i> Add New</a>
+        </div>
+        <div class="col-5 text-right">
+            <b class="font-weight-bolder"><i class="fa fa-chart-pie"></i> Total 10</b> |
+            <b class="font-weight-bolder"><i class="fa fa-chart-pie"></i> Selected 08</b>
+        </div>
+    </div>
 
     {# MAIN DIVISION #}
     <div class="">
