@@ -11,22 +11,24 @@
           integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
 {% endblock %}
 
-{% block page_heading %}
-    Quiz : {{ quiz_title }}<br><br>
-    {#    <p class="m-0 small text-white bg-danger p-2 my-2"><b>WARNING: </b>don't delete this quiz if this is attempted by#}
-    {#        anyone.</p>#}
-    <a href="{% url 'application:delete_quiz' quiz_id %}" class="btn btn-sm btn-link text-danger"><i
-            class="fa fa-trash"></i> Remove</a>
-    <a href="{% url 'application:update_quiz' quiz_id %}" class="btn btn-sm btn-link text-primary"><i
-            class="fa fa-edit"></i> Edit</a>
-    <a href="{% url 'application:quiz_builder' %}" class="btn btn-sm btn-link text-primary"><i
-            class="fa fa-plus"></i> Add New</a>
-
-{% endblock %}
-
 
 {% block content %}
 
+    <div class="row mb-2 px-2">
+        <div class="col-7">
+            <a href="{% url 'application:delete_quiz' quiz_id %}" class="text-danger"><i
+                    class="fa fa-trash"></i> Remove</a> |
+            <a href="{% url 'application:update_quiz' quiz_id %}" class=""><i
+                    class="fa fa-edit"></i> Edit</a> |
+            <a href="{% url 'application:quiz_builder' %}" class="text-success"><i
+                    class="fa fa-plus"></i> New</a>
+        </div>
+        <div class="col-5 text-right">
+            <b class="font-weight-bolder"><i class="fa fa-list"></i> <b id="total">{{ total }}</b></b> |
+            <b class="font-weight-bolder"><i class="fa fa-check-circle"></i> <b id="total">{{ selected }}</b></b> |
+            <b class="font-weight-bolder"><i class="fa fa-times-circle"></i> <b id="selected">{{ remaining }}</b></b>
+        </div>
+    </div>
 
     {# MAIN DIVISION #}
     <div class="">
@@ -72,37 +74,7 @@
                                                                                       class="text-dark">{{ q.age_limit }}</a>
                                         </h5>
                                     </td>
-                                    <td class="">
-                                        Submission Control
-                                        <div class="">
 
-                                            <input type="radio"
-                                                   name="submission_control_{{ q.id }}" id="submission_control"
-                                                   value="1"
-                                                   data-questionid="{{ q.id }}"
-                                                   {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
-                                            > Screen 1
-
-                                            {% if players == '2' or players == '3' %}
-                                                <input type="radio"
-                                                       name="submission_control_{{ q.id }}" id="submission_control"
-                                                       value="2"
-                                                       data-questionid="{{ q.id }}"
-                                                       {% if q.submission_control.no == 2 %}checked{% endif %}
-                                                > Screen 2
-                                            {% endif %}
-
-                                            {% if players == '3' %}
-                                                <input type="radio"
-                                                       name="submission_control_{{ q.id }}" id="submission_control"
-                                                       value="3"
-                                                       data-questionid="{{ q.id }}"
-                                                       {% if q.submission_control.no == 3 %}checked{% endif %}
-                                                > Screen 3
-                                            {% endif %}
-
-                                        </div>
-                                    </td>
                                 </tr>
 
                                 </tbody>
@@ -113,6 +85,55 @@
                         <div id="desc-div">
                             <div class="table-responsive">
                                 <table class="table table-borderless">
+
+                                    <colgroup>
+                                        <col span="1" style="width: 50%;">
+                                    </colgroup>
+
+                                    {# SUBMISSION CONTROL ----------------------------------------------------------- #}
+                                    <tr class="border-top">
+                                        <th>Submission Control</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td>Submission Control</td>
+                                        <td>
+                                            <input type="radio"
+                                                   name="submission_control_{{ q.id }}" id="submission_control"
+                                                   value="1"
+                                                   data-questionid="{{ q.id }}"
+                                                   {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
+                                            >
+                                        </td>
+
+                                        {% if players == '2' or players == '3' %}
+                                            <td>
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="2"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 2 %}checked{% endif %}
+                                                >
+                                            </td>
+                                        {% endif %}
+
+                                        {% if players == '3' %}
+                                            <td>
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="3"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 3 %}checked{% endif %}
+                                                >
+                                            </td>
+                                        {% endif %}
+                                    </tr>
 
                                     {# STATEMENTS ------------------------------------------------------------------ #}
                                     {% if q.statements %}
@@ -129,7 +150,7 @@
 
                                         {% for desc in q.statements %}
                                             <tr>
-                                                <td>{{ desc.description }}</td>
+                                                <td>{{ desc.description }} {% lorem 20 w %}</td>
                                                 <td>
                                                     <input type="checkbox" id="statement_control"
                                                            data-question="{{ q.id }}"
@@ -228,7 +249,7 @@
 
                                         {% for desc in q.images %}
                                             <tr>
-                                                <td>
+                                                <td class="">
                                                     {% if desc.url %}
                                                         <a href="{{ desc.url }}" target="_blank">
                                                             <img src="{{ desc.url }}" height="50">
@@ -288,7 +309,7 @@
                                             <tr>
                                                 <td>
                                                     {% if desc.url %}
-                                                        <audio controls>
+                                                        <audio controls class="">
                                                             <source src="{{ desc.url }}"
                                                                     type="audio/mpeg">
                                                             Your browser does not support the audio tag.
@@ -387,15 +408,6 @@
                                             <b class="text-dark">{{ q.age_limit }}</b>
                                         </h5>
                                     </td>
-                                    <td class="">
-                                        Submission Control
-                                        <div class="">
-
-
-                                            <b class="text-danger">Question is not assocoated with quiz </b>
-
-                                        </div>
-                                    </td>
                                 </tr>
 
                                 </tbody>
@@ -422,7 +434,7 @@
     <script>
         $(document).ready(function () {
 
-            $('#submission_control_body #submission_control').click(function () {
+            $('#desc-div #submission_control').click(function () {
                 let question = $(this).data('questionid');
                 let value = $(this).val();
 

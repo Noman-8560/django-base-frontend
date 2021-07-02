@@ -280,7 +280,6 @@ def profile_update(request):
     image_form = ProfileImageForm(instance=profile)
     other_form = ProfileOtherForm(instance=profile)
 
-    print(request.user.profile_set.first().profile)
 
     if request.method == 'POST':
         action = request.GET.get('action')
@@ -653,6 +652,7 @@ def quiz_builder_update(request, pk):
 
     quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
     questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
+    total = questions.count()
     questions = questions.exclude(id__in=quiz_questions.values_list('question__id', flat=True))
 
     questionsDS = []
@@ -718,13 +718,10 @@ def quiz_builder_update(request, pk):
         'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
         'quiz_id': pk,
         'quiz_title': quiz.title,
-        'total': quiz.questions.count(),
+        'total': total,
+        'selected': quiz.questions.count(),
+        'remaining': questions.count(),
         'players': quiz.players,
-        'remaining': 00,
-        'selected': 00,
-        'hard': 00,
-        'normal': 00,
-        'easy': 00,
     }
     return render(request=request, template_name='application/quiz_builder_update.html', context=context)
 
@@ -1486,9 +1483,6 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
         if user_no == control:
             submission = 1
 
-        print(control)
-        print(user_no)
-
         # STATEMENTS
         for statement in qquestion.statementvisibility_set.all():
             if user_no == 3 and statement.screen_3:
@@ -1510,11 +1504,23 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
                 choices_keys.append(choice.choice.pk)
                 choices_values.append(choice.choice.text)
 
+        for image in qquestion.imagevisibility_set.all():
+            if user_no == 3 and image.screen_3:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+            elif user_no == 2 and image.screen_2:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+            elif user_no == 1 and image.screen_1:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+
+        for audio in qquestion.audiovisibility_set.all():
+            if user_no == 3 and audio.screen_3:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else images.append(audio.audio.url)]
+            elif user_no == 2 and audio.screen_2:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
+            elif user_no == 1 and audio.screen_1:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
+
         # IMAGES AND AUDIOS
-        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
-         question.questionimage_set.filter(screen=screen)]
-        [audios.append(z.audio.url) if z.url is None else audios.append(z.url) for z in
-         question.questionaudio_set.filter(screen=screen)]
 
         total = quiz.questions.count()
         attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
