@@ -21,8 +21,7 @@ def get_jwt():
         'iss': ZOOM_API_KEY_JWT,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     }
-    token = jwt.encode(payload, ZOOM_API_SECRET_JWT)
-    return token
+    return jwt.encode(payload, ZOOM_API_SECRET_JWT).decode('utf-8')
 
 
 # NOT WORKING
@@ -145,6 +144,7 @@ def create_zoom_user(user: User):
     response = requests.post(url, headers=headers, json=data)
     profile = Profile.objects.get(user=user)
     r_data = json.loads(response.text)
+    print(f" {bearer_token}")
     print(" {} ".format(str(r_data)))
     profile.zoom_user_id = r_data['id']
     profile.save()
