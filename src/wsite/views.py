@@ -8,7 +8,6 @@ from .forms import WebsiteForm
 
 
 def home(request):
-
     context = {
         'site': Website.objects.filter().first(),
         'team_members': WebsiteTeam.objects.filter(is_active=True),
@@ -27,7 +26,6 @@ def event(request, slug):
 
 
 def article(request, slug):
-
     article = None
     try:
         article = Article.objects.get(slug=slug)
@@ -70,7 +68,6 @@ def articles(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def site_builder(request):
-
     form = None
     message = None
     website = Website.objects.filter().first()
