@@ -648,7 +648,7 @@ def quiz_builder_update(request, pk):
         quiz = Quiz.objects.get(pk=pk)
     except Quiz.DoesNotExist:
         messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
-        return HttpResponseRedirect(reverse('application:quiz_builder'))
+        return HttpResponseRedirect(reverse('application:quizzes'))
 
     quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
     questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
