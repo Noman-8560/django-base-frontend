@@ -62,10 +62,20 @@
                                         </h5>
                                     </td>
                                     <td>
-                                        Level<br>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
+                                        Level {{ q.level }}<br>
+                                        {% if q.level == 'e' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% elif q.level == 'n' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% else %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% endif %}
 
                                     </td>
                                     <td>
@@ -150,7 +160,7 @@
 
                                         {% for desc in q.statements %}
                                             <tr>
-                                                <td>{{ desc.description }} {% lorem 20 w %}</td>
+                                                <td>{{ desc.description }}</td>
                                                 <td>
                                                     <input type="checkbox" id="statement_control"
                                                            data-question="{{ q.id }}"
@@ -397,9 +407,19 @@
                                     </td>
                                     <td>
                                         Level<br>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
+                                        {% if q.level == 'e' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% elif q.level == 'n' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% else %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% endif %}
 
                                     </td>
                                     <td>
@@ -409,6 +429,13 @@
                                         </h5>
                                     </td>
                                 </tr>
+
+                                {% for statement in q.questionstatement_set.all %}
+                                    <tr>
+                                        <td>{{ statement.statement }}</td>
+                                    </tr>
+                                {% endfor %}
+
 
                                 </tbody>
                             </table>
