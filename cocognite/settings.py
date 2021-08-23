@@ -104,6 +104,8 @@ WSGI_APPLICATION = 'cocognite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+SITE_ID = 1
+
 if SERVER_ACTIVE:
     SITE_ID = 3
     if os.name == 'posix':
