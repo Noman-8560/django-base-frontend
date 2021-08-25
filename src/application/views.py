@@ -1493,16 +1493,21 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
                 statements.append(statement.statement.statement)
 
         # CHOICES
-        for choice in qquestion.choicevisibility_set.all():
-            if user_no == 3 and choice.screen_3:
+        if submission == 1:
+            for choice in qquestion.choicevisibility_set.all():
                 choices_keys.append(choice.choice.pk)
                 choices_values.append(choice.choice.text)
-            elif user_no == 2 and choice.screen_2:
-                choices_keys.append(choice.choice.pk)
-                choices_values.append(choice.choice.text)
-            elif user_no == 1 and choice.screen_1:
-                choices_keys.append(choice.choice.pk)
-                choices_values.append(choice.choice.text)
+        else:
+            for choice in qquestion.choicevisibility_set.all():
+                if user_no == 3 and choice.screen_3:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+                elif user_no == 2 and choice.screen_2:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+                elif user_no == 1 and choice.screen_1:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
 
         for image in qquestion.imagevisibility_set.all():
             if user_no == 3 and image.screen_3:
