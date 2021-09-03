@@ -648,7 +648,7 @@ def quiz_builder_update(request, pk):
         quiz = Quiz.objects.get(pk=pk)
     except Quiz.DoesNotExist:
         messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
-        return HttpResponseRedirect(reverse('application:quiz_builder'))
+        return HttpResponseRedirect(reverse('application:quizzes'))
 
     quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
     questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
@@ -1493,16 +1493,21 @@ def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
                 statements.append(statement.statement.statement)
 
         # CHOICES
-        for choice in qquestion.choicevisibility_set.all():
-            if user_no == 3 and choice.screen_3:
+        if submission == 1:
+            for choice in qquestion.choicevisibility_set.all():
                 choices_keys.append(choice.choice.pk)
                 choices_values.append(choice.choice.text)
-            elif user_no == 2 and choice.screen_2:
-                choices_keys.append(choice.choice.pk)
-                choices_values.append(choice.choice.text)
-            elif user_no == 1 and choice.screen_1:
-                choices_keys.append(choice.choice.pk)
-                choices_values.append(choice.choice.text)
+        else:
+            for choice in qquestion.choicevisibility_set.all():
+                if user_no == 3 and choice.screen_3:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+                elif user_no == 2 and choice.screen_2:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+                elif user_no == 1 and choice.screen_1:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
 
         for image in qquestion.imagevisibility_set.all():
             if user_no == 3 and image.screen_3:

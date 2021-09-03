@@ -410,13 +410,14 @@
                         }
 
                         {# 4 > FETCHING STATEMENTS #}
+                        statements_main_div.show();
                         if (data.statements.length > 0) {
-                            statements_main_div.show();
+
                             for (x of data.statements) {
                                 statements_div.append(`<p> ${x} </p>`);
                             }
-                        } else {
-                            statements_main_div.hide();
+                        }else{
+                            statements_div.append(`<p class="text-danger">No statements available for you</p>`)
                         }
 
                         {# 3 > CHOICES FETCHING #}
