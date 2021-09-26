@@ -27,11 +27,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
 
-    path('home/', home, name='home'),
-    path('', TemplateView.as_view(template_name='start.html')),
+    path('', home, name='home'),
 
     path('', include('src.application.urls', namespace='application')),
-    path('dev/', include('src.dev.urls', namespace='dev')),
 
     path('site/', include('src.wsite.urls', namespace='wsite')),
     path('zoom/', include('src.zoom_api.urls', namespace='zoom_api')),

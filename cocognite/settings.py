@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'src.application',
     'src.wsite',
     'src.zoom_api',
-    'src.dev',
+    # 'src.dev',
 
     # MUST BE AT THE END
     'notifications'
