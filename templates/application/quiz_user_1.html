@@ -27,16 +27,16 @@
             <div class="bg-danger text-light text-center">
                 {% if quiz.players != '1' %}
                     <p class="p-2 small">
-                        quiz <strong>{{ quiz.title }}</strong> is a collaborative quiz. The question statements and
-                        answer choices appear divided among
-                        the participants. Please talk to your team members to know what is displayed on their screens
-                        and then answer the question
+                        Quiz {{ quiz.title }} is a collabotative quiz<br>
+                        The question statements and answer choices appear divided among the participants.<br>
+                        Please talk to your team members to know what is displayed on their screens and then answer the
+                        question.
+
                     </p>
                 {% else %}
                     <p class="p-2 small"><i class="fa fa-warning"></i>
-                        quiz <strong>{{ quiz.title }}</strong> is a single-player quiz, no more participants are allowed
-                        , all options and hints are
-                        visible to you.
+                        quiz <strong>{{ quiz.title }}</strong> is a single-player quiz<br>
+                        No more participants are allowed all options and hints are visible to you.
                     </p>
                 {% endif %}
             </div>
@@ -416,8 +416,8 @@
                             for (x of data.statements) {
                                 statements_div.append(`<p> ${x} </p>`);
                             }
-                        }else{
-                            statements_div.append(`<p class="text-danger">No statements available for you</p>`)
+                        } else {
+                            statements_div.append(`<p class="text-danger">Talk to your partner to see what they see on their screen.</p>`)
                         }
 
                         {# 3 > CHOICES FETCHING #}
