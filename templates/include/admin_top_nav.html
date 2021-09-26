@@ -126,8 +126,8 @@
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user"
-                            {% if request.user.profile_set.first.profile %}
-                         src="/media/{{ request.user.profile_set.first.profile }}"
+                            {% if request.user.profile.profile %}
+                         src="{{ request.user.profile.profile.url }}"
                             {% else %}
                          src="{% static 'application/images/users/avatar-7.jpg' %}"
                             {% endif %}

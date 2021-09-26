@@ -39,6 +39,7 @@ def site_builder(request):
 @login_required
 def dashboard(request):
     allow = False
+
     if request.user.is_superuser:
         return render(request=request, template_name='application/admin_dashboard.html')
 
