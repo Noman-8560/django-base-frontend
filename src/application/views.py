@@ -36,6 +36,7 @@ def site_builder(request):
     return render(request=request, template_name='application/site_builder.html', context=context)
 
 
+# ADMIN --> Done
 @login_required
 def dashboard(request):
     allow = False

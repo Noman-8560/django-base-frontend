@@ -24,16 +24,24 @@ from src.wsite.views import home
 from . import settings
 
 urlpatterns = [
+
+    # REQUIRED --------------------------------------------------------- #
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
 
-    path('', home, name='home'),
+    # PORTALS ---------------------------------------------------------- #
+    path('admins/', include('src.portals.admins.urls', namespace='admin-portal')),
+    # path('s/', include('src.student.admins.urls', namespace='student-portal')),
+    # path('m/', include('src.moderator.admins.urls', namespace='moderator-portal')),
+    # path('p/', include('src.parent.admins.urls', namespace='parent-portal')),
 
+    # DEPRECATED ------------------------------------------------------- #
     path('', include('src.application.urls', namespace='application')),
-
     path('site/', include('src.wsite.urls', namespace='wsite')),
     path('zoom/', include('src.zoom_api.urls', namespace='zoom_api')),
 
+    # NOTIFICATION SERVER ---------------------------------------------- #
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
 
