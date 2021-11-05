@@ -3,8 +3,7 @@ from .views import *
 
 app_name = 'application'
 urlpatterns = [
-    #  --- HELP_PAGE
-
+    # CHANGED
     path('articles/', articles, name='articles'),
     path('add/article/', add_article, name='add_article'),
     path('update/article/<int:pk>/', add_article, name='update_article'),
@@ -17,20 +16,31 @@ urlpatterns = [
     path('quizzes/', quizzes, name='quizzes'),
     path('quiz/builder/', quiz_builder, name='quiz_builder'),
     path('update/quiz/<int:pk>/', update_quiz, name='update_quiz'),
+    path('delete/quiz/<int:pk>/', delete_quiz, name='delete_quiz'),
+    path('questions/', questions, name='questions'),
+    path('question/builder/', question_builder, name='question_builder'),
+    path('delete/question/<int:pk>/', delete_question, name='delete_question'),
+    path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
+
+    # ----------------------------------------------------------------------------------
+    path('add/question_statement/', add_question_statement, name='add_question_statement'),
+    path('add/question_choice/', add_question_choice, name='add_question_choice'),
+    path('delete/question_statement/<int:pk>/', delete_question_statement, name='delete_question_statement'),
+    path('delete/question_choice/<int:pk>/', delete_question_choice, name='delete_question_choice'),
+
+    # ==================================================================================================================
+    path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
     path('update/statements/quiz/<int:quiz_id>/question/<int:question_id>/',
          quiz_question_statements,
          name='quiz_question_statements'
          ),
-
     path('profile/', profile_update, name='profile_update'),
     path('zoom/profile/', zoom_profile, name='zoom_profile'),
     path('zoom/<int:quiz>/', zoom, name='zoom'),
 
     # --- QUIZ SETUP
 
-    path('delete/quiz/<int:pk>/', delete_quiz, name='delete_quiz'),
     path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
-    path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
 
     path('learn/quiz/<int:quiz>/', learning_resources_start, name='learning_resource_start'),
     path('learning_resources/', learning_resources, name='learning_resources'),
@@ -45,22 +55,12 @@ urlpatterns = [
 
     path('delete/team/<int:pk>/', delete_team, name='delete_team'),
 
-    # --- QUESTION BUILDER
-    path('questions/', questions, name='questions'),
-    path('question/builder/', question_builder, name='question_builder'),
-    path('delete/question/<int:pk>/', delete_question, name='delete_question'),
-    path('question/<int:pk>/', question_builder_update, name='question_builder_update'),
-
     path(
         'update/screen/option/<int:option>/question/<int:question>/',
         quiz_builder_question_submission_control,
         name='quiz_builder_question_submission_control'
     ),
     path('search/questions/for/quiz/<int:quiz_pk>/', search_question, name='search_question'),
-    path('add/question_statement/', add_question_statement, name='add_question_statement'),
-    path('add/question_choice/', add_question_choice, name='add_question_choice'),
-    path('delete/question_statement/<int:pk>/', delete_question_statement, name='delete_question_statement'),
-    path('delete/question_choice/<int:pk>/', delete_question_choice, name='delete_question_choice'),
     path('delete/statement/<int:pk>/', question_statement_delete, name='question_statement_delete'),
     path('add/choice/for/question/<int:question>/', question_choices_add, name='question_choice_add'),
     path('delete/choice/<int:pk>/', question_choice_delete, name='question_choice_delete'),

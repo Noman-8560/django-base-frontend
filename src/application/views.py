@@ -17,7 +17,7 @@ from .BusinessLogicLayer import identify_user_in_team
 from .forms import *
 from .models import *
 
-
+from .dll import ChoiceDS, QuestionDS, StatementDS
 """ COMPLETED ----------------------------------------------------------------------------  """
 
 
@@ -241,91 +241,6 @@ def add_article(request, pk=0):
     return render(request=request, template_name='application/add_article.html', context=context)
 
 
-def coming_soon(request):
-    return render(request=request, template_name='application/coming_soon.html')
-
-
-def page_404(request):
-    return render(request=request, template_name='application/page_404.html')
-
-
-def page_500(request):
-    return render(request=request, template_name='application/page_500.html')
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def site_builder(request):
-    context = {}
-    return render(request=request, template_name='application/site_builder.html', context=context)
-
-
-@login_required
-@never_cache
-def profile_update(request):
-    profile = None
-
-    try:
-        profile = Profile.objects.get(user=request.user)
-    except Profile.DoesNotExist:
-        if request.user.is_superuser:
-            messages.warning(request,
-                             f"You are super/root user may be your profile is not added by "
-                             f"developer during your account creation, you can create by own using this "
-                             f"link '{request.get_host()}/admin/application/profile/add/' or try to contact your "
-                             f"developer, by the way you don't need any profile."
-                             )
-        else:
-            messages.error(request, f"Your profile is not created yet, there may be some issue please contact admin.")
-        return redirect('application:dashboard', permanent=True)
-
-    basic_form = ProfileBasicForm(instance=request.user)
-    school_form = ProfileSchoolForm(instance=profile)
-    guardian_form = ProfileParentForm(instance=profile)
-    image_form = ProfileImageForm(instance=profile)
-    other_form = ProfileOtherForm(instance=profile)
-
-    if request.method == 'POST':
-        action = request.GET.get('action')
-        if action == 'basic':
-            pass
-            basic_form = ProfileBasicForm(request.POST or None, instance=request.user)
-            if basic_form.is_valid():
-                basic_form.save(commit=True)
-                messages.success(request, f'Your Name details updated')
-        elif action == 'school':
-            school_form = ProfileSchoolForm(request.POST or None, instance=profile)
-            if school_form.is_valid():
-                school_form.save(commit=True)
-                messages.success(request, f'Your School details updated')
-        elif action == 'guardian':
-            guardian_form = ProfileParentForm(request.POST or None, instance=profile)
-            if guardian_form.is_valid():
-                guardian_form.save(commit=True)
-                messages.success(request, f'Your Guardian details updated')
-        elif action == 'image':
-            image_form = ProfileImageForm(request.POST or None, request.FILES, instance=profile)
-            if image_form.is_valid():
-                image_form.save(commit=True)
-                messages.success(request, f'Your Profile image updated')
-        elif action == 'other':
-            other_form = ProfileOtherForm(request.POST or None, request.FILES, instance=profile)
-            if other_form.is_valid():
-                other_form.save(commit=True)
-                messages.success(request, f'Your Profile details updated')
-
-    context = {
-        'basic_form': basic_form,
-        'school_form': school_form,
-        'guardian_form': guardian_form,
-        'image_form': image_form,
-        'other_form': other_form,
-    }
-    return render(request=request, template_name='application/profile_update.html', context=context)
-
-
-''' QUESTION BUILDER VIEWS _______________________________________________________________'''
-
-
 @user_passes_test(lambda u: u.is_superuser)
 def questions(request):
     context = {
@@ -405,6 +320,128 @@ def question_builder_update(request, pk):
     return render(request=request, template_name='application/question_builder_update.html', context=context)
 
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def quizzes(request):
+    context = {
+        'quizes': Quiz.objects.all(),
+
+    }
+    return render(request=request, template_name='application/quizzes.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def quiz_builder(request):
+    if request.method == 'POST':
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Quiz {out.title} added Successfully.")
+            return redirect('application:quiz_builder_update', out.pk, permanent=True)
+    else:
+        form = QuizForm()
+
+    context = {
+        'form': form
+    }
+    return render(request=request, template_name='application/quiz_builder.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def update_quiz(request, pk):
+    quiz = None
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+    if request.method == 'POST':
+
+        form = QuizForm(request.POST or None, instance=quiz)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Quiz {quiz.title} Updated Successfully.")
+            return redirect('application:quiz_builder_update', quiz.pk, permanent=True)
+    else:
+        form = QuizForm(instance=quiz)
+    context = {
+        'form': form
+    }
+
+    return render(request=request, template_name='application/quiz_builder.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_quiz(request, pk):
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+        out = quiz.delete()
+        messages.success(request=request, message=f"Requested Quiz: {quiz.title} deleted successfully.")
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Quiz ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:quizzes'))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def subjects(request):
+    context = {
+        'subjects': Subject.objects.all()
+    }
+    return render(request=request, template_name='application/subjects.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def update_subject(request, pk):
+    subject = None
+    try:
+        subject = Subject.objects.get(pk=pk)
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Subject ID: {pk} doesn't exists.")
+        return HttpResponseRedirect(reverse('application:subjects'))
+
+    if request.method == 'GET':
+        form = SubjectForm(instance=subject)
+    else:
+        form = SubjectForm(request.POST or None, instance=subject)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request,
+                             message=f"Subject {out} Updated Successfully.")
+
+    context = {'form': form}
+    return render(request=request, template_name='application/add_subject.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_subject(request):
+    if request.method == 'GET':
+        form = SubjectForm()
+    else:
+        form = SubjectForm(request.POST or None)
+        if form.is_valid():
+            out = form.save(commit=True)
+            messages.success(request=request, message=f"Subject: {out} added successfully.")
+    context = {
+        'form': form
+    }
+    return render(request=request, template_name='application/add_subject.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_subject(request, pk):
+    try:
+        subject = Subject.objects.get(pk=pk)
+        out = subject.delete()
+        messages.success(request=request, message=f"Requested Subject: {subject.title} deleted successfully.")
+    except Subject.DoesNotExist:
+        messages.error(request=request, message=f"Requested Subject ID: {pk} doesn't exists.")
+    return HttpResponseRedirect(reverse('application:subjects'))
+
+
+# ------------------------------------------
 @csrf_exempt
 @user_passes_test(lambda u: u.is_superuser)
 def add_question_statement(request):
@@ -461,6 +498,94 @@ def delete_question_statement(request, pk):
         return JsonResponse(data={"message": "success"}, safe=False)
     else:
         return JsonResponse(data=None)
+
+
+""" ____________________________________________________________________________________________________________"""
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def site_builder(request):
+    context = {}
+    return render(request=request, template_name='application/site_builder.html', context=context)
+
+
+def coming_soon(request):
+    return render(request=request, template_name='application/coming_soon.html')
+
+
+def page_404(request):
+    return render(request=request, template_name='application/page_404.html')
+
+
+def page_500(request):
+    return render(request=request, template_name='application/page_500.html')
+
+
+@login_required
+@never_cache
+def profile_update(request):
+    profile = None
+
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        if request.user.is_superuser:
+            messages.warning(request,
+                             f"You are super/root user may be your profile is not added by "
+                             f"developer during your account creation, you can create by own using this "
+                             f"link '{request.get_host()}/admin/application/profile/add/' or try to contact your "
+                             f"developer, by the way you don't need any profile."
+                             )
+        else:
+            messages.error(request, f"Your profile is not created yet, there may be some issue please contact admin.")
+        return redirect('application:dashboard', permanent=True)
+
+    basic_form = ProfileBasicForm(instance=request.user)
+    school_form = ProfileSchoolForm(instance=profile)
+    guardian_form = ProfileParentForm(instance=profile)
+    image_form = ProfileImageForm(instance=profile)
+    other_form = ProfileOtherForm(instance=profile)
+
+    if request.method == 'POST':
+        action = request.GET.get('action')
+        if action == 'basic':
+            pass
+            basic_form = ProfileBasicForm(request.POST or None, instance=request.user)
+            if basic_form.is_valid():
+                basic_form.save(commit=True)
+                messages.success(request, f'Your Name details updated')
+        elif action == 'school':
+            school_form = ProfileSchoolForm(request.POST or None, instance=profile)
+            if school_form.is_valid():
+                school_form.save(commit=True)
+                messages.success(request, f'Your School details updated')
+        elif action == 'guardian':
+            guardian_form = ProfileParentForm(request.POST or None, instance=profile)
+            if guardian_form.is_valid():
+                guardian_form.save(commit=True)
+                messages.success(request, f'Your Guardian details updated')
+        elif action == 'image':
+            image_form = ProfileImageForm(request.POST or None, request.FILES, instance=profile)
+            if image_form.is_valid():
+                image_form.save(commit=True)
+                messages.success(request, f'Your Profile image updated')
+        elif action == 'other':
+            other_form = ProfileOtherForm(request.POST or None, request.FILES, instance=profile)
+            if other_form.is_valid():
+                other_form.save(commit=True)
+                messages.success(request, f'Your Profile details updated')
+
+    context = {
+        'basic_form': basic_form,
+        'school_form': school_form,
+        'guardian_form': guardian_form,
+        'image_form': image_form,
+        'other_form': other_form,
+    }
+    return render(request=request, template_name='application/profile_update.html', context=context)
+
+
+''' QUESTION BUILDER VIEWS _______________________________________________________________'''
 
 
 @csrf_exempt
@@ -615,36 +740,6 @@ def question_audio_delete(request, pk):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def quizzes(request):
-    context = {
-        'quizes': Quiz.objects.all(),
-
-    }
-    return render(request=request, template_name='application/quizzes.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def quiz_builder(request):
-    if request.method == 'POST':
-        form = QuizForm(request.POST)
-        if form.is_valid():
-            out = form.save(commit=True)
-            messages.success(request=request,
-                             message=f"Quiz {out.title} added Successfully.")
-            return redirect('application:quiz_builder_update', out.pk, permanent=True)
-    else:
-        form = QuizForm()
-
-    context = {
-        'form': form
-    }
-    return render(request=request, template_name='application/quiz_builder.html', context=context)
-
-
-from .dll import ChoiceDS, QuestionDS, StatementDS
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def quiz_builder_update(request, pk):
     quiz = None
     try:
@@ -774,43 +869,6 @@ def quiz_builder_question_submission_control(request, option, question):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def update_quiz(request, pk):
-    quiz = None
-    try:
-        quiz = Quiz.objects.get(pk=pk)
-    except Quiz.DoesNotExist:
-        messages.error(request=request, message=f'Requested Quiz [ID: {pk}] Does not Exists.')
-        return HttpResponseRedirect(reverse('application:quiz_builder'))
-
-    if request.method == 'POST':
-
-        form = QuizForm(request.POST or None, instance=quiz)
-        if form.is_valid():
-            out = form.save(commit=True)
-            messages.success(request=request,
-                             message=f"Quiz {quiz.title} Updated Successfully.")
-            return redirect('application:quiz_builder_update', quiz.pk, permanent=True)
-    else:
-        form = QuizForm(instance=quiz)
-    context = {
-        'form': form
-    }
-
-    return render(request=request, template_name='application/quiz_builder.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def delete_quiz(request, pk):
-    try:
-        quiz = Quiz.objects.get(pk=pk)
-        out = quiz.delete()
-        messages.success(request=request, message=f"Requested Quiz: {quiz.title} deleted successfully.")
-    except Subject.DoesNotExist:
-        messages.error(request=request, message=f"Requested Quiz ID: {pk} doesn't exists.")
-    return HttpResponseRedirect(reverse('application:quizzes'))
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def search_question(request, quiz_pk):
     quiz = Quiz.objects.get(pk=quiz_pk)
 
@@ -907,62 +965,6 @@ def quiz_question_delete(request, quiz, question):
 
 
 ''' QUESTION BUILDER VIEWS _______________________________________________________________'''
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def subjects(request):
-    context = {
-        'subjects': Subject.objects.all()
-    }
-    return render(request=request, template_name='application/subjects.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def update_subject(request, pk):
-    subject = None
-    try:
-        subject = Subject.objects.get(pk=pk)
-    except Subject.DoesNotExist:
-        messages.error(request=request, message=f"Requested Subject ID: {pk} doesn't exists.")
-        return HttpResponseRedirect(reverse('application:subjects'))
-
-    if request.method == 'GET':
-        form = SubjectForm(instance=subject)
-    else:
-        form = SubjectForm(request.POST or None, instance=subject)
-        if form.is_valid():
-            out = form.save(commit=True)
-            messages.success(request=request,
-                             message=f"Subject {out} Updated Successfully.")
-
-    context = {'form': form}
-    return render(request=request, template_name='application/add_subject.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def add_subject(request):
-    if request.method == 'GET':
-        form = SubjectForm()
-    else:
-        form = SubjectForm(request.POST or None)
-        if form.is_valid():
-            out = form.save(commit=True)
-            messages.success(request=request, message=f"Subject: {out} added successfully.")
-    context = {
-        'form': form
-    }
-    return render(request=request, template_name='application/add_subject.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def delete_subject(request, pk):
-    try:
-        subject = Subject.objects.get(pk=pk)
-        out = subject.delete()
-        messages.success(request=request, message=f"Requested Subject: {subject.title} deleted successfully.")
-    except Subject.DoesNotExist:
-        messages.error(request=request, message=f"Requested Subject ID: {pk} doesn't exists.")
-    return HttpResponseRedirect(reverse('application:subjects'))
 
 
 ''' QUIZ SETUP VIEWS _______________________________________________________________'''

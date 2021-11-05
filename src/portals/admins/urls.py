@@ -1,9 +1,13 @@
 from django.urls import path, include
 
 from src.portals.admins.views import (
-    DashboardView, ArticleListView, ArticleDeleteView, ArticleCreateView, ArticleUpdateView, ArticleDetailView,
-    SubjectListView, SubjectDetailView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView, QuizListView,
-    QuizCreateView, QuizUpdateView, QuizDeleteView
+    DashboardView,
+    ArticleListView, ArticleDeleteView, ArticleCreateView, ArticleUpdateView, ArticleDetailView,
+    SubjectListView, SubjectDetailView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView,
+    QuizListView, QuizCreateView, QuizUpdateView, QuizDeleteView,
+    QuestionListView, QuestionCreateView, QuestionDeleteView, QuestionUpdateView,
+
+    QuestionChoiceAddJSON, QuestionChoiceDeleteJSON, QuestionStatementAddJSON, QuestionStatementDeleteJSON
 )
 
 app_name = "admin-portal"
@@ -26,5 +30,17 @@ urlpatterns = [
     path('add/quiz/', QuizCreateView.as_view(), name='quiz-create'),
     path('update/quiz/<int:pk>/', QuizUpdateView.as_view(), name='quiz-update'),
     path('delete/quiz/<int:pk>/', QuizDeleteView.as_view(), name='quiz-delete'),
+
+    path('question/', QuestionListView.as_view(), name='question'),
+    path('question/add/', QuestionCreateView.as_view(), name='question-create'),
+    path('question/<int:pk>/change/', QuestionUpdateView.as_view(), name='question-update'),
+    path('question/<int:pk>/delete/', QuestionDeleteView.as_view(), name='question-delete'),
+
+    # -------------------------------------------------------------------------------------------------- JSON RESPONSES
+    path('json/question_statement/add/', QuestionStatementAddJSON.as_view(), name='question-statement-add-json'),
+    path('json/question_choice/add/', QuestionChoiceAddJSON.as_view(), name='question-choice-add-json'),
+
+    path('json/question_statement/<int:pk>/delete/', QuestionStatementDeleteJSON.as_view(), name='question-statement-delete-json'),
+    path('json/question_choice/<int:pk>/delete/', QuestionChoiceDeleteJSON.as_view(), name='question-choice-delete-json'),
 
 ]
