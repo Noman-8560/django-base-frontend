@@ -567,6 +567,80 @@ def quiz_question_delete(request, quiz, question):
         return HttpResponseRedirect(reverse('application:quiz_builder'))
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def question_image_add(request, question):
+    if request.method == 'POST':
+
+        form = QuestionImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            question_ref = Question.objects.get(pk=question)
+            url = form.cleaned_data['url']
+            image = form.cleaned_data['image']
+
+            question_image = QuestionImage.objects.create(
+                url=url, image=image, question=question_ref
+            )
+            question_image.save()
+            messages.success(
+                request=request, message="Image attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+    return redirect('application:question_builder_update', question, permanent=True)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def question_image_delete(request, pk):
+    try:
+        question_image = QuestionImage.objects.get(pk=pk)
+        question_id = question_image.question.pk
+        question_image.delete()
+
+        messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
+        return redirect('application:question_builder_update', question_id, permanent=True)
+    except QuestionImage.DoesNotExist:
+        messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
+
+    return redirect('application:questions', permanent=True)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def question_audio_add(request, question):
+    if request.method == 'POST':
+
+        form = QuestionAudioForm(request.POST, request.FILES)
+        if form.is_valid():
+            question_ref = Question.objects.get(pk=question)
+            url = form.cleaned_data['url']
+            audio = form.cleaned_data['audio']
+
+            question_audio = QuestionAudio.objects.create(
+                url=url, audio=audio, question=question_ref
+            )
+            question_audio.save()
+            messages.success(
+                request=request, message="Audio attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+    return redirect('application:question_builder_update', question, permanent=True)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def question_audio_delete(request, pk):
+    try:
+        question_audio = QuestionAudio.objects.get(pk=pk)
+        question_id = question_audio.question.pk
+        question_audio.delete()
+
+        messages.success(request=request, message=f"Audio of Question > {question_id} deleted successfully")
+        return redirect('application:question_builder_update', question_id, permanent=True)
+    except QuestionAudio.DoesNotExist:
+        messages.error(request=request, message=f"Failed To Delete > Requested audio ({pk}) Does not Exists")
+
+    return redirect('application:question_builder', permanent=True)
+
+
 """ ____________________________________________________________________________________________________________"""
 
 
@@ -725,80 +799,6 @@ def question_choice_delete(request, pk):
         return redirect('application:question_builder_update', question_id, permanent=True)
     except QuestionChoice.DoesNotExist:
         messages.error(request=request, message=f"Failed To Delete > Requested Choice ({pk}) Does not Exists")
-
-    return redirect('application:question_builder', permanent=True)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def question_image_add(request, question):
-    if request.method == 'POST':
-
-        form = QuestionImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            question_ref = Question.objects.get(pk=question)
-            url = form.cleaned_data['url']
-            image = form.cleaned_data['image']
-
-            question_image = QuestionImage.objects.create(
-                url=url, image=image, question=question_ref
-            )
-            question_image.save()
-            messages.success(
-                request=request, message="Image attached to question Successfully - Redirected to Question Description."
-            )
-        else:
-            messages.error(request=request, message=f'Error in adding audios')
-    return redirect('application:question_builder_update', question, permanent=True)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def question_image_delete(request, pk):
-    try:
-        question_image = QuestionImage.objects.get(pk=pk)
-        question_id = question_image.question.pk
-        question_image.delete()
-
-        messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
-        return redirect('application:question_builder_update', question_id, permanent=True)
-    except QuestionImage.DoesNotExist:
-        messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
-
-    return redirect('application:questions', permanent=True)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def question_audio_add(request, question):
-    if request.method == 'POST':
-
-        form = QuestionAudioForm(request.POST, request.FILES)
-        if form.is_valid():
-            question_ref = Question.objects.get(pk=question)
-            url = form.cleaned_data['url']
-            audio = form.cleaned_data['audio']
-
-            question_audio = QuestionAudio.objects.create(
-                url=url, audio=audio, question=question_ref
-            )
-            question_audio.save()
-            messages.success(
-                request=request, message="Audio attached to question Successfully - Redirected to Question Description."
-            )
-        else:
-            messages.error(request=request, message=f'Error in adding audios')
-    return redirect('application:question_builder_update', question, permanent=True)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def question_audio_delete(request, pk):
-    try:
-        question_audio = QuestionAudio.objects.get(pk=pk)
-        question_id = question_audio.question.pk
-        question_audio.delete()
-
-        messages.success(request=request, message=f"Audio of Question > {question_id} deleted successfully")
-        return redirect('application:question_builder_update', question_id, permanent=True)
-    except QuestionAudio.DoesNotExist:
-        messages.error(request=request, message=f"Failed To Delete > Requested audio ({pk}) Does not Exists")
 
     return redirect('application:question_builder', permanent=True)
 

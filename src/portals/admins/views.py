@@ -351,6 +351,82 @@ class QuestionChoiceDeleteJSON(View):
         return JsonResponse(data={"message": "success"}, safe=False)
 
 
+class QuestionImageCreateView(View):
+
+    def post(self, request, question_id):
+        form = QuestionImageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            question_ref = Question.objects.get(pk=question_id)
+            url = form.cleaned_data['url']
+            image = form.cleaned_data['image']
+
+            question_image = QuestionImage.objects.create(
+                url=url, image=image, question=question_ref
+            )
+            question_image.save()
+            messages.success(
+                request=request, message="Image attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding images')
+        return redirect('admin-portal:question-update', question_id, permanent=True)
+
+
+class QuestionAudioCreateView(View):
+
+    def post(self, request, question_id):
+        form = QuestionAudioForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            question_ref = Question.objects.get(pk=question_id)
+            url = form.cleaned_data['url']
+            audio = form.cleaned_data['audio']
+
+            question_audio = QuestionAudio.objects.create(
+                url=url, audio=audio, question=question_ref
+            )
+            question_audio.save()
+            messages.success(
+                request=request, message="Audio attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+        return redirect('admin-portal:question-update', question_id, permanent=True)
+
+
+class QuestionImageDeleteView(View):
+
+    def get(self, request, pk):
+        try:
+            question_image = QuestionImage.objects.get(pk=pk)
+            question_id = question_image.question.pk
+            question_image.delete()
+
+            messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
+            return redirect('admin-portal:question-update', question_id, permanent=True)
+        except QuestionImage.DoesNotExist:
+            messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
+
+        return redirect('admin-portal:question', permanent=True)
+
+
+class QuestionAudioDeleteView(View):
+
+    def get(self, request, pk):
+        try:
+            question_audio = QuestionAudio.objects.get(pk=pk)
+            question_id = question_audio.question.pk
+            question_audio.delete()
+
+            messages.success(request=request, message=f"Audio of Question > {question_id} deleted successfully")
+            return redirect('admin-portal:question-update', question_id, permanent=True)
+        except QuestionAudio.DoesNotExist:
+            messages.error(request=request, message=f"Failed To Delete > Requested audio ({pk}) Does not Exists")
+
+        return redirect('admin-portal:question', permanent=True)
+
+
 """ QUESTION DETAIL RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
 
 
@@ -499,9 +575,6 @@ class QuestionSubmitStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-""" CHNAGE ====================================================================================================== """
-
-
 class QuizQuestionAddJSON(View):
 
     def get(self, request, quiz_id, question_id):
@@ -567,3 +640,6 @@ class QuizQuestionDeleteJSON(View):
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
             messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
             return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+
+""" CHNAGE ====================================================================================================== """

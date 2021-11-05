@@ -8,6 +8,8 @@ from src.portals.admins.views import (
     QuestionListView, QuestionCreateView, QuestionDeleteView, QuestionUpdateView,
 
     QuestionChoiceAddJSON, QuestionChoiceDeleteJSON, QuestionStatementAddJSON, QuestionStatementDeleteJSON,
+    QuestionImageCreateView, QuestionImageDeleteView, QuestionAudioCreateView, QuestionAudioDeleteView,
+
     QuestionStatementStatusUpdateJSON, QuestionChoiceStatusUpdateJSON, QuestionImageStatusUpdateJSON,
     QuestionAudioStatusUpdateJSON, QuestionSubmitStatusUpdateJSON, QuizQuestionAddJSON, QuizQuestionDeleteJSON
 )
@@ -44,6 +46,10 @@ urlpatterns = [
     path('json/question_choice/add/', QuestionChoiceAddJSON.as_view(), name='question-choice-add-json'),
     path('json/question_statement/<int:pk>/delete/', QuestionStatementDeleteJSON.as_view(), name='question-statement-delete-json'),
     path('json/question_choice/<int:pk>/delete/', QuestionChoiceDeleteJSON.as_view(), name='question-choice-delete-json'),
+    path('json/question_image/<int:question_id>/image/add/', QuestionImageCreateView.as_view(), name='question-image-create-json'),
+    path('json/question_image/image/<int:pk>/delete/', QuestionImageDeleteView.as_view(), name='question-image-delete-json'),
+    path('json/question_audio/<int:question_id>/audio/add/', QuestionAudioCreateView.as_view(), name='question-audio-create-json'),
+    path('json/question_audio/<int:pk>/delete/', QuestionAudioDeleteView.as_view(), name='question-audio-delete-json'),
 
     path('json/quiz/question/statement/status/<int:pk>/change/', QuestionStatementStatusUpdateJSON.as_view(), name='question-statement-status-change-json'),
     path('json/quiz/question/choice/status/<int:pk>/change/', QuestionChoiceStatusUpdateJSON.as_view(), name='question-choice-status-change-json'),

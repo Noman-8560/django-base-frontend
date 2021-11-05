@@ -195,7 +195,7 @@
                                                                     </div>
                                                                     <div class="mt-4 text-center">
                                                                         <a class="btn btn-danger"
-                                                                           href="{% url 'application:question_image_delete' image.id %}">
+                                                                           href="{% url 'admin-portal:question-image-delete-json' image.id %}">
                                                                             <i class="fa fa-trash"></i>
                                                                         </a>
                                                                     </div>
@@ -243,7 +243,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <a class="btn btn-danger"
-                                                                       href="{% url 'application:question_audio_delete' audio.id %}">
+                                                                       href="{% url 'admin-portal:question-audio-delete-json' audio.id %}">
                                                                         <i class="fa fa-trash"></i>
                                                                     </a>
                                                                 </td>
@@ -297,7 +297,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'application:question_audio_add' question_id %}" method="post"
+                    <form action="{% url 'admin-portal:question-audio-create-json' question_id %}" method="post"
                           enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ audio_form|crispy }}
@@ -320,7 +320,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'application:question_image_add' question_id %}" method="post"
+                    <form action="{% url 'admin-portal:question-image-create-json' question_id %}" method="post"
                           enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ image_form|crispy }}

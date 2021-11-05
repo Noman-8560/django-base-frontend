@@ -38,8 +38,13 @@ urlpatterns = [
     path('c/api/change/quiz/question/submission/status/<int:pk>/',
          change_question_submission_control, name='capi_change_question_submission_control'),
 
-path('add/quiz/<int:quiz_id>/question/<int:question_id>/', quiz_question_add, name='quiz_question_add'),
+    path('add/quiz/<int:quiz_id>/question/<int:question_id>/', quiz_question_add, name='quiz_question_add'),
     path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
+
+    path('add/image/for/question/<int:question>/', question_image_add, name='question_image_add'),
+    path('delete/image/<int:pk>/', question_image_delete, name='question_image_delete'),
+    path('add/audio/for/question/<int:question>/', question_audio_add, name='question_audio_add'),
+    path('delete/audio/<int:pk>/', question_audio_delete, name='question_audio_delete'),
 
     # ==================================================================================================================
     path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
@@ -77,10 +82,6 @@ path('add/quiz/<int:quiz_id>/question/<int:question_id>/', quiz_question_add, na
     path('delete/statement/<int:pk>/', question_statement_delete, name='question_statement_delete'),
     path('add/choice/for/question/<int:question>/', question_choices_add, name='question_choice_add'),
     path('delete/choice/<int:pk>/', question_choice_delete, name='question_choice_delete'),
-    path('add/image/for/question/<int:question>/', question_image_add, name='question_image_add'),
-    path('delete/image/<int:pk>/', question_image_delete, name='question_image_delete'),
-    path('add/audio/for/question/<int:question>/', question_audio_add, name='question_audio_add'),
-    path('delete/audio/<int:pk>/', question_audio_delete, name='question_audio_delete'),
 
     path('coming_soon/', coming_soon, name='coming_soon'),
     path('404/', page_404, name='404'),
