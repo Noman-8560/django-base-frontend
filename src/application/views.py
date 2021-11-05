@@ -18,25 +18,9 @@ from .forms import *
 from .models import *
 
 
-def coming_soon(request):
-    return render(request=request, template_name='application/coming_soon.html')
+""" COMPLETED ----------------------------------------------------------------------------  """
 
 
-def page_404(request):
-    return render(request=request, template_name='application/page_404.html')
-
-
-def page_500(request):
-    return render(request=request, template_name='application/page_500.html')
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def site_builder(request):
-    context = {}
-    return render(request=request, template_name='application/site_builder.html', context=context)
-
-
-# ADMIN --> Done
 @login_required
 def dashboard(request):
     allow = False
@@ -257,6 +241,24 @@ def add_article(request, pk=0):
     return render(request=request, template_name='application/add_article.html', context=context)
 
 
+def coming_soon(request):
+    return render(request=request, template_name='application/coming_soon.html')
+
+
+def page_404(request):
+    return render(request=request, template_name='application/page_404.html')
+
+
+def page_500(request):
+    return render(request=request, template_name='application/page_500.html')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def site_builder(request):
+    context = {}
+    return render(request=request, template_name='application/site_builder.html', context=context)
+
+
 @login_required
 @never_cache
 def profile_update(request):
@@ -281,7 +283,6 @@ def profile_update(request):
     guardian_form = ProfileParentForm(instance=profile)
     image_form = ProfileImageForm(instance=profile)
     other_form = ProfileOtherForm(instance=profile)
-
 
     if request.method == 'POST':
         action = request.GET.get('action')

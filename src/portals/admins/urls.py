@@ -2,7 +2,8 @@ from django.urls import path, include
 
 from src.portals.admins.views import (
     DashboardView, ArticleListView, ArticleDeleteView, ArticleCreateView, ArticleUpdateView, ArticleDetailView,
-    SubjectListView, SubjectDetailView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView
+    SubjectListView, SubjectDetailView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView, QuizListView,
+    QuizCreateView, QuizUpdateView, QuizDeleteView
 )
 
 app_name = "admin-portal"
@@ -20,5 +21,10 @@ urlpatterns = [
     path('add/subject/', SubjectCreateView.as_view(), name='subject-create'),
     path('update/subject/<int:pk>/', SubjectUpdateView.as_view(), name='subject-update'),
     path('delete/subject/<int:pk>/', SubjectDeleteView.as_view(), name='subject-delete'),
+
+    path('quiz/', QuizListView.as_view(), name='quiz'),
+    path('add/quiz/', QuizCreateView.as_view(), name='quiz-create'),
+    path('update/quiz/<int:pk>/', QuizUpdateView.as_view(), name='quiz-update'),
+    path('delete/quiz/<int:pk>/', QuizDeleteView.as_view(), name='quiz-delete'),
 
 ]

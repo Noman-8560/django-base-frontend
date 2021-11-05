@@ -4,23 +4,16 @@ from .views import *
 app_name = 'application'
 urlpatterns = [
     #  --- HELP_PAGE
-    path('dashboard/', dashboard, name='dashboard'),
-    path('zoom/<int:quiz>/', zoom, name='zoom'),
 
     path('articles/', articles, name='articles'),
     path('add/article/', add_article, name='add_article'),
     path('update/article/<int:pk>/', add_article, name='update_article'),
     path('delete/article/<int:pk>/', delete_article, name='delete_article'),
-
-    path('profile/', profile_update, name='profile_update'),
-    path('zoom/profile/', zoom_profile, name='zoom_profile'),
-
     path('subjects/', subjects, name='subjects'),
     path('add/subject/', add_subject, name='add_subject'),
     path('update/subject/<int:pk>/', update_subject, name='update_subject'),
     path('delete/subject/<int:pk>/', delete_subject, name='delete_subject'),
-
-    # --- QUIZ SETUP
+    path('dashboard/', dashboard, name='dashboard'),
     path('quizzes/', quizzes, name='quizzes'),
     path('quiz/builder/', quiz_builder, name='quiz_builder'),
     path('update/quiz/<int:pk>/', update_quiz, name='update_quiz'),
@@ -28,6 +21,12 @@ urlpatterns = [
          quiz_question_statements,
          name='quiz_question_statements'
          ),
+
+    path('profile/', profile_update, name='profile_update'),
+    path('zoom/profile/', zoom_profile, name='zoom_profile'),
+    path('zoom/<int:quiz>/', zoom, name='zoom'),
+
+    # --- QUIZ SETUP
 
     path('delete/quiz/<int:pk>/', delete_quiz, name='delete_quiz'),
     path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
