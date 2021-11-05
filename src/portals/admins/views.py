@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -13,10 +13,11 @@ from django.views.generic import (
 from src.application.forms import ProfileSchoolForm
 from src.application.models import (
     Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
+    QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
 )
+from src.portals.admins.dll import QuestionDS
 from src.portals.admins.forms import ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm, \
-    QuestionImageForm, QuestionAudioForm
-
+    QuestionImageForm, QuestionAudioForm, QuizQuestionForm
 
 # decorators = [never_cache, login_required]
 # @method_decorator(decorators, name='dispatch')
@@ -121,6 +122,91 @@ class QuizListView(ListView):
     template_name = 'admins/quiz_list.html'
 
 
+class QuizDetailView(DetailView):
+    template_name = 'admins/quiz_detail.html'
+    model = Quiz
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizDetailView, self).get_context_data(**kwargs)
+        quiz = self.object
+
+        quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
+        questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
+        total = questions.count()
+        questions = questions.exclude(id__in=quiz_questions.values_list('question__id', flat=True))
+
+        questionsDS = []
+        for quiz_question in quiz_questions:
+
+            question_exists = False
+            if quiz_question.question in quiz.questions.all():
+                question_exists = True
+
+            questionDS = QuestionDS(
+                id=quiz_question.pk, question_id=quiz_question.question.pk, question_exists=question_exists,
+                level=quiz_question.question.level, subject=quiz_question.question.subject,
+                question_type=quiz_question.question.question_type, age_limit=quiz_question.question.age_limit,
+                submission_control=quiz_question.submission_control
+            )
+
+            for choice_v in ChoiceVisibility.objects.filter(
+                    quiz_question=quiz_question, quiz_question__quiz=quiz):
+                questionDS.add_choice(
+                    id=choice_v.id, description=choice_v.choice.text, is_correct=choice_v.choice.is_correct,
+                    screen1=choice_v.screen_1, screen2=choice_v.screen_2, screen3=choice_v.screen_3
+                )
+
+            for statement_v in StatementVisibility.objects.filter(
+                    quiz_question=quiz_question, quiz_question__quiz=quiz):
+                questionDS.add_statment(
+                    id=statement_v.id, description=statement_v.statement.statement,
+                    screen1=statement_v.screen_1, screen2=statement_v.screen_2, screen3=statement_v.screen_3
+                )
+
+            for image_v in ImageVisibility.objects.filter(
+                    quiz_question=quiz_question, quiz_question__quiz=quiz):
+                if image_v.image.image:
+                    questionDS.add_image(
+                        id=image_v.id, url=image_v.image.url, image=image_v.image.image.url,
+                        screen1=image_v.screen_1, screen2=image_v.screen_2, screen3=image_v.screen_3
+                    )
+                else:
+                    questionDS.add_image(
+                        id=image_v.id, url=image_v.image.url, image=None,
+                        screen1=image_v.screen_1, screen2=image_v.screen_2, screen3=image_v.screen_3
+                    )
+
+            for audio_v in AudioVisibility.objects.filter(
+                    quiz_question=quiz_question, quiz_question__quiz=quiz):
+                if audio_v.audio.audio:
+                    questionDS.add_audio(
+                        id=audio_v.id, url=audio_v.audio.url, audio=audio_v.audio.audio.url,
+                        screen1=audio_v.screen_1, screen2=audio_v.screen_2, screen3=audio_v.screen_3
+                    )
+                else:
+                    questionDS.add_audio(
+                        id=audio_v.id, url=audio_v.audio.url, audio=None,
+                        screen1=audio_v.screen_1, screen2=audio_v.screen_2, screen3=audio_v.screen_3
+                    )
+
+            questionsDS.append(questionDS)
+
+        context = {
+            'questionDS': questionsDS,
+            'questions': questions,
+            'subjects': quiz.subjects.all(),
+            'form': QuizQuestionForm(instance=QuizQuestion.objects.first()),
+            'quiz_id': quiz.pk,
+            'quiz_title': quiz.title,
+            'total': total,
+            'selected': quiz.questions.count(),
+            'remaining': questions.count(),
+            'players': quiz.players,
+        }
+
+        return context
+
+
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
@@ -216,7 +302,7 @@ class QuestionUpdateView(View):
 
 
 """ C-API ------------------------------------------------------------------------- """
-""" QUESTION RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
+""" QUESTION UPDATE RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
 
 
 class QuestionStatementAddJSON(View):
@@ -265,4 +351,219 @@ class QuestionChoiceDeleteJSON(View):
         return JsonResponse(data={"message": "success"}, safe=False)
 
 
-""" CHNAGE """
+""" QUESTION DETAIL RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
+
+
+class QuestionStatementStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        # STATEMENT VISIBILITY CHANGE
+        try:
+            statement_visibility = StatementVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                statement_visibility.screen_1 = status
+            elif screen_id == '2':
+                statement_visibility.screen_2 = status
+            elif screen_id == '3':
+                statement_visibility.screen_3 = status
+            statement_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except StatementVisibility.DoesNotExist:
+            message = "This question is not associated with Quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+class QuestionChoiceStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        try:
+            choice_visibility = ChoiceVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                choice_visibility.screen_1 = status
+            elif screen_id == '2':
+                choice_visibility.screen_2 = status
+            elif screen_id == '3':
+                choice_visibility.screen_3 = status
+            choice_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except ChoiceVisibility.DoesNotExist:
+            message = "This question is not associated with quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+class QuestionAudioStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        try:
+            audio_visibility = AudioVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                audio_visibility.screen_1 = status
+            elif screen_id == '2':
+                audio_visibility.screen_2 = status
+            elif screen_id == '3':
+                audio_visibility.screen_3 = status
+            audio_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except AudioVisibility.DoesNotExist:
+            message = "Not associated with Quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+class QuestionImageStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        try:
+            image_visibility = ImageVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                image_visibility.screen_1 = status
+            elif screen_id == '2':
+                image_visibility.screen_2 = status
+            elif screen_id == '3':
+                image_visibility.screen_3 = status
+            image_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+
+        except ImageVisibility.DoesNotExist:
+            message = "Not associated with quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+class QuestionSubmitStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+
+        # POST METHOD HERE
+        screen_id = request.POST['screen_id']
+
+        # STATEMENT VISIBILITY CHANGE
+        question = QuizQuestion.objects.get(pk=pk)
+        if screen_id == '1':
+            question.submission_control = Screen.objects.first()
+        elif screen_id == '2':
+            question.submission_control = Screen.objects.all()[1]
+        elif screen_id == '3':
+            question.submission_control = Screen.objects.last()
+        question.save()
+
+        # EXTRA DATA HERE
+        message = "Record updated successfully"
+        success = True
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+""" CHNAGE ====================================================================================================== """
+
+
+class QuizQuestionAddJSON(View):
+
+    def get(self, request, quiz_id, question_id):
+
+        try:
+            quiz = Quiz.objects.get(pk=quiz_id)
+            question = Question.objects.get(pk=question_id)
+
+        except [Quiz.DoesNotExist, Question.DoesNotExist]:
+            messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+            return redirect('application:quiz_builder')
+
+        # ALREADY ASSOCIATED OR NOT ---------------------------------
+        if quiz.questions.filter(pk=question_id):
+            messages.warning(request=request,
+                             message=f'Failed to add > Requested Question [ID: {question_id}] already associated with this quiz.')
+        else:
+            messages.success(request=request, message=f'Requested Question [ID: {question_id}] added successfully.')
+
+            # STEP1 => Add Question to Quiz
+            quiz.questions.add(question)
+            quiz.save()
+
+            quiz_question = QuizQuestion.objects.filter(question=question, quiz=quiz)[0]
+
+            # STEP2 => Add Statements Visibility
+            for statement in question.questionstatement_set.all():
+                StatementVisibility(
+                    quiz_question=quiz_question, statement=statement
+                ).save()
+
+            # STEP3 => Add Choices Visibility
+            for choice in question.questionchoice_set.all():
+                ChoiceVisibility(
+                    quiz_question=quiz_question, choice=choice
+                ).save()
+
+            # STEP3 => Add Images Visibility
+            for image in question.questionimage_set.all():
+                ImageVisibility(
+                    quiz_question=quiz_question, image=image
+                ).save()
+
+            # STEP4 => Add audios Visibility
+            for audio in question.questionaudio_set.all():
+                AudioVisibility(
+                    quiz_question=quiz_question, audio=audio
+                ).save()
+
+        return redirect('application:quiz_builder_update', quiz_id, permanent=True)
+
+
+class QuizQuestionDeleteJSON(View):
+
+    def get(self, request, quiz_id, question_id):
+        try:
+            quiz = Quiz.objects.get(pk=quiz_id)
+            question = Question.objects.get(pk=question_id)
+
+            quiz.questions.remove(question)
+            messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
+            return redirect('application:quiz_builder_update', quiz_id, permanent=True)
+        except [Quiz.DoesNotExist, Question.DoesNotExist]:
+            messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+            return HttpResponseRedirect(reverse('application:quiz_builder'))

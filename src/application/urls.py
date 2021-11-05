@@ -27,6 +27,19 @@ urlpatterns = [
     path('add/question_choice/', add_question_choice, name='add_question_choice'),
     path('delete/question_statement/<int:pk>/', delete_question_statement, name='delete_question_statement'),
     path('delete/question_choice/<int:pk>/', delete_question_choice, name='delete_question_choice'),
+    path('c/api/change/quiz/question/statement/status/<int:pk>/',
+         change_question_statement_status, name='capi_change_question_statement_status'),
+    path('c/api/change/quiz/question/choice/status/<int:pk>/',
+         change_question_choice_status, name='capi_change_question_choice_status'),
+    path('c/api/change/quiz/question/image/status/<int:pk>/',
+         change_question_image_status, name='capi_change_question_image_status'),
+    path('c/api/change/quiz/question/audio/status/<int:pk>/',
+         change_question_audio_status, name='capi_change_question_audio_status'),
+    path('c/api/change/quiz/question/submission/status/<int:pk>/',
+         change_question_submission_control, name='capi_change_question_submission_control'),
+
+path('add/quiz/<int:quiz_id>/question/<int:question_id>/', quiz_question_add, name='quiz_question_add'),
+    path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
 
     # ==================================================================================================================
     path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
@@ -69,9 +82,6 @@ urlpatterns = [
     path('add/audio/for/question/<int:question>/', question_audio_add, name='question_audio_add'),
     path('delete/audio/<int:pk>/', question_audio_delete, name='question_audio_delete'),
 
-    path('add/quiz/<int:quiz_id>/question/<int:question_id>/', quiz_question_add, name='quiz_question_add'),
-    path('delete/quiz/<int:quiz>/question/<int:question>/', quiz_question_delete, name='quiz_question_delete'),
-
     path('coming_soon/', coming_soon, name='coming_soon'),
     path('404/', page_404, name='404'),
     path('500/', page_500, name='500'),
@@ -88,15 +98,4 @@ urlpatterns = [
     path('c/api/learn/<int:quiz_id>/question/<int:question_id>/', learn_access_question_json,
          name='capi_learn_question_access'),
     path('c/api/learn/submit/question/', learn_question_submission_json, name='capi_learn_question_submission'),
-
-    path('c/api/change/quiz/question/statement/status/<int:pk>/',
-         change_question_statement_status, name='capi_change_question_statement_status'),
-    path('c/api/change/quiz/question/choice/status/<int:pk>/',
-         change_question_choice_status, name='capi_change_question_choice_status'),
-    path('c/api/change/quiz/question/image/status/<int:pk>/',
-         change_question_image_status, name='capi_change_question_image_status'),
-    path('c/api/change/quiz/question/audio/status/<int:pk>/',
-         change_question_audio_status, name='capi_change_question_audio_status'),
-    path('c/api/change/quiz/question/submission/status/<int:pk>/',
-         change_question_submission_control, name='capi_change_question_submission_control'),
 ]

@@ -500,6 +500,73 @@ def delete_question_statement(request, pk):
         return JsonResponse(data=None)
 
 
+@user_passes_test(lambda u: u.is_superuser)
+@never_cache
+def quiz_question_add(request, quiz_id, question_id):
+    # CHECK QUIZ AND QUESTION EXISTS ----------------------------
+    try:
+        quiz = Quiz.objects.get(pk=quiz_id)
+        question = Question.objects.get(pk=question_id)
+
+    except [Quiz.DoesNotExist, Question.DoesNotExist]:
+        messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+        return redirect('application:quiz_builder')
+
+    # ALREADY ASSOCIATED OR NOT ---------------------------------
+    if quiz.questions.filter(pk=question_id):
+        messages.warning(request=request,
+                         message=f'Failed to add > Requested Question [ID: {question_id}] already associated with this quiz.')
+    else:
+        messages.success(request=request, message=f'Requested Question [ID: {question_id}] added successfully.')
+
+        # STEP1 => Add Question to Quiz
+        quiz.questions.add(question)
+        quiz.save()
+
+        quiz_question = QuizQuestion.objects.filter(question=question, quiz=quiz)[0]
+
+        # STEP2 => Add Statements Visibility
+        for statement in question.questionstatement_set.all():
+            StatementVisibility(
+                quiz_question=quiz_question, statement=statement
+            ).save()
+
+        # STEP3 => Add Choices Visibility
+        for choice in question.questionchoice_set.all():
+            ChoiceVisibility(
+                quiz_question=quiz_question, choice=choice
+            ).save()
+
+        # STEP3 => Add Images Visibility
+        for image in question.questionimage_set.all():
+            ImageVisibility(
+                quiz_question=quiz_question, image=image
+            ).save()
+
+        # STEP4 => Add audios Visibility
+        for audio in question.questionaudio_set.all():
+            AudioVisibility(
+                quiz_question=quiz_question, audio=audio
+            ).save()
+
+    return redirect('application:quiz_builder_update', quiz_id, permanent=True)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+@never_cache
+def quiz_question_delete(request, quiz, question):
+    try:
+        quiz_model = Quiz.objects.get(pk=quiz)
+        question_model = Question.objects.get(pk=question)
+
+        quiz_model.questions.remove(question_model)
+        messages.success(request=request, message=f'Requested Question [ID: {question}] deleted successfully.')
+        return redirect('application:quiz_builder_update', quiz, permanent=True)
+    except [Quiz.DoesNotExist, Question.DoesNotExist]:
+        messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+        return HttpResponseRedirect(reverse('application:quiz_builder'))
+
+
 """ ____________________________________________________________________________________________________________"""
 
 
@@ -895,73 +962,6 @@ def search_question(request, quiz_pk):
     dict_out['length'] = count
 
     return JsonResponse(dict_out, safe=False)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-@never_cache
-def quiz_question_add(request, quiz_id, question_id):
-    # CHECK QUIZ AND QUESTION EXISTS ----------------------------
-    try:
-        quiz = Quiz.objects.get(pk=quiz_id)
-        question = Question.objects.get(pk=question_id)
-
-    except [Quiz.DoesNotExist, Question.DoesNotExist]:
-        messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-        return redirect('application:quiz_builder')
-
-    # ALREADY ASSOCIATED OR NOT ---------------------------------
-    if quiz.questions.filter(pk=question_id):
-        messages.warning(request=request,
-                         message=f'Failed to add > Requested Question [ID: {question_id}] already associated with this quiz.')
-    else:
-        messages.success(request=request, message=f'Requested Question [ID: {question_id}] added successfully.')
-
-        # STEP1 => Add Question to Quiz
-        quiz.questions.add(question)
-        quiz.save()
-
-        quiz_question = QuizQuestion.objects.filter(question=question, quiz=quiz)[0]
-
-        # STEP2 => Add Statements Visibility
-        for statement in question.questionstatement_set.all():
-            StatementVisibility(
-                quiz_question=quiz_question, statement=statement
-            ).save()
-
-        # STEP3 => Add Choices Visibility
-        for choice in question.questionchoice_set.all():
-            ChoiceVisibility(
-                quiz_question=quiz_question, choice=choice
-            ).save()
-
-        # STEP3 => Add Images Visibility
-        for image in question.questionimage_set.all():
-            ImageVisibility(
-                quiz_question=quiz_question, image=image
-            ).save()
-
-        # STEP4 => Add audios Visibility
-        for audio in question.questionaudio_set.all():
-            AudioVisibility(
-                quiz_question=quiz_question, audio=audio
-            ).save()
-
-    return redirect('application:quiz_builder_update', quiz_id, permanent=True)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-@never_cache
-def quiz_question_delete(request, quiz, question):
-    try:
-        quiz_model = Quiz.objects.get(pk=quiz)
-        question_model = Question.objects.get(pk=question)
-
-        quiz_model.questions.remove(question_model)
-        messages.success(request=request, message=f'Requested Question [ID: {question}] deleted successfully.')
-        return redirect('application:quiz_builder_update', quiz, permanent=True)
-    except [Quiz.DoesNotExist, Question.DoesNotExist]:
-        messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-        return HttpResponseRedirect(reverse('application:quiz_builder'))
 
 
 ''' QUESTION BUILDER VIEWS _______________________________________________________________'''
