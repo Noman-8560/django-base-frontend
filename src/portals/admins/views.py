@@ -1,30 +1,30 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import (
     TemplateView, ListView, DeleteView, DetailView, UpdateView, CreateView
 )
 
-from src.application.forms import ProfileSchoolForm
+from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
 )
-from src.portals.admins.dll import QuestionDS
-from src.portals.admins.forms import ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm, \
+from src.portals.admins.forms import (
+    ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm,
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
+)
 
-# decorators = [never_cache, login_required]
-# @method_decorator(decorators, name='dispatch')
+admin_decorators = [login_required, user_passes_test(lambda u: u.is_superuser)]
 
 """  INIT ------------------------------------------------------------------------- """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class DashboardView(TemplateView):
     template_name = 'admins/dashboard.html'
 
@@ -36,22 +36,21 @@ class DashboardView(TemplateView):
 """  ARTICLES --------------------------------------------------------------------- """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class ArticleListView(ListView):
     models = Article
     queryset = Article.objects.all()
     template_name = 'admins/article_list.html'
 
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def dispatch(self, *args, **kwargs):
-        return super(ArticleListView, self).dispatch(*args, **kwargs)
 
-
+@method_decorator(admin_decorators, name='dispatch')
 class ArticleDetailView(DetailView):
     models = Article
     queryset = Article.objects.all()
     template_name = 'admins/article_detail.html'
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class ArticleCreateView(CreateView):
     models = Article
     queryset = Article.objects.all()
@@ -60,6 +59,7 @@ class ArticleCreateView(CreateView):
     success_url = reverse_lazy('admin-portal:article')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class ArticleUpdateView(UpdateView):
     models = Article
     queryset = Article.objects.all()
@@ -68,6 +68,7 @@ class ArticleUpdateView(UpdateView):
     success_url = reverse_lazy('admin-portal:article')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class ArticleDeleteView(DeleteView):
     models = Article
     queryset = Article.objects.all()
@@ -78,18 +79,21 @@ class ArticleDeleteView(DeleteView):
 """  SUBJECTS --------------------------------------------------------------------- """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class SubjectListView(ListView):
     models = Subject
     queryset = Subject.objects.all()
     template_name = 'admins/subject_list.html'
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class SubjectDetailView(DetailView):
     models = Subject
     queryset = Subject.objects.all()
     template_name = 'admins/subject_detail.html'
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class SubjectCreateView(CreateView):
     models = Subject
     queryset = Subject.objects.all()
@@ -98,6 +102,7 @@ class SubjectCreateView(CreateView):
     success_url = reverse_lazy('admin-portal:subject')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class SubjectUpdateView(UpdateView):
     models = Subject
     queryset = Subject.objects.all()
@@ -106,6 +111,7 @@ class SubjectUpdateView(UpdateView):
     success_url = reverse_lazy('admin-portal:subject')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class SubjectDeleteView(DeleteView):
     models = Subject
     queryset = Subject.objects.all()
@@ -116,12 +122,14 @@ class SubjectDeleteView(DeleteView):
 """ QUIZ -------------------------------------------------------------------------- """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizListView(ListView):
     models = Quiz
     queryset = Quiz.objects.all()
     template_name = 'admins/quiz_list.html'
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizDetailView(DetailView):
     template_name = 'admins/quiz_detail.html'
     model = Quiz
@@ -207,6 +215,7 @@ class QuizDetailView(DetailView):
         return context
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
@@ -215,6 +224,7 @@ class QuizCreateView(CreateView):
     success_url = reverse_lazy('admin-portal:quiz')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizUpdateView(UpdateView):
     models = Quiz
     queryset = Quiz.objects.all()
@@ -223,6 +233,7 @@ class QuizUpdateView(UpdateView):
     success_url = reverse_lazy('admin-portal:quiz')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizDeleteView(DeleteView):
     models = Quiz
     queryset = Quiz.objects.all()
@@ -233,12 +244,14 @@ class QuizDeleteView(DeleteView):
 """ QUESTION ---------------------------------------------------------------------- """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionListView(ListView):
     models = Question
     queryset = Question.objects.all()
     template_name = 'admins/question_list.html'
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionDeleteView(DeleteView):
     models = Question
     queryset = Question.objects.all()
@@ -246,6 +259,7 @@ class QuestionDeleteView(DeleteView):
     success_url = reverse_lazy('admin-portal:question')
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionCreateView(View):
 
     def get(self, request):
@@ -283,6 +297,7 @@ class QuestionCreateView(View):
         return JsonResponse(data={'message': 'success', 'question': question.pk}, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionUpdateView(View):
 
     def get(self, request, pk):
@@ -305,6 +320,7 @@ class QuestionUpdateView(View):
 """ QUESTION UPDATE RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionStatementAddJSON(View):
 
     def post(self, request):
@@ -322,6 +338,7 @@ class QuestionStatementAddJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionStatementDeleteJSON(View):
 
     def get(self, request, pk):
@@ -329,6 +346,7 @@ class QuestionStatementDeleteJSON(View):
         return JsonResponse(data={"message": "success"}, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionChoiceAddJSON(View):
 
     def post(self, request):
@@ -344,6 +362,7 @@ class QuestionChoiceAddJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionChoiceDeleteJSON(View):
 
     def get(self, request, pk):
@@ -351,6 +370,7 @@ class QuestionChoiceDeleteJSON(View):
         return JsonResponse(data={"message": "success"}, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionImageCreateView(View):
 
     def post(self, request, question_id):
@@ -373,6 +393,7 @@ class QuestionImageCreateView(View):
         return redirect('admin-portal:question-update', question_id, permanent=True)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionAudioCreateView(View):
 
     def post(self, request, question_id):
@@ -395,6 +416,7 @@ class QuestionAudioCreateView(View):
         return redirect('admin-portal:question-update', question_id, permanent=True)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionImageDeleteView(View):
 
     def get(self, request, pk):
@@ -411,6 +433,7 @@ class QuestionImageDeleteView(View):
         return redirect('admin-portal:question', permanent=True)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionAudioDeleteView(View):
 
     def get(self, request, pk):
@@ -430,6 +453,7 @@ class QuestionAudioDeleteView(View):
 """ QUESTION DETAIL RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionStatementStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -460,6 +484,7 @@ class QuestionStatementStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionChoiceStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -489,6 +514,7 @@ class QuestionChoiceStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionAudioStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -518,6 +544,7 @@ class QuestionAudioStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionImageStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -548,6 +575,7 @@ class QuestionImageStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionSubmitStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -575,6 +603,7 @@ class QuestionSubmitStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizQuestionAddJSON(View):
 
     def get(self, request, quiz_id, question_id):
@@ -627,6 +656,7 @@ class QuizQuestionAddJSON(View):
         return redirect('application:quiz_builder_update', quiz_id, permanent=True)
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class QuizQuestionDeleteJSON(View):
 
     def get(self, request, quiz_id, question_id):

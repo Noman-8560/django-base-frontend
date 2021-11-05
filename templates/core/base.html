@@ -24,11 +24,11 @@
     <link rel="stylesheet" href="{% static 'application/css/icons.min.css' %}">
 
 
-    {# BASE LINKS THAT ARE REQUIRED FOR CERTAIN PAGE #}
+    {# BASE LINKS THAT ARE REQUIRED FOR CERTAIN PAGE ------------- #}
     {% block base_links %}
 
     {% endblock %}
-    {# --------------------------------------------- #}
+    {# ----------------------------------------------------------- #}
 
 </head>
 <body data-topbar="dark" data-layout="horizontal">
@@ -36,11 +36,11 @@
 <!-- Begin page -->
 <div id="layout-wrapper">
 
-    {# BASE TOP NAVIGATION PANEL AREA #}
+    {# BASE TOP NAVIGATION PANEL AREA -------------------------- #}
     {% block base_top_nav %}
         {% include 'core/include/base_portal_top_nav.html' %}
     {% endblock %}
-    {# ------------------------------ #}
+    {# --------------------------------------------------------- #}
 
     {% block dont_include_details %}
 
@@ -88,8 +88,6 @@
 <script src="{% static 'application/libs/simplebar/simplebar.min.js' %}"></script>
 <script src="{% static 'application/libs/node-waves/waves.min.js' %}"></script>
 <script src="{% static 'js/moment.js' %}"></script>
-
-<!-- App js -->
 <script src="{% static 'application/js/app.js' %}"></script>
 
 {#<script src="{% static 'js/notify.js' %}" type="text/javascript"></script>#}

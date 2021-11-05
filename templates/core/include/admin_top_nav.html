@@ -3,26 +3,27 @@
 
 <header id="page-topbar" style="background-color: orangered;">
     <div class="navbar-header" style="background-color: orangered;">
+
+        {# LEFT HEAD -------------------------------------------------------------- #}
+
         <div class="d-flex">
-            <!-- LOGO -->
-            <!-- LOGO -->
             <div class="navbar-brand-box">
                 <a href="/" class="logo logo-dark">
-                                <span class="logo-sm">
-                                    <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="22">
-                                </span>
+                    <span class="logo-sm">
+                        <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="22">
+                    </span>
                     <span class="logo-lg">
-                                    <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="17">
-                                </span>
+                        <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="17">
+                    </span>
                 </a>
 
                 <a href="/" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="{% static 'images/new_1.png' %}" alt="" height="22">
-                                </span>
+                    <span class="logo-sm">
+                        <img src="{% static 'images/new_1.png' %}" alt="" height="22">
+                    </span>
                     <span class="logo-lg">
-                                    <img src="{% static 'images/new_1.png' %}" alt="" height="19">
-                                </span>
+                        <img src="{% static 'images/new_1.png' %}" alt="" height="19">
+                    </span>
                 </a>
             </div>
 
@@ -33,52 +34,20 @@
 
         </div>
 
+        {# RIGHT HEAD ------------------------------------------------------------- #}
+
         <div class="d-flex">
 
+            {# FULL_SCREEN -------------------------------------------------------- #}
 
-            {# FLAGS #}
-            <div class="dropdown d-none d-lg-inline-block ml-1">
-                <button type="button" class="btn header-item waves-effect"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="" src="{% static 'application/images/flags/us.jpg' %}" alt="Header Language"
-                         height="16">
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="{% static 'application/images/flags/spain.jpg' %}" alt="user-image" class="mr-1"
-                             height="12"> <span class="align-middle">Spanish</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="{% static 'application/images/flags/germany.jpg' %}" alt="user-image" class="mr-1"
-                             height="12"> <span class="align-middle">German</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="{% static 'application/images/flags/italy.jpg' %}" alt="user-image" class="mr-1"
-                             height="12"> <span class="align-middle">Italian</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="{% static 'application/images/flags/russia.jpg' %}" alt="user-image" class="mr-1"
-                             height="12"> <span class="align-middle">Russian</span>
-                    </a>
-                </div>
-            </div>
-
-            {# FULL_SCREEN #}
             <div class="dropdown d-none d-lg-inline-block ml-1">
                 <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
                     <i class="bx bx-fullscreen"></i>
                 </button>
             </div>
 
-            {# NOTIFICATIONS #}
+            {# NOTIFICATIONS ------------------------------------------------------ #}
+
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon waves-effect"
                         id="page-header-notifications-dropdown"
@@ -114,14 +83,8 @@
 
             </div>
 
-            {#            <div class="dropdown d-inline-block">#}
-            {#                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">#}
-            {#                    <i class="bx bx-cog bx-spin"></i>#}
-            {#                </button>#}
-            {#            </div>#}
+            {# USER ONLINE -------------------------------------------------------- #}
 
-
-            {# USER ONLINE #}
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -137,7 +100,7 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
                     <!-- item-->
-                    <a class="dropdown-item" href="{% url 'application:dashboard' %}">
+                    <a class="dropdown-item" href="{% url 'admin-portal:dashboard' %}">
                         <i class="bx bxs-dashboard font-size-16 align-middle mr-1"></i> Dashboard
                     </a>
                     <a class="dropdown-item" href="{% url 'application:profile_update' %}">
@@ -161,9 +124,15 @@
                 </div>
             </div>
 
+            {# USER INFO ---------------------------------------------------------- #}
+
         </div>
+
     </div>
 </header>
+
+{# ------------------------------------------------------------------------------------------------------------------ #}
+
 <div class="topnav">
     <div class="container-fluid">
         <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
@@ -188,12 +157,10 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-pages">
 
-                            <a href="{% url 'application:quiz_builder' %}" class="dropdown-item">Quiz Builder</a>
-                            <a href="{% url 'application:question_builder' %}" class="dropdown-item">Question
+                            <a href="{% url 'admin-portal:quiz-create' %}" class="dropdown-item">Quiz Builder</a>
+                            <a href="{% url 'admin-portal:question-create' %}" class="dropdown-item">Question
                                 Builder</a>
-                            <a href="{% url 'application:add_article' %}" class="dropdown-item">Article Builder</a>
-                            <a href="{% url 'wsite:site_builder' %}" class="dropdown-item">Site
-                                Builder</a>
+                            <a href="{% url 'admin-portal:article-create' %}" class="dropdown-item">Article Builder</a>
                         </div>
                     </li>
 
@@ -206,63 +173,10 @@
                             <div class="arrow-down"></div>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-components">
-                            <div class="dropdown">
-                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-charts"
-                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Articles
-                                    <div class="arrow-down"></div>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="topnav-charts">
-                                    <a href="{% url 'wsite:articles' %}" class="dropdown-item">User View</a>
-                                    <a href="{% url 'application:articles' %}" class="dropdown-item">View
-                                        All</a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-form"
-                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Quizzes
-                                    <div class="arrow-down"></div>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="topnav-form">
-                                    <a href="{% url 'application:quizzes' %}" class="dropdown-item">View All</a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-table"
-                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Questions
-                                    <div class="arrow-down"></div>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="topnav-table">
-                                    <a href="{% url 'application:questions' %}" class="dropdown-item">View All</a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-charts"
-                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Teams
-                                    <div class="arrow-down"></div>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="topnav-charts">
-                                    <a href="{% url 'application:admin_teams' %}" class="dropdown-item">View All</a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-charts"
-                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Subjects
-                                    <div class="arrow-down"></div>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="topnav-charts">
-                                    <a href="{% url 'application:add_subject' %}" class="dropdown-item">
-                                        Add New
-                                    </a>
-                                    <a href="{% url 'application:subjects' %}" class="dropdown-item">
-                                        View All
-                                    </a>
-                                </div>
-                            </div>
+                            <a href="{% url 'admin-portal:quiz' %}" class="dropdown-item">Quizzes</a>
+                            <a href="{% url 'admin-portal:question' %}" class="dropdown-item">Questions</a>
+                            <a href="{% url 'admin-portal:subject' %}" class="dropdown-item">Subjects</a>
+                            <a href="{% url 'admin-portal:article' %}" class="dropdown-item">Articles</a>
                         </div>
                     </li>
 
@@ -271,3 +185,5 @@
         </nav>
     </div>
 </div>
+
+{# ------------------------------------------------------------------------------------------------------------------ #}
