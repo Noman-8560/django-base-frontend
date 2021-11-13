@@ -18,6 +18,7 @@ from .forms import *
 from .models import *
 
 from .dll import ChoiceDS, QuestionDS, StatementDS
+
 """ COMPLETED ----------------------------------------------------------------------------  """
 
 
@@ -318,7 +319,6 @@ def question_builder_update(request, pk):
         'audio_form': QuestionAudioForm(),
     }
     return render(request=request, template_name='application/question_builder_update.html', context=context)
-
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -724,6 +724,203 @@ def learning_resources(request):
     return render(request=request, template_name='application/learning_resources.html', context=context)
 
 
+@login_required
+def learning_resources_result(request, quiz):
+    quiz_ = None
+    result = None
+
+    try:
+        quiz_ = Quiz.objects.get(pk=quiz)
+        result = LearningResourceResult.objects.get(user=request.user, quiz=quiz_)
+    except LearningResourceResult.DoesNotExist:
+        pass
+    except Quiz.DoesNotExist:
+        pass
+
+    attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz_)
+
+    context = {
+        'quiz': quiz_,
+        'result': result,
+        'attempts': attempts
+    }
+    return render(request=request, template_name='application/learning_quiz_result.html', context=context)
+
+
+@never_cache
+def learning_resources_start(request, quiz):
+    user_quiz = None
+    allowed_to_start = False
+    time_status = None
+    question_ids = []
+    quiz_id = None
+
+    ''' QUIZ and TEAM is required here'''
+    try:
+        user_quiz = Quiz.objects.get(pk=quiz)
+
+        # if len(QuizCompleted.objects.filter(user=request.user, quiz=user_quiz)) > 0:
+        # messages.success(request=request, message="Dear User you have already attempted this quiz, if you attempt it again your previous record will be updated")
+
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message="Requested Quiz doesn't exists")
+        return redirect('application:quizes', permanent=True)
+
+    if not user_quiz.questions.all():
+        messages.error(request=request,
+                       message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
+        return redirect('application:quizes', permanent=True)
+
+    if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
+        allowed_to_start = True
+        time_status = 'present'
+
+        questions = user_quiz.questions.all()
+        for question in questions:
+            question_ids.append(question.pk)
+
+    else:
+        if user_quiz.start_time > timezone.now():
+            time_status = 'future'
+        elif timezone.now() > user_quiz.end_time:
+            time_status = 'past'
+
+    context = {
+        'time_status': time_status,
+        'allowed_to_start': allowed_to_start,
+        'quiz_start_date': user_quiz.start_time,
+        'quiz_end_date': user_quiz.end_time,
+        'question_ids': question_ids,
+        'quiz_id': user_quiz.pk,
+    }
+
+    return render(request=request, template_name='application/learning_quiz.html', context=context)
+
+
+# -------------------------------------------------------------------------
+
+
+@login_required
+def learn_access_question_json(request, quiz_id, question_id):
+    total = 0
+    attempts = 0
+    remains = 0
+
+    statements = []
+    images = []
+    audios = []
+    choices_keys = []
+    choices_values = []
+
+    if request.method == 'GET':
+
+        ''' __FETCHING BASE DATA__'''
+        quiz = Quiz.objects.get(pk=quiz_id)
+
+        '''__QUESTION LOGIC WILL BE HERE__'''
+        question = quiz.questions.get(pk=question_id)
+
+        '''__FETCHING SUBMISSION AND CHOICES CONTROL__'''
+
+        ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
+        [statements.append(x.statement) for x in question.questionstatement_set.all()]
+        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
+         question.questionimage_set.all()]
+        [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
+         question.questionaudio_set.all()]
+        [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
+        [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
+
+        total = quiz.questions.count()
+        attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz).count()
+        remains = total - attempts
+
+        ''' __GENERATING RESPONSES__'''
+        response = {
+            'question': question.pk,
+            'choices_keys': choices_keys,
+            'choices_values': choices_values,
+            'statements': statements,
+            'images': images,
+            'audios': audios,
+
+            'total': total,
+            'attempts': attempts,
+            'remains': remains,
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None, safe=False)
+
+
+@csrf_exempt
+@login_required
+def learn_question_submission_json(request):
+    success = False
+    message = None
+    end = False
+
+    """ CHECK API CALL """
+    if request.method == 'POST':
+
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+
+        question = Question.objects.get(pk=request.POST['question_id'])
+        choice_id = request.POST['choice_id']
+
+        """ CHECK CORRECT OR NOT """
+        correct = QuestionChoice.objects.get(pk=choice_id).is_correct
+
+        """------------------------------------------------------------"""
+        """                     SAVING DATA                            """
+        """------------------------------------------------------------"""
+
+        learn_previous = LearningResourceResult.objects.filter(user=request.user, quiz=quiz)
+        if len(learn_previous) == 0:
+            LearningResourceAttempts(
+                question=question,
+                user=request.user,
+                quiz=quiz,
+                start_time=request.POST['start_time'],
+                end_time=request.POST['end_time'],
+                successful=correct
+            ).save()
+        else:
+            x = LearningResourceAttempts.objects.filter(question=question, user=request.user, quiz=quiz)[0]
+            x.start_time = request.POST['start_time']
+            x.end_time = request.POST['end_time']
+            x.successful = correct
+            x.save()
+
+        if request.POST['end'] == 'True':
+            yy = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz)
+
+            if len(learn_previous) == 0:
+                LearningResourceResult(
+                    user=request.user,
+                    quiz=quiz,
+                    total=yy.count(),
+                    obtained=yy.filter(successful=True).count()
+                ).save()
+            else:
+                y = LearningResourceResult.objects.filter(user=request.user, quiz=quiz)[0]
+                y.total = yy.count()
+                y.obtained = yy.filter(successful=True).count()
+                y.attempts = y.attempts + 1
+                y.save()
+
+        success = True
+        message = f"Question {request.POST['question_id']} marked successfully"
+
+        response = {
+            'success': success,
+            'message': message,
+            'end': request.POST['end'],
+            'path': request.get_full_path()
+        }
+
+        return JsonResponse(data=response, safe=False)
+
 
 """ ____________________________________________________________________________________________________________"""
 """ ____________________________________________________________________________________________________________"""
@@ -1034,10 +1231,10 @@ def search_question(request, quiz_pk):
 
 ''' QUESTION BUILDER VIEWS _______________________________________________________________'''
 
-
 ''' QUIZ SETUP VIEWS _______________________________________________________________'''
 
 from django.db.models import F
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_teams(request):
@@ -1384,28 +1581,6 @@ def results(request):
     return render(request=request, template_name='application/results.html')
 
 
-@login_required
-def learning_resources_result(request, quiz):
-    quiz_ = None
-    result = None
-
-    try:
-        quiz_ = Quiz.objects.get(pk=quiz)
-        result = LearningResourceResult.objects.get(user=request.user, quiz=quiz_)
-    except LearningResourceResult.DoesNotExist:
-        pass
-    except Quiz.DoesNotExist:
-        pass
-
-    attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz_)
-
-    context = {
-        'quiz': quiz_,
-        'result': result,
-        'attempts': attempts
-    }
-    return render(request=request, template_name='application/learning_quiz_result.html', context=context)
-
 ''' CAPI VIEWS _______________________________________________________________'''
 
 
@@ -1645,178 +1820,6 @@ def next_question_json(request):
             'success': success,
             'message': message,
             'end': request.POST['end']
-        }
-
-        return JsonResponse(data=response, safe=False)
-
-
-@never_cache
-def learning_resources_start(request, quiz):
-    user_quiz = None
-    allowed_to_start = False
-    time_status = None
-    question_ids = []
-    quiz_id = None
-
-    ''' QUIZ and TEAM is required here'''
-    try:
-        user_quiz = Quiz.objects.get(pk=quiz)
-
-        # if len(QuizCompleted.objects.filter(user=request.user, quiz=user_quiz)) > 0:
-        # messages.success(request=request, message="Dear User you have already attempted this quiz, if you attempt it again your previous record will be updated")
-
-    except Quiz.DoesNotExist:
-        messages.error(request=request, message="Requested Quiz doesn't exists")
-        return redirect('application:quizes', permanent=True)
-
-    if not user_quiz.questions.all():
-        messages.error(request=request,
-                       message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
-        return redirect('application:quizes', permanent=True)
-
-    if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
-        allowed_to_start = True
-        time_status = 'present'
-
-        questions = user_quiz.questions.all()
-        for question in questions:
-            question_ids.append(question.pk)
-
-    else:
-        if user_quiz.start_time > timezone.now():
-            time_status = 'future'
-        elif timezone.now() > user_quiz.end_time:
-            time_status = 'past'
-
-    context = {
-        'time_status': time_status,
-        'allowed_to_start': allowed_to_start,
-        'quiz_start_date': user_quiz.start_time,
-        'quiz_end_date': user_quiz.end_time,
-        'question_ids': question_ids,
-        'quiz_id': user_quiz.pk,
-    }
-
-    return render(request=request, template_name='application/learning_quiz.html', context=context)
-
-
-@login_required
-def learn_access_question_json(request, quiz_id, question_id):
-    total = 0
-    attempts = 0
-    remains = 0
-
-    statements = []
-    images = []
-    audios = []
-    choices_keys = []
-    choices_values = []
-
-    if request.method == 'GET':
-
-        ''' __FETCHING BASE DATA__'''
-        quiz = Quiz.objects.get(pk=quiz_id)
-
-        '''__QUESTION LOGIC WILL BE HERE__'''
-        question = quiz.questions.get(pk=question_id)
-
-        '''__FETCHING SUBMISSION AND CHOICES CONTROL__'''
-
-        ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
-        [statements.append(x.statement) for x in question.questionstatement_set.all()]
-        [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
-         question.questionimage_set.all()]
-        [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
-         question.questionaudio_set.all()]
-        [choices_keys.append(c['pk']) for c in question.questionchoice_set.all().values('pk')]
-        [choices_values.append(c['text']) for c in question.questionchoice_set.all().values('text')]
-
-        total = quiz.questions.count()
-        attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz).count()
-        remains = total - attempts
-
-        ''' __GENERATING RESPONSES__'''
-        response = {
-            'question': question.pk,
-            'choices_keys': choices_keys,
-            'choices_values': choices_values,
-            'statements': statements,
-            'images': images,
-            'audios': audios,
-
-            'total': total,
-            'attempts': attempts,
-            'remains': remains,
-        }
-        return JsonResponse(data=response, safe=False)
-    else:
-        return JsonResponse(data=None, safe=False)
-
-
-@csrf_exempt
-@login_required
-def learn_question_submission_json(request):
-    success = False
-    message = None
-    end = False
-
-    """ CHECK API CALL """
-    if request.method == 'POST':
-
-        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
-
-        question = Question.objects.get(pk=request.POST['question_id'])
-        choice_id = request.POST['choice_id']
-
-        """ CHECK CORRECT OR NOT """
-        correct = QuestionChoice.objects.get(pk=choice_id).is_correct
-
-        """------------------------------------------------------------"""
-        """                     SAVING DATA                            """
-        """------------------------------------------------------------"""
-
-        learn_previous = LearningResourceResult.objects.filter(user=request.user, quiz=quiz)
-        if len(learn_previous) == 0:
-            LearningResourceAttempts(
-                question=question,
-                user=request.user,
-                quiz=quiz,
-                start_time=request.POST['start_time'],
-                end_time=request.POST['end_time'],
-                successful=correct
-            ).save()
-        else:
-            x = LearningResourceAttempts.objects.filter(question=question, user=request.user, quiz=quiz)[0]
-            x.start_time = request.POST['start_time']
-            x.end_time = request.POST['end_time']
-            x.successful = correct
-            x.save()
-
-        if request.POST['end'] == 'True':
-            yy = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz)
-
-            if len(learn_previous) == 0:
-                LearningResourceResult(
-                    user=request.user,
-                    quiz=quiz,
-                    total=yy.count(),
-                    obtained=yy.filter(successful=True).count()
-                ).save()
-            else:
-                y = LearningResourceResult.objects.filter(user=request.user, quiz=quiz)[0]
-                y.total = yy.count()
-                y.obtained = yy.filter(successful=True).count()
-                y.attempts = y.attempts + 1
-                y.save()
-
-        success = True
-        message = f"Question {request.POST['question_id']} marked successfully"
-
-        response = {
-            'success': success,
-            'message': message,
-            'end': request.POST['end'],
-            'path': request.get_full_path()
         }
 
         return JsonResponse(data=response, safe=False)

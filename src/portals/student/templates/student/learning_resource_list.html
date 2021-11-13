@@ -108,7 +108,7 @@
                                     </td>
                                     <td>{{ quiz.start_time }}</td>
                                     <td>{{ quiz.end_time }}</td>
-                                    <td><a href="{% url 'application:learning_resource_start' quiz.pk %}"><i
+                                    <td><a href="{% url 'student-portal:learning-resource-live' quiz.pk %}"><i
                                             class="bx bx-task"></i> Try a tutorial</a></td>
                                     </tr>
                                 {% endfor %}
