@@ -49,11 +49,19 @@ urlpatterns = [
     # ----------------------------------------------------------------------------------
 
     path('quizes/', quizes, name='quizes'),
+    path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
+    path('enroll/quiz/<int:pk>/', enroll, name='enroll_quiz'),
     path('teams/', teams, name='teams'),
     path('learning_resources/', learning_resources, name='learning_resources'),
     path('learn/quiz/<int:quiz>/', learning_resources_start, name='learning_resource_start'),
     path('learning_resource/result/quiz/<int:quiz>/', learning_resources_result, name='learning_resource_result'),
 
+    path('zoom/<int:quiz>/', zoom, name='zoom'),
+    path('c/api/submit/question/', question_submission_json, name='capi_question_submission'),
+    path('c/api/next/question/', next_question_json, name='capi_next_question'),
+    path('c/api/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/skip/<int:skip>/',
+         quiz_access_question_json,
+         name='capi_quiz_question_access'),
     # ----------------------------------------------------------------------------------
 
     path('c/api/learn/<int:quiz_id>/question/<int:question_id>/', learn_access_question_json,
@@ -68,16 +76,12 @@ urlpatterns = [
          ),
     path('profile/', profile_update, name='profile_update'),
     path('zoom/profile/', zoom_profile, name='zoom_profile'),
-    path('zoom/<int:quiz>/', zoom, name='zoom'),
 
     # --- QUIZ SETUP
-
-    path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
 
     path('admin/teams/', admin_teams, name='admin_teams'),
     path('admin/delete/team/<int:pk>/', admin_team_delete, name='admin_team_delete'),
     path('team/<int:pk>/', team, name='team'),
-    path('enroll/quiz/<int:pk>/', enroll, name='enroll_quiz'),
 
     path('delete/team/<int:pk>/', delete_team, name='delete_team'),
 
@@ -98,9 +102,4 @@ urlpatterns = [
 
     # --- C-API
     path('c/api/user/<str:username>/exists/', user_exists_json, name='capi_user_exists'),
-    path('c/api/submit/question/', question_submission_json, name='capi_question_submission'),
-    path('c/api/next/question/', next_question_json, name='capi_next_question'),
-    path('c/api/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/skip/<int:skip>/',
-         quiz_access_question_json,
-         name='capi_quiz_question_access'),
 ]

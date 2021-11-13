@@ -797,6 +797,273 @@ def learning_resources_start(request, quiz):
     return render(request=request, template_name='application/learning_quiz.html', context=context)
 
 
+@login_required
+def enroll(request, pk):
+    # CHECK_QUIZ_EXISTS
+    quiz = None
+    try:
+        quiz = Quiz.objects.get(pk=pk)
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message=f'Requested Quiz with [ ID:{pk} ]does not exists.')
+        return HttpResponseRedirect(reverse('application:quizes'))
+
+    # ALREADY_ALLOCATED
+    if Team.objects.filter(participants__username=request.user.username, quiz=quiz).count() != 0:
+        messages.warning(request=request, message=f'You are already enrolled to this quiz')
+        return HttpResponseRedirect(reverse('application:quizes'))
+
+    # POST_METHOD
+    if request.method == 'POST':
+        team_name = request.POST['team_name']
+        player_1 = request.user
+        player_2 = None
+        player_3 = None
+
+        # USER_EXISTS_OR_NOT
+        try:
+
+            if quiz.players == '2':
+                player_2 = User.objects.get(username=request.POST['player_2'])
+                if quiz.players == '3':
+                    player_3 = User.objects.get(username=request.POST['player_3'])
+
+                    # PLAYER_3_ASSIGNED_OR_NOT
+                    if Team.objects.filter(participants__username=player_3.username, quiz=quiz).count() != 0:
+                        messages.warning(request=request,
+                                         message=f'Requested participant or participants '
+                                                 f'already enrolled choose different partners.'
+                                         )
+                        return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+                # PLAYER_3_ASSIGNED_OR_NOT
+                if Team.objects.filter(participants__username=player_2.username, quiz=quiz).count() != 0:
+                    messages.warning(request=request,
+                                     message=f'Requested participant or participants '
+                                             f'already enrolled choose different partners.'
+                                     )
+                    return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+        except User.DoesNotExist:
+            messages.error(request=request, message=f'Requested participant or participants does not exists.')
+            return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+        #  --------- MEETING --------- #
+
+        meeting_id = None
+        start_url = None
+        join_url = None
+
+        if int(quiz.players) > 1:
+            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                                           start_time=quiz.start_time.timestamp(),
+                                           end_time=quiz.end_time.timestamp(), host=request.user.email)
+            if response.status_code != 201:
+                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
+                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+
+            meeting = json.loads(response.text)
+            meeting_id = meeting['id']
+            start_url = meeting['start_url']
+            join_url = meeting['join_url']
+
+        # --------- SAVE --------- #
+
+        team = Team(
+            name=team_name,
+            quiz=quiz,
+            created_by=request.user,
+            zoom_meeting_id=meeting_id,
+            zoom_start_url=start_url,
+            zoom_join_url=join_url,
+        )
+
+        team.save()
+        team.participants.add(player_1, player_2, player_3)
+        messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
+                                                  f'with team={team_name} as a caption of team.')
+
+        # --------- NOTIFY
+        ps = [request.user.username]
+        if player_2 is not None:
+            ps.append(player_2.username)
+        if player_3 is not None:
+            ps.append(player_3.username)
+
+        for user in ps:
+            desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, scheduled on <b>{quiz.start_time.ctime()}</b>" \
+                   f" your team is <b>{team.name}</b> and members are {', '.join([str(elem) for elem in ps])}."
+
+            notify.send(
+                request.user,
+                recipient=User.objects.get(username=user),
+                verb=f'Enrolled to {quiz.title}',
+                level='success',
+                description=desc
+            )
+        # -----------------------------------------------------------------------------------------------------------
+        return HttpResponseRedirect(reverse('application:quizes'))
+
+    # GET_METHOD
+    context = {
+        'quiz': quiz,
+        'form': TeamForm()
+    }
+    return render(request=request, template_name='application/add_team.html', context=context)
+
+
+@never_cache
+def quiz_start(request, quiz):
+    user_team = None
+    user_quiz = None
+    allowed_to_start = False
+    time_status = None
+    question_ids = []
+    quiz_id = None
+    user_no = None
+    submission = None
+    new = False
+
+    ''' QUIZ and TEAM is required here'''
+
+    try:
+        user_quiz = Quiz.objects.get(pk=quiz)
+        questions = user_quiz.questions.all()
+        user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
+        if not user_team:
+            messages.error(request=request,
+                           message="You are not registered to any team _ please register your team first")
+            return redirect('application:quizes', permanent=True)
+
+        completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
+        if completed_by_me:
+            messages.error(request=request, message="Dear User you have already attempted this quiz")
+            return redirect('application:quizes', permanent=True)
+
+    except Quiz.DoesNotExist:
+        messages.error(request=request, message="Requested Quiz doesn't exists")
+        return redirect('application:quizes', permanent=True)
+
+    if not user_quiz.questions.all():
+        messages.error(request=request,
+                       message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
+        return redirect('application:quizes', permanent=True)
+
+    if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
+        allowed_to_start = True
+        time_status = 'present'
+
+        attempts = Attempt.objects.filter(quiz=user_quiz, user=request.user)
+
+        remaining = questions.exclude(id__in=attempts.values_list('question', flat=True))
+        for re in remaining:
+            question_ids.append(re.pk)
+        user_no = identify_user_in_team(user_team, request, user_quiz)
+
+        no_notify = False
+
+        if not QuizCompleted.objects.filter(user=request.user, quiz=quiz):
+            for user in user_team.participants.all():
+                QuizCompleted(
+                    user=user, quiz=user_quiz, remains=','.join(map(str, question_ids)),
+                    total=user_quiz.questions.count()
+                ).save()
+                if user != request.user:
+                    if user != request.user:
+                        notify.send(
+                            request.user,
+                            recipient=user,
+                            verb=f'Quiz {user_quiz.title} Started',
+                            level='info',
+                            description=f"<b>Hi {user.username}!</b> <b>{request.user}</b> "
+                                        f"has started the quiz join your teammates ASAP"
+                        )
+            no_notify = True
+
+        if not no_notify:
+            for user in user_team.participants.all():
+                if user != request.user:
+                    notify.send(
+                        request.user,
+                        recipient=user,
+                        verb=f'Teammate joined {user_quiz.title}',
+                        level='info',
+                        description=f"<b>Hi {user.username}!</b> your teammate <b>{request.user}</b> "
+                                    f"has joined the quiz"
+                    )
+
+        submission = '1'
+
+    else:
+        if user_quiz.start_time > timezone.now():
+            time_status = 'future'
+        elif timezone.now() > user_quiz.end_time:
+            time_status = 'past'
+
+    zoom_start_url = f"https://zoom.us/s/{user_team.zoom_meeting_id}"
+    zoom_join_url = f"https://zoom.us/j/{user_team.zoom_meeting_id}"
+
+    context = {
+        'time_status': time_status,
+        'allowed_to_start': allowed_to_start,
+        'quiz_start_date': user_quiz.start_time,
+        'quiz_end_date': user_quiz.end_time,
+        'question_ids': question_ids,
+        'team_id': user_team.pk,
+        'zoom_join_url': zoom_start_url if user_team.created_by == request.user else zoom_join_url,
+        'zoom_start_url': user_team.zoom_start_url,
+        'quiz_id': user_quiz.pk,
+        'user_no': user_no,
+        'submission_control': submission,
+        'quiz': Quiz.objects.get(pk=quiz)
+    }
+
+    return render(request=request, template_name='application/quiz_user_1.html', context=context)
+
+
+import hashlib
+import hmac
+import base64
+import time
+
+
+def generate_signature(data):
+    ts = int(round(time.time() * 1000)) - 30000
+    msg = data['apiKey'] + str(data['meetingNumber']) + str(ts) + str(data['role'])
+    message = base64.b64encode(bytes(msg, 'utf-8'))
+    # message = message.decode("utf-8");
+    secret = bytes(data['apiSecret'], 'utf-8')
+    hash = hmac.new(secret, message, hashlib.sha256)
+    hash = base64.b64encode(hash.digest())
+    hash = hash.decode("utf-8")
+    tmpString = "%s.%s.%s.%s.%s" % (data['apiKey'], str(data['meetingNumber']), str(ts), str(data['role']), hash)
+    signature = base64.b64encode(bytes(tmpString, "utf-8"))
+    signature = signature.decode("utf-8")
+    return signature.rstrip("=")
+
+
+@login_required
+@never_cache
+def zoom(request, quiz):
+    user_quiz = Quiz.objects.get(pk=quiz)
+    user_team = Team.objects.filter(quiz=user_quiz, participants=request.user)[0]
+    data = {
+        'apiKey': "EBB0k1HnRN6hlD5dvrkAyw",
+        'apiSecret': "1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF",
+        'meetingNumber': user_team.zoom_meeting_id,
+        'role': 1
+    }
+    signature = generate_signature(data)
+
+    context = {
+        'meeting': user_team.zoom_meeting_id,
+        'signature': signature,
+        'user_name': request.user.username,
+        'user_email': request.user.email,
+        'api_key': settings.ZOOM_API_KEY_JWT,
+    }
+
+    return render(request=request, template_name='application/zooom_meeting.html', context=context)
+
 # -------------------------------------------------------------------------
 
 
@@ -921,6 +1188,228 @@ def learn_question_submission_json(request):
 
         return JsonResponse(data=response, safe=False)
 
+
+@login_required
+def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
+    # TODO: please write query to avoid re-attempting quiz
+    statements = []
+    images = []
+    audios = []
+    choices_keys = []
+    choices_values = []
+    id = 0
+
+    if request.method == 'GET' and request.is_ajax():
+
+        ''' __FETCHING BASE DATA__'''
+        quiz = Quiz.objects.get(pk=quiz_id)
+        screen = Screen.objects.get(no=user_id)
+        attempts = Attempt.objects.filter(quiz=quiz, user=request.user)
+        user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
+
+        if skip == 1:
+            for user in user_team.participants.all():
+                result = QuizCompleted.objects.filter(
+                    user=user, quiz=quiz
+                )[0]
+                result.skipped += 1
+
+                value = result.remains
+                ll = value.split(',')
+                ll.append(ll.pop(0))
+                result.remains = ','.join(map(str, ll))
+                result.save()
+
+        # _____________________________________________________________________________________________________________
+        # LOGIC: Get Remains etc.
+
+        result = QuizCompleted.objects.filter(user=request.user, quiz=quiz)[0]
+        ll = result.remains.split(',')
+
+        # _____________________________________________________________________________________________________________
+        # LOGIC: Get Questions
+        # remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
+        # remaining = [remaining.get(pk=x) for x in questions_get]
+
+        '''__QUESTION LOGIC WILL BE HERE__'''
+        try:
+            question = Question.objects.get(pk=ll[0])
+            qquestion = QuizQuestion.objects.get(question=question, quiz=quiz)
+        except ValueError:
+            messages.success(request=request, message="Your Quiz has been submitted successfully")
+            return redirect('application:quizes')
+
+        ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
+
+        # CONTROL
+        control = qquestion.submission_control.no
+        submission = 0
+        user_no = identify_user_in_team(user_team, request, quiz)
+        if user_no == control:
+            submission = 1
+
+        # STATEMENTS
+        for statement in qquestion.statementvisibility_set.all():
+            if user_no == 3 and statement.screen_3:
+                statements.append(statement.statement.statement)
+            elif user_no == 2 and statement.screen_2:
+                statements.append(statement.statement.statement)
+            elif user_no == 1 and statement.screen_1:
+                statements.append(statement.statement.statement)
+
+        # CHOICES
+        if submission == 1:
+            for choice in qquestion.choicevisibility_set.all():
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+        else:
+            for choice in qquestion.choicevisibility_set.all():
+                if user_no == 3 and choice.screen_3:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+                elif user_no == 2 and choice.screen_2:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+                elif user_no == 1 and choice.screen_1:
+                    choices_keys.append(choice.choice.pk)
+                    choices_values.append(choice.choice.text)
+
+        for image in qquestion.imagevisibility_set.all():
+            if user_no == 3 and image.screen_3:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+            elif user_no == 2 and image.screen_2:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+            elif user_no == 1 and image.screen_1:
+                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
+
+        for audio in qquestion.audiovisibility_set.all():
+            if user_no == 3 and audio.screen_3:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else images.append(audio.audio.url)]
+            elif user_no == 2 and audio.screen_2:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
+            elif user_no == 1 and audio.screen_1:
+                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
+
+        # IMAGES AND AUDIOS
+
+        total = quiz.questions.count()
+        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
+        remains = total - attempts
+
+        ''' __GENERATING RESPONSES__'''
+        response = {
+            'question': question.pk,
+            'submission': submission,
+            'choices_keys': choices_keys,
+            'choices_values': choices_values,
+            'statements': statements,
+            'images': images,
+            'audios': audios,
+            'questions': ll,
+
+            'total': total,
+            'attempts': attempts,
+            'remains': remains,
+        }
+        return JsonResponse(data=response, safe=False)
+
+    else:
+        return JsonResponse(data=None, safe=False)
+
+
+@csrf_exempt
+@login_required
+def question_submission_json(request):
+    success = False
+    message = None
+    end = False
+
+    """ CHECK API CALL """
+    if request.method == 'POST':
+
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+        question = Question.objects.get(pk=request.POST['question_id'])
+        team = Team.objects.get(pk=request.POST['team_id'])
+        choice = QuestionChoice.objects.get(pk=request.POST['choice_id'])
+
+        users = team.participants.all()
+        attempt = Attempt.objects.filter(user=request.user, question=question, quiz=quiz)
+
+        for user in users:
+
+            Attempt(
+                quiz=quiz, user=user, question=question, team=team,
+                start_time=request.POST['start_time'], end_time=request.POST['end_time'],
+                successful=choice.is_correct
+            ).save()
+
+            quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=user)[0]
+            quiz_complete.passed += 1
+            u = quiz_complete.remains.split(',')
+            u = [int(i) for i in u]
+            u.pop(0)
+            u = ','.join([str(elem) for elem in u])
+            quiz_complete.remains = u
+
+            if choice.is_correct:
+                quiz_complete.obtained += 1
+
+            quiz_complete.save()
+
+            if int(request.POST['end']) == 1:
+                meeting_id = team.zoom_meeting_id
+                if meeting_id is not None or meeting_id == '':
+                    zoom_delete_meeting(meeting_id)
+
+                notify.send(
+                    request.user,
+                    recipient=user,
+                    verb=f'Quiz {quiz.title} submitted',
+                    level='info',
+                    description=f'<b>Hi {user}!</b> you can review your vs other teams performance on dashboard'
+                )
+
+        response = {
+            'success': 'true',
+            'message': message,
+            'end': request.POST['end'],
+        }
+
+        return JsonResponse(data=response, safe=False)
+
+
+@csrf_exempt
+@login_required
+def next_question_json(request):
+    success = False
+    message = None
+    end = False
+    change = False
+
+    """ CHECK API CALL """
+    if request.method == 'POST':
+
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+        question = Question.objects.get(pk=request.POST['question_id'])
+
+        quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=request.user)[0]
+        question_ids = request.POST['question_ids']
+        if question_ids != quiz_complete.remains:
+            change = True
+
+        if Attempt.objects.filter(user=request.user, question=question, quiz=quiz):
+            success = True
+        else:
+            message = "Question is not submitted by you team"
+
+        response = {
+            'change': change,
+            'success': success,
+            'message': message,
+            'end': request.POST['end']
+        }
+
+        return JsonResponse(data=response, safe=False)
 
 """ ____________________________________________________________________________________________________________"""
 """ ____________________________________________________________________________________________________________"""
@@ -1301,274 +1790,6 @@ def delete_team(request, pk):
 
 
 @login_required
-def enroll(request, pk):
-    # CHECK_QUIZ_EXISTS
-    quiz = None
-    try:
-        quiz = Quiz.objects.get(pk=pk)
-    except Quiz.DoesNotExist:
-        messages.error(request=request, message=f'Requested Quiz with [ ID:{pk} ]does not exists.')
-        return HttpResponseRedirect(reverse('application:quizes'))
-
-    # ALREADY_ALLOCATED
-    if Team.objects.filter(participants__username=request.user.username, quiz=quiz).count() != 0:
-        messages.warning(request=request, message=f'You are already enrolled to this quiz')
-        return HttpResponseRedirect(reverse('application:quizes'))
-
-    # POST_METHOD
-    if request.method == 'POST':
-        team_name = request.POST['team_name']
-        player_1 = request.user
-        player_2 = None
-        player_3 = None
-
-        # USER_EXISTS_OR_NOT
-        try:
-
-            if quiz.players == '2':
-                player_2 = User.objects.get(username=request.POST['player_2'])
-                if quiz.players == '3':
-                    player_3 = User.objects.get(username=request.POST['player_3'])
-
-                    # PLAYER_3_ASSIGNED_OR_NOT
-                    if Team.objects.filter(participants__username=player_3.username, quiz=quiz).count() != 0:
-                        messages.warning(request=request,
-                                         message=f'Requested participant or participants '
-                                                 f'already enrolled choose different partners.'
-                                         )
-                        return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-
-                # PLAYER_3_ASSIGNED_OR_NOT
-                if Team.objects.filter(participants__username=player_2.username, quiz=quiz).count() != 0:
-                    messages.warning(request=request,
-                                     message=f'Requested participant or participants '
-                                             f'already enrolled choose different partners.'
-                                     )
-                    return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-
-        except User.DoesNotExist:
-            messages.error(request=request, message=f'Requested participant or participants does not exists.')
-            return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-
-        #  --------- MEETING --------- #
-
-        meeting_id = None
-        start_url = None
-        join_url = None
-
-        if int(quiz.players) > 1:
-            response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
-                                           start_time=quiz.start_time.timestamp(),
-                                           end_time=quiz.end_time.timestamp(), host=request.user.email)
-            if response.status_code != 201:
-                messages.error(request=request, message=f'Failed To create zoom meeting please consult administration')
-                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
-
-            meeting = json.loads(response.text)
-            meeting_id = meeting['id']
-            start_url = meeting['start_url']
-            join_url = meeting['join_url']
-
-        # --------- SAVE --------- #
-
-        team = Team(
-            name=team_name,
-            quiz=quiz,
-            created_by=request.user,
-            zoom_meeting_id=meeting_id,
-            zoom_start_url=start_url,
-            zoom_join_url=join_url,
-        )
-
-        team.save()
-        team.participants.add(player_1, player_2, player_3)
-        messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
-                                                  f'with team={team_name} as a caption of team.')
-
-        # --------- NOTIFY
-        ps = [request.user.username]
-        if player_2 is not None:
-            ps.append(player_2.username)
-        if player_3 is not None:
-            ps.append(player_3.username)
-
-        for user in ps:
-            desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, scheduled on <b>{quiz.start_time.ctime()}</b>" \
-                   f" your team is <b>{team.name}</b> and members are {', '.join([str(elem) for elem in ps])}."
-
-            notify.send(
-                request.user,
-                recipient=User.objects.get(username=user),
-                verb=f'Enrolled to {quiz.title}',
-                level='success',
-                description=desc
-            )
-        # -----------------------------------------------------------------------------------------------------------
-        return HttpResponseRedirect(reverse('application:quizes'))
-
-    # GET_METHOD
-    context = {
-        'quiz': quiz,
-        'form': TeamForm()
-    }
-    return render(request=request, template_name='application/add_team.html', context=context)
-
-
-@never_cache
-def quiz_start(request, quiz):
-    user_team = None
-    user_quiz = None
-    allowed_to_start = False
-    time_status = None
-    question_ids = []
-    quiz_id = None
-    user_no = None
-    submission = None
-    new = False
-
-    ''' QUIZ and TEAM is required here'''
-
-    try:
-        user_quiz = Quiz.objects.get(pk=quiz)
-        questions = user_quiz.questions.all()
-        user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
-        if not user_team:
-            messages.error(request=request,
-                           message="You are not registered to any team _ please register your team first")
-            return redirect('application:quizes', permanent=True)
-
-        completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
-        if completed_by_me:
-            messages.error(request=request, message="Dear User you have already attempted this quiz")
-            return redirect('application:quizes', permanent=True)
-
-    except Quiz.DoesNotExist:
-        messages.error(request=request, message="Requested Quiz doesn't exists")
-        return redirect('application:quizes', permanent=True)
-
-    if not user_quiz.questions.all():
-        messages.error(request=request,
-                       message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
-        return redirect('application:quizes', permanent=True)
-
-    if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
-        allowed_to_start = True
-        time_status = 'present'
-
-        attempts = Attempt.objects.filter(quiz=user_quiz, user=request.user)
-
-        remaining = questions.exclude(id__in=attempts.values_list('question', flat=True))
-        for re in remaining:
-            question_ids.append(re.pk)
-        user_no = identify_user_in_team(user_team, request, user_quiz)
-
-        no_notify = False
-
-        if not QuizCompleted.objects.filter(user=request.user, quiz=quiz):
-            for user in user_team.participants.all():
-                QuizCompleted(
-                    user=user, quiz=user_quiz, remains=','.join(map(str, question_ids)),
-                    total=user_quiz.questions.count()
-                ).save()
-                if user != request.user:
-                    if user != request.user:
-                        notify.send(
-                            request.user,
-                            recipient=user,
-                            verb=f'Quiz {user_quiz.title} Started',
-                            level='info',
-                            description=f"<b>Hi {user.username}!</b> <b>{request.user}</b> "
-                                        f"has started the quiz join your teammates ASAP"
-                        )
-            no_notify = True
-
-        if not no_notify:
-            for user in user_team.participants.all():
-                if user != request.user:
-                    notify.send(
-                        request.user,
-                        recipient=user,
-                        verb=f'Teammate joined {user_quiz.title}',
-                        level='info',
-                        description=f"<b>Hi {user.username}!</b> your teammate <b>{request.user}</b> "
-                                    f"has joined the quiz"
-                    )
-
-        submission = '1'
-
-    else:
-        if user_quiz.start_time > timezone.now():
-            time_status = 'future'
-        elif timezone.now() > user_quiz.end_time:
-            time_status = 'past'
-
-    zoom_start_url = f"https://zoom.us/s/{user_team.zoom_meeting_id}"
-    zoom_join_url = f"https://zoom.us/j/{user_team.zoom_meeting_id}"
-
-    context = {
-        'time_status': time_status,
-        'allowed_to_start': allowed_to_start,
-        'quiz_start_date': user_quiz.start_time,
-        'quiz_end_date': user_quiz.end_time,
-        'question_ids': question_ids,
-        'team_id': user_team.pk,
-        'zoom_join_url': zoom_start_url if user_team.created_by == request.user else zoom_join_url,
-        'zoom_start_url': user_team.zoom_start_url,
-        'quiz_id': user_quiz.pk,
-        'user_no': user_no,
-        'submission_control': submission,
-        'quiz': Quiz.objects.get(pk=quiz)
-    }
-
-    return render(request=request, template_name='application/quiz_user_1.html', context=context)
-
-
-import hashlib
-import hmac
-import base64
-import time
-
-
-def generate_signature(data):
-    ts = int(round(time.time() * 1000)) - 30000
-    msg = data['apiKey'] + str(data['meetingNumber']) + str(ts) + str(data['role'])
-    message = base64.b64encode(bytes(msg, 'utf-8'))
-    # message = message.decode("utf-8");
-    secret = bytes(data['apiSecret'], 'utf-8')
-    hash = hmac.new(secret, message, hashlib.sha256)
-    hash = base64.b64encode(hash.digest())
-    hash = hash.decode("utf-8")
-    tmpString = "%s.%s.%s.%s.%s" % (data['apiKey'], str(data['meetingNumber']), str(ts), str(data['role']), hash)
-    signature = base64.b64encode(bytes(tmpString, "utf-8"))
-    signature = signature.decode("utf-8")
-    return signature.rstrip("=")
-
-
-@login_required
-@never_cache
-def zoom(request, quiz):
-    user_quiz = Quiz.objects.get(pk=quiz)
-    user_team = Team.objects.filter(quiz=user_quiz, participants=request.user)[0]
-    data = {
-        'apiKey': "EBB0k1HnRN6hlD5dvrkAyw",
-        'apiSecret': "1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF",
-        'meetingNumber': user_team.zoom_meeting_id,
-        'role': 1
-    }
-    signature = generate_signature(data)
-
-    context = {
-        'meeting': user_team.zoom_meeting_id,
-        'signature': signature,
-        'user_name': request.user.username,
-        'user_email': request.user.email,
-        'api_key': settings.ZOOM_API_KEY_JWT,
-    }
-
-    return render(request=request, template_name='application/zooom_meeting.html', context=context)
-
-
-@login_required
 def results(request):
     # quiz = Quiz.objects.get(pk=1)
     # attempts = LearningResourceAttempts.objects.filter(quiz=quiz, user=request.user)
@@ -1602,227 +1823,7 @@ def user_exists_json(request, username):
         return JsonResponse(data=None)
 
 
-@login_required
-def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
-    # TODO: please write query to avoid re-attempting quiz
-    statements = []
-    images = []
-    audios = []
-    choices_keys = []
-    choices_values = []
-    id = 0
 
-    if request.method == 'GET' and request.is_ajax():
-
-        ''' __FETCHING BASE DATA__'''
-        quiz = Quiz.objects.get(pk=quiz_id)
-        screen = Screen.objects.get(no=user_id)
-        attempts = Attempt.objects.filter(quiz=quiz, user=request.user)
-        user_team = Team.objects.filter(quiz=quiz, participants=request.user)[0]
-
-        if skip == 1:
-            for user in user_team.participants.all():
-                result = QuizCompleted.objects.filter(
-                    user=user, quiz=quiz
-                )[0]
-                result.skipped += 1
-
-                value = result.remains
-                ll = value.split(',')
-                ll.append(ll.pop(0))
-                result.remains = ','.join(map(str, ll))
-                result.save()
-
-        # _____________________________________________________________________________________________________________
-        # LOGIC: Get Remains etc.
-
-        result = QuizCompleted.objects.filter(user=request.user, quiz=quiz)[0]
-        ll = result.remains.split(',')
-
-        # _____________________________________________________________________________________________________________
-        # LOGIC: Get Questions
-        # remaining = Question.objects.exclude(id__in=attempts.values_list('question', flat=True))
-        # remaining = [remaining.get(pk=x) for x in questions_get]
-
-        '''__QUESTION LOGIC WILL BE HERE__'''
-        try:
-            question = Question.objects.get(pk=ll[0])
-            qquestion = QuizQuestion.objects.get(question=question, quiz=quiz)
-        except ValueError:
-            messages.success(request=request, message="Your Quiz has been submitted successfully")
-            return redirect('application:quizes')
-
-        ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
-
-        # CONTROL
-        control = qquestion.submission_control.no
-        submission = 0
-        user_no = identify_user_in_team(user_team, request, quiz)
-        if user_no == control:
-            submission = 1
-
-        # STATEMENTS
-        for statement in qquestion.statementvisibility_set.all():
-            if user_no == 3 and statement.screen_3:
-                statements.append(statement.statement.statement)
-            elif user_no == 2 and statement.screen_2:
-                statements.append(statement.statement.statement)
-            elif user_no == 1 and statement.screen_1:
-                statements.append(statement.statement.statement)
-
-        # CHOICES
-        if submission == 1:
-            for choice in qquestion.choicevisibility_set.all():
-                choices_keys.append(choice.choice.pk)
-                choices_values.append(choice.choice.text)
-        else:
-            for choice in qquestion.choicevisibility_set.all():
-                if user_no == 3 and choice.screen_3:
-                    choices_keys.append(choice.choice.pk)
-                    choices_values.append(choice.choice.text)
-                elif user_no == 2 and choice.screen_2:
-                    choices_keys.append(choice.choice.pk)
-                    choices_values.append(choice.choice.text)
-                elif user_no == 1 and choice.screen_1:
-                    choices_keys.append(choice.choice.pk)
-                    choices_values.append(choice.choice.text)
-
-        for image in qquestion.imagevisibility_set.all():
-            if user_no == 3 and image.screen_3:
-                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
-            elif user_no == 2 and image.screen_2:
-                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
-            elif user_no == 1 and image.screen_1:
-                var = [images.append(image.image.image.url) if image.image.image else images.append(image.image.url)]
-
-        for audio in qquestion.audiovisibility_set.all():
-            if user_no == 3 and audio.screen_3:
-                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else images.append(audio.audio.url)]
-            elif user_no == 2 and audio.screen_2:
-                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
-            elif user_no == 1 and audio.screen_1:
-                var = [audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
-
-        # IMAGES AND AUDIOS
-
-        total = quiz.questions.count()
-        attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
-        remains = total - attempts
-
-        ''' __GENERATING RESPONSES__'''
-        response = {
-            'question': question.pk,
-            'submission': submission,
-            'choices_keys': choices_keys,
-            'choices_values': choices_values,
-            'statements': statements,
-            'images': images,
-            'audios': audios,
-            'questions': ll,
-
-            'total': total,
-            'attempts': attempts,
-            'remains': remains,
-        }
-        return JsonResponse(data=response, safe=False)
-
-    else:
-        return JsonResponse(data=None, safe=False)
-
-
-@csrf_exempt
-@login_required
-def question_submission_json(request):
-    success = False
-    message = None
-    end = False
-
-    """ CHECK API CALL """
-    if request.method == 'POST':
-
-        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
-        question = Question.objects.get(pk=request.POST['question_id'])
-        team = Team.objects.get(pk=request.POST['team_id'])
-        choice = QuestionChoice.objects.get(pk=request.POST['choice_id'])
-
-        users = team.participants.all()
-        attempt = Attempt.objects.filter(user=request.user, question=question, quiz=quiz)
-
-        for user in users:
-
-            Attempt(
-                quiz=quiz, user=user, question=question, team=team,
-                start_time=request.POST['start_time'], end_time=request.POST['end_time'],
-                successful=choice.is_correct
-            ).save()
-
-            quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=user)[0]
-            quiz_complete.passed += 1
-            u = quiz_complete.remains.split(',')
-            u = [int(i) for i in u]
-            u.pop(0)
-            u = ','.join([str(elem) for elem in u])
-            quiz_complete.remains = u
-
-            if choice.is_correct:
-                quiz_complete.obtained += 1
-
-            quiz_complete.save()
-
-            if int(request.POST['end']) == 1:
-                meeting_id = team.zoom_meeting_id
-                if meeting_id is not None or meeting_id == '':
-                    zoom_delete_meeting(meeting_id)
-
-                notify.send(
-                    request.user,
-                    recipient=user,
-                    verb=f'Quiz {quiz.title} submitted',
-                    level='info',
-                    description=f'<b>Hi {user}!</b> you can review your vs other teams performance on dashboard'
-                )
-
-        response = {
-            'success': 'true',
-            'message': message,
-            'end': request.POST['end'],
-        }
-
-        return JsonResponse(data=response, safe=False)
-
-
-@csrf_exempt
-@login_required
-def next_question_json(request):
-    success = False
-    message = None
-    end = False
-    change = False
-
-    """ CHECK API CALL """
-    if request.method == 'POST':
-
-        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
-        question = Question.objects.get(pk=request.POST['question_id'])
-
-        quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=request.user)[0]
-        question_ids = request.POST['question_ids']
-        if question_ids != quiz_complete.remains:
-            change = True
-
-        if Attempt.objects.filter(user=request.user, question=question, quiz=quiz):
-            success = True
-        else:
-            message = "Question is not submitted by you team"
-
-        response = {
-            'change': change,
-            'success': success,
-            'message': message,
-            'end': request.POST['end']
-        }
-
-        return JsonResponse(data=response, safe=False)
 
 
 # def statistics(request):
