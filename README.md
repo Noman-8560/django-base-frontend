@@ -42,6 +42,7 @@ features check the list below > update started
 6. Models must be placed inside their respective applications
 7. Re-build Admin Portal
 4. Re-build Student Portal
+
 ###WHAT'S NEW
 1. Associate Classes, Subjects, topics and Subtopics
 2. Add Topics and Sub-topics to question and quiz-builder
