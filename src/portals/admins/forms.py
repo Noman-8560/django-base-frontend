@@ -5,7 +5,6 @@ from src.application.models import (
     Question, QuestionStatement, QuestionImage, QuestionAudio, QuestionChoice, Quiz, QuizQuestion, Article, Team,
     Subject, Profile
 )
-from django.contrib.admin import widgets
 
 
 class CSDateTimeInput(forms.DateTimeInput):
@@ -65,12 +64,6 @@ class ArticleForm(ModelForm):
     class Meta:
         model = Article
         fields = ['topic', 'event', 'content', 'content', 'active']
-
-
-class TeamForm(ModelForm):
-    class Meta:
-        model = Team
-        fields = ['name', 'participants', 'is_active']
 
 
 class SubjectForm(ModelForm):

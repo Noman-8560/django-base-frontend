@@ -350,7 +350,7 @@
             function initialization() {
                 {% if quiz.players != '1' %}
                     {# TODO:VALIDATE > make sure zoom api is independent #}
-                    myWindow = window.open("/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
+                    myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
                     const Notify = new XNotify();
                     Notify.success({
                         title: "Team Meeting",
@@ -383,7 +383,7 @@
             function x_accessor() {
                 if (question_ids.length > 1) {
 
-                    $.get('/c/api/quiz/{{ quiz_id }}/question/' + question_ids[0] + '/num/{{ user_no }}/skip/' + skip + '/', function (data) {
+                    $.get('/s/json/quiz/{{ quiz_id }}/question/' + question_ids[0] + '/num/{{ user_no }}/skip/' + skip + '/', function (data) {
 
                         {# 1 > CLEANING ON EACH CALL #}
                         clean_all();
@@ -488,7 +488,7 @@
                     question_end = get_time_formatted();
 
                     // TODO: csrf security required _ avoid csrf_exempt in deployment
-                    $.post("/c/api/submit/question/",
+                    $.post("/s/json/quiz/live/question/submit/",
                         {
                             quiz_id: {{ quiz_id }},
                             question_id: question_div.attr('data-question'),
@@ -524,7 +524,7 @@
                 if (question_ids == undefined) {
                     end = 'True';
                 } else {
-                    $.post("/c/api/next/question/",
+                    $.post("/s/json/quiz/live/question/next/",
                         {
                             quiz_id: {{ quiz_id }},
                             question_id: question_div.attr('data-question'),
@@ -615,7 +615,7 @@
             }
 
             function openWin() {
-                myWindow = window.open("/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
+                myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
             }
 
             function closeWin() {

@@ -118,7 +118,7 @@
                                     </td>
                                     <td>{{ quiz.start_time }}</td>
                                     <td>{{ quiz.end_time }}</td>
-                                    <td><a href="{% url 'application:enroll_quiz' quiz.pk %}"><i class="fa fa-link"></i>
+                                    <td><a href="{% url 'student-portal:quiz-enroll' quiz.pk %}"><i class="fa fa-link"></i>
                                         Enroll</a>
                                     </td>
                                     </tr>
@@ -177,7 +177,7 @@
                                     <td>{{ quiz.start_time }}</td>
                                     <td>{{ quiz.end_time }}</td>
                                     <td>
-                                        <a href="{% url 'application:quiz_start' quiz.pk %}"><i class="fa fa-play"></i>
+                                        <a href="{% url 'student-portal:quiz-live' quiz.pk %}"><i class="fa fa-play"></i>
                                             Start
                                         </a>
                                         {#                                    <button id="quiz_select_to_play" class="btn btn-link"#}

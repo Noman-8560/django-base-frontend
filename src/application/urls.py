@@ -62,6 +62,8 @@ urlpatterns = [
     path('c/api/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/skip/<int:skip>/',
          quiz_access_question_json,
          name='capi_quiz_question_access'),
+    path('c/api/user/<str:username>/exists/', user_exists_json, name='capi_user_exists'),
+
     # ----------------------------------------------------------------------------------
 
     path('c/api/learn/<int:quiz_id>/question/<int:question_id>/', learn_access_question_json,
@@ -101,5 +103,4 @@ urlpatterns = [
     path('results/', results, name='results'),
 
     # --- C-API
-    path('c/api/user/<str:username>/exists/', user_exists_json, name='capi_user_exists'),
 ]

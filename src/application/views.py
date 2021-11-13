@@ -1411,6 +1411,24 @@ def next_question_json(request):
 
         return JsonResponse(data=response, safe=False)
 
+
+@login_required
+def user_exists_json(request, username):
+    if request.method == 'GET':
+        flag = False
+        try:
+            user = User.objects.get(username=username)
+            flag = True
+        except User.DoesNotExist:
+            pass
+
+        response = {
+            'flag': flag
+        }
+        return JsonResponse(data=response, safe=False)
+    else:
+        return JsonResponse(data=None)
+
 """ ____________________________________________________________________________________________________________"""
 """ ____________________________________________________________________________________________________________"""
 """ ____________________________________________________________________________________________________________"""
@@ -1803,27 +1821,6 @@ def results(request):
 
 
 ''' CAPI VIEWS _______________________________________________________________'''
-
-
-@login_required
-def user_exists_json(request, username):
-    if request.method == 'GET':
-        flag = False
-        try:
-            user = User.objects.get(username=username)
-            flag = True
-        except User.DoesNotExist:
-            pass
-
-        response = {
-            'flag': flag
-        }
-        return JsonResponse(data=response, safe=False)
-    else:
-        return JsonResponse(data=None)
-
-
-
 
 
 # def statistics(request):

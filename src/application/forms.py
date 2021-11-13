@@ -2,7 +2,6 @@ from django.contrib.admin.widgets import AdminSplitDateTime, AdminTimeWidget
 from django.forms import *
 from django import forms
 from .models import *
-from django.contrib.admin import widgets
 
 
 class CSDateTimeInput(forms.DateTimeInput):
