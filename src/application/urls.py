@@ -49,6 +49,7 @@ urlpatterns = [
     # ----------------------------------------------------------------------------------
 
     path('quizes/', quizes, name='quizes'),
+    path('team/<int:pk>/', team, name='team'),
     path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
     path('enroll/quiz/<int:pk>/', enroll, name='enroll_quiz'),
     path('teams/', teams, name='teams'),
@@ -83,7 +84,6 @@ urlpatterns = [
 
     path('admin/teams/', admin_teams, name='admin_teams'),
     path('admin/delete/team/<int:pk>/', admin_team_delete, name='admin_team_delete'),
-    path('team/<int:pk>/', team, name='team'),
 
     path('delete/team/<int:pk>/', delete_team, name='delete_team'),
 

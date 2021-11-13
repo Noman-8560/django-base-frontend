@@ -1020,6 +1020,53 @@ def quiz_start(request, quiz):
     return render(request=request, template_name='application/quiz_user_1.html', context=context)
 
 
+@login_required
+def team(request, pk):
+    team = None
+    try:
+        team = Team.objects.get(pk=pk)
+
+    except Team.DoesNotExist:
+        messages.error(request=request, message=f'Requested Team with [ ID:{pk} ] does not exists.')
+        return HttpResponseRedirect(reverse('application:teams'))
+
+    context = {
+        'team': team,
+        'players': team.participants.all()
+    }
+    return render(request=request, template_name='application/team.html', context=context)
+
+
+@login_required
+@never_cache
+def delete_team(request, pk):
+    team = None
+
+    try:
+        team = Team.objects.get(pk=pk)
+    except Team.DoesNotExist:
+        messages.error(request=request, message="Requested Team Does not exists")
+        return redirect('application:teams', permanent=True)
+
+    if len(Team.objects.filter(participants__username=request.user.username, pk=pk)) == 0:
+        messages.error(request=request, message="You are not allowed to delete this team")
+        return redirect('application:teams', permanent=True)
+
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
+
+    if Team.objects.filter(quiz__in=completed):
+        messages.error(request=request,
+                       message="you have attempted quiz with this team, you are not allowed to delete this team now")
+        return redirect('application:teams', permanent=True)
+    else:
+        zoom_delete_meeting(team.zoom_meeting_id)
+        team.delete()
+        messages.success(request=request,
+                         message="Team Destroyed completely")
+    return redirect('application:teams', permanent=True)
+
+
 import hashlib
 import hmac
 import base64
@@ -1758,53 +1805,6 @@ def admin_team_delete(request, pk):
     except Subject.DoesNotExist:
         messages.error(request=request, message=f"Requested Team ID: {pk} doesn't exists.")
     return HttpResponseRedirect(reverse('application:admin_teams'))
-
-
-@login_required
-def team(request, pk):
-    team = None
-    try:
-        team = Team.objects.get(pk=pk)
-
-    except Team.DoesNotExist:
-        messages.error(request=request, message=f'Requested Team with [ ID:{pk} ] does not exists.')
-        return HttpResponseRedirect(reverse('application:teams'))
-
-    context = {
-        'team': team,
-        'players': team.participants.all()
-    }
-    return render(request=request, template_name='application/team.html', context=context)
-
-
-@login_required
-@never_cache
-def delete_team(request, pk):
-    team = None
-
-    try:
-        team = Team.objects.get(pk=pk)
-    except Team.DoesNotExist:
-        messages.error(request=request, message="Requested Team Does not exists")
-        return redirect('application:teams', permanent=True)
-
-    if len(Team.objects.filter(participants__username=request.user.username, pk=pk)) == 0:
-        messages.error(request=request, message="You are not allowed to delete this team")
-        return redirect('application:teams', permanent=True)
-
-    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
-    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
-
-    if Team.objects.filter(quiz__in=completed):
-        messages.error(request=request,
-                       message="you have attempted quiz with this team, you are not allowed to delete this team now")
-        return redirect('application:teams', permanent=True)
-    else:
-        zoom_delete_meeting(team.zoom_meeting_id)
-        team.delete()
-        messages.success(request=request,
-                         message="Team Destroyed completely")
-    return redirect('application:teams', permanent=True)
 
 
 @login_required

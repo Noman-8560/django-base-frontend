@@ -244,6 +244,54 @@ class QuizListView(View):
         return render(request=request, template_name='student/quiz_list.html', context=context)
 
 
+class TeamDetailView(View):
+
+    def get(self, request, pk):
+        team = None
+        try:
+            team = Team.objects.get(pk=pk)
+
+        except Team.DoesNotExist:
+            messages.error(request=request, message=f'Requested Team with [ ID:{pk} ] does not exists.')
+            return HttpResponseRedirect(reverse('student-portal:team'))
+
+        context = {
+            'team': team,
+            'players': team.participants.all()
+        }
+        return render(request=request, template_name='student/team.html', context=context)
+
+
+class TeamDeleteView(View):
+
+    def get(self, request, pk):
+        team = None
+
+        try:
+            team = Team.objects.get(pk=pk)
+        except Team.DoesNotExist:
+            messages.error(request=request, message="Requested Team Does not exists")
+            return redirect('student-portal:team', permanent=True)
+
+        if len(Team.objects.filter(participants__username=request.user.username, pk=pk)) == 0:
+            messages.error(request=request, message="You are not allowed to delete this team")
+            return redirect('student-portal:team', permanent=True)
+
+        completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+        completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
+
+        if Team.objects.filter(quiz__in=completed):
+            messages.error(request=request,
+                           message="you have attempted quiz with this team, you are not allowed to delete this team now")
+            return redirect('student-portal:team', permanent=True)
+        else:
+            zoom_delete_meeting(team.zoom_meeting_id)
+            team.delete()
+            messages.success(request=request,
+                             message="Team Destroyed completely")
+        return redirect('student-portal:team', permanent=True)
+
+
 class QuizEnrollView(View):
 
     def get(self, request, pk):
