@@ -16,7 +16,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
 
     # PORTALS ---------------------------------------------------------- #
-    path('admins/', include('src.portals.admins.urls', namespace='admin-portal')),
+    path('a/', include('src.portals.admins.urls', namespace='admin-portal')),
     path('s/', include('src.portals.student.urls', namespace='student-portal')),
     # path('m/', include('src.moderator.admins.urls', namespace='moderator-portal')),
     # path('p/', include('src.parent.admins.urls', namespace='parent-portal')),

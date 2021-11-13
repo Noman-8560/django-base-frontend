@@ -484,7 +484,7 @@
                 let value = $(this).val();
 
                 $.ajax({
-                    url: "/admins/json/quiz/question/submission/status/" + question + "/change/",
+                    url: "/a/json/quiz/question/submission/status/" + question + "/change/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {
@@ -506,7 +506,7 @@
                 let is_checked = $(this).is(":checked");
 
                 $.ajax({
-                    url: "/admins/json/quiz/question/choice/status/" + choice_id + "/change/",
+                    url: "/a/json/quiz/question/choice/status/" + choice_id + "/change/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {
@@ -528,7 +528,7 @@
                 let is_checked = $(this).is(":checked");
 
                 $.ajax({
-                    url: "/admins/json/quiz/question/statement/status/" + statement_id + "/change/",
+                    url: "/a/json/quiz/question/statement/status/" + statement_id + "/change/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {
@@ -550,7 +550,7 @@
                 let is_checked = $(this).is(":checked");
 
                 $.ajax({
-                    url: "/admins/json/quiz/question/image/status/" + image_id + "/change/",
+                    url: "/a/json/quiz/question/image/status/" + image_id + "/change/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {
@@ -572,7 +572,7 @@
                 let is_checked = $(this).is(":checked");
 
                 $.ajax({
-                    url: "/admins/json/quiz/question/audio/status/" + audio_id + "/change/",
+                    url: "/a/json/quiz/question/audio/status/" + audio_id + "/change/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {
@@ -592,8 +592,8 @@
                 let quiz = $(this).data('quiz');
                 let question = $(this).data('question');
                 let is_checked = $(this).is(":checked");
-                let add_url = "/admins/json/quiz/" + quiz + "/question/" + question + "/add/";
-                let del_url = "/admins/json/quiz/" + quiz + "/question/" + question + "/delete/";
+                let add_url = "/a/json/quiz/" + quiz + "/question/" + question + "/add/";
+                let del_url = "/a/json/quiz/" + quiz + "/question/" + question + "/delete/";
 
                 if (is_checked) {
                     $.get(add_url, function (data) {

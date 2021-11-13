@@ -188,13 +188,13 @@
                     };
 
                     $.ajax({
-                        url: '/admins/question/add/',
+                        url: '/a/question/add/',
                         type: 'POST',
                         headers: {'X-CSRFToken': csrftoken},
                         data: data,
                     }).then(function (data, status) {
                         if (data.message === 'success') {
-                            location.href = "/admins/question/" + data.question + "/change/"
+                            location.href = "/a/question/" + data.question + "/change/"
                         }
                     }).catch(function (err) {
                         console.log(err);

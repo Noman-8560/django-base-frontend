@@ -376,13 +376,13 @@
             });
 
             function deleteStatement(id) {
-                $.get("/admins/json/question_statement/" + id + "/delete/", function () {
+                $.get("/a/json/question_statement/" + id + "/delete/", function () {
                     window.location.reload()
                 });
             }
 
             function deleteChoice(id) {
-                $.get("/admins/json/question_choice/" + id + "/delete/", function () {
+                $.get("/a/json/question_choice/" + id + "/delete/", function () {
                     window.location.reload()
                 });
             }
@@ -400,7 +400,7 @@
                     };
 
                     $.ajax({
-                        url: '/admins/json/question_choice/add/',
+                        url: '/a/json/question_choice/add/',
                         type: 'POST',
                         headers: {'X-CSRFToken': csrftoken},
                         data: data,
@@ -423,7 +423,7 @@
                     };
 
                     $.ajax({
-                        url: '/admins/json/question_statement/add/',
+                        url: '/a/json/question_statement/add/',
                         type: 'POST',
                         headers: {'X-CSRFToken': csrftoken},
                         data: data,
