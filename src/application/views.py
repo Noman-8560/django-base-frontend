@@ -644,12 +644,6 @@ def question_audio_delete(request, pk):
 """ ____________________________________________________________________________________________________________"""
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def site_builder(request):
-    context = {}
-    return render(request=request, template_name='application/site_builder.html', context=context)
-
-
 def coming_soon(request):
     return render(request=request, template_name='application/coming_soon.html')
 
@@ -660,6 +654,80 @@ def page_404(request):
 
 def page_500(request):
     return render(request=request, template_name='application/page_500.html')
+
+
+@login_required
+def quizes(request):
+    # ALL_QUIZES
+    all_quizes = Quiz.objects.filter(learning_purpose=False).order_by('-start_time')
+    my_teams = Team.objects.filter(participants__in=[request.user.id])
+    my_quizes = Quiz.objects.filter(id__in=my_teams.values_list('quiz', flat=True))
+
+    # AVAILABLE_QUIZES
+    available_quizes = Quiz.objects.filter(end_time__gte=timezone.now(), learning_purpose=False).exclude(
+        id__in=my_quizes.values_list('id', flat=True)).order_by('-start_time')
+
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
+
+    # QUIZ ENROLLED
+    enrolled_quizes = Quiz.objects \
+        .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
+        .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
+
+    # QUIZ SUBMITTED
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
+
+    context = {
+        'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
+        'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
+        'quizes_enrolled': enrolled_quizes,  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+        'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
+    }
+    return render(request=request, template_name='application/quizes.html', context=context)
+
+
+@login_required
+def teams(request):
+    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
+    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
+
+    teams = Team.objects.filter(participants__username=request.user.username)
+
+    expired_teams = teams.filter(quiz__end_time__lt=timezone.now())
+    available_teams = teams.filter(quiz__end_time__gt=timezone.now()).exclude(quiz__in=completed)
+
+    context = {
+        'teams': teams.order_by('-created_at'),
+        'ex_teams': expired_teams.order_by('-created_at'),
+        'av_teams': available_teams.order_by('-created_at'),
+    }
+    return render(request=request, template_name='application/teams.html', context=context)
+
+
+@login_required
+def learning_resources(request):
+    # ALL_QUIZES
+    all_quizes = Quiz.objects.filter(learning_purpose=True).order_by('-start_time')
+
+    # AVAILABLE_QUIZES
+    available_quizes = Quiz.objects.filter(
+        end_time__gte=timezone.now(),
+        learning_purpose=True).order_by('-start_time')
+
+    completed_by_me = LearningResourceResult.objects.filter(user__id=request.user.id).order_by('-created')
+
+    context = {
+        'all_quizes': all_quizes,
+        'available_quizes': available_quizes,
+        'completed_quizes': completed_by_me,
+    }
+    return render(request=request, template_name='application/learning_resources.html', context=context)
+
+
+
+""" ____________________________________________________________________________________________________________"""
+""" ____________________________________________________________________________________________________________"""
+""" ____________________________________________________________________________________________________________"""
 
 
 @login_required
@@ -970,55 +1038,6 @@ def search_question(request, quiz_pk):
 ''' QUIZ SETUP VIEWS _______________________________________________________________'''
 
 from django.db.models import F
-
-
-@login_required
-def quizes(request):
-    # ALL_QUIZES
-    all_quizes = Quiz.objects.filter(learning_purpose=False).order_by('-start_time')
-    my_teams = Team.objects.filter(participants__in=[request.user.id])
-    my_quizes = Quiz.objects.filter(id__in=my_teams.values_list('quiz', flat=True))
-
-    # AVAILABLE_QUIZES
-    available_quizes = Quiz.objects.filter(end_time__gte=timezone.now(), learning_purpose=False).exclude(
-        id__in=my_quizes.values_list('id', flat=True)).order_by('-start_time')
-
-    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
-
-    # QUIZ ENROLLED
-    enrolled_quizes = Quiz.objects \
-        .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
-        .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
-
-    # QUIZ SUBMITTED
-    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
-
-    context = {
-        'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
-        'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
-        'quizes_enrolled': enrolled_quizes,  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
-        'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
-    }
-    return render(request=request, template_name='application/quizes.html', context=context)
-
-
-@login_required
-def teams(request):
-    completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
-    completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
-
-    teams = Team.objects.filter(participants__username=request.user.username)
-
-    expired_teams = teams.filter(quiz__end_time__lt=timezone.now())
-    available_teams = teams.filter(quiz__end_time__gt=timezone.now()).exclude(quiz__in=completed)
-
-    context = {
-        'teams': teams.order_by('-created_at'),
-        'ex_teams': expired_teams.order_by('-created_at'),
-        'av_teams': available_teams.order_by('-created_at'),
-    }
-    return render(request=request, template_name='application/teams.html', context=context)
-
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_teams(request):
@@ -1386,27 +1405,6 @@ def learning_resources_result(request, quiz):
         'attempts': attempts
     }
     return render(request=request, template_name='application/learning_quiz_result.html', context=context)
-
-
-@login_required
-def learning_resources(request):
-    # ALL_QUIZES
-    all_quizes = Quiz.objects.filter(learning_purpose=True).order_by('-start_time')
-
-    # AVAILABLE_QUIZES
-    available_quizes = Quiz.objects.filter(
-        end_time__gte=timezone.now(),
-        learning_purpose=True).order_by('-start_time')
-
-    completed_by_me = LearningResourceResult.objects.filter(user__id=request.user.id).order_by('-created')
-
-    context = {
-        'all_quizes': all_quizes,
-        'available_quizes': available_quizes,
-        'completed_quizes': completed_by_me,
-    }
-    return render(request=request, template_name='application/learning_resources.html', context=context)
-
 
 ''' CAPI VIEWS _______________________________________________________________'''
 

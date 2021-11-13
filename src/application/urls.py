@@ -46,6 +46,10 @@ urlpatterns = [
     path('add/audio/for/question/<int:question>/', question_audio_add, name='question_audio_add'),
     path('delete/audio/<int:pk>/', question_audio_delete, name='question_audio_delete'),
 
+    path('quizes/', quizes, name='quizes'),
+    path('teams/', teams, name='teams'),
+    path('learning_resources/', learning_resources, name='learning_resources'),
+
     # ==================================================================================================================
     path('quiz/<int:pk>/', quiz_builder_update, name='quiz_builder_update'),
     path('update/statements/quiz/<int:quiz_id>/question/<int:question_id>/',
@@ -61,11 +65,8 @@ urlpatterns = [
     path('quiz/<int:quiz>/start/', quiz_start, name='quiz_start'),
 
     path('learn/quiz/<int:quiz>/', learning_resources_start, name='learning_resource_start'),
-    path('learning_resources/', learning_resources, name='learning_resources'),
     path('learning_resource/result/quiz/<int:quiz>/', learning_resources_result, name='learning_resource_result'),
 
-    path('quizes/', quizes, name='quizes'),
-    path('teams/', teams, name='teams'),
     path('admin/teams/', admin_teams, name='admin_teams'),
     path('admin/delete/team/<int:pk>/', admin_team_delete, name='admin_team_delete'),
     path('team/<int:pk>/', team, name='team'),
