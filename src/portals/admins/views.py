@@ -614,7 +614,7 @@ class QuizQuestionAddJSON(View):
 
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
             messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-            return redirect('application:quiz_builder')
+            return redirect('admin-portal:quiz-create')
 
         # ALREADY ASSOCIATED OR NOT ---------------------------------
         if quiz.questions.filter(pk=question_id):
@@ -653,7 +653,7 @@ class QuizQuestionAddJSON(View):
                     quiz_question=quiz_question, audio=audio
                 ).save()
 
-        return redirect('application:quiz_builder_update', quiz_id, permanent=True)
+        return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
 
 
 @method_decorator(admin_decorators, name='dispatch')
@@ -666,10 +666,10 @@ class QuizQuestionDeleteJSON(View):
 
             quiz.questions.remove(question)
             messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
-            return redirect('application:quiz_builder_update', quiz_id, permanent=True)
+            return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
             messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-            return HttpResponseRedirect(reverse('application:quiz_builder'))
+            return HttpResponseRedirect(reverse('admin-portal:quiz-create'))
 
 
 """ CHNAGE ====================================================================================================== """

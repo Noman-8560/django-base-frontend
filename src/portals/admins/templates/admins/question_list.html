@@ -12,6 +12,12 @@
 
 {% block content %}
 
+    <div class="mb-4 text-right">
+        <a href="{% url 'admin-portal:question-create' %}" class="btn btn-success">
+            Add Question
+        </a>
+    </div>
+
     <div class="card">
         <div class="card-body">
             {% if question_list %}
@@ -26,9 +32,7 @@
                                 <th>Age</th>
                                 <th>created</th>
                                 <th>Level</th>
-                                <th>View</th>
-{#                                <th>Edit</th>#}
-                                <th>Delete</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody class="">
@@ -53,14 +57,14 @@
                                         {% endif %}
                                     </td>
                                     <td><a href="{% url 'admin-portal:question-update' question.pk %}">
-                                        <i class="fa fa-clipboard"></i> View</a>
-                                    </td>
-{#                                    <td><a href="{% url 'application:update_question' question.pk %}">#}
+                                        <i class="fa fa-edit"></i></a>
+
+{#                                    <a href="{% url 'application:update_question' question.pk %}">#}
 {#                                        <i class="fa fa-edit"></i> Edit</a>#}
-{#                                    </td>#}
-                                    <td><a class="text-danger"
+{#                                    #}
+                                    <a class="text-danger"
                                            href="{% url 'admin-portal:question-delete' question.pk %}">
-                                        <i class="fa fa-trash"></i> Delete</a>
+                                        <i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
 

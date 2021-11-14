@@ -251,9 +251,15 @@ class Quiz(models.Model):
     )
 
     title = models.CharField(max_length=100, null=False, blank=False)
-    age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
+    age_limit = models.PositiveIntegerField(
+        null=False, blank=False, validators=[is_more_than_eighteen],
+        help_text="Age must be greater then 5 and less than 18"
+    )
     subjects = models.ManyToManyField(Subject, blank=True)
-    players = models.CharField(max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1')
+    players = models.CharField(
+        max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1',
+        help_text="Select no of players for this quiz"
+    )
     questions = models.ManyToManyField(Question, through="QuizQuestion")
     submission_control = models.ForeignKey(Screen, null=True, blank=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField(null=False, blank=False)

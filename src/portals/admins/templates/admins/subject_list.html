@@ -1,10 +1,9 @@
-
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block base_title %} Articles {% endblock %}
+{% block base_title %} Subjects {% endblock %}
 {% block page_heading %}
-    Articles
+    Subjects
 {% endblock %}
 
 {% block base_links %}
@@ -13,6 +12,12 @@
 {% endblock %}
 
 {% block content %}
+
+    <div class="mb-4 text-right">
+        <a href="{% url 'admin-portal:subject-create' %}" class="btn btn-success">
+            Add Subject
+        </a>
+    </div>
 
     <div class="card" id="data_to_print">
         <div class="card-body">
@@ -26,8 +31,7 @@
                                 <th>Name</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                <th>View</th>
-                                <th>Delete</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody class="">
@@ -39,10 +43,10 @@
                                     <td>{{ subject.created_at }}</td>
                                     <td>{{ subject.modified_at }}</td>
                                     <td><a href="{% url 'admin-portal:subject-update' subject.pk %}">
-                                        <i class="fa fa-edit"></i> Update</a>
-                                    </td>
-                                    <td><a class="text-danger" href="{% url 'admin-portal:subject-delete' subject.pk %}">
-                                        <i class="fa fa-trash"></i> Delete</a>
+                                        <i class="fa fa-edit"></i></a>
+                                    <a class="text-danger"
+                                           href="{% url 'admin-portal:subject-delete' subject.pk %}">
+                                        <i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
 
