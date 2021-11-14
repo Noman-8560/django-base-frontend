@@ -4,6 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 """ CONFIGURATIONS -----------------------------------------------------------------------------------------------"""
 
+AUTH_USER_MODEL = 'accounts.User'
 ROOT_URLCONF = 'cocognite.urls'
 WSGI_APPLICATION = 'cocognite.wsgi.application'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -17,7 +18,7 @@ SERVER = False
 ALLOWED_HOSTS = ['*']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-LOGIN_REDIRECT_URL = '/dashboard/'
+LOGIN_REDIRECT_URL = '/accounts/cross-auth/'
 
 """ INSTALLATIONS ------------------------------------------------------------------------------------------------"""
 
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 
     # USER_APPLICATIONS
     'src.application',
+    'src.accounts',
     'src.wsite',
     'src.zoom_api',
 

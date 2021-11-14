@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.contrib.auth.models import User
+from src.accounts.models import User
 from ckeditor.fields import RichTextField
 
 from django.db.models.signals import post_save, pre_save
@@ -397,7 +397,7 @@ class Guardian(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
     quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
-    participants = models.ManyToManyField('auth.User', blank=True, related_name='participants+')
+    participants = models.ManyToManyField('accounts.User', blank=True, related_name='participants+')
 
     zoom_meeting_id = models.CharField(max_length=255, blank=True, null=True)
     zoom_start_url = models.TextField(blank=True, null=True)
@@ -429,7 +429,7 @@ class Team(models.Model):
 class Attempt(models.Model):
     question = models.ForeignKey('Question', null=False, blank=False, related_name='question-attempt+',
                                  on_delete=models.DO_NOTHING)
-    user = models.ForeignKey('auth.User', null=False, blank=False, related_name='attempt-by+',
+    user = models.ForeignKey('accounts.User', null=False, blank=False, related_name='attempt-by+',
                              on_delete=models.CASCADE)
     quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
@@ -456,7 +456,7 @@ class Attempt(models.Model):
 
 class LearningResourceResult(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True, blank=True)
     total = models.PositiveIntegerField(null=False, blank=False, default=0)
     obtained = models.PositiveIntegerField(null=False, blank=False, default=0)
     attempts = models.PositiveIntegerField(null=False, blank=False, default=1)
@@ -473,7 +473,7 @@ class LearningResourceResult(models.Model):
 class LearningResourceAttempts(models.Model):
     question = models.ForeignKey('Question', null=False, blank=False, related_name='question-attempt+',
                                  on_delete=models.DO_NOTHING)
-    user = models.ForeignKey('auth.User', null=False, blank=False, related_name='attempt-by+',
+    user = models.ForeignKey('accounts.User', null=False, blank=False, related_name='attempt-by+',
                              on_delete=models.CASCADE)
     quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
@@ -495,7 +495,7 @@ class LearningResourceAttempts(models.Model):
 
 class QuizCompleted(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True, blank=True)
     passed = models.PositiveIntegerField(default=0, null=False, blank=False)
     remains = models.CharField(max_length=1000, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)

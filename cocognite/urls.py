@@ -9,7 +9,6 @@ from src.wsite.views import (
     home, page_404, page_500, coming_soon
 )
 from . import settings
-
 urlpatterns = [
 
     # BASE URLS -------------------------------------------------------- #
@@ -20,10 +19,11 @@ urlpatterns = [
 
     # REQUIRED --------------------------------------------------------- #
     path('admin/', admin.site.urls),
+path('accounts/', include('src.accounts.urls', namespace='accounts')),
     path('accounts/', include('allauth.urls')),
 
     # PORTALS ---------------------------------------------------------- #
-    # path('site/', include('src.wsite.urls', namespace='wsite')),
+    # path('', include('src.wsite.urls', namespace='wsite')),
     path('a/', include('src.portals.admins.urls', namespace='admin-portal')),
     path('s/', include('src.portals.student.urls', namespace='student-portal')),
     # path('m/', include('src.moderator.admins.urls', namespace='moderator-portal')),
@@ -37,6 +37,7 @@ urlpatterns = [
     # NOTIFICATION SERVER ---------------------------------------------- #
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
