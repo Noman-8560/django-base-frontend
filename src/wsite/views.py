@@ -88,3 +88,15 @@ def site_builder(request):
             form = WebsiteForm()
 
     return render(request=request, template_name='application/site_builder.html', context={'form': form})
+
+
+def coming_soon(request):
+    return render(request=request, template_name='application/coming_soon.html')
+
+
+def page_404(request):
+    return render(request=request, template_name='application/page_404.html')
+
+
+def page_500(request):
+    return render(request=request, template_name='application/page_500.html')

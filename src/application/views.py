@@ -27,7 +27,7 @@ def dashboard(request):
     allow = False
 
     if request.user.is_superuser:
-        return render(request=request, template_name='application/admin_dashboard.html')
+        return render(request=request, template_name='admins/dashboard.html')
 
     # ALL_QUIZES
     all_quizes = Quiz.objects.filter(learning_purpose=False).order_by('-start_time')
@@ -184,7 +184,7 @@ def dashboard(request):
             allow = False
             messages.error(request, 'Requested quiz does not exists.')
 
-    return render(request=request, template_name='application/student_dashboard.html', context=context)
+    return render(request=request, template_name='student/dashboard.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -642,18 +642,6 @@ def question_audio_delete(request, pk):
 
 
 """ ____________________________________________________________________________________________________________"""
-
-
-def coming_soon(request):
-    return render(request=request, template_name='application/coming_soon.html')
-
-
-def page_404(request):
-    return render(request=request, template_name='application/page_404.html')
-
-
-def page_500(request):
-    return render(request=request, template_name='application/page_500.html')
 
 
 @login_required

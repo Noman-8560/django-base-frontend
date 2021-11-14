@@ -97,9 +97,7 @@ urlpatterns = [
     path('add/choice/for/question/<int:question>/', question_choices_add, name='question_choice_add'),
     path('delete/choice/<int:pk>/', question_choice_delete, name='question_choice_delete'),
 
-    path('coming_soon/', coming_soon, name='coming_soon'),
-    path('404/', page_404, name='404'),
-    path('500/', page_500, name='500'),
+
     path('results/', results, name='results'),
 
     # --- C-API

@@ -1,53 +1,30 @@
 import json
-import hashlib
-import hmac
-import base64
-import time
-
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views import View
-from django.views.generic import (
-    TemplateView, ListView, DeleteView, DetailView, UpdateView, CreateView
-)
 from notifications.signals import notify
 
 from cocognite import settings
 from src.application.models import (
-    Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
-    QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen, Team, QuizCompleted,
+    Quiz, Question, QuestionChoice,
+    QuizQuestion, Screen, Team, QuizCompleted,
     Attempt, LearningResourceResult, LearningResourceAttempts,
 )
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
+from src.portals.student.helpers import generate_signature
 from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting
 
 student_decorators = [login_required]
 
-
-def generate_signature(data):
-    ts = int(round(time.time() * 1000)) - 30000
-    msg = data['apiKey'] + str(data['meetingNumber']) + str(ts) + str(data['role'])
-    message = base64.b64encode(bytes(msg, 'utf-8'))
-    # message = message.decode("utf-8");
-    secret = bytes(data['apiSecret'], 'utf-8')
-    hash = hmac.new(secret, message, hashlib.sha256)
-    hash = base64.b64encode(hash.digest())
-    hash = hash.decode("utf-8")
-    tmpString = "%s.%s.%s.%s.%s" % (data['apiKey'], str(data['meetingNumber']), str(ts), str(data['role']), hash)
-    signature = base64.b64encode(bytes(tmpString, "utf-8"))
-    signature = signature.decode("utf-8")
-    return signature.rstrip("=")
-
-
-"""  VIEWS ======================================================================== """
+"""  VIEWS ================================================================================= """
 
 
 class DashboardView(View):
@@ -634,7 +611,7 @@ class LearningResourceResultView(View):
         return render(request=request, template_name='student/learning_resource_result.html', context=context)
 
 
-"""  SUBJECTS --------------------------------------------------------------------- """
+"""  EXTRA VIEWS ---------------------------------------------------------------------------- """
 
 
 class ZoomMeetingView(View):
@@ -661,7 +638,7 @@ class ZoomMeetingView(View):
         return render(request=request, template_name='student/zoom_meeting.html', context=context)
 
 
-""" C-API ========================================================================= """
+""" C-API =================================================================================== """
 
 
 class LearningResourceLiveQuestionSubmitJSON(View):
@@ -784,22 +761,6 @@ class LearningResourceLiveQuestionAccessJSON(View):
             return JsonResponse(data=response, safe=False)
         else:
             return JsonResponse(data=None, safe=False)
-
-
-class UserExistsJSON(View):
-
-    def get(self, request, username):
-        flag = False
-        try:
-            user = User.objects.get(username=username)
-            flag = True
-        except User.DoesNotExist:
-            pass
-
-        response = {
-            'flag': flag
-        }
-        return JsonResponse(data=response, safe=False)
 
 
 class QuizLiveQuestionSubmitJSON(View):
@@ -1022,4 +983,17 @@ class QuizLiveQuestionNextJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
-""" CHANGE ======================================================================== """
+class UserExistsJSON(View):
+
+    def get(self, request, username):
+        flag = False
+        try:
+            user = User.objects.get(username=username)
+            flag = True
+        except User.DoesNotExist:
+            pass
+
+        response = {
+            'flag': flag
+        }
+        return JsonResponse(data=response, safe=False)
