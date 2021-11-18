@@ -20,66 +20,149 @@
             <div class="row justify-content-center">
 
                 <div class="col-12 text-center">
-                <h2>Just One Step Behind!</h2>
-                <p class="mb-0">Please select your account type to continue</p>
-                <small>
-                    <b>NOTE: </b>Make sure that your account will be associated with correct portal and permissions, once you
-                    select you are not allowed to change in future
-                </small>
-            </div>
+                    <h2>Just One Step Behind!</h2>
+                    <p class="mb-0">Please select your account type to continue</p>
+                    <small>
+                        <b>NOTE: </b>Make sure that your account will be associated with correct portal and permissions,
+                        once you
+                        select you are not allowed to change in future
+                    </small>
+                </div>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="col-12 mt-3 card-body">
 
-                <div class="col-12 mt-3 card-body">
-                    <div class="row">
-                        {% for val in '123'|make_list %}
+                        <div class="row">
+
+                            {# STUDENT #}
                             <div class="col">
-                                <div class="border rounded shadow-lg bg-white p-4 mx-1">
-                                    <div class="text-center">
-                                        <h1 class=""><i class="fa fa-user"></i></h1>
-                                    </div>
-                                    <h4 class="text-center">
-                                        Student Account
-                                    </h4>
-                                    <hr>
-                                    <ul class="list-unstyled">
-                                        <div class="row justify-content-center">
-                                            <div class="text-center col border p-3">
-                                                <h5 class="mb-0"><i class="fa fa-clock"></i></h5>
-                                                <p class="mb-0">Quizzes</p>
-                                            </div>
-
-                                            <div class="text-center col border p-3">
-                                                <h5 class="mb-0"><i class="fa fa-hand-pointer"></i></h5>
-                                                <p class="mb-0">Practice</p>
-                                            </div>
-
-                                            <div class="text-center col border p-3">
-                                                <h5 class="mb-0"><i class="fa fa-book"></i></h5>
-                                                <p class="mb-0">Learning</p>
-                                            </div>
-
-                                            <div class="text-center col border p-3">
-                                                <h5 class="mb-0"><i class="fa fa-user-friends"></i></h5>
-                                                <p class="mb-0">Teams</p>
-                                            </div>
-
+                                    <div class="border rounded shadow-lg bg-white p-4 mx-1">
+                                        <div class="text-center">
+                                            <h1 class=""><i class="fa fa-user-graduate"></i></h1>
                                         </div>
-                                    </ul>
-                                    <hr>
-                                    <input type="radio" name="type" id="type" class="form-check-inline"> I am a student
-                                </div>
-                            </div>
-                        {% endfor %}
+                                        <h4 class="text-center">
+                                            Student Account
+                                        </h4>
+                                        <hr>
+                                        <ul class="list-unstyled">
+                                            <div class="row justify-content-center">
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-clock"></i></h5>
+                                                    <p class="mb-0">Quizzes</p>
+                                                </div>
 
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-hand-pointer"></i></h5>
+                                                    <p class="mb-0">Practice</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-book"></i></h5>
+                                                    <p class="mb-0">Learning</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-user-friends"></i></h5>
+                                                    <p class="mb-0">Teams</p>
+                                                </div>
+
+                                            </div>
+                                        </ul>
+                                        <hr>
+                                        <input type="radio" value="s" name="user_type" id="user_type" class="form-check-inline"> <b>I am a
+                                        Student</b>
+                                    </div>
+                                </div>
+
+                            {# TEACHER #}
+                            <div class="col">
+                                    <div class="border rounded shadow-lg bg-white p-4 mx-1">
+                                        <div class="text-center">
+                                            <h1 class=""><i class="fa fa-user-tie"></i></h1>
+                                        </div>
+                                        <h4 class="text-center">
+                                            Moderator Account
+                                        </h4>
+                                        <hr>
+                                        <ul class="list-unstyled">
+                                            <div class="row justify-content-center">
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-clock"></i></h5>
+                                                    <p class="mb-0">Quizzes</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-hand-pointer"></i></h5>
+                                                    <p class="mb-0">Practice</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-book"></i></h5>
+                                                    <p class="mb-0">Learning</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-user-friends"></i></h5>
+                                                    <p class="mb-0">Teams</p>
+                                                </div>
+
+                                            </div>
+                                        </ul>
+                                        <hr>
+                                        <input type="radio" value="m" name="user_type" id="user_type" class="form-check-inline">
+                                        <b>I am a Moderator</b>
+                                    </div>
+                                </div>
+
+                            {# PARENT #}
+                            <div class="col">
+                                    <div class="border rounded shadow-lg bg-white p-4 mx-1">
+                                        <div class="text-center">
+                                            <h1 class=""><i class="fa fa-house-user"></i></h1>
+                                        </div>
+                                        <h4 class="text-center">
+                                            Parent Account
+                                        </h4>
+                                        <hr>
+                                        <ul class="list-unstyled">
+                                            <div class="row justify-content-center">
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-clock"></i></h5>
+                                                    <p class="mb-0">Quizzes</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-hand-pointer"></i></h5>
+                                                    <p class="mb-0">Practice</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-book"></i></h5>
+                                                    <p class="mb-0">Learning</p>
+                                                </div>
+
+                                                <div class="text-center col border p-3">
+                                                    <h5 class="mb-0"><i class="fa fa-user-friends"></i></h5>
+                                                    <p class="mb-0">Teams</p>
+                                                </div>
+
+                                            </div>
+                                        </ul>
+                                        <hr>
+                                        <input type="radio" value="p" name="user_type" id="user_type" class="form-check-inline">
+                                        <b>I need parental account</b>
+                                    </div>
+                                </div>
+                        </div>
 
                     </div>
 
-                </div>
-
-                <div class="col-12 mt-3 text-center">
-                    <button class="btn btn-lg btn-primary">
-                        Submit
-                    </button>
-                </div>
+                    <div class="col-12 mt-3 text-center">
+                        <button class="btn btn-lg btn-primary" type="submit">
+                            Submit
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
