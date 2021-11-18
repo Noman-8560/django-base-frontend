@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
 from cocognite import settings
 
 
@@ -14,6 +13,7 @@ class User(AbstractUser):
     is_student = models.BooleanField(default=True, help_text="This account belongs to student")
     is_moderator = models.BooleanField(default=False, help_text="This account belongs to Moderator/Teacher")
     is_parent = models.BooleanField(default=False, help_text="This account is parental")
+    is_completed = models.BooleanField(default=False, help_text="Shows weather the account is associated with any type")
 
     profile_image = models.ImageField(
         null=True, blank=True,
