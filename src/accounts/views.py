@@ -52,9 +52,18 @@ class IdentificationCheckView(View):
                 else:
                     messages.success(request, "You are identified as Parent")
                     user.is_parent = True
-                # user.save()
+                user.is_completed = True
+                user.save()
                 redirect('accounts:cross-auth-view')
             else:
                 messages.error(request, "Please provide correct user type")
 
         return render(request, 'accounts/identification-check.html')
+
+
+class ProfileUpdateView(View):
+    pass
+
+
+class ProfileImageUpdateView(View):
+    pass
