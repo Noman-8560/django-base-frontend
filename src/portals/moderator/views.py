@@ -6,8 +6,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import (
-    ListView, UpdateView, DeleteView, CreateView, DetailView
-)
+    ListView, UpdateView, DeleteView, CreateView, DetailView,
+    TemplateView)
 
 from src.application.forms import QuestionImageForm
 from src.application.models import (
@@ -16,6 +16,15 @@ from src.application.models import (
     Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen)
 from src.portals.admins.dll import QuestionDS
 from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
+
+
+@method_decorator(login_required, name='dispatch')
+class DashboardView(TemplateView):
+    template_name = 'moderator/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DashboardView, self).get_context_data(**kwargs)
+        return context
 
 
 """ QUIZ """

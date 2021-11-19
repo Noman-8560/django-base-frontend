@@ -15,8 +15,10 @@ class CrossAuthView(View):
 
         if request.user.is_superuser:
             return redirect('admin-portal:dashboard')
-        else:
+        elif request.user.is_student:
             return redirect('student-portal:dashboard')
+        else:
+            return redirect('moderator-portal:dashboard')
 
 
 @method_decorator(login_required, name='dispatch')

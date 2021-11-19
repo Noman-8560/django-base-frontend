@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import (
+    DashboardView,
+
     QuizListView, QuizCreateView, QuizDeleteView, QuizUpdateView, QuizDetailView,
     QuestionListView, QuestionCreateView, QuestionDeleteView, QuestionUpdateView,
 
@@ -13,6 +15,7 @@ from .views import (
 app_name = "moderator-portal"
 urlpatterns = [
 
+    path('', DashboardView.as_view(), name='dashboard'),
     path('quiz/', QuizListView.as_view(), name='quiz'),
 
     path('add/quiz/', QuizCreateView.as_view(), name='quiz-create'),

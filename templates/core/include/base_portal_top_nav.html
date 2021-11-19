@@ -3,7 +3,9 @@
 {% if request.user.is_authenticated %}
     {% if request.user.is_superuser %}
         {% include 'core/include/admin_top_nav.html' %}
-    {% else %}
+    {% elif request.user.is_student %}
         {% include 'core/include/student_top_nav.html' %}
+    {% else %}
+        {% include 'core/include/moderator_top_nav.html' %}
     {% endif %}
 {% endif %}
