@@ -24,7 +24,6 @@ class User(AbstractUser):
     about = models.TextField(null=True, blank=True, help_text="Tell us something interesting about yourself")
     address = models.TextField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
-    institute = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Users"

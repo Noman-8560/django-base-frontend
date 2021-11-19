@@ -27,16 +27,13 @@ class IdentificationCheckView(View):
     def get(self, request):
 
         # IS USER ALREADY IDENTIFIED
-        if request.user.is_completed:
-            return redirect('accounts:cross-auth-view')
-
+        if request.user.is_completed: return redirect('accounts:cross-auth-view')
         return render(request, 'accounts/identification-check.html')
 
     def post(self, request):
 
         # IF USER ALREADY IDENTIFIED
-        if request.user.is_completed:
-            return redirect('accounts:cross-auth-view')
+        if request.user.is_completed: return redirect('accounts:cross-auth-view')
 
         # IF USER HAS TYPE
         if request.POST['user_type']:

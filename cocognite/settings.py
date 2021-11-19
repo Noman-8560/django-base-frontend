@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'src.zoom_api',
 
     'src.portals.moderator',
+    'src.portals.parent',
     'src.portals.student',
     'src.portals.admins',
 

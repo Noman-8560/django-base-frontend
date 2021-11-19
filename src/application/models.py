@@ -12,6 +12,33 @@ from django.utils.text import slugify
 from notifications.signals import notify
 
 
+class Child(models.Model):
+    RELATION_CHOICES = (
+        ("fat", "Father"),
+        ("mot", "Mother"),
+        ("sis", "Sister"),
+        ("bro", "Brother"),
+        ("unc", "Uncle"),
+        ("aun", "Aunt"),
+        ("gua", "Guardian"),
+    )
+    parent_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="parent_user")
+    child_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=False,
+                              related_name="child_user")
+    relation_status = models.CharField(
+        max_length=3, choices=RELATION_CHOICES, default='fat',
+        help_text="Your relation with student"
+    )
+    is_verified_by_child = models.BooleanField(default=False)
+
+    is_active = models.BooleanField(default=True)
+    created_on = models\
+        .DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.parent_user
+
+
 class AppUpdate(models.Model):
     UPDATE_STATUS = (
         ('des', 'Designing'),
