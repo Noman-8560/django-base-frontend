@@ -27,8 +27,8 @@ urlpatterns = [
     # path('', include('src.wsite.urls', namespace='wsite')),
     path('a/', include('src.portals.admins.urls', namespace='admin-portal')),
     path('s/', include('src.portals.student.urls', namespace='student-portal')),
-    # path('m/', include('src.moderator.admins.urls', namespace='moderator-portal')),
-    # path('p/', include('src.parent.admins.urls', namespace='parent-portal')),
+    path('m/', include('src.portals.moderator.urls', namespace='moderator-portal')),
+    # path('p/', include('src.parent.moderator.urls', namespace='parent-portal')),
 
     # DEPRECATED ------------------------------------------------------- #
     path('site/', include('src.wsite.urls', namespace='wsite')),

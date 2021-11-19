@@ -1,0 +1,613 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Quiz Builder{% endblock %}
+
+{% block base_links %}
+    <!-- XDSoft DateTimePicker -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+          integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row mb-2 px-2">
+        <div class="col-7">
+            <a href="{% url 'admin-portal:quiz-delete' quiz_id %}" class="text-danger"><i
+                    class="fa fa-trash"></i> Remove</a> |
+            <a href="{% url 'admin-portal:quiz-update' quiz_id %}" class=""><i
+                    class="fa fa-edit"></i> Edit</a> |
+            <a href="{% url 'admin-portal:quiz-create' %}" class="text-success"><i
+                    class="fa fa-plus"></i> New</a>
+        </div>
+        <div class="col-5 text-right">
+            <b class="font-weight-bolder"><i class="fa fa-list"></i> <b id="total">{{ total }}</b></b> |
+            <b class="font-weight-bolder"><i class="fa fa-check-circle"></i> <b id="total">{{ selected }}</b></b> |
+            <b class="font-weight-bolder"><i class="fa fa-times-circle"></i> <b id="selected">{{ remaining }}</b></b>
+        </div>
+    </div>
+
+    {# MAIN DIVISION #}
+    <div class="">
+
+        {% if questionDS %}
+            {% for q in questionDS %}
+                <div class="card">
+                    <div class="card-body">
+
+                        {# QUESTION-MAIN HEADER ----------------------------------------------------------------- #}
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-nowrap mb-0">
+                                <tbody id="submission_control_body">
+
+                                <tr>
+                                    <td>
+                                        SNO ({{ q.question_id }})
+                                        <div class="">
+                                            <input type="checkbox" id="question_submission" data-quiz="{{ quiz_id }}"
+                                                   data-question="{{ q.question_id }}" data-quizquestion="{{ q.id }}"
+                                                    {% if q.question_exists %} checked {% endif %}>
+                                            <b class="text-success">
+                                                Associated
+                                            </b>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Subject
+                                        <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                      class="text-dark">{{ q.subject }}</a>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        Level {{ q.level }}<br>
+                                        {% if q.level == 'e' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% elif q.level == 'n' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% else %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% endif %}
+
+                                    </td>
+                                    <td>
+                                        Age Limit
+                                        <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                      class="text-dark">{{ q.age_limit }}</a>
+                                        </h5>
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {# QUESTION-DESC ------------------------------------------------------------------------ #}
+                        <div id="desc-div">
+                            <div class="table-responsive">
+                                <table class="table table-borderless">
+
+                                    <colgroup>
+                                        <col span="1" style="width: 50%;">
+                                    </colgroup>
+
+                                    {# SUBMISSION CONTROL ----------------------------------------------------------- #}
+                                    <tr class="border-top">
+                                        <th>Submission Control</th>
+                                        <th>Screen 1</th>
+                                        {% if players == '2' or players == '3' %}
+                                            <th>Screen 2</th>
+                                        {% endif %}
+                                        {% if players == '3' %}
+                                            <th>Screen 3</th>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td>Submission Control</td>
+                                        <td>
+                                            <input type="radio"
+                                                   name="submission_control_{{ q.id }}" id="submission_control"
+                                                   value="1"
+                                                   data-questionid="{{ q.id }}"
+                                                   {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
+                                            >
+                                        </td>
+
+                                        {% if players == '2' or players == '3' %}
+                                            <td>
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="2"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 2 %}checked{% endif %}
+                                                >
+                                            </td>
+                                        {% endif %}
+
+                                        {% if players == '3' %}
+                                            <td>
+                                                <input type="radio"
+                                                       name="submission_control_{{ q.id }}" id="submission_control"
+                                                       value="3"
+                                                       data-questionid="{{ q.id }}"
+                                                       {% if q.submission_control.no == 3 %}checked{% endif %}
+                                                >
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+
+                                    {# STATEMENTS ------------------------------------------------------------------ #}
+                                    {% if q.statements %}
+                                        <tr class="border-top">
+                                            <th>Statement</th>
+                                            <th>Screen 1</th>
+                                            {% if players == '2' or players == '3' %}
+                                                <th>Screen 2</th>
+                                            {% endif %}
+                                            {% if players == '3' %}
+                                                <th>Screen 3</th>
+                                            {% endif %}
+                                        </tr>
+
+                                        {% for desc in q.statements %}
+                                            <tr>
+                                                <td>{{ desc.description }}</td>
+                                                <td>
+                                                    <input type="checkbox" id="statement_control"
+                                                           data-question="{{ q.id }}"
+                                                           data-statement="{{ desc.id }}"
+                                                            {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                                </td>
+
+                                                {% if players == '2' or players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="statement_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-statement="{{ desc.id }}"
+                                                                {% if desc.screen2 %} checked {% endif %}
+                                                               data-screen="2">
+                                                    </td>
+                                                {% endif %}
+
+                                                {% if players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="statement_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-statement="{{ desc.id }}"
+                                                                {% if desc.screen3 %} checked {% endif %}
+                                                               data-screen="3">
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {# CHOICES ---------------------------------------------------------------------- #}
+                                    {% if q.choices %}
+                                        <tr class="border-top">
+                                            <th>Choice</th>
+                                            <th>Screen 1</th>
+                                            {% if players == '2' or players == '3' %}
+                                                <th>Screen 2</th>
+                                            {% endif %}
+                                            {% if players == '3' %}
+                                                <th>Screen 3</th>
+                                            {% endif %}
+                                        </tr>
+
+                                        {% for desc in q.choices %}
+                                            <tr>
+                                                <td>
+                                                    {% if desc.is_correct %}
+                                                        <i class="fa fa-check-circle font-weight-bolder text-success"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-times-circle font-weight-bolder text-danger"></i>
+                                                    {% endif %}
+                                                    {{ desc.description }}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" id="choice_control"
+                                                           data-question="{{ q.id }}"
+                                                           data-choice="{{ desc.id }}"
+                                                            {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                                </td>
+
+                                                {% if players == '2' or players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="choice_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-choice="{{ desc.id }}"
+                                                                {% if desc.screen2 %} checked {% endif %}
+                                                               data-screen="2">
+                                                    </td>
+                                                {% endif %}
+
+                                                {% if players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="choice_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-choice="{{ desc.id }}"
+                                                                {% if desc.screen3 %} checked {% endif %}
+                                                               data-screen="3">
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {#IMAGE ------------------------------------------------------------------------- #}
+                                    {% if q.images %}
+                                        <tr class="border-top">
+                                            <th>Image</th>
+                                            <th>Screen 1</th>
+                                            {% if players == '2' or players == '3' %}
+                                                <th>Screen 2</th>
+                                            {% endif %}
+                                            {% if players == '3' %}
+                                                <th>Screen 3</th>
+                                            {% endif %}
+                                        </tr>
+
+                                        {% for desc in q.images %}
+                                            <tr>
+                                                <td class="">
+                                                    {% if desc.url %}
+                                                        <a href="{{ desc.url }}" target="_blank">
+                                                            <img src="{{ desc.url }}" height="50">
+                                                        </a>
+                                                    {% elif desc.image %}
+                                                        <a href="{{ desc.image }}" target="_blank">
+                                                            <img src="{{ desc.image }}" height="50">
+                                                        </a>
+                                                    {% else %}
+                                                        <h4 class="text-danger font-weight-bolder">Content not
+                                                            available</h4>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" id="image_control" data-question="{{ q.id }}"
+                                                           data-image="{{ desc.id }}"
+                                                            {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                                </td>
+
+                                                {% if players == '2' or players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="image_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-image="{{ desc.id }}"
+                                                                {% if desc.screen2 %} checked {% endif %}
+                                                               data-screen="2">
+                                                    </td>
+                                                {% endif %}
+
+                                                {% if players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="image_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-image="{{ desc.id }}"
+                                                                {% if desc.screen3 %} checked {% endif %}
+                                                               data-screen="3">
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {# ADUIOS ----------------------------------------------------------------------- #}
+                                    {% if q.audios %}
+                                        <tr class="border-top">
+                                            <th>Audio</th>
+                                            <th>Screen 1</th>
+                                            {% if players == '2' or players == '3' %}
+                                                <th>Screen 2</th>
+                                            {% endif %}
+                                            {% if players == '3' %}
+                                                <th>Screen 3</th>
+                                            {% endif %}
+                                        </tr>
+
+                                        {% for desc in q.audios %}
+                                            <tr>
+                                                <td>
+                                                    {% if desc.url %}
+                                                        <audio controls class="">
+                                                            <source src="{{ desc.url }}"
+                                                                    type="audio/mpeg">
+                                                            Your browser does not support the audio tag.
+                                                        </audio>
+                                                    {% elif desc.audio %}
+                                                        <audio controls>
+                                                            <source src="{{ desc.audio }}"
+                                                                    type="audio/mpeg">
+                                                            Your browser does not support the audio tag.
+                                                        </audio>
+                                                    {% else %}
+                                                        <h4 class="text-danger font-weight-bolder">Content not
+                                                            available</h4>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" id="audio_control" data-question="{{ q.id }}"
+                                                           data-audio="{{ desc.id }}"
+                                                            {% if desc.screen1 %} checked {% endif %} data-screen="1">
+                                                </td>
+
+                                                {% if players == '2' or players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="audio_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-audio="{{ desc.id }}"
+                                                                {% if desc.screen2 %} checked {% endif %}
+                                                               data-screen="2">
+                                                    </td>
+                                                {% endif %}
+
+                                                {% if players == '3' %}
+                                                    <td>
+                                                        <input type="checkbox" id="audio_control"
+                                                               data-question="{{ q.id }}"
+                                                               data-audio="{{ desc.id }}"
+                                                                {% if desc.screen3 %} checked {% endif %}
+                                                               data-screen="3">
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if questions %}
+            {% for q in questions %}
+
+                <div class="card">
+                    <div class="card-body">
+
+                        {# QUESTION-MAIN HEADER ----------------------------------------------------------------- #}
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-nowrap mb-0">
+                                <tbody id="submission_control_body">
+
+                                <tr>
+
+                                    <td>
+                                        SNO ({{ q.id }})
+                                        <div class="">
+                                            <input type="checkbox" class="mt-2" id="question_submission"
+                                                   data-quiz="{{ quiz_id }}"
+                                                   data-question="{{ q.id }}">
+                                            <b class="text-danger">
+                                                Not-Associated
+                                            </b>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        Subject
+                                        <h5 class="text-truncate font-size-14 m-0"><a href="#"
+                                                                                      class="text-dark">{{ q.subject }}</a>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        Level<br>
+                                        {% if q.level == 'e' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% elif q.level == 'n' %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                        {% else %}
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% endif %}
+
+                                    </td>
+                                    <td>
+                                        Age Limit
+                                        <h5 class="text-truncate font-size-14 m-0">
+                                            <b class="text-dark">{{ q.age_limit }}</b>
+                                        </h5>
+                                    </td>
+                                </tr>
+
+                                {% for statement in q.questionstatement_set.all %}
+                                    <tr>
+                                        <td>{{ statement.statement }}</td>
+                                    </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+
+{% endblock %}
+
+{% block base_internal_scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
+            integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        $(document).ready(function () {
+
+            $('#desc-div #submission_control').click(function () {
+                let question = $(this).data('questionid');
+                let value = $(this).val();
+
+                $.ajax({
+                    url: "/a/json/quiz/question/submission/status/" + question + "/change/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        screen_id: value,
+                    },
+                }).then(function (data, status) {
+                    if (data.success === "False") {
+                        alert("Failed to update record: make sure everything is correct");
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+            });
+
+            $('#desc-div #choice_control').click(function () {
+                let choice_id = $(this).data('choice');
+                let screen_id = $(this).data('screen');
+                let is_checked = $(this).is(":checked");
+
+                $.ajax({
+                    url: "/a/json/quiz/question/choice/status/" + choice_id + "/change/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+                    },
+                }).then(function (data, status) {
+                    if (data.success == "False") {
+                        alert(data.message);
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            });
+
+            $('#desc-div #statement_control').click(function () {
+                let statement_id = $(this).data('statement');
+                let screen_id = $(this).data('screen');
+                let is_checked = $(this).is(":checked");
+
+                $.ajax({
+                    url: "/a/json/quiz/question/statement/status/" + statement_id + "/change/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+                    },
+                }).then(function (data, status) {
+                    if (data.success == "False") {
+                        alert(data.message);
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            });
+
+            $('#desc-div #image_control').click(function () {
+                let image_id = $(this).data('image');
+                let screen_id = $(this).data('screen');
+                let is_checked = $(this).is(":checked");
+
+                $.ajax({
+                    url: "/a/json/quiz/question/image/status/" + image_id + "/change/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+                    },
+                }).then(function (data, status) {
+                    if (data.success == "False") {
+                            alert(data.message);
+                        }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            });
+
+            $('#desc-div #audio_control').click(function () {
+                let audio_id = $(this).data('audio');
+                let screen_id = $(this).data('screen');
+                let is_checked = $(this).is(":checked");
+
+                $.ajax({
+                    url: "/a/json/quiz/question/audio/status/" + audio_id + "/change/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        screen_id: screen_id,
+                        is_checked: is_checked,
+                    },
+                }).then(function (data, status) {
+                    if (data.success == "False") {
+                            alert(data.message);
+                        }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            });
+
+            $('#submission_control_body #question_submission').click(function () {
+                let quiz = $(this).data('quiz');
+                let question = $(this).data('question');
+                let is_checked = $(this).is(":checked");
+                let add_url = "/a/json/quiz/" + quiz + "/question/" + question + "/add/";
+                let del_url = "/a/json/quiz/" + quiz + "/question/" + question + "/delete/";
+
+                if (is_checked) {
+                    $.get(add_url, function (data) {
+                        location.reload();
+                    });
+                } else {
+                    $.get(del_url, function (data) {
+                        location.reload();
+                    });
+                }
+            });
+
+        });
+    </script>
+
+{% endblock %}
+

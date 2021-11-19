@@ -1,0 +1,175 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block base_title %} Quizzes {% endblock %}
+{% block page_heading %} Quizzes {% endblock %}
+
+{% block base_links %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.5/css/buttons.dataTables.min.css">
+{% endblock %}
+
+{% block content %}
+
+    <div class="mb-4 text-right">
+        <a href="{% url 'admin-portal:quiz-create' %}" class="btn btn-success">
+            Add Quiz
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {% if quiz_list %}
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Players</th>
+                                <th>Subjects</th>
+                                <th>Questions</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Created</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody class="">
+
+                            {% for quiz in quiz_list %}
+                                <tr>
+                                    <td>{{ quiz.pk }}</td>
+                                    <td>{{ quiz.title }}</td>
+                                    <td>{{ quiz.players }}</td>
+                                    <td>{{ quiz.subjects.count }}</td>
+                                    <td>{{ quiz.questions.count }}</td>
+                                    <td>{{ quiz.start_time }}</td>
+                                    <td>{{ quiz.end_time }}</td>
+                                    <td>{{ quiz.created_at }}</td>
+                                    <td>
+
+                                        {% if quiz.learning_purpose %}
+                                            <b class="text-primary">Practice</b>
+                                        {% else %}
+                                            <b class="text-success">Quiz</b>
+                                        {% endif %}
+
+                                    </td>
+                                    <td><a href="{% url 'admin-portal:quiz-detail' quiz.pk %}">
+                                        <i class="fa fa-eye"></i></a>
+                                        <a href="{% url 'admin-portal:quiz-update' quiz.pk %}">
+                                            <i class="fa fa-edit"></i></a>
+                                        <a class="text-danger" href="{% url 'admin-portal:quiz-delete' quiz.pk %}">
+                                            <i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="">
+                    <div class="card border border-danger">
+                        <div class="card-header bg-transparent border-danger">
+                            <h5 class="my-0 text-danger">
+                                <i class="mdi mdi-block-helper mr-3"></i>Quiz Help</h5>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-0">No Quizes available</h5>
+                            <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no quiz available,
+                                include some quizes to attract your users, You can add quizes
+                                <a href="{% url 'application:quiz_builder' %}">Here</a>.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block base_internal_scripts %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.colVis.min.js"></script>
+
+
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+            $('table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text: 'Show/Hide',
+                        titleAttr: 'Column Visibility'
+                    },
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text: '<i class="fa fa-copy text-dark"></i>',
+                        titleAttr: 'Copy'
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text: '<i class="fa fa-file-excel-o text-success"></i>',
+                        titleAttr: 'Excel'
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text: '<i class="fa fa-file text-success"></i>',
+                        titleAttr: 'CSV'
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text: '<i class="fa fa-file-pdf text-danger"></i>',
+                        titleAttr: 'PDF'
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        text: '<i class="fa fa-print text-primary"></i>',
+                        titleAttr: 'Print'
+                    }
+                ]
+            })
+            ;
+
+        });
+
+    </script>
+{% endblock %}
