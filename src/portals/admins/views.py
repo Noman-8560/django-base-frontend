@@ -223,6 +223,12 @@ class QuizCreateView(CreateView):
     template_name = 'admins/quiz_create_form.html'
     success_url = reverse_lazy('admin-portal:quiz')
 
+    def form_valid(self, form):
+        quiz = form.save(commit=True)
+        quiz.created_by = self.request.user
+        quiz.save()
+        return super(QuizCreateView, self).form_valid(form)
+
 
 @method_decorator(admin_decorators, name='dispatch')
 class QuizUpdateView(UpdateView):
@@ -270,7 +276,7 @@ class QuestionCreateView(View):
     def post(self, request):
         question = Question.objects.create(
             age_limit=request.POST['age'],
-            subject=Subject.objects.get(pk=request.POST['subject_id']),
+            subject=Subject.objects.get(pk=request.POST['subject_id']), created_by=request.user
         )
 
         for statement in request.POST.getlist('statements[]'):

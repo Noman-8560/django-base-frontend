@@ -27,12 +27,11 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Writer</th>
                                 <th>Players</th>
                                 <th>Subjects</th>
                                 <th>Questions</th>
-                                <th>Start</th>
-                                <th>End</th>
-                                <th>Created</th>
+                                <th>Time</th>
                                 <th>Type</th>
                                 <th>Action</th>
                             </tr>
@@ -43,12 +42,20 @@
                                 <tr>
                                     <td>{{ quiz.pk }}</td>
                                     <td>{{ quiz.title }}</td>
+                                    <td>
+                                        {% if quiz.created_by %}
+                                            <b>{{ quiz.created_by.username }}</b>
+                                        {% else %}
+                                            <b class="text-danger"></b>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ quiz.players }}</td>
                                     <td>{{ quiz.subjects.count }}</td>
                                     <td>{{ quiz.questions.count }}</td>
-                                    <td>{{ quiz.start_time }}</td>
-                                    <td>{{ quiz.end_time }}</td>
-                                    <td>{{ quiz.created_at }}</td>
+                                    <td>
+                                        <i class="fa fa-play-circle"></i> {{ quiz.start_time }}<br>
+                                        <i class="fa fa-stop-circle"></i> {{ quiz.end_time }}<br>
+                                    </td>
                                     <td>
 
                                         {% if quiz.learning_purpose %}

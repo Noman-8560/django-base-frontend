@@ -31,7 +31,6 @@ class DashboardView(TemplateView):
 @method_decorator(login_required, name='dispatch')
 class QuizListView(ListView):
     models = Quiz
-    queryset = Quiz.objects.all()
     template_name = 'moderator/quiz_list.html'
 
     def get_queryset(self):
@@ -46,22 +45,32 @@ class QuizCreateView(CreateView):
     template_name = 'moderator/quiz_create_form.html'
     success_url = reverse_lazy('moderator-portal:quiz')
 
+    def form_valid(self, form):
+        quiz = form.save(commit=True)
+        quiz.created_by = self.request.user
+        quiz.save()
+        return super(QuizCreateView, self).form_valid(form)
+
 
 @method_decorator(login_required, name='dispatch')
 class QuizUpdateView(UpdateView):
     models = Quiz
-    queryset = Quiz.objects.all()
     fields = '__all__'
     template_name = 'moderator/quiz_update_form.html'
     success_url = reverse_lazy('moderator-portal:quiz')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
 
 
 @method_decorator(login_required, name='dispatch')
 class QuizDeleteView(DeleteView):
     models = Quiz
-    queryset = Quiz.objects.all()
     template_name = 'moderator/quiz_delete.html'
     success_url = reverse_lazy('moderator-portal:quiz')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
 
 
 @method_decorator(login_required, name='dispatch')
@@ -69,9 +78,12 @@ class QuizDetailView(DetailView):
     template_name = 'moderator/quiz_detail.html'
     model = Quiz
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
         context = super(QuizDetailView, self).get_context_data(**kwargs)
-        quiz = self.object
+        quiz = self.get_object()
 
         quiz_questions = QuizQuestion.objects.filter(quiz=quiz)
         questions = Question.objects.filter(subject__in=quiz.subjects.all(), age_limit__lte=quiz.age_limit)
@@ -156,16 +168,21 @@ class QuizDetailView(DetailView):
 @method_decorator(login_required, name='dispatch')
 class QuestionListView(ListView):
     models = Question
-    queryset = Question.objects.all()
     template_name = 'moderator/question_list.html'
+
+    def get_queryset(self):
+        return Question.objects.filter(created_by=self.request.user)
 
 
 @method_decorator(login_required, name='dispatch')
 class QuestionDeleteView(DeleteView):
     models = Question
-    queryset = Question.objects.all()
     template_name = 'moderator/question_delete.html'
     success_url = reverse_lazy('moderator-portal:question')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Question.objects.filter(
+            created_by=self.request.user), pk=self.kwargs.get('pk'))
 
 
 @method_decorator(login_required, name='dispatch')
@@ -179,7 +196,7 @@ class QuestionCreateView(View):
     def post(self, request):
         question = Question.objects.create(
             age_limit=request.POST['age'],
-            subject=Subject.objects.get(pk=request.POST['subject_id']),
+            subject=Subject.objects.get(pk=request.POST['subject_id']), created_by=request.user
         )
 
         for statement in request.POST.getlist('statements[]'):
@@ -210,7 +227,7 @@ class QuestionCreateView(View):
 class QuestionUpdateView(View):
 
     def get(self, request, pk):
-        question = get_object_or_404(Question, pk=pk)
+        question = get_object_or_404(Question.objects.filter(created_by=request.user), pk=pk)
         context = {
             'statements': QuestionStatement.objects.filter(question=question),
             'choices': QuestionChoice.objects.filter(question=question),

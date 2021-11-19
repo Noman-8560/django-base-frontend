@@ -30,7 +30,8 @@
                                 <th>Choices</th>
                                 <th>Subject</th>
                                 <th>Age</th>
-                                <th>created</th>
+                                <th>created by</th>
+                                <th>created at</th>
                                 <th>Level</th>
                                 <th>Action</th>
                             </tr>
@@ -43,6 +44,7 @@
                                     <td>{{ question.choices_control }}</td>
                                     <td>{{ question.subject }}</td>
                                     <td>{{ question.age_limit }}</td>
+                                    <td>{{ question.created_by }}</td>
                                     <td>{{ question.created_at }}</td>
                                     <td>
                                         {% if question.level == 'e' %}

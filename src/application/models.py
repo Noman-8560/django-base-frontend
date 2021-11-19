@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+
+from cocognite import settings
 from src.accounts.models import User
 from ckeditor.fields import RichTextField
 
@@ -143,6 +145,7 @@ class Question(models.Model):
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
     question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False, default='1')
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -264,6 +267,7 @@ class Quiz(models.Model):
     submission_control = models.ForeignKey(Screen, null=True, blank=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     learning_purpose = models.BooleanField(default=False,
