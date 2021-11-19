@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
@@ -9,6 +9,7 @@ from django.views.generic import (
     ListView, UpdateView, DeleteView, CreateView, DetailView,
     TemplateView)
 
+from src.accounts.decorators import moderator_required, identification_required
 from src.application.forms import QuestionImageForm
 from src.application.models import (
     Quiz, QuizQuestion, Question, ChoiceVisibility, StatementVisibility, ImageVisibility,
@@ -18,7 +19,10 @@ from src.portals.admins.dll import QuestionDS
 from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
 
 
-@method_decorator(login_required, name='dispatch')
+moderator_decorators = [moderator_required, identification_required]
+
+
+@method_decorator(moderator_decorators, name='dispatch')
 class DashboardView(TemplateView):
     template_name = 'moderator/dashboard.html'
 
@@ -28,16 +32,16 @@ class DashboardView(TemplateView):
 
 
 """ QUIZ """
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizListView(ListView):
     models = Quiz
     template_name = 'moderator/quiz_list.html'
 
     def get_queryset(self):
-        return Quiz.objects.all()
+        return Quiz.objects.filter(created_by=self.request.user)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
@@ -52,7 +56,7 @@ class QuizCreateView(CreateView):
         return super(QuizCreateView, self).form_valid(form)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizUpdateView(UpdateView):
     models = Quiz
     fields = '__all__'
@@ -63,7 +67,7 @@ class QuizUpdateView(UpdateView):
         return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizDeleteView(DeleteView):
     models = Quiz
     template_name = 'moderator/quiz_delete.html'
@@ -73,7 +77,7 @@ class QuizDeleteView(DeleteView):
         return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizDetailView(DetailView):
     template_name = 'moderator/quiz_detail.html'
     model = Quiz
@@ -165,7 +169,7 @@ class QuizDetailView(DetailView):
 """ QUESTION """
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionListView(ListView):
     models = Question
     template_name = 'moderator/question_list.html'
@@ -174,7 +178,7 @@ class QuestionListView(ListView):
         return Question.objects.filter(created_by=self.request.user)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionDeleteView(DeleteView):
     models = Question
     template_name = 'moderator/question_delete.html'
@@ -185,7 +189,7 @@ class QuestionDeleteView(DeleteView):
             created_by=self.request.user), pk=self.kwargs.get('pk'))
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionCreateView(View):
 
     def get(self, request):
@@ -223,7 +227,7 @@ class QuestionCreateView(View):
         return JsonResponse(data={'message': 'success', 'question': question.pk}, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionUpdateView(View):
 
     def get(self, request, pk):
@@ -246,7 +250,7 @@ class QuestionUpdateView(View):
 """ QUESTION UPDATE RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionStatementAddJSON(View):
 
     def post(self, request):
@@ -264,7 +268,7 @@ class QuestionStatementAddJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionStatementDeleteJSON(View):
 
     def get(self, request, pk):
@@ -272,7 +276,7 @@ class QuestionStatementDeleteJSON(View):
         return JsonResponse(data={"message": "success"}, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionChoiceAddJSON(View):
 
     def post(self, request):
@@ -288,7 +292,7 @@ class QuestionChoiceAddJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionChoiceDeleteJSON(View):
 
     def get(self, request, pk):
@@ -296,7 +300,7 @@ class QuestionChoiceDeleteJSON(View):
         return JsonResponse(data={"message": "success"}, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionImageCreateView(View):
 
     def post(self, request, question_id):
@@ -319,7 +323,7 @@ class QuestionImageCreateView(View):
         return redirect('moderator-portal:question-update', question_id, permanent=True)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionAudioCreateView(View):
 
     def post(self, request, question_id):
@@ -342,7 +346,7 @@ class QuestionAudioCreateView(View):
         return redirect('moderator-portal:question-update', question_id, permanent=True)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionImageDeleteView(View):
 
     def get(self, request, pk):
@@ -359,7 +363,7 @@ class QuestionImageDeleteView(View):
         return redirect('moderator-portal:question', permanent=True)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionAudioDeleteView(View):
 
     def get(self, request, pk):
@@ -379,7 +383,7 @@ class QuestionAudioDeleteView(View):
 """ QUESTION DETAIL RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionStatementStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -410,7 +414,7 @@ class QuestionStatementStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionChoiceStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -440,7 +444,7 @@ class QuestionChoiceStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionAudioStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -470,7 +474,7 @@ class QuestionAudioStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionImageStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -501,7 +505,7 @@ class QuestionImageStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuestionSubmitStatusUpdateJSON(View):
 
     def post(self, request, pk):
@@ -529,7 +533,7 @@ class QuestionSubmitStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizQuestionAddJSON(View):
 
     def get(self, request, quiz_id, question_id):
@@ -582,7 +586,7 @@ class QuizQuestionAddJSON(View):
         return redirect('moderator-portal:quiz-update', quiz_id, permanent=True)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(moderator_decorators, name='dispatch')
 class QuizQuestionDeleteJSON(View):
 
     def get(self, request, quiz_id, question_id):

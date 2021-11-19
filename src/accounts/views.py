@@ -56,7 +56,7 @@ class IdentificationCheckView(View):
                     user.is_parent = True
                 user.is_completed = True
                 user.save()
-                redirect('accounts:cross-auth-view')
+                return redirect('accounts:cross-auth-view')
             else:
                 messages.error(request, "Please provide correct user type")
 
