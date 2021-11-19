@@ -3,7 +3,6 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
 
 from src.wsite.views import (
     home, page_404, page_500, coming_soon
@@ -28,7 +27,7 @@ urlpatterns = [
     path('a/', include('src.portals.admins.urls', namespace='admin-portal')),
     path('s/', include('src.portals.student.urls', namespace='student-portal')),
     path('m/', include('src.portals.moderator.urls', namespace='moderator-portal')),
-    # path('p/', include('src.parent.moderator.urls', namespace='parent-portal')),
+    # path('p/', include('src.portals.parent.urls', namespace='parent-portal')),
 
     # DEPRECATED ------------------------------------------------------- #
     path('site/', include('src.wsite.urls', namespace='wsite')),

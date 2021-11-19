@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import (
@@ -12,7 +13,7 @@ from src.application.forms import QuestionImageForm
 from src.application.models import (
     Quiz, QuizQuestion, Question, ChoiceVisibility, StatementVisibility, ImageVisibility,
     AudioVisibility,
-    Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage)
+    Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen)
 from src.portals.admins.dll import QuestionDS
 from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
 
@@ -213,3 +214,362 @@ class QuestionUpdateView(View):
             'audio_form': QuestionAudioForm(),
         }
         return render(request=request, template_name='admins/question_update_form.html', context=context)
+    
+    
+""" C-API ------------------------------------------------------------------------- """
+""" QUESTION UPDATE RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionStatementAddJSON(View):
+
+    def post(self, request):
+        text = request.POST['text']
+        # screen = request.POST['screen']
+        question_id = request.POST['pk']
+        statement = QuestionStatement()
+        statement.statement = text
+        # statement.screen = Screen.objects.get(no=screen)
+        statement.question = Question.objects.get(pk=question_id)
+        statement.save()
+        response = {
+            'statement': text
+        }
+        return JsonResponse(data=response, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionStatementDeleteJSON(View):
+
+    def get(self, request, pk):
+        QuestionStatement.objects.get(pk=pk).delete()
+        return JsonResponse(data={"message": "success"}, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionChoiceAddJSON(View):
+
+    def post(self, request):
+        is_correct = str(request.POST['is_correct']) == 'true'
+        question_id = request.POST['pk']
+        text = request.POST['text']
+        choice = QuestionChoice()
+        choice.text = text
+        choice.question = Question.objects.get(pk=question_id)
+        choice.is_correct = is_correct
+        choice.save()
+        response = {'choice': text}
+        return JsonResponse(data=response, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionChoiceDeleteJSON(View):
+
+    def get(self, request, pk):
+        QuestionChoice.objects.get(pk=pk).delete()
+        return JsonResponse(data={"message": "success"}, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionImageCreateView(View):
+
+    def post(self, request, question_id):
+        form = QuestionImageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            question_ref = Question.objects.get(pk=question_id)
+            url = form.cleaned_data['url']
+            image = form.cleaned_data['image']
+
+            question_image = QuestionImage.objects.create(
+                url=url, image=image, question=question_ref
+            )
+            question_image.save()
+            messages.success(
+                request=request, message="Image attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding images')
+        return redirect('admin-portal:question-update', question_id, permanent=True)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionAudioCreateView(View):
+
+    def post(self, request, question_id):
+        form = QuestionAudioForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            question_ref = Question.objects.get(pk=question_id)
+            url = form.cleaned_data['url']
+            audio = form.cleaned_data['audio']
+
+            question_audio = QuestionAudio.objects.create(
+                url=url, audio=audio, question=question_ref
+            )
+            question_audio.save()
+            messages.success(
+                request=request, message="Audio attached to question Successfully - Redirected to Question Description."
+            )
+        else:
+            messages.error(request=request, message=f'Error in adding audios')
+        return redirect('admin-portal:question-update', question_id, permanent=True)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionImageDeleteView(View):
+
+    def get(self, request, pk):
+        try:
+            question_image = QuestionImage.objects.get(pk=pk)
+            question_id = question_image.question.pk
+            question_image.delete()
+
+            messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
+            return redirect('admin-portal:question-update', question_id, permanent=True)
+        except QuestionImage.DoesNotExist:
+            messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
+
+        return redirect('admin-portal:question', permanent=True)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionAudioDeleteView(View):
+
+    def get(self, request, pk):
+        try:
+            question_audio = QuestionAudio.objects.get(pk=pk)
+            question_id = question_audio.question.pk
+            question_audio.delete()
+
+            messages.success(request=request, message=f"Audio of Question > {question_id} deleted successfully")
+            return redirect('admin-portal:question-update', question_id, permanent=True)
+        except QuestionAudio.DoesNotExist:
+            messages.error(request=request, message=f"Failed To Delete > Requested audio ({pk}) Does not Exists")
+
+        return redirect('admin-portal:question', permanent=True)
+
+
+""" QUESTION DETAIL RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionStatementStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        # STATEMENT VISIBILITY CHANGE
+        try:
+            statement_visibility = StatementVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                statement_visibility.screen_1 = status
+            elif screen_id == '2':
+                statement_visibility.screen_2 = status
+            elif screen_id == '3':
+                statement_visibility.screen_3 = status
+            statement_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except StatementVisibility.DoesNotExist:
+            message = "This question is not associated with Quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionChoiceStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        try:
+            choice_visibility = ChoiceVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                choice_visibility.screen_1 = status
+            elif screen_id == '2':
+                choice_visibility.screen_2 = status
+            elif screen_id == '3':
+                choice_visibility.screen_3 = status
+            choice_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except ChoiceVisibility.DoesNotExist:
+            message = "This question is not associated with quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionAudioStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        try:
+            audio_visibility = AudioVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                audio_visibility.screen_1 = status
+            elif screen_id == '2':
+                audio_visibility.screen_2 = status
+            elif screen_id == '3':
+                audio_visibility.screen_3 = status
+            audio_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+        except AudioVisibility.DoesNotExist:
+            message = "Not associated with Quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionImageStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+        screen_id = request.POST['screen_id']
+        status = request.POST['is_checked']
+        status = True if status == 'true' else False
+
+        try:
+            image_visibility = ImageVisibility.objects.get(pk=pk)
+            if screen_id == '1':
+                image_visibility.screen_1 = status
+            elif screen_id == '2':
+                image_visibility.screen_2 = status
+            elif screen_id == '3':
+                image_visibility.screen_3 = status
+            image_visibility.save()
+
+            message = "Record updated successfully"
+            success = True
+
+        except ImageVisibility.DoesNotExist:
+            message = "Not associated with quiz"
+            success = False
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuestionSubmitStatusUpdateJSON(View):
+
+    def post(self, request, pk):
+        success = False
+        message = "Failed to update record"
+
+        # POST METHOD HERE
+        screen_id = request.POST['screen_id']
+
+        # STATEMENT VISIBILITY CHANGE
+        question = QuizQuestion.objects.get(pk=pk)
+        if screen_id == '1':
+            question.submission_control = Screen.objects.first()
+        elif screen_id == '2':
+            question.submission_control = Screen.objects.all()[1]
+        elif screen_id == '3':
+            question.submission_control = Screen.objects.last()
+        question.save()
+
+        # EXTRA DATA HERE
+        message = "Record updated successfully"
+        success = True
+
+        context = {'success': success, 'message': message}
+        return JsonResponse(data=context, safe=False)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuizQuestionAddJSON(View):
+
+    def get(self, request, quiz_id, question_id):
+
+        try:
+            quiz = Quiz.objects.get(pk=quiz_id)
+            question = Question.objects.get(pk=question_id)
+
+        except [Quiz.DoesNotExist, Question.DoesNotExist]:
+            messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+            return redirect('admin-portal:quiz-create')
+
+        # ALREADY ASSOCIATED OR NOT ---------------------------------
+        if quiz.questions.filter(pk=question_id):
+            messages.warning(request=request,
+                             message=f'Failed to add > Requested Question [ID: {question_id}] already associated with this quiz.')
+        else:
+            messages.success(request=request, message=f'Requested Question [ID: {question_id}] added successfully.')
+
+            # STEP1 => Add Question to Quiz
+            quiz.questions.add(question)
+            quiz.save()
+
+            quiz_question = QuizQuestion.objects.filter(question=question, quiz=quiz)[0]
+
+            # STEP2 => Add Statements Visibility
+            for statement in question.questionstatement_set.all():
+                StatementVisibility(
+                    quiz_question=quiz_question, statement=statement
+                ).save()
+
+            # STEP3 => Add Choices Visibility
+            for choice in question.questionchoice_set.all():
+                ChoiceVisibility(
+                    quiz_question=quiz_question, choice=choice
+                ).save()
+
+            # STEP3 => Add Images Visibility
+            for image in question.questionimage_set.all():
+                ImageVisibility(
+                    quiz_question=quiz_question, image=image
+                ).save()
+
+            # STEP4 => Add audios Visibility
+            for audio in question.questionaudio_set.all():
+                AudioVisibility(
+                    quiz_question=quiz_question, audio=audio
+                ).save()
+
+        return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
+
+
+@method_decorator(login_required, name='dispatch')
+class QuizQuestionDeleteJSON(View):
+
+    def get(self, request, quiz_id, question_id):
+        try:
+            quiz = Quiz.objects.get(pk=quiz_id)
+            question = Question.objects.get(pk=question_id)
+
+            quiz.questions.remove(question)
+            messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
+            return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
+        except [Quiz.DoesNotExist, Question.DoesNotExist]:
+            messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
+            return HttpResponseRedirect(reverse('admin-portal:quiz-create'))
+
+
+""" CHNAGE ====================================================================================================== """
