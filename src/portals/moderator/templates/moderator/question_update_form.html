@@ -1,0 +1,440 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block base_title %}Question Builder Update{% endblock %}
+
+{% block page_heading %}
+    Question builder Update
+{% endblock %}
+{% block content %}
+
+    <div class="container">
+
+
+        <div class="row justify-content-center">
+            <div class="col-sm-8">
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <form class="outer-repeater">
+                            <div data-repeater-list="outer-group" class="outer">
+                                <div data-repeater-item="" class="outer">
+
+                                    {# NORMAL --> FIELDS #}
+                                    <div class="form-group">
+                                        <label for="subject">Subject</label>
+                                        <select class="form-control" id="subject" name="subject">
+                                            {% for subject in subjects %}
+                                                {% if question.subject.pk == subject.pk %}
+                                                    <option value="{{ subject.pk }}"
+                                                            selected>{{ subject.title }}</option>
+                                                {% else %}
+                                                    <option value="{{ subject.pk }}">{{ subject.title }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="age">Age</label>
+                                        <input type="number" value="{{ question.age_limit }}"
+                                               class="form-control" id="age" name="age"
+                                               placeholder="Targeted age">
+                                    </div>
+
+                                    {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
+                                    <div id="statements">
+                                        <p class="font-weight-bolder mt-4 h4">QUESTION STATEMENTS</p>
+
+                                        {# STATEMENTS -- GET -------------------------------------------------------- #}
+                                        <div class="statements-div">
+                                            {% if statements %}
+                                                <div class="statements-div-get">
+                                                    {% for statement in statements %}
+
+                                                        <div class="form-row mb-3">
+                                                            <div class="col-md-11 col-10" id="statement-get">
+                                                                <textarea data-statement-id="{{ statement.pk }}"
+                                                                          class="form-control"
+                                                                          rows="3">{{ statement.statement }}</textarea>
+                                                            </div>
+                                                            <div class="col-md-1 col-2">
+                                                                <div class="btn-group-vertical">
+
+                                                                    <!-- <button type="button"
+                                                                            data-statement-id="{{ statement.id }}"
+                                                                            id="statement-update"
+                                                                            class="btn btn-primary">
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </button> -->
+                                                                    <button type="button"
+                                                                            data-statement-id="{{ statement.id }}"
+                                                                            id="statement-delete"
+                                                                            class="btn btn-danger">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="statements-div-set">
+
+                                                <div class="form-row mb-3">
+                                                    <div class="col-md-11 col-10" id="statement-get">
+                                                        <textarea id="statement-add-text"
+                                                                  class="form-control"
+                                                                  rows="3"></textarea>
+                                                    </div>
+                                                    <div class="col-md-1 col-2">
+                                                        <div class="btn-group-vertical">
+                                                            <button id="statement-add-btn" type="button"
+                                                                    class="btn btn-success">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {# ============================================================================== #}
+
+                                    {# CHOICES -- GLOBAL ------------------------------------------------------------ #}
+                                    <div id="choices">
+                                        <p class="font-weight-bolder mt-4 h4">QUESTION CHOICES</p>
+
+                                        {# CHOICES -- GET ----------------------------------------------------------- #}
+                                        <div class="choices-div">
+                                            {% if choices %}
+                                                <div class="choices-div-get">
+                                                    {% for choice in choices %}
+                                                        <div class="form-row mb-3">
+                                                            <div class="col-md-10 col-8" id="option">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       placeholder="option" value="{{ choice.text }}">
+                                                            </div>
+                                                            <div class="col-md-1 col-2" id="choice">
+
+                                                                {% if choice.is_correct %}
+                                                                    <input type="checkbox" class="form-control" checked>
+                                                                {% else %}
+                                                                    <input type="checkbox" class="form-control">
+                                                                {% endif %}
+
+                                                            </div>
+
+                                                            <div class="col-md-1 col-2">
+                                                                <button type="button" data-choice-id="{{ choice.id }}"
+                                                                        id="choice-delete"
+                                                                        class="btn btn-danger">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-row mb-3">
+                                                <div class="col-md-10 col-6" id="option">
+                                                    <input type="text" class="form-control"
+                                                           id="choice-add-text"
+                                                           placeholder="option">
+                                                </div>
+                                                <div class="col-md-1 col-2" id="choice">
+                                                    <input type="checkbox" class="form-control"
+                                                           id="choice-add-correct">
+                                                </div>
+                                                <div class="col-md-1 col-2">
+                                                    <button type="button" id="choices-add-btn"
+                                                            class="btn btn-success">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {# ============================================================================== #}
+
+
+                                    {# IMAGES AND AUDIOS -- GLOBAL ------------------------------------------------------------ #}
+                                    {% if images %}
+                                        <div id="images">
+                                            <p class="font-weight-bolder mt-4 h4">QUESTION IMAGES</p>
+
+                                            {# CHOICES -- GET ----------------------------------------------------------- #}
+                                            <div id="images-div">
+                                                <div id="images-div-get" class="row">
+                                                    {% for image in images %}
+                                                        <div class="col-xl-4 col-sm-6">
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <div class="product-img position-relative">
+                                                                        {% if image.url %}
+                                                                            <img src="{{ image.url }}"
+                                                                                 alt="" class="mx-auto d-block"
+                                                                                 height="150">
+                                                                        {% elif image.image %}
+                                                                            <img src="{{ image.image.url }}"
+                                                                                 alt="" class="mx-auto d-block"
+                                                                                 height="150">
+                                                                        {% else %}
+                                                                            <img src="{% static 'images/no_content.png' %}"
+                                                                                 alt="" class="mx-auto d-block"
+                                                                                 height="150">
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="mt-4 text-center">
+                                                                        <a class="btn btn-danger"
+                                                                           href="{% url 'moderator-portal:question-image-delete-json' image.id %}">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {# ============================================================================== #}
+
+                                    {# IMAGES AND AUDIOS -- GLOBAL ------------------------------------------------------------ #}
+                                    {% if audios %}
+                                        <div id="audios">
+                                            <p class="font-weight-bolder mt-4 h4">QUESTION AUDIOS</p>
+
+                                            {# CHOICES -- GET ----------------------------------------------------------- #}
+                                            <div id="audios-div">
+                                                <div id="audios-div-get" class="table-responsive">
+                                                    <table class="table table-borderless">
+                                                        <tbody>
+                                                        {% for audio in audios %}
+
+                                                            <tr>
+                                                                <td>
+
+                                                                    {% if audio.url %}
+                                                                        <audio controls>
+                                                                            <source src="{{ audio.url }}"
+                                                                                    type="audio/mpeg">
+                                                                            Your browser does not support the audio tag.
+                                                                        </audio>
+                                                                    {% elif audio.audio %}
+                                                                        <audio controls>
+                                                                            <source src="{{ audio.audio.url }}"
+                                                                                    type="audio/mpeg">
+                                                                            Your browser does not support the audio tag.
+                                                                        </audio>
+                                                                    {% else %}
+                                                                        <h5 class="text-danger font-weight-bolder">No
+                                                                            resource found!</h5>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-danger"
+                                                                       href="{% url 'moderator-portal:question-audio-delete-json' audio.id %}">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {# ============================================================================== #}
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-muted"><b>NOTE: </b>This is a complete update question form, feel free to add,
+                            update
+                            statements options images and audios, you can change it later whereas screen selection will
+                            be on
+                            quiz builder during question selection.
+                        </p>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#audioModel">
+                            <i class="fa fa-file-audio"></i> Add Audio hint
+                        </button>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#imageModel">
+                            <i class="fa fa-images"></i> Add Image hint
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {# AUDIO FORM #}
+    <div class="modal fade" id="audioModel" tabindex="-1" role="dialog" aria-labelledby="audioModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="audioModalLabel"><i class="fa fa-music"></i> Audio Hint form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'moderator-portal:question-audio-create-json' question_id %}" method="post"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ audio_form|crispy }}
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check-circle"></i> Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# IMAGE FORM #}
+    <div class="modal fade" id="imageModel" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel"><i class="fa fa-music"></i> Image Hint form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'moderator-portal:question-image-create-json' question_id %}" method="post"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ image_form|crispy }}
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check-circle"></i> Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+{% block base_external_scripts %}
+    <script>
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        $(document).ready(function () {
+
+            $('#statements #statement-delete').click(function () {
+                let id = $(this).data('statement-id');
+                deleteStatement(id);
+            });
+
+            $('#statements #statement-add-btn').click(function () {
+                saveStatement();
+            });
+
+            $('#choices #choice-delete').click(function () {
+                let id = $(this).data('choice-id');
+                deleteChoice(id);
+            });
+
+            $('#choices #choices-add-btn').click(function () {
+                saveChoice();
+            });
+
+            function deleteStatement(id) {
+                $.get("/m/json/question_statement/" + id + "/delete/", function () {
+                    window.location.reload()
+                });
+            }
+
+            function deleteChoice(id) {
+                $.get("/m/json/question_choice/" + id + "/delete/", function () {
+                    window.location.reload()
+                });
+            }
+
+            function saveChoice() {
+                let text = $('#choice-add-text').val();
+                let is_correct = $('#choice-add-correct').is(":checked");
+                if (text == "") {
+                    alert("Choice field must not be empty");
+                } else {
+                    let data = {
+                        pk: {{ question_id }},
+                        text: text,
+                        is_correct: is_correct
+                    };
+
+                    $.ajax({
+                        url: '/m/json/question_choice/add/',
+                        type: 'POST',
+                        headers: {'X-CSRFToken': csrftoken},
+                        data: data,
+                    }).then(function (data, status) {
+                        window.location.reload();
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            }
+
+            function saveStatement() {
+                let text = $('#statement-add-text').val();
+                if (text == "") {
+                    alert("Statement field must not be empty");
+                } else {
+                    let data = {
+                        pk: {{ question_id }},
+                        text: text
+                    };
+
+                    $.ajax({
+                        url: '/m/json/question_statement/add/',
+                        type: 'POST',
+                        headers: {'X-CSRFToken': csrftoken},
+                        data: data,
+                    }).then(function (data, status) {
+                        window.location.reload();
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            }
+
+        });
+    </script>
+{% endblock %}

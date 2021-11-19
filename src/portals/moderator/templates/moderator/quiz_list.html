@@ -12,7 +12,7 @@
 {% block content %}
 
     <div class="mb-4 text-right">
-        <a href="{% url 'admin-portal:quiz-create' %}" class="btn btn-success">
+        <a href="{% url 'moderator-portal:quiz-create' %}" class="btn btn-success">
             Add Quiz
         </a>
     </div>
@@ -58,11 +58,11 @@
                                         {% endif %}
 
                                     </td>
-                                    <td><a href="{% url 'admin-portal:quiz-detail' quiz.pk %}">
+                                    <td><a href="{% url 'moderator-portal:quiz-detail' quiz.pk %}">
                                         <i class="fa fa-eye"></i></a>
-                                        <a href="{% url 'admin-portal:quiz-update' quiz.pk %}">
+                                        <a href="{% url 'moderator-portal:quiz-update' quiz.pk %}">
                                             <i class="fa fa-edit"></i></a>
-                                        <a class="text-danger" href="{% url 'admin-portal:quiz-delete' quiz.pk %}">
+                                        <a class="text-danger" href="{% url 'moderator-portal:quiz-delete' quiz.pk %}">
                                             <i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>

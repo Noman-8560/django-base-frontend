@@ -35,7 +35,7 @@ class QuizCreateView(CreateView):
     queryset = Quiz.objects.all()
     fields = '__all__'
     template_name = 'moderator/quiz_create_form.html'
-    success_url = reverse_lazy('admin-portal:quiz')
+    success_url = reverse_lazy('moderator-portal:quiz')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -44,7 +44,7 @@ class QuizUpdateView(UpdateView):
     queryset = Quiz.objects.all()
     fields = '__all__'
     template_name = 'moderator/quiz_update_form.html'
-    success_url = reverse_lazy('admin-portal:quiz')
+    success_url = reverse_lazy('moderator-portal:quiz')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -52,12 +52,12 @@ class QuizDeleteView(DeleteView):
     models = Quiz
     queryset = Quiz.objects.all()
     template_name = 'moderator/quiz_delete.html'
-    success_url = reverse_lazy('admin-portal:quiz')
+    success_url = reverse_lazy('moderator-portal:quiz')
 
 
 @method_decorator(login_required, name='dispatch')
 class QuizDetailView(DetailView):
-    template_name = 'admins/quiz_detail.html'
+    template_name = 'moderator/quiz_detail.html'
     model = Quiz
 
     def get_context_data(self, **kwargs):
@@ -148,15 +148,15 @@ class QuizDetailView(DetailView):
 class QuestionListView(ListView):
     models = Question
     queryset = Question.objects.all()
-    template_name = 'admins/question_list.html'
+    template_name = 'moderator/question_list.html'
 
 
 @method_decorator(login_required, name='dispatch')
 class QuestionDeleteView(DeleteView):
     models = Question
     queryset = Question.objects.all()
-    template_name = 'admins/question_delete.html'
-    success_url = reverse_lazy('admin-portal:question')
+    template_name = 'moderator/question_delete.html'
+    success_url = reverse_lazy('moderator-portal:question')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -165,7 +165,7 @@ class QuestionCreateView(View):
     def get(self, request):
         question_subjects = Subject.objects.all()
         context = {'subjects': question_subjects}
-        return render(request=request, template_name='admins/question_add_form.html', context=context)
+        return render(request=request, template_name='moderator/question_add_form.html', context=context)
 
     def post(self, request):
         question = Question.objects.create(
@@ -213,7 +213,7 @@ class QuestionUpdateView(View):
             'image_form': QuestionImageForm(),
             'audio_form': QuestionAudioForm(),
         }
-        return render(request=request, template_name='admins/question_update_form.html', context=context)
+        return render(request=request, template_name='moderator/question_update_form.html', context=context)
     
     
 """ C-API ------------------------------------------------------------------------- """
@@ -290,7 +290,7 @@ class QuestionImageCreateView(View):
             )
         else:
             messages.error(request=request, message=f'Error in adding images')
-        return redirect('admin-portal:question-update', question_id, permanent=True)
+        return redirect('moderator-portal:question-update', question_id, permanent=True)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -313,7 +313,7 @@ class QuestionAudioCreateView(View):
             )
         else:
             messages.error(request=request, message=f'Error in adding audios')
-        return redirect('admin-portal:question-update', question_id, permanent=True)
+        return redirect('moderator-portal:question-update', question_id, permanent=True)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -326,11 +326,11 @@ class QuestionImageDeleteView(View):
             question_image.delete()
 
             messages.success(request=request, message=f"Image of Question > {question_id} deleted successfully")
-            return redirect('admin-portal:question-update', question_id, permanent=True)
+            return redirect('moderator-portal:question-update', question_id, permanent=True)
         except QuestionImage.DoesNotExist:
             messages.error(request=request, message=f"Failed To Delete > Requested Image ({pk}) Does not Exist ")
 
-        return redirect('admin-portal:question', permanent=True)
+        return redirect('moderator-portal:question', permanent=True)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -343,11 +343,11 @@ class QuestionAudioDeleteView(View):
             question_audio.delete()
 
             messages.success(request=request, message=f"Audio of Question > {question_id} deleted successfully")
-            return redirect('admin-portal:question-update', question_id, permanent=True)
+            return redirect('moderator-portal:question-update', question_id, permanent=True)
         except QuestionAudio.DoesNotExist:
             messages.error(request=request, message=f"Failed To Delete > Requested audio ({pk}) Does not Exists")
 
-        return redirect('admin-portal:question', permanent=True)
+        return redirect('moderator-portal:question', permanent=True)
 
 
 """ QUESTION DETAIL RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
@@ -514,7 +514,7 @@ class QuizQuestionAddJSON(View):
 
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
             messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-            return redirect('admin-portal:quiz-create')
+            return redirect('moderator-portal:quiz-create')
 
         # ALREADY ASSOCIATED OR NOT ---------------------------------
         if quiz.questions.filter(pk=question_id):
@@ -553,7 +553,7 @@ class QuizQuestionAddJSON(View):
                     quiz_question=quiz_question, audio=audio
                 ).save()
 
-        return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
+        return redirect('moderator-portal:quiz-update', quiz_id, permanent=True)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -566,10 +566,10 @@ class QuizQuestionDeleteJSON(View):
 
             quiz.questions.remove(question)
             messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
-            return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
+            return redirect('moderator-portal:quiz-update', quiz_id, permanent=True)
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
             messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')
-            return HttpResponseRedirect(reverse('admin-portal:quiz-create'))
+            return HttpResponseRedirect(reverse('moderator-portal:quiz-create'))
 
 
 """ CHNAGE ====================================================================================================== """

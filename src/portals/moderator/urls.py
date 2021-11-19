@@ -1,7 +1,13 @@
 from django.urls import path
 from .views import (
     QuizListView, QuizCreateView, QuizDeleteView, QuizUpdateView, QuizDetailView,
-    QuestionListView, QuestionCreateView, QuestionDeleteView, QuestionUpdateView
+    QuestionListView, QuestionCreateView, QuestionDeleteView, QuestionUpdateView,
+
+    QuestionChoiceAddJSON, QuestionChoiceDeleteJSON, QuestionStatementAddJSON, QuestionStatementDeleteJSON,
+    QuestionImageCreateView, QuestionImageDeleteView, QuestionAudioCreateView, QuestionAudioDeleteView,
+
+    QuestionStatementStatusUpdateJSON, QuestionChoiceStatusUpdateJSON, QuestionImageStatusUpdateJSON,
+    QuestionAudioStatusUpdateJSON, QuestionSubmitStatusUpdateJSON, QuizQuestionAddJSON, QuizQuestionDeleteJSON
 )
 
 app_name = "moderator-portal"
