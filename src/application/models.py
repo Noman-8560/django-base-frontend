@@ -12,31 +12,36 @@ from django.utils.text import slugify
 from notifications.signals import notify
 
 
-class Child(models.Model):
-    RELATION_CHOICES = (
-        ("fat", "Father"),
-        ("mot", "Mother"),
-        ("sis", "Sister"),
-        ("bro", "Brother"),
-        ("unc", "Uncle"),
-        ("aun", "Aunt"),
-        ("gua", "Guardian"),
-    )
-    parent_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="parent_user")
-    child_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=False,
-                              related_name="child_user")
-    relation_status = models.CharField(
-        max_length=3, choices=RELATION_CHOICES, default='fat',
-        help_text="Your relation with student"
-    )
-    is_verified_by_child = models.BooleanField(default=False)
+class RelationType(models.Model):
+    guardian_relation_name = models.CharField(max_length=255, unique=True)
+    student_relation_name = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
-    is_active = models.BooleanField(default=True)
-    created_on = models\
-        .DateTimeField(auto_now_add=True)
+    class Meta:
+        verbose_name_plural = "Relation Types"
 
     def __str__(self):
-        return self.parent_user
+        return self.guardian_relation_name
+
+
+class Relation(models.Model):
+    parent = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="parent_user")
+    child = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=False,
+        related_name="child_user"
+    )
+    relation = models.ForeignKey(RelationType, models.SET_NULL, null=True, blank=True)
+    is_verified_by_child = models.BooleanField(default=False, name='Verified by Child')
+
+    is_active = models.BooleanField(default=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['parent']
+
+    def __str__(self):
+        return self.parent
 
 
 class AppUpdate(models.Model):

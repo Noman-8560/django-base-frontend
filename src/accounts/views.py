@@ -17,6 +17,8 @@ class CrossAuthView(View):
             return redirect('admin-portal:dashboard')
         elif request.user.is_student:
             return redirect('student-portal:dashboard')
+        elif request.user.is_parent:
+            return redirect('parent-portal:dashboard')
         else:
             return redirect('moderator-portal:dashboard')
 
