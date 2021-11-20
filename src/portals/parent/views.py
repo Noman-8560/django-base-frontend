@@ -1,11 +1,11 @@
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.generic import (
     DetailView, CreateView, ListView, DeleteView, UpdateView, TemplateView
 )
 from django.views.generic.base import View
 
+from src.accounts.models import User
 from src.application.models import Relation, RelationType
 
 

@@ -19,17 +19,17 @@
                             <form method="post">
                                 {% csrf_token %}
                                 <div>
-                                    <label for="email" class="form-label">Username <span
+                                    <label for="username" class="form-label">Username <span
                                             class="text-muted">(Child)</span></label>
-                                    <input type="text" class="form-control" id="email" required placeholder="mark0762">
+                                    <input type="text" class="form-control" id="username" name="username" required placeholder="mark0762">
                                     <div class="invalid-feedback">
                                         Please enter a valid name
                                     </div>
                                 </div>
                                 <br>
                                 <div>
-                                    <label for="country" class="form-label">Your relation</label>
-                                    <select class="form-control" id="country" required>
+                                    <label for="relation_type" class="form-label">Your relation</label>
+                                    <select class="form-control" id="relation_type" name="relation_type" required>
                                         <option value="">Choose . .</option>
                                         {% for relation_type in relation_types %}
                                             <option value="{{ relation_type.pk }}">{{ relation_type.guardian_relation_name }}</option>
