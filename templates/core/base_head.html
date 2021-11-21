@@ -1,11 +1,11 @@
 {% load static %}
 {% load notifications_tags %}
 
+{# MAIN HEADER ------------------------------------------------------------------------------------------------------ #}
 <header id="page-topbar" style="background-color: orangered;">
     <div class="navbar-header" style="background-color: orangered;">
 
-        {# LEFT HEAD -------------------------------------------------------------- #}
-
+        {# LEFT HEAD ------------------- #}
         <div class="d-flex">
             <div class="navbar-brand-box">
                 <a href="/" class="logo logo-dark">
@@ -34,8 +34,7 @@
 
         </div>
 
-        {# RIGHT HEAD ------------------------------------------------------------- #}
-
+        {# RIGHT HEAD ------------------ #}
         <div class="d-flex">
 
             {# FULL_SCREEN -------------------------------------------------------- #}
@@ -100,7 +99,7 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
                     <!-- item-->
-                    <a class="dropdown-item" href="{% url 'admin-portal:dashboard' %}">
+                    <a class="dropdown-item" href="{% url 'moderator-portal:dashboard' %}">
                         <i class="bx bxs-dashboard font-size-16 align-middle mr-1"></i> Dashboard
                     </a>
                     <a class="dropdown-item" href="{% url 'application:profile_update' %}">
@@ -131,8 +130,7 @@
     </div>
 </header>
 
-{# ------------------------------------------------------------------------------------------------------------------ #}
-
+{# SUB HEADER ------------------------------------------------------------------------------------------------------- #}
 <div class="topnav">
     <div class="container-fluid">
         <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
@@ -140,50 +138,20 @@
             <div class="collapse navbar-collapse" id="topnav-menu-content">
                 <ul class="navbar-nav">
 
-                    {#DASHBOARD#}
-                    <li class="nav-item">
-                        <a class="nav-link dropdown-toggle arrow-none" href="{% url 'admin-portal:dashboard' %}">
-                            <i class="bx bx-home-circle mr-2"></i>Admin Dashboard
-                        </a>
-                    </li>
-
-
-                    {# Apps #}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-pages" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bx bx-customize mr-2"></i>Apps
-                            <div class="arrow-down"></div>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="topnav-pages">
-
-                            <a href="{% url 'admin-portal:quiz-create' %}" class="dropdown-item">Quiz Builder</a>
-                            <a href="{% url 'admin-portal:question-create' %}" class="dropdown-item">Question
-                                Builder</a>
-                            <a href="{% url 'admin-portal:article-create' %}" class="dropdown-item">Article Builder</a>
-                        </div>
-                    </li>
-
-
-                    {# FEATURES #}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-components" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bx bx-collection mr-2"></i>Features
-                            <div class="arrow-down"></div>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="topnav-components">
-                            <a href="{% url 'admin-portal:quiz' %}" class="dropdown-item">Quizzes</a>
-                            <a href="{% url 'admin-portal:question' %}" class="dropdown-item">Questions</a>
-                            <a href="{% url 'admin-portal:subject' %}" class="dropdown-item">Subjects</a>
-                            <a href="{% url 'admin-portal:article' %}" class="dropdown-item">Articles</a>
-                        </div>
-                    </li>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_superuser %}
+                            {% include 'core/include/admin_header.html' %}
+                        {% elif request.user.is_student %}
+                            {% include 'core/include/student_header.html' %}
+                        {% elif request.user.is_parent %}
+                            {% include 'core/include/parent_header.html' %}
+                        {% else %}
+                            {% include 'core/include/moderator_header.html' %}
+                        {% endif %}
+                    {% endif %}
 
                 </ul>
             </div>
         </nav>
     </div>
 </div>
-
-{# ------------------------------------------------------------------------------------------------------------------ #}
