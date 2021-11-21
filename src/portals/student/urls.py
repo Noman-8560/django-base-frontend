@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     DashboardView, QuizListView, TeamListView, ZoomMeetingView, QuizEnrollView, QuizLiveView,
     LearningResourceListView, LearningResourceLiveView, LearningResourceResultView, TeamDetailView, TeamDeleteView,
+    RelationListView, RelationDetailView, RelationDeleteView,
 
     LearningResourceLiveQuestionAccessJSON, LearningResourceLiveQuestionSubmitJSON,
     QuizLiveQuestionNextJSON, QuizLiveQuestionAccessJSON, QuizLiveQuestionSubmitJSON, UserExistsJSON
@@ -25,6 +26,10 @@ urlpatterns = [
     path('learning-resource/<int:quiz_id>/live/', LearningResourceLiveView.as_view(), name='learning-resource-live'),
     path('learning-resource/<int:quiz_id>/result/', LearningResourceResultView.as_view(),
          name='learning-resource-result'),
+
+    path('relation/', RelationListView.as_view(), name='relation'),
+    path('relation/<int:pk>/', RelationDetailView.as_view(), name='relation-detail'),
+    path('relation/<int:pk>/delete/', RelationDeleteView.as_view(), name='relation-delete'),
 
     # -------------------------------------------------------------------------------------------------- JSON RESPONSES
     path('json/learning-resource/live/access/question/<int:question_id>/quiz/<int:quiz_id>/',

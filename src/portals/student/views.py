@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views import View
+from django.views.generic import ListView, DetailView, DeleteView
 from notifications.signals import notify
 
 from cocognite import settings
@@ -16,7 +17,7 @@ from src.application.models import (
     Quiz, Question, QuestionChoice,
     QuizQuestion, Screen, Team, QuizCompleted,
     Attempt, LearningResourceResult, LearningResourceAttempts,
-)
+    Relation)
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
@@ -511,6 +512,41 @@ class TeamListView(View):
             'av_teams': available_teams.order_by('-created_at'),
         }
         return render(request=request, template_name='student/team_list.html', context=context)
+
+
+"""  RELATION LIST --------------------------------------------------------------------- """
+
+
+class RelationListView(ListView):
+    model = Relation
+    template_name = 'student/relation_list.html'
+
+    def get_queryset(self):
+        return Relation.objects.filter(child=self.request.user, is_verified_by_child=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(RelationListView, self).get_context_data(**kwargs)
+        context['relation_list_unverified'] = Relation.objects.filter(
+            child=self.request.user, is_verified_by_child=False
+        )
+        return context
+
+
+class RelationDetailView(DetailView):
+    model = Relation
+    template_name = 'student/relation_detail.html'
+
+    def get_queryset(self):
+        return Relation.objects.filter(child=self.request.user, is_verified_by_child=True)
+
+
+class RelationDeleteView(DeleteView):
+    template_name = 'parent/relation_delete.html'
+    model = Relation
+    success_url = reverse_lazy('parent-portal:relation')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Relation.objects.filter(child=self.request.user), pk=self.kwargs['pk'])
 
 
 """  LEARNING RESOURCE --------------------------------------------------------------------- """

@@ -32,7 +32,7 @@ class Relation(models.Model):
         related_name="child_user"
     )
     relation = models.ForeignKey(RelationType, models.SET_NULL, null=True, blank=True)
-    is_verified_by_child = models.BooleanField(default=False, name='Verified by Child')
+    is_verified_by_child = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -41,7 +41,7 @@ class Relation(models.Model):
         ordering = ['parent']
 
     def __str__(self):
-        return self.parent
+        return self.parent.username
 
 
 class AppUpdate(models.Model):

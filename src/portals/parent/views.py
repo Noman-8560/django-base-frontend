@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import (
     DetailView, CreateView, ListView, DeleteView, UpdateView, TemplateView
 )
@@ -16,6 +17,16 @@ class DashboardView(TemplateView):
 class RelationListView(ListView):
     model = Relation
     template_name = 'parent/relation_list.html'
+
+    def get_queryset(self):
+        return Relation.objects.filter(parent=self.request.user, is_verified_by_child=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(RelationListView, self).get_context_data(**kwargs)
+        context['relation_list_unverified'] = Relation.objects.filter(
+            parent=self.request.user, is_verified_by_child=False
+        )
+        return context
 
 
 class RelationDetailView(DetailView):
@@ -39,28 +50,36 @@ class RelationCreateView(View):
             relation_type = RelationType.objects.filter(pk=request.POST['relation_type'])
 
             # if relation type exists
-            if relation_type and relation_type:
+            if user and relation_type:
                 relation_type = relation_type[0]
                 user = user[0]
 
-                # user record already added
-                if not Relation.objects.filter(is_active=True, parent=self.request.user, child=user, relation=relation_type):
-                    Relation(parent=self.request.user, child=user, relation=relation_type).save()
-                    messages.success(
-                        request, "Your relation request added successfully, "
-                                 "please ask your child to give permissions to access data."
-                    )
-                    return redirect('parent-portal:relation')
+                # requested account is not a student
+                if user.is_student:
+
+                    # already registered or not
+                    relation = Relation.objects.filter(parent=self.request.user, child=user)
+                    if not relation:
+                        Relation(parent=self.request.user, child=user, relation=relation_type).save()
+                        messages.success(
+                            request, f"{user} is added as your {relation_type.student_relation_name} is pending"
+                        )
+                        return redirect('parent-portal:relation')
+                    else:
+                        message = f"Requested already, ask your {relation[0].relation.student_relation_name} to give accept it."
+                        if relation.filter(is_verified_by_child=True):
+                            message = f"{user} is already registered as your {relation[0].relation.student_relation_name}"
+
                 else:
-                    message = "Relation already taken"
+                    message = "Requested account is not a student"
+
             else:
-                message = "Relation Type Doesn't Exists."
+                message = "This username is not associated with any student account"
         else:
-            messages.error(request, "Username or Relation Type is wrong")
-        context = {
-            'relation_types': RelationType.objects.filter(active=True).values('pk', 'guardian_relation_name')
-        }
-        return render(request, template_name=self.template_name, context=context)
+            message = "Username or Relation is missing"
+
+        messages.error(request, message)
+        return redirect("parent-portal:relation-create")
 
 
 class RelationUpdateView(UpdateView):
@@ -68,4 +87,9 @@ class RelationUpdateView(UpdateView):
 
 
 class RelationDeleteView(DeleteView):
+    template_name = 'parent/relation_delete.html'
     model = Relation
+    success_url = reverse_lazy('parent-portal:relation')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Relation.objects.filter(parent=self.request.user), pk=self.kwargs['pk'])

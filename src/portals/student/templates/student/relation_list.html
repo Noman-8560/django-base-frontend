@@ -19,7 +19,7 @@
                         <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Child</th>
+                            <th scope="col">Guardian</th>
                             <th scope="col">Relation</th>
                             <th scope="col">Status</th>
                             <th scope="col">Created</th>
@@ -32,18 +32,20 @@
                                 <tr>
                                     <td>{{ relation.pk }}</td>
                                     <td>
-                                        {{ relation.child.get_full_name }}<br>
-                                        <small class="text-muted">({{ relation.child.username }})</small>
+                                        {{ relation.parent.get_full_name }}<br>
+                                        <small class="text-muted">({{ relation.parent.username }})</small>
                                     </td>
-                                    <td>{{ relation.relation.student_relation_name }}</td>
+                                    <td>{{ relation.relation.guardian_relation_name }}</td>
                                     <td>
-                                        <span class="badge badge-success"><i class="fa fa-check"></i> verified</span>
+                                        <span class="badge badge-success">
+                                            <i class="fa fa-check"></i> verified
+                                        </span>
                                     </td>
                                     <td>{{ relation.created_on }}</td>
                                     <td>
                                         <b><a href="#"><i class="fa fa-eye"></i></a></b> |
                                         <b><a href="#"><i class="fa fa-chart-line"></i></a></b> |
-                                        <a href="{% url 'parent-portal:relation-delete' relation.pk %}">
+                                        <a href="{% url 'student-portal:relation-delete' relation.pk %}">
                                             <i class="fa fa-trash text-danger"></i>
                                         </a>
                                     </td>
@@ -56,19 +58,17 @@
                                 <tr>
                                     <td>{{ relation.pk }}</td>
                                     <td>
-                                        {{ relation.child.get_full_name }}<br>
-                                        <small class="text-muted">({{ relation.child.username }})</small>
+                                        {{ relation.parent.get_full_name }}<br>
+                                        <small class="text-muted">({{ relation.parent.username }})</small>
                                     </td>
                                     <td>{{ relation.relation.student_relation_name }}</td>
                                     <td width="30%">
                                         <span class="badge badge-warning"><i class="fa fa-clock"></i> Pending</span><br>
-                                        <small>Ask your {{ relation.relation.student_relation_name }} to give access
-                                            permissions</small>
                                     </td>
                                     <td>{{ relation.created_on }}</td>
                                     <td>
                                         <b>
-                                            <a href="{% url 'parent-portal:relation-delete' relation.pk %}">
+                                            <a href="{% url 'student-portal:relation-delete' relation.pk %}">
                                                 <i class="fa fa-trash text-danger"></i>
                                             </a>
                                         </b>
