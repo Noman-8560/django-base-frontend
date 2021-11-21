@@ -1,10 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'core/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block base_title %} Parental Access {% endblock %}
+
+{% block content %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-center">
+                        <div>
+                            {% if relation.parent.profile_image %}
+                                <img src="{{ relation.parent.profile_image.url }}" class="rounded-circle">
+                            {% else %}
+                                <img src="{% static 'images/user.jpg' %}" height="100" width="100"
+                                     class="rounded-circle">
+                            {% endif %}
+
+                            <div class="mt-2">
+                                <b>{{ relation.parent.get_full_name }}</b><br>
+                                <small> ({{ relation.parent.username }})</small>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p>
+                                {% lorem 1 p %}
+                            </p>
+                        </div>
+
+                        <div>
+                            <form method="post">
+                                {% csrf_token %}
+                                {% if relation.is_verified_by_child %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-trash"></i> Remove Access
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-child"></i> Allow Access
+                                    </button>
+                                {% endif %}
+                            </form>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

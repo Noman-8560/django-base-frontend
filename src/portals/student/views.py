@@ -532,18 +532,36 @@ class RelationListView(ListView):
         return context
 
 
-class RelationDetailView(DetailView):
-    model = Relation
-    template_name = 'student/relation_detail.html'
+class RelationDetailView(View):
 
-    def get_queryset(self):
-        return Relation.objects.filter(child=self.request.user, is_verified_by_child=True)
+    def get(self, request, pk):
+        relation = get_object_or_404(Relation.objects.filter(child=self.request.user), pk=pk)
+        context = {'relation': relation}
+        return render(request, 'student/relation_detail.html', context)
+
+    def post(self, request, pk):
+        relation_ = get_object_or_404(Relation.objects.filter(child=self.request.user), pk=pk)
+        if relation_.is_verified_by_child:
+            relation_.delete()
+            messages.success(
+                request, f"You have successfully verified {relation_.parent.username} "
+                         f"as your {relation_.relation}"
+            )
+            return redirect('student-portal:relation')
+
+        relation_.is_verified_by_child = True
+        relation_.save()
+        messages.success(
+            request, f"You have successfully removed access from {relation_.parent.username} "
+                     f"identified as your {relation_.relation}"
+        )
+        return redirect('student-portal:relation-detail', pk)
 
 
 class RelationDeleteView(DeleteView):
-    template_name = 'parent/relation_delete.html'
+    template_name = 'student/relation_delete.html'
     model = Relation
-    success_url = reverse_lazy('parent-portal:relation')
+    success_url = reverse_lazy('student-portal:relation')
 
     def get_object(self, queryset=None):
         return get_object_or_404(Relation.objects.filter(child=self.request.user), pk=self.kwargs['pk'])

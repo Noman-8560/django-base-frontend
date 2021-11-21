@@ -11,8 +11,9 @@
                 <div class="card-body">
 
                     <form method="post">{% csrf_token %}
-                        <p class="mb-2">Are you sure you want to delete your relation with
-                            <b class="text-danger">"{{ object.child.username }}"</b>
+                        <p class="mb-2">Are you sure your want to remove parental access from
+                            <b class="text-danger">"{{ object.parent.username }}"</b> identified as your
+                            <b>{{ object.relation.guardian_relation_name }}</b>.
                         </p>
                         <input type="submit" class="btn btn-danger" value="Confirm">
                     </form>
