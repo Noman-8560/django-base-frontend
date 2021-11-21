@@ -13,7 +13,7 @@ from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
-)
+    Relation)
 from src.portals.admins.forms import (
     ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm,
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
@@ -31,6 +31,42 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
         return context
+
+
+""" -----------------------------------------------------------"""
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationListView(ListView):
+    models = Relation
+    queryset = Relation.objects.all()
+    template_name = 'admins/relation_list.html'
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationCreateView(CreateView):
+    models = Relation
+    queryset = Relation.objects.all()
+    fields = '__all__'
+    template_name = 'admins/relation_create_form.html'
+    success_url = reverse_lazy('admin-portal:relation')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationUpdateView(UpdateView):
+    models = Relation
+    queryset = Relation.objects.all()
+    fields = '__all__'
+    template_name = 'admins/relation_create_form.html'
+    success_url = reverse_lazy('admin-portal:relation')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationDeleteView(DeleteView):
+    models = Relation
+    queryset = Relation.objects.all()
+    template_name = 'admins/relation_delete.html'
+    success_url = reverse_lazy('admin-portal:relation')
 
 
 """  ARTICLES --------------------------------------------------------------------- """
