@@ -13,7 +13,7 @@ from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
-    Relation, Topic)
+    Relation, Topic, RelationType)
 from src.portals.admins.forms import (
     ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm,
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
@@ -155,7 +155,7 @@ class SubjectDeleteView(DeleteView):
     success_url = reverse_lazy('admin-portal:subject')
 
 
-"""  SUBJECTS --------------------------------------------------------------------- """
+"""  TOPICS --------------------------------------------------------------------- """
 
 
 @method_decorator(admin_decorators, name='dispatch')
@@ -189,7 +189,43 @@ class TopicDeleteView(DeleteView):
     queryset = Topic.objects.all()
     template_name = 'admins/Topic_delete.html'
     success_url = reverse_lazy('admin-portal:topic')
-    
+
+
+"""  RELATION TYPES --------------------------------------------------------------- """
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationTypeListView(ListView):
+    models = RelationType
+    queryset = RelationType.objects.all()
+    template_name = 'admins/relation_type_list.html'
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationTypeCreateView(CreateView):
+    models = RelationType
+    queryset = RelationType.objects.all()
+    fields = '__all__'
+    template_name = 'admins/relation_type_create_form.html'
+    success_url = reverse_lazy('admin-portal:relation-type')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationTypeUpdateView(UpdateView):
+    models = RelationType
+    queryset = RelationType.objects.all()
+    fields = '__all__'
+    template_name = 'admins/relation_type_create_form.html'
+    success_url = reverse_lazy('admin-portal:relation-type')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class RelationTypeDeleteView(DeleteView):
+    models = RelationType
+    queryset = RelationType.objects.all()
+    template_name = 'admins/relation_type_delete.html'
+    success_url = reverse_lazy('admin-portal:relation-type')
+
     
 """ QUIZ -------------------------------------------------------------------------- """
 

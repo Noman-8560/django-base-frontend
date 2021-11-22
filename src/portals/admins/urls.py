@@ -8,6 +8,7 @@ from src.portals.admins.views import (
     QuestionListView, QuestionCreateView, QuestionDeleteView, QuestionUpdateView,
     RelationListView, RelationCreateView, RelationUpdateView, RelationDeleteView,
     TopicListView, TopicCreateView, TopicUpdateView, TopicDeleteView,
+    RelationTypeListView, RelationTypeCreateView, RelationTypeUpdateView, RelationTypeDeleteView,
 
     QuestionChoiceAddJSON, QuestionChoiceDeleteJSON, QuestionStatementAddJSON, QuestionStatementDeleteJSON,
     QuestionImageCreateView, QuestionImageDeleteView, QuestionAudioCreateView, QuestionAudioDeleteView,
@@ -41,6 +42,11 @@ urlpatterns = [
     path('add/topic/', TopicCreateView.as_view(), name='topic-create'),
     path('update/topic/<int:pk>/', TopicUpdateView.as_view(), name='topic-update'),
     path('delete/topic/<int:pk>/', TopicDeleteView.as_view(), name='topic-delete'),
+
+    path('relation-type/', RelationTypeListView.as_view(), name='relation-type'),
+    path('add/relation-type/', RelationTypeCreateView.as_view(), name='relation-type-create'),
+    path('update/relation-type/<int:pk>/', RelationTypeUpdateView.as_view(), name='relation-type-update'),
+    path('delete/relation-type/<int:pk>/', RelationTypeDeleteView.as_view(), name='relation-type-delete'),
 
     path('quiz/', QuizListView.as_view(), name='quiz'),
     path('add/quiz/', QuizCreateView.as_view(), name='quiz-create'),
