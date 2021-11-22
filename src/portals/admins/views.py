@@ -13,7 +13,7 @@ from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
-    Relation)
+    Relation, Topic)
 from src.portals.admins.forms import (
     ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm,
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
@@ -155,6 +155,42 @@ class SubjectDeleteView(DeleteView):
     success_url = reverse_lazy('admin-portal:subject')
 
 
+"""  SUBJECTS --------------------------------------------------------------------- """
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class TopicListView(ListView):
+    models = Topic
+    queryset = Topic.objects.all()
+    template_name = 'admins/topic_list.html'
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class TopicCreateView(CreateView):
+    models = Topic
+    queryset = Topic.objects.all()
+    fields = '__all__'
+    template_name = 'admins/topic_create_form.html'
+    success_url = reverse_lazy('admin-portal:topic')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class TopicUpdateView(UpdateView):
+    models = Topic
+    queryset = Topic.objects.all()
+    fields = '__all__'
+    template_name = 'admins/topic_create_form.html'
+    success_url = reverse_lazy('admin-portal:topic')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class TopicDeleteView(DeleteView):
+    models = Topic
+    queryset = Topic.objects.all()
+    template_name = 'admins/Topic_delete.html'
+    success_url = reverse_lazy('admin-portal:topic')
+    
+    
 """ QUIZ -------------------------------------------------------------------------- """
 
 
