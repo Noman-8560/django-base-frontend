@@ -17,7 +17,7 @@ class User(AbstractUser):
 
     profile_image = models.ImageField(
         null=True, blank=True,
-        upload_to='images/profiles/', height_field='150', width_field='150',
+        upload_to='images/profiles/',
         verbose_name="Profile Picture", help_text="Profile image must be 150*150 in size of png, jpg or jpeg"
     )
     gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER_CHOICE)

@@ -118,7 +118,7 @@ class Subject(models.Model):
 class Topic(models.Model):
     title = models.CharField(max_length=50, unique=True, null=False, blank=False)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -87,23 +87,20 @@
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user"
-                            {% if request.user.profile.profile %}
-                         src="{{ request.user.profile.profile.url }}"
-                            {% else %}
-                         src="{% static 'application/images/users/avatar-7.jpg' %}"
-                            {% endif %}
-                         alt="Header Avatar">
+
+                    {% if request.user.profile_image %}
+                        <img class="rounded-circle header-profile-user" src="{% static 'images/user.png' %}" alt="Header Avatar">
+                    {% else %}
+                         <img class="rounded-circle header-profile-user" src="{% static 'images/user.png' %}">
+                    {% endif %}
+
+
                     <span class="d-none d-xl-inline-block ml-1">{{ request.user.username }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <!-- item-->
-                    <a class="dropdown-item" href="{% url 'moderator-portal:dashboard' %}">
-                        <i class="bx bxs-dashboard font-size-16 align-middle mr-1"></i> Dashboard
-                    </a>
-                    <a class="dropdown-item" href="{% url 'application:profile_update' %}">
-                        <i class="bx bx-user font-size-16 align-middle mr-1"></i> Profile
+                    <a class="dropdown-item" href="{% url 'accounts:user-change' %}">
+                        <i class="bx bx-user font-size-16 align-middle mr-1"></i> Profile Update
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item d-block text-danger" href="#">

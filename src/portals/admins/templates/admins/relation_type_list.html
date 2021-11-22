@@ -68,12 +68,11 @@
             <div class="card-body">
                 <h5 class="card-title text-danger">No Relation Types available</h5>
                 <p class="card-text mb-0">Hi <b>{{ request.user.username }}</b>!
-                    there is no relation type available, please add relation types here
+                    there is no relation type available, please add relation types
                     <a href="{% url 'admin-portal:relation-type-create' %}">Here</a>.
                 </p>
             </div>
         {% endif %}
-    </div>
     </div>
 
 {% endblock %}

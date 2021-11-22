@@ -4,16 +4,13 @@
 {% load crispy_forms_tags %}
 
 {% block base_title %}Email Accounts{% endblock %}
-{% block page_heading %}
-    {% trans "Security Check" %}
-{% endblock %}
 
 {% block content %}
     <div class="row justify-content-center">
         <div class="col-sm-8 col-12">
             <div class="card">
-                <div class="card-header">
-                    <p class="card-title">{% trans "Related email addresses" %}</p>
+                <div class="card-header bg-white border-bottom">
+                    <p class="card-title mb-0">{% trans "Related email addresses" %}</p>
                 </div>
                 <div class="card-body">
 
@@ -35,17 +32,27 @@
 
                                             {{ emailaddress.email }}
                                             {% if emailaddress.verified %}
-                                                <span class="verified">{% trans "Verified" %}</span>
+                                                <b class="text-success">
+                                                <span class="verified">
+                                                    <i class="fa fa-check-circle"></i> {% trans "Verified" %}
+                                                </span>
+                                                </b>
                                             {% else %}
-                                                <span class="unverified">{% trans "Unverified" %}</span>
+                                                <b class="text-danger">
+                                                    <span class="unverified"><i
+                                                            class="fa fa-times-circle"></i> {% trans "Unverified" %}
+                                                    </span>
+                                                </b>
                                             {% endif %}
                                             {% if emailaddress.primary %}
-                                                <span class="primary">{% trans "Primary" %}</span>{% endif %}
+                                                <b class="text-success"><i class="fa fa-check-circle"></i>
+                                                    <span class="primary">{% trans "Primary" %}</span>
+                                                </b>
+                                            {% endif %}
                                         </label>
                                     </div>
                                 {% endfor %}
-
-                                <hr class="border border-danger">
+                                <hr>
                                 <div class="buttonHolder">
                                     <button class="secondaryAction btn btn-sm btn-primary" type="submit"
                                             name="action_primary">{% trans 'Make Primary' %}</button>
