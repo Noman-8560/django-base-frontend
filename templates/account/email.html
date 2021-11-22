@@ -54,11 +54,11 @@
                                 {% endfor %}
                                 <hr>
                                 <div class="buttonHolder">
-                                    <button class="secondaryAction btn btn-sm btn-primary" type="submit"
+                                    <button class="secondaryAction btn btn-primary" type="submit"
                                             name="action_primary">{% trans 'Make Primary' %}</button>
-                                    <button class="secondaryAction btn btn-sm btn-primary" type="submit"
+                                    <button class="secondaryAction btn btn-primary" type="submit"
                                             name="action_send">{% trans 'Re-send Verification' %}</button>
-                                    <button class="primaryAction btn btn-sm btn-danger" type="submit"
+                                    <button class="primaryAction btn btn-danger" type="submit"
                                             name="action_remove">{% trans 'Remove' %}</button>
                                 </div>
 
@@ -78,8 +78,8 @@
 
             {% if can_add_email %}
                 <div class="card">
-                    <div class="card-header">
-                        <p class="card-title">{% trans "Add email address" %}</p>
+                    <div class="card-header bg-white border-bottom">
+                        <p class="card-title mb-0">{% trans "Add email address" %}</p>
                     </div>
                     <div class="card-body">
 
@@ -87,7 +87,8 @@
                             {% csrf_token %}
                             {{ form|crispy }}
                             <button class="btn btn-primary" name="action_add"
-                                    type="submit">{% trans "Add E-mail" %}</button>
+                                    type="submit">{% trans "Add E-mail" %}
+                            </button>
                         </form>
                     </div>
                 </div>
