@@ -39,10 +39,15 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="age">Age</label>
-                                        <input type="number" value="{{ question.age_limit }}"
-                                               class="form-control" id="age" name="age"
-                                               placeholder="Targeted age">
+                                        <label for="age">Topics</label>
+                                        <select multiple="multiple" class="form-control" id="topics" name="topics">
+                                            {% for topic in topics_selected %}
+                                                <option value="{{ topic.pk }}" selected>{{ topic.title }}</option>
+                                            {% endfor %}
+                                            {% for topic in topics %}
+                                                <option value="{{ topic.pk }}">{{ topic.title }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
 
                                     {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}

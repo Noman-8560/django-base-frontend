@@ -189,6 +189,7 @@ class Question(models.Model):
     choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
                                         related_name='select_choices')
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
+    topics = models.ManyToManyField(Topic)
     question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False, default='1')
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -310,6 +311,7 @@ class Quiz(models.Model):
         help_text="Select no of players for this quiz"
     )
     questions = models.ManyToManyField(Question, through="QuizQuestion")
+    topics = models.ManyToManyField(Topic)
     submission_control = models.ForeignKey(Screen, null=True, blank=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)

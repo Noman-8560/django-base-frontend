@@ -33,7 +33,7 @@ class DashboardView(TemplateView):
         return context
 
 
-""" -----------------------------------------------------------"""
+""" Relations -----------------------------------------------------------"""
 
 
 @method_decorator(admin_decorators, name='dispatch')
@@ -378,24 +378,40 @@ class QuestionCreateView(View):
 
     def get(self, request):
         question_subjects = Subject.objects.all()
-        context = {'subjects': question_subjects}
+        context = {
+            'subjects': question_subjects,
+            'topics': Topic.objects.all()
+        }
         return render(request=request, template_name='admins/question_add_form.html', context=context)
 
     def post(self, request):
+
+        corrects = request.POST.getlist('corrects[]')
+        options = request.POST.getlist('options[]')
+        topics = request.POST.getlist('topics[]')
+
+        #1: CREATE QUESTION
         question = Question.objects.create(
-            age_limit=request.POST['age'],
-            subject=Subject.objects.get(pk=request.POST['subject_id']), created_by=request.user
+            age_limit=request.POST['age'], created_by=request.user,
+            subject=Subject.objects.get(pk=request.POST['subject_id']),
         )
 
+        #2: CREATE STATEMENTS
         for statement in request.POST.getlist('statements[]'):
             QuestionStatement.objects.create(
                 statement=statement,
                 question=question
             )
 
-        corrects = request.POST.getlist('corrects[]')
-        options = request.POST.getlist('options[]')
+        #3 CREATE TOPICS
+        for topic_id in topics:
+            try:
+                topic = Topic.objects.get(pk=topic_id)
+                question.topics.add(topic)
+            except Topic.DoesNotExist:
+                continue
 
+        #4 CREATE OPTIONS
         for index, value in enumerate(options):
 
             choice = False
@@ -416,6 +432,10 @@ class QuestionUpdateView(View):
 
     def get(self, request, pk):
         question = get_object_or_404(Question, pk=pk)
+
+        topics_selected = question.topics.all()
+        topics = Topic.objects.exclude(pk__in=topics_selected.values_list('pk'))
+
         context = {
             'statements': QuestionStatement.objects.filter(question=question),
             'choices': QuestionChoice.objects.filter(question=question),
@@ -426,6 +446,8 @@ class QuestionUpdateView(View):
             'subjects': Subject.objects.all(),
             'image_form': QuestionImageForm(),
             'audio_form': QuestionAudioForm(),
+            'topics': topics,
+            'topics_selected': topics_selected
         }
         return render(request=request, template_name='admins/question_update_form.html', context=context)
 
