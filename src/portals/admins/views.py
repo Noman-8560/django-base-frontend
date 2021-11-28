@@ -483,6 +483,46 @@ class QuestionStatementDeleteJSON(View):
 
 
 @method_decorator(admin_decorators, name='dispatch')
+class QuestionTopicAddJSON(View):
+
+    def post(self, request, question_id):
+        message = "Failed Request"
+        is_error = True
+        try:
+            question = Question.objects.get(pk=question_id)
+            topic = Topic.objects.get(pk=request.POST['topic'])
+            question.topics.add(topic)
+            message = "Topic added successfully"
+            is_error = False
+        except Question.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+        except Topic.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+
+        return JsonResponse(data={"message": message, "is_error": is_error}, safe=False)
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class QuestionTopicDeleteJSON(View):
+
+    def post(self, request, question_id):
+        message = "Failed Request"
+        is_error = True
+        try:
+            question = Question.objects.get(pk=question_id)
+            topic = Topic.objects.get(pk=request.POST['topic'])
+            question.topics.remove(topic)
+            message = "Topic deleted successfully"
+            is_error = False
+        except Question.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+        except Topic.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+
+        return JsonResponse(data={"message": message, "is_error": is_error}, safe=False)
+
+
+@method_decorator(admin_decorators, name='dispatch')
 class QuestionChoiceAddJSON(View):
 
     def post(self, request):

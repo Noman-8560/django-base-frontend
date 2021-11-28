@@ -270,7 +270,8 @@
                                 <p class="mb-2">Available</p>
                                 <div id="available-topics-div">
                                     {% for topic in topics %}
-                                        <span class="badge badge-pill badge-soft-primary font-size-12" id="available-topic" data-id="{{ topic.pk }}">
+                                        <span class="badge badge-pill badge-soft-primary font-size-12"
+                                              id="available-topic" data-id="{{ topic.pk }}">
                                                         <i class="fa fa-plus"></i> {{ topic.title }}
                                                     </span>
                                     {% endfor %}
@@ -281,7 +282,8 @@
                                 <p class="mb-2">Selected</p>
                                 <div id="selected-topics-div">
                                     {% for topic in topics_selected %}
-                                        <span class="badge badge-pill badge-soft-success font-size-12" id="selected-topic" data-id="{{ topic.pk }}">
+                                        <span class="badge badge-pill badge-soft-success font-size-12"
+                                              id="selected-topic" data-id="{{ topic.pk }}">
                                                         <i class="fa fa-check"></i> {{ topic.title }}
                                                     </span>
                                     {% endfor %}
@@ -404,12 +406,12 @@
 
             $('#selected-topics-div #selected-topic').click(function () {
                 let id = $(this).data('id');
-                alert("S "+ id);
+                delete_topic(id);
             });
 
             $('#available-topics-div #available-topic').click(function () {
                 let id = $(this).data('id');
-                alert("A "+ id);
+                add_topic(id);
             });
 
             function deleteStatement(id) {
@@ -425,14 +427,34 @@
             }
 
             function add_topic(id) {
-                 $.get("/a/json/question/" + id + "/topic/"+ id +"/add/", function () {
-                    window.location.reload()
+
+                $.ajax({
+                    url: "/a/json/question/" + id + "/topic/add/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        topic: id
+                    },
+                }).then(function (data, status) {
+                    window.location.reload();
+                }).catch(function (err) {
+                    console.log(err);
                 });
+
             }
 
             function delete_topic(id) {
-                 $.get("/a/json/question/" + id + "/topic/"+ id +"/delete/", function () {
-                    window.location.reload()
+                $.ajax({
+                    url: "/a/json/question/" + id + "/topic/delete/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        topic: id
+                    },
+                }).then(function (data, status) {
+                    window.location.reload();
+                }).catch(function (err) {
+                    console.log(err);
                 });
             }
 

@@ -14,7 +14,9 @@ from src.portals.admins.views import (
     QuestionImageCreateView, QuestionImageDeleteView, QuestionAudioCreateView, QuestionAudioDeleteView,
 
     QuestionStatementStatusUpdateJSON, QuestionChoiceStatusUpdateJSON, QuestionImageStatusUpdateJSON,
-    QuestionAudioStatusUpdateJSON, QuestionSubmitStatusUpdateJSON, QuizQuestionAddJSON, QuizQuestionDeleteJSON
+    QuestionAudioStatusUpdateJSON, QuestionSubmitStatusUpdateJSON, QuizQuestionAddJSON, QuizQuestionDeleteJSON,
+
+    QuestionTopicAddJSON, QuestionTopicDeleteJSON
 )
 
 app_name = "admin-portal"
@@ -88,5 +90,9 @@ urlpatterns = [
          name='quiz-question-add-json'),
     path('json/quiz/<int:quiz_id>/question/<int:question_id>/delete/', QuizQuestionDeleteJSON.as_view(),
          name='quiz-question-delete-json'),
+
+    path('json/question/<int:question_id>/topic/add/', QuestionTopicAddJSON.as_view(), name='question-topic-add-json'),
+    path('json/question/<int:question_id>/topic/delete/', QuestionTopicDeleteJSON.as_view(),
+         name='question-topic-delete-json'),
 
 ]
