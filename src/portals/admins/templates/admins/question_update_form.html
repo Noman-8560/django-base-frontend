@@ -268,9 +268,9 @@
                         <div class="row">
                             <div class="col-6 border-right">
                                 <p class="mb-2">Available</p>
-                                <div>
-                                    {% for topic in topics_selected %}
-                                        <span class="badge badge-pill badge-soft-primary font-size-12">
+                                <div id="available-topics-div">
+                                    {% for topic in topics %}
+                                        <span class="badge badge-pill badge-soft-primary font-size-12" id="available-topic" data-id="{{ topic.pk }}">
                                                         <i class="fa fa-plus"></i> {{ topic.title }}
                                                     </span>
                                     {% endfor %}
@@ -278,10 +278,10 @@
                             </div>
 
                             <div class="col-6">
-                                <p class="mb-0">Selected</p>
-                                <div>
+                                <p class="mb-2">Selected</p>
+                                <div id="selected-topics-div">
                                     {% for topic in topics_selected %}
-                                        <span class="badge badge-pill badge-soft-success font-size-12">
+                                        <span class="badge badge-pill badge-soft-success font-size-12" id="selected-topic" data-id="{{ topic.pk }}">
                                                         <i class="fa fa-check"></i> {{ topic.title }}
                                                     </span>
                                     {% endfor %}
@@ -402,8 +402,14 @@
                 deleteChoice(id);
             });
 
-            $('#choices #choices-add-btn').click(function () {
-                saveChoice();
+            $('#selected-topics-div #selected-topic').click(function () {
+                let id = $(this).data('id');
+                alert("S "+ id);
+            });
+
+            $('#available-topics-div #available-topic').click(function () {
+                let id = $(this).data('id');
+                alert("A "+ id);
             });
 
             function deleteStatement(id) {
@@ -414,6 +420,18 @@
 
             function deleteChoice(id) {
                 $.get("/a/json/question_choice/" + id + "/delete/", function () {
+                    window.location.reload()
+                });
+            }
+
+            function add_topic(id) {
+                 $.get("/a/json/question/" + id + "/topic/"+ id +"/add/", function () {
+                    window.location.reload()
+                });
+            }
+
+            function delete_topic(id) {
+                 $.get("/a/json/question/" + id + "/topic/"+ id +"/delete/", function () {
                     window.location.reload()
                 });
             }
