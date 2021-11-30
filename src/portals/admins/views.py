@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import never_cache
 from django.views.generic import (
     TemplateView, ListView, DeleteView, DetailView, UpdateView, CreateView
 )
@@ -226,7 +227,7 @@ class RelationTypeDeleteView(DeleteView):
     template_name = 'admins/relation_type_delete.html'
     success_url = reverse_lazy('admin-portal:relation-type')
 
-    
+
 """ QUIZ -------------------------------------------------------------------------- """
 
 
@@ -390,20 +391,20 @@ class QuestionCreateView(View):
         options = request.POST.getlist('options[]')
         topics = request.POST.getlist('topics[]')
 
-        #1: CREATE QUESTION
+        # 1: CREATE QUESTION
         question = Question.objects.create(
             age_limit=request.POST['age'], created_by=request.user,
             subject=Subject.objects.get(pk=request.POST['subject_id']),
         )
 
-        #2: CREATE STATEMENTS
+        # 2: CREATE STATEMENTS
         for statement in request.POST.getlist('statements[]'):
             QuestionStatement.objects.create(
                 statement=statement,
                 question=question
             )
 
-        #3 CREATE TOPICS
+        # 3 CREATE TOPICS
         for topic_id in topics:
             try:
                 topic = Topic.objects.get(pk=topic_id)
@@ -411,7 +412,7 @@ class QuestionCreateView(View):
             except Topic.DoesNotExist:
                 continue
 
-        #4 CREATE OPTIONS
+        # 4 CREATE OPTIONS
         for index, value in enumerate(options):
 
             choice = False
@@ -492,6 +493,7 @@ class QuestionTopicAddJSON(View):
             question = Question.objects.get(pk=question_id)
             topic = Topic.objects.get(pk=request.POST['topic'])
             question.topics.add(topic)
+            print(question.pk)
             message = "Topic added successfully"
             is_error = False
         except Question.DoesNotExist:
