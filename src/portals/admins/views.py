@@ -493,7 +493,6 @@ class QuestionTopicAddJSON(View):
             question = Question.objects.get(pk=question_id)
             topic = Topic.objects.get(pk=request.POST['topic'])
             question.topics.add(topic)
-            print(question.pk)
             message = "Topic added successfully"
             is_error = False
         except Question.DoesNotExist:

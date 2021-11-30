@@ -16,6 +16,9 @@
             <div class="col-sm-8">
 
                 <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <p class="card-title mb-0">Basic Details</p>
+                    </div>
                     <div class="card-body">
 
                         <form class="outer-repeater">
@@ -36,13 +39,6 @@
                                             {% endfor %}
 
                                         </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="age">Age</label>
-                                        <input type="number" value="{{ question.age_limit }}"
-                                               class="form-control" id="age" name="age"
-                                               placeholder="Targeted age">
                                     </div>
 
                                     {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
@@ -195,7 +191,7 @@
                                                                     </div>
                                                                     <div class="mt-4 text-center">
                                                                         <a class="btn btn-danger"
-                                                                           href="{% url 'moderator-portal:question-image-delete-json' image.id %}">
+                                                                           href="{% url 'admin-portal:question-image-delete-json' image.id %}">
                                                                             <i class="fa fa-trash"></i>
                                                                         </a>
                                                                     </div>
@@ -243,7 +239,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <a class="btn btn-danger"
-                                                                       href="{% url 'moderator-portal:question-audio-delete-json' audio.id %}">
+                                                                       href="{% url 'admin-portal:question-audio-delete-json' audio.id %}">
                                                                         <i class="fa fa-trash"></i>
                                                                     </a>
                                                                 </td>
@@ -265,6 +261,42 @@
                 </div>
 
                 <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <p class="card-title mb-0">Topic Details</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 border-right">
+                                <p class="mb-2">Available</p>
+                                <div id="available-topics-div">
+                                    {% for topic in topics %}
+                                        <span class="badge badge-pill badge-soft-primary font-size-12"
+                                              id="available-topic" data-id="{{ topic.pk }}">
+                                                        <i class="fa fa-plus"></i> {{ topic.title }}
+                                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <p class="mb-2">Selected</p>
+                                <div id="selected-topics-div">
+                                    {% for topic in topics_selected %}
+                                        <span class="badge badge-pill badge-soft-success font-size-12"
+                                              id="selected-topic" data-id="{{ topic.pk }}">
+                                                        <i class="fa fa-check"></i> {{ topic.title }}
+                                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <p class="card-title mb-0">More Details</p>
+                    </div>
                     <div class="card-body">
                         <p class="text-muted"><b>NOTE: </b>This is a complete update question form, feel free to add,
                             update
@@ -375,6 +407,17 @@
                 saveChoice();
             });
 
+            $('#selected-topics-div #selected-topic').click(function () {
+                let id = $(this).data('id');
+                delete_topic(id);
+            });
+
+            $('#available-topics-div #available-topic').click(function () {
+                let id = $(this).data('id');
+                add_topic(id);
+            });
+
+
             function deleteStatement(id) {
                 $.get("/m/json/question_statement/" + id + "/delete/", function () {
                     window.location.reload()
@@ -384,6 +427,38 @@
             function deleteChoice(id) {
                 $.get("/m/json/question_choice/" + id + "/delete/", function () {
                     window.location.reload()
+                });
+            }
+
+            function add_topic(id) {
+
+                $.ajax({
+                    url: "/a/json/question/{{ question_id }}/topic/add/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        topic: id
+                    },
+                }).then(function (data, status) {
+                    window.location.reload();
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+            }
+
+            function delete_topic(id) {
+                $.ajax({
+                    url: "/a/json/question/{{ question_id }}/topic/delete/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        topic: id
+                    },
+                }).then(function (data, status) {
+                    window.location.reload();
+                }).catch(function (err) {
+                    console.log(err);
                 });
             }
 

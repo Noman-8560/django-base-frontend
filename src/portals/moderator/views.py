@@ -14,7 +14,7 @@ from src.application.forms import QuestionImageForm
 from src.application.models import (
     Quiz, QuizQuestion, Question, ChoiceVisibility, StatementVisibility, ImageVisibility,
     AudioVisibility,
-    Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen)
+    Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen, Topic)
 from src.portals.admins.dll import QuestionDS
 from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
 
@@ -231,7 +231,11 @@ class QuestionCreateView(View):
 class QuestionUpdateView(View):
 
     def get(self, request, pk):
+
         question = get_object_or_404(Question.objects.filter(created_by=request.user), pk=pk)
+        topics_selected = question.topics.all()
+        topics = Topic.objects.exclude(pk__in=topics_selected.values_list('pk'))
+
         context = {
             'statements': QuestionStatement.objects.filter(question=question),
             'choices': QuestionChoice.objects.filter(question=question),
@@ -242,12 +246,54 @@ class QuestionUpdateView(View):
             'subjects': Subject.objects.all(),
             'image_form': QuestionImageForm(),
             'audio_form': QuestionAudioForm(),
+            'topics': topics,
+            'topics_selected': topics_selected
         }
         return render(request=request, template_name='moderator/question_update_form.html', context=context)
     
     
 """ C-API ------------------------------------------------------------------------- """
 """ QUESTION UPDATE RELATED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ """
+
+
+@method_decorator(moderator_decorators, name='dispatch')
+class QuestionTopicAddJSON(View):
+
+    def post(self, request, question_id):
+        message = "Failed Request"
+        is_error = True
+        try:
+            question = Question.objects.get(pk=question_id)
+            topic = Topic.objects.get(pk=request.POST['topic'])
+            question.topics.add(topic)
+            message = "Topic added successfully"
+            is_error = False
+        except Question.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+        except Topic.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+
+        return JsonResponse(data={"message": message, "is_error": is_error}, safe=False)
+
+
+@method_decorator(moderator_decorators, name='dispatch')
+class QuestionTopicDeleteJSON(View):
+
+    def post(self, request, question_id):
+        message = "Failed Request"
+        is_error = True
+        try:
+            question = Question.objects.get(pk=question_id)
+            topic = Topic.objects.get(pk=request.POST['topic'])
+            question.topics.remove(topic)
+            message = "Topic deleted successfully"
+            is_error = False
+        except Question.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+        except Topic.DoesNotExist:
+            message = "Question or Topic Doesn't exists"
+
+        return JsonResponse(data={"message": message, "is_error": is_error}, safe=False)
 
 
 @method_decorator(moderator_decorators, name='dispatch')
