@@ -18,8 +18,8 @@ app_name = "moderator-portal"
 urlpatterns = [
 
     path('', DashboardView.as_view(), name='dashboard'),
-    path('quiz/', QuizListView.as_view(), name='quiz'),
 
+    path('quiz/', QuizListView.as_view(), name='quiz'),
     path('add/quiz/', QuizCreateView.as_view(), name='quiz-create'),
     path('quiz/<int:pk>/', QuizDetailView.as_view(), name='quiz-detail'),
     path('update/quiz/<int:pk>/', QuizUpdateView.as_view(), name='quiz-update'),
