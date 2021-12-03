@@ -45,7 +45,7 @@ class QuizListView(ListView):
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
-    fields = '__all__'
+    fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'moderator/quiz_create_form.html'
     success_url = reverse_lazy('moderator-portal:quiz')
 
@@ -59,7 +59,7 @@ class QuizCreateView(CreateView):
 @method_decorator(moderator_decorators, name='dispatch')
 class QuizUpdateView(UpdateView):
     models = Quiz
-    fields = '__all__'
+    fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'moderator/quiz_update_form.html'
     success_url = reverse_lazy('moderator-portal:quiz')
 
@@ -194,24 +194,36 @@ class QuestionCreateView(View):
 
     def get(self, request):
         question_subjects = Subject.objects.all()
-        context = {'subjects': question_subjects}
+        context = {'subjects': question_subjects, 'topics': Topic.objects.all()}
         return render(request=request, template_name='moderator/question_add_form.html', context=context)
 
     def post(self, request):
+        topics = request.POST.getlist('topics[]')
+        corrects = request.POST.getlist('corrects[]')
+        options = request.POST.getlist('options[]')
+
+        # 1: CREATE QUESTION
         question = Question.objects.create(
             age_limit=request.POST['age'],
             subject=Subject.objects.get(pk=request.POST['subject_id']), created_by=request.user
         )
 
+        # 2: CREATE STATEMENTS
         for statement in request.POST.getlist('statements[]'):
             QuestionStatement.objects.create(
                 statement=statement,
                 question=question
             )
 
-        corrects = request.POST.getlist('corrects[]')
-        options = request.POST.getlist('options[]')
+        # 3 CREATE TOPICS
+        for topic_id in topics:
+            try:
+                topic = Topic.objects.get(pk=topic_id)
+                question.topics.add(topic)
+            except Topic.DoesNotExist:
+                continue
 
+        # 4 CREATE OPTIONS
         for index, value in enumerate(options):
 
             choice = False
@@ -276,7 +288,6 @@ class QuestionTopicAddJSON(View):
         return JsonResponse(data={"message": message, "is_error": is_error}, safe=False)
 
 
-@method_decorator(moderator_decorators, name='dispatch')
 class QuestionTopicDeleteJSON(View):
 
     def post(self, request, question_id):

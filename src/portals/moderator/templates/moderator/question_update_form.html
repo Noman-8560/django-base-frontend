@@ -433,7 +433,7 @@
             function add_topic(id) {
 
                 $.ajax({
-                    url: "/a/json/question/{{ question_id }}/topic/add/",
+                    url: "/m/json/question/{{ question_id }}/topic/add/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {
@@ -449,7 +449,7 @@
 
             function delete_topic(id) {
                 $.ajax({
-                    url: "/a/json/question/{{ question_id }}/topic/delete/",
+                    url: "/m/json/question/{{ question_id }}/topic/delete/",
                     type: 'POST',
                     headers: {'X-CSRFToken': csrftoken},
                     data: {

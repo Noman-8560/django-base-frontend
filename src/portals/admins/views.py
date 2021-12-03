@@ -328,7 +328,7 @@ class QuizDetailView(DetailView):
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
-    fields = '__all__'
+    fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'admins/quiz_create_form.html'
     success_url = reverse_lazy('admin-portal:quiz')
 
@@ -343,7 +343,7 @@ class QuizCreateView(CreateView):
 class QuizUpdateView(UpdateView):
     models = Quiz
     queryset = Quiz.objects.all()
-    fields = '__all__'
+    fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'admins/quiz_update_form.html'
     success_url = reverse_lazy('admin-portal:quiz')
 

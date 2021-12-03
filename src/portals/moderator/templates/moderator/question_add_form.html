@@ -40,6 +40,15 @@
                                                placeholder="Targeted age">
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="age">Topics</label>
+                                        <select multiple="multiple" class="form-control" id="topics" name="topics">
+                                            {% for topic in topics %}
+                                                <option value="{{ topic.pk }}">{{ topic.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
                                     {# REPEAT --> FIELDS --> STATEMENTS -------------------------------------------- #}
                                     <p class="font-weight-bolder mt-2">Statements</p>
                                     <div class="inner-repeater mb-4">
@@ -150,10 +159,15 @@
             let statements = [];
             let options = [];
             let corrects = [];
+            let topics_list = [];
+
 
             submit_button.click(function (event) {
                 let subject = $('#subject').val();
                 let age = parseInt($('#age').val());
+
+                let topics = $("#topics").val();
+
 
                 if (!isNaN(age) && age > 0 && age <= 18) {
                     $('#statements > #statement').each(function () {
@@ -179,12 +193,17 @@
                         }
                     });
 
+                    for (let i = 0; i< topics.length; i++){
+                        topics_list.push(parseInt(topics[i]))
+                    }
+
                     let data = {
                         subject_id: subject,
                         age: age,
                         statements: statements,
                         options: options,
                         corrects: corrects,
+                        topics: topics_list
                     };
 
                     $.ajax({
