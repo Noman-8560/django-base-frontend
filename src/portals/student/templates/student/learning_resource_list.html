@@ -49,35 +49,30 @@
 
                                 {% for quiz in all_quizes %}
                                     <tr>
-                                    <td>{{ quiz.title }}</td>
-                                    <td>{{ quiz.questions.count }}</td>
-                                    <td>
-                                        {% for subject in quiz.subjects.all %}
-                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ quiz.start_time }}</td>
-                                    <td>{{ quiz.end_time }}</td>
+                                        <td>{{ quiz.title }}</td>
+                                        <td>{{ quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.subjects.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.start_time }}</td>
+                                        <td>{{ quiz.end_time }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     {% else %}
-                        <div class="p-4">
-                            <div class="card border border-warning">
-                                <div class="card-header bg-transparent border-warning">
-                                    <h5 class="my-0 text-warning">
-                                        <i class="mdi mdi-alert-outline mr-3"></i>Learning Resource Help</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mt-0">No learning resource available?</h5>
-                                    <p class="card-text">{{ request.user.username }}! No learning resources are
-                                        available now
-                                        because
-                                        the admin didn't added yet come back later.</p>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-0 text-danger">No learning resource available?</h5>
+                            <p class="card-text">{{ request.user.username }}! No learning resources are
+                                available now
+                                because
+                                the admin didn't added yet come back later.
+                            </p>
                         </div>
                     {% endif %}
                 </div>
@@ -99,37 +94,33 @@
 
                                 {% for quiz in available_quizes %}
                                     <tr>
-                                    <td>{{ quiz.title }}</td>
-                                    <td>{{ quiz.questions.count }}</td>
-                                    <td>
-                                        {% for subject in quiz.subjects.all %}
-                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ quiz.start_time }}</td>
-                                    <td>{{ quiz.end_time }}</td>
-                                    <td><a href="{% url 'student-portal:learning-resource-live' quiz.pk %}"><i
-                                            class="bx bx-task"></i> Try a tutorial</a></td>
+                                        <td>{{ quiz.title }}</td>
+                                        <td>{{ quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.subjects.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.start_time }}</td>
+                                        <td>{{ quiz.end_time }}</td>
+                                        <td><a href="{% url 'student-portal:learning-resource-live' quiz.pk %}"><i
+                                                class="bx bx-task"></i> Try a tutorial</a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     {% else %}
-                        <div class="p-4">
-                            <div class="card border border-warning">
-                                <div class="card-header bg-transparent border-warning">
-                                    <h5 class="my-0 text-warning">
-                                        <i class="mdi mdi-alert-outline mr-3"></i>Learning Resource Help</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mt-0">No learning resource available?</h5>
-                                    <p class="card-text">{{ request.user.username }}! No learning resources are
-                                        available now
-                                        because
-                                        the admin didn't added yet come back later.</p>
-                                </div>
-                            </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title mt-0 text-danger">No learning resource available?</h5>
+                            <p class="card-text">{{ request.user.username }}! No learning resources are
+                                available now
+                                because
+                                the admin didn't added yet come back later.
+                            </p>
                         </div>
                     {% endif %}
                 </div>
@@ -153,38 +144,32 @@
 
                                 {% for quiz in completed_quizes %}
                                     <tr>
-                                    <td>{{ quiz.quiz.title }}</td>
-                                    <td>{{ quiz.quiz.questions.count }}</td>
-                                    <td>
-                                        {% for subject in quiz.quiz.subjects.all %}
-                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ quiz.quiz.start_time }}</td>
-                                    <td>{{ quiz.quiz.end_time }}</td>
-                                    <td>{{ quiz.total }}</td>
-                                    <td>{{ quiz.obtained }}</td>
-                                    <td>{{ quiz.created }}</td>
+                                        <td>{{ quiz.quiz.title }}</td>
+                                        <td>{{ quiz.quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.quiz.subjects.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.quiz.start_time }}</td>
+                                        <td>{{ quiz.quiz.end_time }}</td>
+                                        <td>{{ quiz.total }}</td>
+                                        <td>{{ quiz.obtained }}</td>
+                                        <td>{{ quiz.created }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     {% else %}
-                        <div class="p-4">
-                            <div class="card border border-warning">
-                                <div class="card-header bg-transparent border-warning">
-                                    <h5 class="my-0 text-warning">
-                                        <i class="mdi mdi-alert-outline mr-3"></i>Learning Resource Help</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mt-0">No learning resource available?</h5>
-                                    <p class="card-text">{{ request.user.username }}! No learning resources are
-                                        available now
-                                        because
-                                        the admin didn't added yet come back later.</p>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-0 text-danger">No learning resource available?</h5>
+                            <p class="card-text">{{ request.user.username }}! No learning resources are
+                                available now
+                                because
+                                the admin didn't added yet come back later.</p>
                         </div>
                     {% endif %}
                 </div>

@@ -10,7 +10,7 @@
 
 
 {% block base_links %}
-   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
 {% endblock %}
 
 
@@ -22,73 +22,75 @@
         <div class="card-body">
 
             <ul class="nav nav-tabs">
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link active" data-toggle="tab" href="#all"><i class="fa fa-list"></i> All</a>#}
-{#                </li>#}
+                {#                <li class="nav-item">#}
+                {#                    <a class="nav-link active" data-toggle="tab" href="#all"><i class="fa fa-list"></i> All</a>#}
+                {#                </li>#}
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#available"><i class="fa fa-pen"></i> Available</a>
+                    <a class="nav-link active" data-toggle="tab" href="#available"><i class="fa fa-pen"></i>
+                        Available</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#enrolled"><i class="fa fa-flag"></i> Enrolled</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-success" data-toggle="tab" href="#completed"><i class="fa fa-check"></i> Completed</a>
+                    <a class="nav-link text-success" data-toggle="tab" href="#completed"><i class="fa fa-check"></i>
+                        Completed</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-{#                <div class="tab-pane fade show active" id="all">#}
-{#                    {% if quizes_all %}#}
-{#                        <div class="table-responsive py-4">#}
-{#                            <table class="table table-hover table-bordered table-striped" id="q_all">#}
-{#                                <thead>#}
-{#                                <tr>#}
-{#                                    <th>Name</th>#}
-{#                                    <th>Required</th>#}
-{#                                    <th>Questions</th>#}
-{#                                    <th>Subjects</th>#}
-{#                                    <th>Start</th>#}
-{#                                    <th>End</th>#}
-{#                                </tr>#}
-{#                                </thead>#}
-{#                                <tbody class="">#}
-{##}
-{#                                {% for quiz in quizes_all %}#}
-{#                                    <tr>#}
-{#                                    <td>{{ quiz.title }}</td>#}
-{#                                    <td>{{ quiz.get_players_display }}</td>#}
-{#                                    <td>{{ quiz.questions.count }}</td>#}
-{#                                    <td>#}
-{#                                        {% for subject in quiz.subjects.all %}#}
-{#                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>#}
-{#                                        {% endfor %}#}
-{#                                    </td>#}
-{#                                    <td>{{ quiz.start_time }}</td>#}
-{#                                    <td>{{ quiz.end_time }}</td>#}
-{#                                    </tr>#}
-{##}
-{#                                {% endfor %}#}
-{##}
-{##}
-{#                                </tbody>#}
-{#                            </table>#}
-{#                        </div>#}
-{#                    {% else %}#}
-{#                        <div class="p-4">#}
-{#                            <div class="card border border-warning">#}
-{#                                <div class="card-header bg-transparent border-warning">#}
-{#                                    <h5 class="my-0 text-warning">#}
-{#                                        <i class="mdi mdi-alert-outline mr-3"></i>Quiz Help</h5>#}
-{#                                </div>#}
-{#                                <div class="card-body">#}
-{#                                    <h5 class="card-title mt-0">Why Quizzes are unavailable?</h5>#}
-{#                                    <p class="card-text">{{ request.user.username }}! No quizzes are available now#}
-{#                                        because#}
-{#                                        the admin didn't added yet come back later.</p>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    {% endif %}#}
-{#                </div>#}
+                {#                <div class="tab-pane fade show active" id="all">#}
+                {#                    {% if quizes_all %}#}
+                {#                        <div class="table-responsive py-4">#}
+                {#                            <table class="table table-hover table-bordered table-striped" id="q_all">#}
+                {#                                <thead>#}
+                {#                                <tr>#}
+                {#                                    <th>Name</th>#}
+                {#                                    <th>Required</th>#}
+                {#                                    <th>Questions</th>#}
+                {#                                    <th>Subjects</th>#}
+                {#                                    <th>Start</th>#}
+                {#                                    <th>End</th>#}
+                {#                                </tr>#}
+                {#                                </thead>#}
+                {#                                <tbody class="">#}
+                {##}
+                {#                                {% for quiz in quizes_all %}#}
+                {#                                    <tr>#}
+                {#                                    <td>{{ quiz.title }}</td>#}
+                {#                                    <td>{{ quiz.get_players_display }}</td>#}
+                {#                                    <td>{{ quiz.questions.count }}</td>#}
+                {#                                    <td>#}
+                {#                                        {% for subject in quiz.subjects.all %}#}
+                {#                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>#}
+                {#                                        {% endfor %}#}
+                {#                                    </td>#}
+                {#                                    <td>{{ quiz.start_time }}</td>#}
+                {#                                    <td>{{ quiz.end_time }}</td>#}
+                {#                                    </tr>#}
+                {##}
+                {#                                {% endfor %}#}
+                {##}
+                {##}
+                {#                                </tbody>#}
+                {#                            </table>#}
+                {#                        </div>#}
+                {#                    {% else %}#}
+                {#                        <div class="p-4">#}
+                {#                            <div class="card border border-warning">#}
+                {#                                <div class="card-header bg-transparent border-warning">#}
+                {#                                    <h5 class="my-0 text-warning">#}
+                {#                                        <i class="mdi mdi-alert-outline mr-3"></i>Quiz Help</h5>#}
+                {#                                </div>#}
+                {#                                <div class="card-body">#}
+                {#                                    <h5 class="card-title mt-0">Why Quizzes are unavailable?</h5>#}
+                {#                                    <p class="card-text">{{ request.user.username }}! No quizzes are available now#}
+                {#                                        because#}
+                {#                                        the admin didn't added yet come back later.</p>#}
+                {#                                </div>#}
+                {#                            </div>#}
+                {#                        </div>#}
+                {#                    {% endif %}#}
+                {#                </div>#}
                 <div class="tab-pane fade show active" id="available">
                     {% if quizes_available %}
                         <div class="table-responsive py-4">
@@ -108,19 +110,22 @@
 
                                 {% for quiz in quizes_available %}
                                     <tr>
-                                    <td>{{ quiz.title }}</td>
-                                    <td>{{ quiz.get_players_display }}</td>
-                                    <td>{{ quiz.questions.count }}</td>
-                                    <td>
-                                        {% for subject in quiz.subjects.all %}
-                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ quiz.start_time }}</td>
-                                    <td>{{ quiz.end_time }}</td>
-                                    <td><a href="{% url 'student-portal:quiz-enroll' quiz.pk %}"><i class="fa fa-link"></i>
-                                        Enroll</a>
-                                    </td>
+                                        <td>{{ quiz.title }}</td>
+                                        <td>{{ quiz.get_players_display }}</td>
+                                        <td>{{ quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.subjects.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.start_time }}</td>
+                                        <td>{{ quiz.end_time }}</td>
+                                        <td><a href="{% url 'student-portal:quiz-enroll' quiz.pk %}"><i
+                                                class="fa fa-link"></i>
+                                            Enroll</a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
 
@@ -129,21 +134,13 @@
                             </table>
                         </div>
                     {% else %}
-                        <div class="p-4">
-                            <div class="card border border-warning">
-                                <div class="card-header bg-transparent border-warning">
-                                    <h5 class="my-0 text-warning">
-                                        <i class="mdi mdi-alert-outline mr-3"></i>Quiz Help</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mt-0">Why Quizzes are unavailable to Enroll?</h5>
-                                    <p class="card-text">{{ request.user.username }}! No quizzes are available to enroll
-                                        now
-                                        its because the admin didn't added yet or you have have been enrolled already
-                                        check
-                                        your <a href="{% url 'student-portal:team' %}">teams</a> to confirm it.</p>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">Why Quizzes are unavailable to Enroll?</h5>
+                            <p class="card-text">{{ request.user.username }}! No quizzes are available to enroll
+                                now
+                                its because the admin didn't added yet or you have have been enrolled already
+                                check
+                                your <a href="{% url 'student-portal:team' %}">teams</a> to confirm it.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -166,26 +163,29 @@
 
                                 {% for quiz in quizes_enrolled %}
                                     <tr>
-                                    <td>{{ quiz.title }}</td>
-                                    <td>{{ quiz.get_players_display }}</td>
-                                    <td>{{ quiz.questions.count }}</td>
-                                    <td>
-                                        {% for subject in quiz.subjects.all %}
-                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ quiz.start_time }}</td>
-                                    <td>{{ quiz.end_time }}</td>
-                                    <td>
-                                        <a href="{% url 'student-portal:quiz-live' quiz.pk %}"><i class="fa fa-play"></i>
-                                            Start
-                                        </a>
-                                        {#                                    <button id="quiz_select_to_play" class="btn btn-link"#}
-                                        {#                                            data-url="{% url 'student-portal:quiz-live' quiz.pk %}"><i#}
-                                        {#                                            class="fa fa-play"></i>#}
-                                        {#                                        Start#}
-                                        {#                                    </button>#}
-                                    </td>
+                                        <td>{{ quiz.title }}</td>
+                                        <td>{{ quiz.get_players_display }}</td>
+                                        <td>{{ quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.subjects.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.start_time }}</td>
+                                        <td>{{ quiz.end_time }}</td>
+                                        <td>
+                                            <a href="{% url 'student-portal:quiz-live' quiz.pk %}"><i
+                                                    class="fa fa-play"></i>
+                                                Start
+                                            </a>
+                                            {#                                    <button id="quiz_select_to_play" class="btn btn-link"#}
+                                            {#                                            data-url="{% url 'student-portal:quiz-live' quiz.pk %}"><i#}
+                                            {#                                            class="fa fa-play"></i>#}
+                                            {#                                        Start#}
+                                            {#                                    </button>#}
+                                        </td>
                                     </tr>
                                 {% endfor %}
 
@@ -194,21 +194,13 @@
                             </table>
                         </div>
                     {% else %}
-                        <div class="p-4">
-                            <div class="card border border-warning">
-                                <div class="card-header bg-transparent border-warning">
-                                    <h5 class="my-0 text-warning">
-                                        <i class="mdi mdi-alert-outline mr-3"></i>Quiz Help</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mt-0">Why Enrolled Quizzes are unavailable?</h5>
-                                    <p class="card-text">{{ request.user.username }}! No quizzes are available now
-                                        because
-                                        of some reasons the admin didn't added yet, you are not enrolled to any quiz or
-                                        you
-                                        have attempted all your enrolled quizzes.</p>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">Why Enrolled Quizzes are unavailable?</h5>
+                            <p class="card-text">{{ request.user.username }}! No quizzes are available now
+                                because
+                                of some reasons the admin didn't added yet, you are not enrolled to any quiz or
+                                you
+                                have attempted all your enrolled quizzes.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -233,19 +225,21 @@
 
                                 {% for quiz in quizes_completed %}
                                     <tr>
-                                    <td>{{ quiz.quiz.title }}</td>
-                                    <td>{{ quiz.quiz.get_players_display }}</td>
-                                    <td>{{ quiz.quiz.questions.count }}</td>
-                                    <td>
-                                        {% for subject in quiz.quiz.subjects.all %}
-                                            <span href="" class="badge badge-pill badge-soft-primary">{{subject.title}}</span><br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ quiz.quiz.start_time }}</td>
-                                    <td>{{ quiz.quiz.end_time }}</td>
-                                    <td>{{ quiz.total }}</td>
-                                    <td>{{ quiz.obtained }}</td>
-                                    <td>{{ quiz.created }}</td>
+                                        <td>{{ quiz.quiz.title }}</td>
+                                        <td>{{ quiz.quiz.get_players_display }}</td>
+                                        <td>{{ quiz.quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.quiz.subjects.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.quiz.start_time }}</td>
+                                        <td>{{ quiz.quiz.end_time }}</td>
+                                        <td>{{ quiz.total }}</td>
+                                        <td>{{ quiz.obtained }}</td>
+                                        <td>{{ quiz.created }}</td>
                                     </tr>
                                 {% endfor %}
 
@@ -254,17 +248,10 @@
                             </table>
                         </div>
                     {% else %}
-                        <div class="p-4">
-                            <div class="card border border-warning">
-                                <div class="card-header bg-transparent border-warning">
-                                    <h5 class="my-0 text-warning">
-                                        <i class="mdi mdi-alert-outline mr-3"></i>Quiz Help</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mt-0">Why Completed Quizzes are unavailable?</h5>
-                                    <p class="card-text">{{ request.user.username }}! you haven't submitted any quiz yet.</p>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">Why Completed Quizzes are unavailable?</h5>
+                            <p class="card-text">{{ request.user.username }}! you haven't submitted any quiz
+                                yet.</p>
                         </div>
                     {% endif %}
                 </div>
