@@ -11,8 +11,8 @@
 
 {% block content %}
 
-    <div class="mb-4 text-right">
-        <a href="{% url 'admin-portal:quiz-create' %}" class="btn btn-success">
+    <div class="mb-2">
+        <a href="{% url 'admin-portal:quiz-create' %}" class="btn-primary btn">
             Add Quiz
         </a>
     </div>
@@ -82,19 +82,11 @@
                     </div>
                 </div>
             {% else %}
-                <div class="">
-                    <div class="card border border-danger">
-                        <div class="card-header bg-transparent border-danger">
-                            <h5 class="my-0 text-danger">
-                                <i class="mdi mdi-block-helper mr-3"></i>Quiz Help</h5>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-0">No Quizes available</h5>
-                            <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no quiz available,
-                                include some quizes to attract your users, You can add quizes
-                                <a href="{% url 'application:quiz_builder' %}">Here</a>.
-                        </div>
-                    </div>
+                <div class="card-body">
+                    <h5 class="card-title text-danger">No Quizes available</h5>
+                    <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no quiz available,
+                        include some quizes to attract your users, You can add quizes
+                        <a href="{% url 'admin-portal:quiz-create' %}">Here</a>.
                 </div>
             {% endif %}
         </div>

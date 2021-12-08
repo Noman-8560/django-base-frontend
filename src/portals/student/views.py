@@ -52,7 +52,7 @@ class DashboardView(View):
             .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
             .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
 
-        # QUIZ SUBMITTED
+         # QUIZ SUBMITTED
         completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
         context = {
             'allow': allow,
@@ -274,6 +274,26 @@ class QuizEnrollView(View):
 
     def get(self, request, pk):
         # CHECK_QUIZ_EXISTS
+
+        try:
+            quiz = Quiz.objects.get(pk=pk)
+        except Quiz.DoesNotExist:
+            messages.error(request=request, message=f'Requested Quiz with [ ID:{pk} ]does not exists.')
+            return HttpResponseRedirect(reverse('student-portal:quiz'))
+
+        # ALREADY_ALLOCATED
+        if Team.objects.filter(participants__username=request.user.username, quiz=quiz).count() != 0:
+            messages.warning(request=request, message=f'You are already enrolled to this quiz')
+            return HttpResponseRedirect(reverse('student-portal:quiz'))
+
+        context = {
+            'quiz': quiz,
+            'form': TeamForm()
+        }
+        return render(request=request, template_name='student/team_create_form.html', context=context)
+
+    def post(self, request, pk):
+        # CHECK_QUIZ_EXISTS
         quiz = None
         try:
             quiz = Quiz.objects.get(pk=pk)
@@ -293,10 +313,24 @@ class QuizEnrollView(View):
             player_2 = None
             player_3 = None
 
+            # 2 player quiz ---------------------------------------------
+            if quiz.players == '2':
+                user2 = User.objects.filter(username=request.POST['player_2'])
+
+                if not user2:
+                    pass
+
+                player_2 = user2[0]
+
+            # 3 player quiz ---------------------------------------------
+            if quiz.players == '3':
+                pass
+
             # USER_EXISTS_OR_NOT
             try:
 
                 if quiz.players == '2':
+
                     player_2 = User.objects.get(username=request.POST['player_2'])
                     if quiz.players == '3':
                         player_3 = User.objects.get(username=request.POST['player_3'])
@@ -370,7 +404,7 @@ class QuizEnrollView(View):
 
                 notify.send(
                     request.user,
-                    recipient=User.objects.get(username=user),
+                    recipient=User.objects.get(pk=user.pk),
                     verb=f'Enrolled to {quiz.title}',
                     level='success',
                     description=desc

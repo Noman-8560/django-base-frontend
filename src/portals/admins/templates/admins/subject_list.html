@@ -13,8 +13,8 @@
 
 {% block content %}
 
-    <div class="mb-4 text-right">
-        <a href="{% url 'admin-portal:subject-create' %}" class="btn btn-success">
+    <div class="mb-2">
+        <a href="{% url 'admin-portal:subject-create' %}" class="btn btn-primary">
             Add Subject
         </a>
     </div>
@@ -44,9 +44,9 @@
                                     <td>{{ subject.modified_at }}</td>
                                     <td><a href="{% url 'admin-portal:subject-update' subject.pk %}">
                                         <i class="fa fa-edit"></i></a>
-                                    <a class="text-danger"
+                                        <a class="text-danger"
                                            href="{% url 'admin-portal:subject-delete' subject.pk %}">
-                                        <i class="fa fa-trash"></i></a>
+                                            <i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
 
@@ -58,19 +58,11 @@
                     </div>
                 </div>
             {% else %}
-                <div class="">
-                    <div class="card border border-danger">
-                        <div class="card-header bg-transparent border-danger">
-                            <h5 class="my-0 text-danger">
-                                <i class="mdi mdi-block-helper mr-3"></i>Subject Help</h5>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-0">No Subjects available</h5>
-                            <p class="card-text">Hi <b>{{ request.user.username }}</b>!
+                <div class="card-body">
+                    <h5 class="card-title text-danger">No Subjects available</h5>
+                    <p class="card-text">Hi <b>{{ request.user.username }}</b>!
                                 there is no subject available for quiz initialization, please add subjects
                                 <a href="{% url 'admin-portal:subject-create' %}">Here</a>.
-                        </div>
-                    </div>
                 </div>
             {% endif %}
         </div>

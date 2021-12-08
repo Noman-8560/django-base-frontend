@@ -92,6 +92,7 @@ urlpatterns = [
          name='quiz-question-delete-json'),
 
     path('json/question/<int:question_id>/topic/add/', QuestionTopicAddJSON.as_view(), name='question-topic-add-json'),
-    path('json/question/<int:question_id>/topic/delete/', QuestionTopicDeleteJSON.as_view(), name='question-topic-delete-json'),
+    path('json/question/<int:question_id>/topic/delete/', QuestionTopicDeleteJSON.as_view(),
+         name='question-topic-delete-json'),
 
 ]

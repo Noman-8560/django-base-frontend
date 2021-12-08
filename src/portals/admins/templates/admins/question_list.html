@@ -12,8 +12,8 @@
 
 {% block content %}
 
-    <div class="mb-4 text-right">
-        <a href="{% url 'admin-portal:question-create' %}" class="btn btn-success">
+    <div class="mb-2">
+        <a href="{% url 'admin-portal:question-create' %}" class="btn btn-primary">
             Add Question
         </a>
     </div>
@@ -59,12 +59,12 @@
                                     <td><a href="{% url 'admin-portal:question-update' question.pk %}">
                                         <i class="fa fa-edit"></i></a>
 
-{#                                    <a href="{% url 'application:update_question' question.pk %}">#}
-{#                                        <i class="fa fa-edit"></i> Edit</a>#}
-{#                                    #}
-                                    <a class="text-danger"
+                                        {#                                    <a href="{% url 'application:update_question' question.pk %}">#}
+                                        {#                                        <i class="fa fa-edit"></i> Edit</a>#}
+                                        {#                                    #}
+                                        <a class="text-danger"
                                            href="{% url 'admin-portal:question-delete' question.pk %}">
-                                        <i class="fa fa-trash"></i></a>
+                                            <i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
 
@@ -76,22 +76,15 @@
                     </div>
                 </div>
             {% else %}
-                <div class="">
-                    <div class="card border border-danger">
-                        <div class="card-header bg-transparent border-danger">
-                            <h5 class="my-0 text-danger">
-                                <i class="mdi mdi-block-helper mr-3"></i>Questions Help</h5>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-0">No Questions available</h5>
-                            <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no question
-                                available,
-                                include some questions to attract your users, First add Quiz <a
-                                        href="{% url 'application:quiz_builder' %}">Here</a> then you can add questions
-                                <a href="{% url 'application:question_builder' %}">Here</a>.
-                        </div>
-                    </div>
+                <div class="card-body">
+                    <h5 class="card-title text-danger">No Questions available</h5>
+                    <p class="card-text">Admin <b>{{ request.user.username }}</b>! there is no question
+                        available,
+                        include some questions to attract your users, First add Quiz <a
+                                href="{% url 'admin-portal:quiz-create' %}">Here</a> then you can add questions
+                        <a href="{% url 'admin-portal:question-create' %}">Here</a>.
                 </div>
+
             {% endif %}
         </div>
     </div>
