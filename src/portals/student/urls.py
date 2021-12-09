@@ -41,6 +41,6 @@ urlpatterns = [
     path('json/quiz/live/question/submit/', QuizLiveQuestionSubmitJSON.as_view(), name='capi_question_submission'),
     path('json/quiz/live/question/next/', QuizLiveQuestionNextJSON.as_view(), name='capi_next_question'),
     path('json/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/skip/<int:skip>/',
-         QuizLiveQuestionSubmitJSON.as_view(), name='capi_quiz_question_access'
+         QuizLiveQuestionAccessJSON.as_view(), name='capi_quiz_question_access'
          ),
 ]

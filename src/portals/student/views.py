@@ -1,7 +1,7 @@
 import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import F
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
@@ -22,6 +22,7 @@ from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
 from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting
+User = get_user_model()
 
 student_decorators = [login_required]
 
@@ -362,7 +363,7 @@ class QuizEnrollView(View):
             join_url = None
 
             if int(quiz.players) > 1:
-                response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                """response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
                                                start_time=quiz.start_time.timestamp(),
                                                end_time=quiz.end_time.timestamp(), host=request.user.email)
                 if response.status_code != 201:
@@ -373,7 +374,7 @@ class QuizEnrollView(View):
                 meeting = json.loads(response.text)
                 meeting_id = meeting['id']
                 start_url = meeting['start_url']
-                join_url = meeting['join_url']
+                join_url = meeting['join_url']"""
 
             # --------- SAVE --------- #
 
@@ -391,7 +392,7 @@ class QuizEnrollView(View):
             messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                       f'with team={team_name} as a caption of team.')
 
-            # --------- NOTIFY
+            # ---------> NOTIFY
             ps = [request.user.username]
             if player_2 is not None:
                 ps.append(player_2.username)
@@ -399,7 +400,8 @@ class QuizEnrollView(View):
                 ps.append(player_3.username)
 
             for user in ps:
-                desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, scheduled on <b>{quiz.start_time.ctime()}</b>" \
+                desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, " \
+                       f"scheduled on <b>{quiz.start_time.ctime()}</b>" \
                        f" your team is <b>{team.name}</b> and members are {', '.join([str(elem) for elem in ps])}."
 
                 notify.send(
