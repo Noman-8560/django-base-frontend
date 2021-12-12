@@ -406,7 +406,7 @@ class QuizEnrollView(View):
 
                 notify.send(
                     request.user,
-                    recipient=User.objects.get(pk=user.pk),
+                    recipient=User.objects.get(username=user.username),
                     verb=f'Enrolled to {quiz.title}',
                     level='success',
                     description=desc
@@ -435,6 +435,8 @@ class QuizLiveView(View):
         new = False
 
         ''' QUIZ and TEAM is required here'''
+
+        print("Start")
 
         try:
             user_quiz = Quiz.objects.get(pk=pk)
