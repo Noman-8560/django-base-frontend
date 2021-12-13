@@ -23,6 +23,7 @@ from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
 from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting
+
 User = get_user_model()
 
 student_decorators = [login_required]
@@ -54,7 +55,7 @@ class DashboardView(View):
             .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
             .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
 
-         # QUIZ SUBMITTED
+        # QUIZ SUBMITTED
         completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
         context = {
             'allow': allow,
@@ -437,7 +438,6 @@ class QuizLiveView(View):
         new = False
 
         ''' QUIZ and TEAM is required here'''
-
 
         try:
             user_quiz = Quiz.objects.get(pk=pk)
@@ -984,22 +984,16 @@ class QuizLiveQuestionAccessJSON(View):
             elif user_no == 1 and statement.screen_1:
                 statements.append(statement.statement.statement)
 
-        # CHOICES
-        if submission == 1:
-            for choice in qquestion.choicevisibility_set.all():
+        for choice in qquestion.choicevisibility_set.all():
+            if user_no == 3 and choice.screen_3:
                 choices_keys.append(choice.choice.pk)
                 choices_values.append(choice.choice.text)
-        else:
-            for choice in qquestion.choicevisibility_set.all():
-                if user_no == 3 and choice.screen_3:
-                    choices_keys.append(choice.choice.pk)
-                    choices_values.append(choice.choice.text)
-                elif user_no == 2 and choice.screen_2:
-                    choices_keys.append(choice.choice.pk)
-                    choices_values.append(choice.choice.text)
-                elif user_no == 1 and choice.screen_1:
-                    choices_keys.append(choice.choice.pk)
-                    choices_values.append(choice.choice.text)
+            elif user_no == 2 and choice.screen_2:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
+            elif user_no == 1 and choice.screen_1:
+                choices_keys.append(choice.choice.pk)
+                choices_values.append(choice.choice.text)
 
         for image in qquestion.imagevisibility_set.all():
             if user_no == 3 and image.screen_3:
@@ -1054,7 +1048,6 @@ class QuizLiveQuestionNextJSON(View):
         message = None
         end = False
         change = False
-
 
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
         question = Question.objects.get(pk=request.POST['question_id'])
