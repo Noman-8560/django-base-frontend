@@ -4,9 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block base_title %}Identification Check{% endblock %}
-
 {% block base_top_nav %}{% endblock %}
-
 
 {% block dont_include_details %}
 
@@ -16,18 +14,24 @@
     </div>
 
     <div class="my-4 pt-sm-5">
+
+        {% include 'core/include/message.html' %}
+
         <div class="container">
 
             <!-- THIS IS UPPER AREA -->
             <div class="row justify-content-center">
                 <div class="col-12 text-center">
-                    <h2>Just One Step Behind!</h2>
-                    <p class="mb-0">Please select your account type to continue</p>
-                    <small>
-                        <b>NOTE: </b>Make sure that your account will be associated with correct portal and permissions,
-                        once you
-                        select you are not allowed to change in future
-                    </small>
+                    <h2 class="lead mb-4" style="font-size: xx-large"><i class="fa fa-running"></i> Just One Step Behind!
+                    </h2>
+                    <p>
+                        <b>Cocognito</b> was developed during the times of <b class="text-danger">COVID-19</b> to help
+                        students to continue their study and to maintain their performance, so <b>Cocognito</b> is a
+                        students performance tracking system, below here your are seeing different types of accounts
+                        each one has its own features and portal system, please make sure to select a right category for
+                        your self, once you have selected your account will be associated with that portal system and it
+                         can't be changed in future.
+                    </p>
                 </div>
             </div>
 
@@ -39,23 +43,26 @@
 
                     {# STUDENT #}
                     <div class="col">
-                        <div class="card">
+                        <div class="card rounded">
                             <div class="card-body">
 
                                 <div class="text-center">
                                     <img src="{% static 'images/student.png' %}">
                                 </div>
-                                <div class="my-4 text-center">
-                                    <p class="my-0">{% lorem 4 w %}</p>
-                                    <p class="my-0">{% lorem 3 w %}</p>
-                                    <p class="my-0">{% lorem 5 w %}</p>
-                                    <p class="my-0">{% lorem 6 w %}</p>
+                                <div class="mt-4 text-center">
+                                    <b class="text-secondary">
+                                        <p class="my-0">Attempt Quizzes</p>
+                                        <p class="my-0">Learn From Resources</p>
+                                        <p class="my-0">Parental Access</p>
+                                        <p class="my-0">Team Building</p>
+                                        <p class="my-0">Competitions Participation's</p>
+                                    </b>
                                 </div>
 
                             </div>
                             <div class="card-footer bg-white border-top text-center">
                                 <input type="radio" value="s" name="user_type" id="user_type"
-                                       class="form-check-inline"> <b>I am a Student</b>
+                                       class="form-check-inline"> <b class="lead">I am a Student</b>
                             </div>
 
                         </div>
@@ -69,17 +76,20 @@
                                 <div class="text-center">
                                     <img src="{% static 'images/teacher.png' %}">
                                 </div>
-                                <div class="my-4 text-center">
-                                    <p class="my-0">{% lorem 4 w %}</p>
-                                    <p class="my-0">{% lorem 3 w %}</p>
-                                    <p class="my-0">{% lorem 5 w %}</p>
-                                    <p class="my-0">{% lorem 6 w %}</p>
+                                <div class="mt-4 text-center">
+                                    <b class="text-secondary">
+                                        <p class="my-0">Build Quizzes</p>
+                                        <p class="my-0">Build Learning Resources</p>
+                                        <p class="my-0">Build Questions</p>
+                                        <p class="my-0">View Reports</p>
+                                        <p class="my-0">View Live Competitions</p>
+                                    </b>
                                 </div>
 
                             </div>
                             <div class="card-footer bg-white border-top text-center">
                                 <input type="radio" value="m" name="user_type" id="user_type" class="form-check-inline">
-                                <b>I am a Moderator</b>
+                                <b class="lead">I am a Moderator</b>
                             </div>
 
                         </div>
@@ -94,17 +104,20 @@
                                 <div class="text-center">
                                     <img src="{% static 'images/parent.png' %}">
                                 </div>
-                                <div class="my-4 text-center">
-                                    <p class="my-0">{% lorem 4 w %}</p>
-                                    <p class="my-0">{% lorem 3 w %}</p>
-                                    <p class="my-0">{% lorem 5 w %}</p>
-                                    <p class="my-0">{% lorem 6 w %}</p>
+                                <div class="mt-4 text-center">
+                                    <b class="text-secondary">
+                                        <p class="my-0">Children Account access</p>
+                                        <p class="my-0">Children Learning Progress</p>
+                                        <p class="my-0">Children Performance</p>
+                                        <p class="my-0">Children Reporting</p>
+                                        <p class="my-0">View Live Competitions</p>
+                                    </b>
                                 </div>
 
                             </div>
                             <div class="card-footer bg-white border-top text-center">
                                 <input type="radio" value="p" name="user_type" id="user_type" class="form-check-inline">
-                                <b>I need parental account</b>
+                                <b class="lead">I need parental account</b>
                             </div>
 
                         </div>
@@ -115,7 +128,7 @@
                 <div class="row justify-content-center">
                     <div class="col-12">
                         <div class="text-center">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-lg btn-primary" type="submit">
                                 <i class="fa fa-check-circle"></i>
                                 Submit
                             </button>

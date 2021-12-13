@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
-
 from src.accounts.forms import UserProfileForm
 
 
@@ -39,9 +38,10 @@ class IdentificationCheckView(View):
         # IF USER ALREADY IDENTIFIED
         if request.user.is_completed: return redirect('accounts:cross-auth-view')
 
+        user_type = request.POST.get('user_type', None)
+
         # IF USER HAS TYPE
-        if request.POST['user_type']:
-            user_type = request.POST['user_type']
+        if user_type is not None:
             user = request.user
 
             # IF USER HAS CORRECT TYPE
@@ -60,6 +60,8 @@ class IdentificationCheckView(View):
                 return redirect('accounts:cross-auth-view')
             else:
                 messages.error(request, "Please provide correct user type")
+        else:
+            messages.error(request, "Please provide user type")
 
         return render(request, 'accounts/identification-check.html')
 

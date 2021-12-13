@@ -9,6 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views import View
+from django.views.decorators.cache import never_cache
 from django.views.generic import ListView, DetailView, DeleteView
 from notifications.signals import notify
 
@@ -422,6 +423,7 @@ class QuizEnrollView(View):
         return render(request=request, template_name='student/team_create_form.html', context=context)
 
 
+@method_decorator(never_cache, name='dispatch')
 class QuizLiveView(View):
 
     def get(self, request, pk):
@@ -436,7 +438,6 @@ class QuizLiveView(View):
 
         ''' QUIZ and TEAM is required here'''
 
-        print("Start")
 
         try:
             user_quiz = Quiz.objects.get(pk=pk)
@@ -447,7 +448,7 @@ class QuizLiveView(View):
                                message="You are not registered to any team _ please register your team first")
                 return redirect('student-portal:quiz', permanent=True)
 
-            completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
+            completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'), quiz=user_quiz)
             if completed_by_me:
                 messages.error(request=request, message="Dear User you have already attempted this quiz")
                 return redirect('student-portal:quiz', permanent=True)
@@ -862,14 +863,17 @@ class QuizLiveQuestionSubmitJSON(View):
         message = None
         end = False
 
+        # VALUES FROM POST
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
         question = Question.objects.get(pk=request.POST['question_id'])
         team = Team.objects.get(pk=request.POST['team_id'])
         choice = QuestionChoice.objects.get(pk=request.POST['choice_id'])
 
+        # GET USERS AND ATTEMPTS
         users = team.participants.all()
         attempt = Attempt.objects.filter(user=request.user, question=question, quiz=quiz)
 
+        # SAVING INFO
         for user in users:
 
             Attempt(
