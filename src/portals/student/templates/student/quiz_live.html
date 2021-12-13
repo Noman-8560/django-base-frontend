@@ -390,6 +390,12 @@
                     x_accessor();
                 });
 
+                $('body').on('change', '#ans', function () {
+                    let value = $('input[name="ans"]:checked').val();
+                    submit_choice(value);
+                });
+
+
             }
 
             {# ----------------------------------------------------------------------------------------------------- #}
@@ -491,44 +497,56 @@
             function submit_question() {
                 let next = false;
                 let end = 0;
-                let choice = $("input[type='radio'][name='ans']:checked");
 
                 if (question_ids.length == 1) {
                     end = 1;
                     protection = false;
                 }
 
-                if (choice.length > 0) {
 
-                    {% now "jS F Y H:i:s" as nn %}
-                    question_end = get_time_formatted();
+                {% now "jS F Y H:i:s" as nn %}
+                question_end = get_time_formatted();
 
-                    $.ajax({
-                        url: "/s/json/quiz/live/question/submit/",
-                        type: 'POST',
-                        headers: {'X-CSRFToken': csrftoken},
-                        data: {
-                            quiz_id: {{ quiz_id }},
-                            question_id: question_div.attr('data-question'),
-                            choice_id: choice.val(),
-                            team_id: {{ team_id }},
-                            end: end,
-                            start_time: question_now,
-                            end_time: question_end,
-                        },
-                    }).then(function (data, status) {
-                        if (data.success === false) {
-                            alert(data.message);
-                        } else {
-                            x_accessor();
-                        }
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
+                $.ajax({
+                    url: "/s/json/quiz/live/question/submit/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        quiz_id: {{ quiz_id }},
+                        question_id: question_div.attr('data-question'),
+                        team_id: {{ team_id }},
+                        end: end,
+                        start_time: question_now,
+                        end_time: question_end,
+                    },
+                }).then(function (data, status) {
+                    if (data.success === 'false') {
+                        alert(data.message);
+                    } else {
+                        x_accessor();
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
 
-                } else {
-                    alert("Please Select any option to continue");
-                }
+            function submit_choice(value) {
+
+                $.ajax({
+                    url: "/s/json/quiz/live/choice/submit/",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: {
+                        quiz_id: {{ quiz_id }},
+                        question_id: question_div.attr('data-question'),
+                        choice_id: value,
+                        team_id: {{ team_id }},
+                    },
+                }).then(function (data, status) {
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
 
             }
 

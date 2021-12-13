@@ -18,7 +18,7 @@ from src.application.models import (
     Quiz, Question, QuestionChoice,
     QuizQuestion, Screen, Team, QuizCompleted,
     Attempt, LearningResourceResult, LearningResourceAttempts,
-    Relation)
+    Relation, QuizMisc)
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
@@ -863,23 +863,35 @@ class QuizLiveQuestionSubmitJSON(View):
         message = None
         end = False
 
-        # VALUES FROM POST
+        # VALUES FROM POST >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
         quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
         question = Question.objects.get(pk=request.POST['question_id'])
         team = Team.objects.get(pk=request.POST['team_id'])
-        choice = QuestionChoice.objects.get(pk=request.POST['choice_id'])
 
-        # GET USERS AND ATTEMPTS
+        miscellaneous = QuizMisc.objects.filter(quiz=quiz, question=question, team=team)
+        if not miscellaneous:
+            response = {
+                'success': 'false',
+                'message': "No Choice has been selected by your team, "
+                           "please select any choice or ask your teammates to select, if in case "
+                           "any issue try to re-select it."
+            }
+            return JsonResponse(data=response, safe=False)
+
+        miscellaneous = miscellaneous[0]
+        # GET USERS AND ATTEMPTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
         users = team.participants.all()
         attempt = Attempt.objects.filter(user=request.user, question=question, quiz=quiz)
 
-        # SAVING INFO
+        # SAVING INFO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         for user in users:
 
             Attempt(
                 quiz=quiz, user=user, question=question, team=team,
                 start_time=request.POST['start_time'], end_time=request.POST['end_time'],
-                successful=choice.is_correct
+                successful=miscellaneous.choice.is_correct
             ).save()
 
             quiz_complete = QuizCompleted.objects.filter(quiz=quiz, user=user)[0]
@@ -890,7 +902,7 @@ class QuizLiveQuestionSubmitJSON(View):
             u = ','.join([str(elem) for elem in u])
             quiz_complete.remains = u
 
-            if choice.is_correct:
+            if miscellaneous.choice.is_correct:
                 quiz_complete.obtained += 1
 
             quiz_complete.save()
@@ -907,6 +919,7 @@ class QuizLiveQuestionSubmitJSON(View):
                     level='info',
                     description=f'<b>Hi {user}!</b> you can review your vs other teams performance on dashboard'
                 )
+        miscellaneous.delete()
 
         response = {
             'success': 'true',
@@ -968,14 +981,15 @@ class QuizLiveQuestionAccessJSON(View):
 
         ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
 
-        # CONTROL
+        # CONTROL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         control = qquestion.submission_control.no
         submission = 0
         user_no = identify_user_in_team(user_team, request, quiz)
         if user_no == control:
             submission = 1
 
-        # STATEMENTS
+        # STATEMENTS CHOICES IMAGES AUDIOS >>>>>>>>>>>>>>>>>>>>>>>>>>>
+
         for statement in qquestion.statementvisibility_set.all():
             if user_no == 3 and statement.screen_3:
                 statements.append(statement.statement.statement)
@@ -1017,7 +1031,7 @@ class QuizLiveQuestionAccessJSON(View):
                 var = [
                     audios.append(audio.audio.audio.url) if audio.audio.audio else audios.append(audio.audio.url)]
 
-        # IMAGES AND AUDIOS
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         total = quiz.questions.count()
         attempts = Attempt.objects.filter(user=request.user, quiz=quiz).count()
@@ -1067,6 +1081,35 @@ class QuizLiveQuestionNextJSON(View):
             'success': success,
             'message': message,
             'end': request.POST['end']
+        }
+
+        return JsonResponse(data=response, safe=False)
+
+
+class QuizLiveChoiceSubmitJSON(View):
+
+    def post(self, request):
+
+        # VALUES FROM POST
+        quiz = Quiz.objects.get(pk=request.POST['quiz_id'])
+        question = Question.objects.get(pk=request.POST['question_id'])
+        team = Team.objects.get(pk=request.POST['team_id'])
+        choice = QuestionChoice.objects.get(pk=request.POST['choice_id'])
+
+        # CREATE TEMP RECORD
+        miscellaneous = QuizMisc.objects.filter(quiz=quiz, question=question, team=team)
+        if not miscellaneous:
+            QuizMisc.objects.create(quiz=quiz, question=question, team=team, user=request.user, choice=choice)
+        else:
+            miscellaneous = miscellaneous[0]
+            miscellaneous.choice = choice
+            miscellaneous.user = request.user
+            miscellaneous.save()
+
+        # RESPONSE
+        response = {
+            'success': 'true',
+            'message': 'message',
         }
 
         return JsonResponse(data=response, safe=False)

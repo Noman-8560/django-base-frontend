@@ -4,7 +4,7 @@ from .views import (
     LearningResourceListView, LearningResourceLiveView, LearningResourceResultView, TeamDetailView, TeamDeleteView,
     RelationListView, RelationDetailView, RelationDeleteView,
 
-    LearningResourceLiveQuestionAccessJSON, LearningResourceLiveQuestionSubmitJSON,
+    LearningResourceLiveQuestionAccessJSON, LearningResourceLiveQuestionSubmitJSON, QuizLiveChoiceSubmitJSON,
     QuizLiveQuestionNextJSON, QuizLiveQuestionAccessJSON, QuizLiveQuestionSubmitJSON, UserExistsJSON
 )
 
@@ -43,4 +43,8 @@ urlpatterns = [
     path('json/quiz/<int:quiz_id>/question/<int:question_id>/num/<int:user_id>/skip/<int:skip>/',
          QuizLiveQuestionAccessJSON.as_view(), name='capi_quiz_question_access'
          ),
+    path(
+         'json/quiz/live/choice/submit/',
+         QuizLiveChoiceSubmitJSON.as_view(), name='capi_quiz_choice_submit'
+    )
 ]

@@ -512,6 +512,21 @@ class Attempt(models.Model):
         super().save(*args, **kwargs)
 
 
+class QuizMisc(models.Model):
+    question = models.ForeignKey('Question', null=False, blank=False, related_name='question-attempt+',
+                                 on_delete=models.DO_NOTHING)
+    user = models.ForeignKey('accounts.User', null=False, blank=False, related_name='attempt-by+',
+                             on_delete=models.CASCADE)
+    quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
+    choice = models.ForeignKey('QuestionChoice', null=False, blank=False, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Quiz Misc"
+        verbose_name_plural = "Quiz Miscs"
+
+
 class LearningResourceResult(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True, blank=True)
