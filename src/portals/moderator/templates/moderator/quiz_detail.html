@@ -45,7 +45,9 @@
 
                                 <tr>
                                     <td>
-                                        SNO ({{ q.question_id }})
+                                        <b><a href="{% url 'moderator-portal:question-update' q.question_id %}">
+                                            SNO ({{ q.question_id }}) <i class="fa fa-edit"></i>
+                                        </a></b>
                                         <div class="">
                                             <input type="checkbox" id="question_submission" data-quiz="{{ quiz_id }}"
                                                    data-question="{{ q.question_id }}" data-quizquestion="{{ q.id }}"

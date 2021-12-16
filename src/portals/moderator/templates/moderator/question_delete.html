@@ -11,7 +11,7 @@
                 <div class="card-body">
 
                     <form method="post">{% csrf_token %}
-                        <p class="mb-2">Are you sure you want to delete
+                        <p class="mb-2">Are you sure you want to delete question no:
                             <b class="text-danger">"{{ object.pk }}"</b>
                             ?</p>
                         <input type="submit" class="btn btn-danger" value="Confirm">
