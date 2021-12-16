@@ -5,14 +5,13 @@
 {% block base_title %}Quiz Builder{% endblock %}
 
 {% block base_links %}
-    <!-- XDSoft DateTimePicker -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
           integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
 {% endblock %}
 
 {% block page_heading %}
-    Quiz Builder Application
+    Quiz Builder
 {% endblock %}
 
 {% block content %}
@@ -21,19 +20,16 @@
         <div class="row justify-content-center">
             <div class="col-sm-7 col-12">
                 <div class="card">
-                    {#                <div class="card-header text-center p-4">#}
-                    {#                    <p class="card-title m-0">Basic Details</p>#}
-                    {##}
-                    {#                </div>#}
                     <div class="card-body">
-                        <br>
-
-                        <div class="p-4">
+                        <div class="p-3">
                             <form autocomplete="off" method="post" action="">
                                 {% csrf_token %}
                                 {{ form | crispy }}
                                 <button type="submit" class="btn btn-success"> > Submit</button>
                             </form>
+                            <div class="mt-3">
+                                <a href="{% url 'moderator-portal:quiz' %}"><i class="fa fa-clock"></i> View Quizzes</a>
+                            </div>
                         </div>
                     </div>
                 </div>

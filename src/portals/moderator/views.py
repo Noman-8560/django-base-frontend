@@ -47,7 +47,6 @@ class QuizCreateView(CreateView):
     queryset = Quiz.objects.all()
     fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'moderator/quiz_create_form.html'
-    success_url = reverse_lazy('moderator-portal:quiz')
 
     def form_valid(self, form):
         quiz = form.save(commit=True)
@@ -55,16 +54,21 @@ class QuizCreateView(CreateView):
         quiz.save()
         return super(QuizCreateView, self).form_valid(form)
 
+    def get_success_url(self):
+        return reverse('moderator-portal:quiz-detail', kwargs={'pk': self.object.pk})
+
 
 @method_decorator(moderator_decorators, name='dispatch')
 class QuizUpdateView(UpdateView):
     models = Quiz
     fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'moderator/quiz_update_form.html'
-    success_url = reverse_lazy('moderator-portal:quiz')
 
     def get_object(self, queryset=None):
         return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
+
+    def get_success_url(self):
+        return reverse('moderator-portal:quiz-detail', kwargs={'pk': self.object.pk})
 
 
 @method_decorator(moderator_decorators, name='dispatch')

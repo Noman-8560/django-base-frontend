@@ -69,15 +69,13 @@
                 </div>
             {% else %}
 
-                <div class="card-body">
-                    <h5 class="card-title text-danger">No articles available</h5>
-                    <p class="card-text">Hi <b>{{ request.user.username }}</b>! there is no articles
-                        available
-                        yet,
-                        include some articles to attract your users, you can add articles
-                        <a href="{% url 'admin-portal:article-create' %}">Here</a>.
-                    </p>
-                </div>
+                <h5 class="card-title text-danger">No articles available</h5>
+                <p class="card-text">Hi <b>{{ request.user.username }}</b>! there is no articles
+                    available
+                    yet,
+                    include some articles to attract your users, you can add articles
+                    <a href="{% url 'admin-portal:article-create' %}">Here</a>.
+                </p>
 
             {% endif %}
         </div>

@@ -21,59 +21,56 @@
     <div class="card">
         <div class="card-body">
             {% if question_list %}
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped">
-                            <thead>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>SNO</th>
+                            <th>Choices</th>
+                            <th>Subject</th>
+                            <th>Age</th>
+                            <th>created</th>
+                            <th>Level</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+
+                        {% for question in question_list %}
                             <tr>
-                                <th>SNO</th>
-                                <th>Choices</th>
-                                <th>Subject</th>
-                                <th>Age</th>
-                                <th>created</th>
-                                <th>Level</th>
-                                <th>Action</th>
+                                <td>{{ question.pk }}</td>
+                                <td>{{ question.choices_control }}</td>
+                                <td>{{ question.subject }}</td>
+                                <td>{{ question.age_limit }}</td>
+                                <td>{{ question.created_at }}</td>
+                                <td>
+                                    {% if question.level == 'e' %}
+                                        <i class="fa fa-star text-warning"></i>
+                                    {% elif question.level == 'm' %}
+                                        <i class="fa fa-star" style="color: darkorange;"></i>
+                                        <i class="fa fa-star" style="color: darkorange;"></i>
+                                    {% else %}
+                                        <i class="fa fa-star text-danger"></i>
+                                        <i class="fa fa-star text-danger"></i>
+                                        <i class="fa fa-star text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td><a href="{% url 'admin-portal:question-update' question.pk %}">
+                                    <i class="fa fa-edit"></i></a>
+
+                                    {#                                    <a href="{% url 'application:update_question' question.pk %}">#}
+                                    {#                                        <i class="fa fa-edit"></i> Edit</a>#}
+                                    {#                                    #}
+                                    <a class="text-danger"
+                                       href="{% url 'admin-portal:question-delete' question.pk %}">
+                                        <i class="fa fa-trash"></i></a>
+                                </td>
                             </tr>
-                            </thead>
-                            <tbody class="">
 
-                            {% for question in question_list %}
-                                <tr>
-                                    <td>{{ question.pk }}</td>
-                                    <td>{{ question.choices_control }}</td>
-                                    <td>{{ question.subject }}</td>
-                                    <td>{{ question.age_limit }}</td>
-                                    <td>{{ question.created_at }}</td>
-                                    <td>
-                                        {% if question.level == 'e' %}
-                                            <i class="fa fa-star text-warning"></i>
-                                        {% elif question.level == 'm' %}
-                                            <i class="fa fa-star" style="color: darkorange;"></i>
-                                            <i class="fa fa-star" style="color: darkorange;"></i>
-                                        {% else %}
-                                            <i class="fa fa-star text-danger"></i>
-                                            <i class="fa fa-star text-danger"></i>
-                                            <i class="fa fa-star text-danger"></i>
-                                        {% endif %}
-                                    </td>
-                                    <td><a href="{% url 'admin-portal:question-update' question.pk %}">
-                                        <i class="fa fa-edit"></i></a>
+                        {% endfor %}
 
-                                        {#                                    <a href="{% url 'application:update_question' question.pk %}">#}
-                                        {#                                        <i class="fa fa-edit"></i> Edit</a>#}
-                                        {#                                    #}
-                                        <a class="text-danger"
-                                           href="{% url 'admin-portal:question-delete' question.pk %}">
-                                            <i class="fa fa-trash"></i></a>
-                                    </td>
-                                </tr>
-
-                            {% endfor %}
-
-
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             {% else %}
                 <div class="card-body">

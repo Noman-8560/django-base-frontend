@@ -16,12 +16,14 @@
 
     <div class="row mb-2 px-2">
         <div class="col-7">
-            <a href="{% url 'admin-portal:quiz-delete' quiz_id %}" class="text-danger"><i
-                    class="fa fa-trash"></i> Remove</a> |
+            <a href="{% url 'admin-portal:quiz-create' %}" class="text-success"><i
+                    class="fa fa-plus"></i> New</a> |
             <a href="{% url 'admin-portal:quiz-update' quiz_id %}" class=""><i
                     class="fa fa-edit"></i> Edit</a> |
-            <a href="{% url 'admin-portal:quiz-create' %}" class="text-success"><i
-                    class="fa fa-plus"></i> New</a>
+            <a href="{% url 'admin-portal:quiz-delete' quiz_id %}" class="text-danger"><i
+                class="fa fa-trash"></i> Remove</a> ||
+            <a href="{% url 'admin-portal:quiz' %}" class="text-secondary"><i
+                    class="fa fa-clock"></i> Quizzes</a>
         </div>
         <div class="col-5 text-right">
             <b class="font-weight-bolder"><i class="fa fa-list"></i> <b id="total">{{ total }}</b></b> |
@@ -45,7 +47,9 @@
 
                                 <tr>
                                     <td>
-                                        SNO ({{ q.question_id }})
+                                        <b><a href="{% url 'admin-portal:question-update' q.question_id %}">
+                                            SNO ({{ q.question_id }}) <i class="fa fa-edit"></i>
+                                        </a></b>
                                         <div class="">
                                             <input type="checkbox" id="question_submission" data-quiz="{{ quiz_id }}"
                                                    data-question="{{ q.question_id }}" data-quizquestion="{{ q.id }}"

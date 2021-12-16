@@ -20,66 +20,64 @@
     <div class="card">
         <div class="card-body">
             {% if quiz_list %}
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped">
-                            <thead>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Writer</th>
+                            <th>Players</th>
+                            <th>Subjects</th>
+                            <th>Questions</th>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+
+                        {% for quiz in quiz_list %}
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Writer</th>
-                                <th>Players</th>
-                                <th>Subjects</th>
-                                <th>Questions</th>
-                                <th>Time</th>
-                                <th>Type</th>
-                                <th>Action</th>
+                                <td>{{ quiz.pk }}</td>
+                                <td>{{ quiz.title }}</td>
+                                <td>
+                                    {% if quiz.created_by %}
+                                        <b>{{ quiz.created_by.username }}</b>
+                                    {% else %}
+                                        <b class="text-danger"></b>
+                                    {% endif %}
+                                </td>
+                                <td>{{ quiz.players }}</td>
+                                <td>{{ quiz.subjects.count }}</td>
+                                <td>{{ quiz.questions.count }}</td>
+                                <td>
+                                    <i class="fa fa-play-circle"></i> {{ quiz.start_time }}<br>
+                                    <i class="fa fa-stop-circle"></i> {{ quiz.end_time }}<br>
+                                </td>
+                                <td>
+
+                                    {% if quiz.learning_purpose %}
+                                        <b class="text-primary">Practice</b>
+                                    {% else %}
+                                        <b class="text-success">Quiz</b>
+                                    {% endif %}
+
+                                </td>
+                                <td><a href="{% url 'admin-portal:quiz-detail' quiz.pk %}">
+                                    <i class="fa fa-eye"></i></a>
+                                    <a href="{% url 'admin-portal:quiz-update' quiz.pk %}">
+                                        <i class="fa fa-edit"></i></a>
+                                    <a class="text-danger" href="{% url 'admin-portal:quiz-delete' quiz.pk %}">
+                                        <i class="fa fa-trash"></i></a>
+                                </td>
                             </tr>
-                            </thead>
-                            <tbody class="">
 
-                            {% for quiz in quiz_list %}
-                                <tr>
-                                    <td>{{ quiz.pk }}</td>
-                                    <td>{{ quiz.title }}</td>
-                                    <td>
-                                        {% if quiz.created_by %}
-                                            <b>{{ quiz.created_by.username }}</b>
-                                        {% else %}
-                                            <b class="text-danger"></b>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ quiz.players }}</td>
-                                    <td>{{ quiz.subjects.count }}</td>
-                                    <td>{{ quiz.questions.count }}</td>
-                                    <td>
-                                        <i class="fa fa-play-circle"></i> {{ quiz.start_time }}<br>
-                                        <i class="fa fa-stop-circle"></i> {{ quiz.end_time }}<br>
-                                    </td>
-                                    <td>
-
-                                        {% if quiz.learning_purpose %}
-                                            <b class="text-primary">Practice</b>
-                                        {% else %}
-                                            <b class="text-success">Quiz</b>
-                                        {% endif %}
-
-                                    </td>
-                                    <td><a href="{% url 'admin-portal:quiz-detail' quiz.pk %}">
-                                        <i class="fa fa-eye"></i></a>
-                                        <a href="{% url 'admin-portal:quiz-update' quiz.pk %}">
-                                            <i class="fa fa-edit"></i></a>
-                                        <a class="text-danger" href="{% url 'admin-portal:quiz-delete' quiz.pk %}">
-                                            <i class="fa fa-trash"></i></a>
-                                    </td>
-                                </tr>
-
-                            {% endfor %}
+                        {% endfor %}
 
 
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             {% else %}
                 <div class="card-body">

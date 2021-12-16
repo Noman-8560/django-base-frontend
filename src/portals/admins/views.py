@@ -330,13 +330,15 @@ class QuizCreateView(CreateView):
     queryset = Quiz.objects.all()
     fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'admins/quiz_create_form.html'
-    success_url = reverse_lazy('admin-portal:quiz')
 
     def form_valid(self, form):
         quiz = form.save(commit=True)
         quiz.created_by = self.request.user
         quiz.save()
         return super(QuizCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('admin-portal:quiz-detail', kwargs={'pk': self.object.pk})
 
 
 @method_decorator(admin_decorators, name='dispatch')
@@ -345,7 +347,9 @@ class QuizUpdateView(UpdateView):
     queryset = Quiz.objects.all()
     fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'admins/quiz_update_form.html'
-    success_url = reverse_lazy('admin-portal:quiz')
+
+    def get_success_url(self):
+        return reverse('admin-portal:quiz-detail', kwargs={'pk': self.object.pk})
 
 
 @method_decorator(admin_decorators, name='dispatch')
