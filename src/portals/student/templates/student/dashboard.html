@@ -7,6 +7,115 @@
 {% block base_links %}{% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="media">
+                                <div class="mr-3">
+                                    {% if request.user.profile_image %}
+                                        <img src="{{ request.user.profile_image.url }}" alt=""
+                                             class="avatar-md rounded-circle img-thumbnail">
+                                    {% else %}
+                                        <img src="{% static 'images/user.png ' %}" alt=""
+                                             class="avatar-md rounded-circle img-thumbnail">
+                                    {% endif %}
+                                </div>
+                                <div class="media-body align-self-center">
+                                    <div class="text-muted">
+                                        <p class="mb-2">Welcome to Cocognito</p>
+                                        <h5 class="mb-1">
+                                            {% if request.user.first_name and request.user.last_name %}
+                                                {{ request.user.first_name }} {{ request.user_last_name }}
+                                            {% else %}
+                                                {{ request.user.username }}
+                                            {% endif %}
+                                        </h5>
+                                        <p class="mb-0 text-danger">
+                                            Student Account
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8 align-self-center">
+                            <div class="text-lg-center mt-4 mt-lg-0">
+                                <div class="row text-center">
+                                    <div class="col">
+                                        <div>
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-clock"></i>
+                                            </h2>
+                                            <small>Quizzes</small>
+                                            <h5 class="mt-2">05</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-success">
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-check-circle text-success"></i>
+                                            </h2>
+                                            <small>Passed</small>
+                                            <h5 class="mb-0 text-success">00</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col border-right">
+                                        <div class="text-danger">
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-times-circle text-danger"></i>
+                                            </h2>
+                                            <small>Failed</small>
+                                            <h5 class="mb-0 text-danger">00</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-book"></i>
+                                            </h2>
+                                            <small>Learning</small>
+                                            <h5 class="mt-2">05</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-success">
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-check-circle text-success"></i>
+                                            </h2>
+                                            <small>Passed</small>
+                                            <h5 class="mb-0 text-success">00</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col border-right">
+                                        <div class="text-danger">
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-times-circle text-danger"></i>
+                                            </h2>
+                                            <small>Failed</small>
+                                            <h5 class="mb-0 text-danger">00</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-barcode"></i>
+                                            </h2>
+                                            <small>Average</small>
+                                            <h5 class="mb-0">00</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-12">
