@@ -46,7 +46,11 @@
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                         </b> |
-                                        <b><a href="#"><i class="fa fa-chart-line"></i></a></b> |
+                                        <b>
+                                            <a href="{% url 'parent-portal:child-detail' relation.pk %}">
+                                                <i class="fa fa-chart-line"></i>
+                                            </a>
+                                        </b> |
                                         <a href="{% url 'parent-portal:relation-delete' relation.pk %}">
                                             <i class="fa fa-trash text-danger"></i>
                                         </a>
