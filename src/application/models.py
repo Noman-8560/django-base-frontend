@@ -211,6 +211,13 @@ class Question(models.Model):
         managed = True
         verbose_name_plural = 'Questions'
 
+    def get_statement(self):
+        question_statements = QuestionStatement.objects.filter(question=self)
+        if question_statements:
+            return question_statements.first()
+        else:
+            return "Statement not available"
+
 
 class QuestionStatement(models.Model):
     statement = models.TextField(null=False, blank=False,

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    DashboardView,
+    DashboardView, ChildDetailView, ChildQuizDetailView, ChildLearningDetailView,
     RelationListView, RelationDetailView, RelationCreateView, RelationUpdateView, RelationDeleteView
 )
 
@@ -14,5 +14,9 @@ urlpatterns = [
     path('relation/<int:pk>/', RelationDetailView.as_view(), name='relation-detail'),
     path('relation/<int:pk>/update/', RelationUpdateView.as_view(), name='relation-update'),
     path('relation/<int:pk>/delete/', RelationDeleteView.as_view(), name='relation-delete'),
+
+    path('child/<int:pk>/', ChildDetailView.as_view(), name='child-detail'),
+    path('child/<int:relation_id>/quiz/<int:pk>/', ChildQuizDetailView.as_view(), name='child-quiz-detail'),
+    path('child/<int:relation_id>/learn/<int:pk>/', ChildLearningDetailView.as_view(), name='child-learn-detail'),
 
 ]

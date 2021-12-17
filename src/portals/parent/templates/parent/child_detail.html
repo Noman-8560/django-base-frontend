@@ -1,0 +1,219 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block base_title %} Child Profile {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+
+                    {# IMAGE DIV #}
+                    <div class="text-center">
+                        {% if object.child.profile_image %}
+                            <img class="rounded-circle" src="{{ object.child.profile_image.url }}" height="150px"
+                                 alt="user-image">
+                        {% else %}
+                            <img class="rounded-circle" src="{% static 'images/user.png' %}"
+                                 height="150px" alt="no-user-image">
+                        {% endif %}
+                    </div>
+
+                    {# NAME AND OTHER #}
+                    <div class="text-center mt-2">
+                        <h5 class="mb-0">{{ object.child.get_full_name }}
+                            {% if object.child.is_active %}
+                                <i class="fa fa-check-circle text-success"></i>
+                            {% endif %}
+                        </h5>
+                        <p class="fw-light text-muted mb-0">( {{ object.child.username }} )</p>
+                    </div>
+
+                    {# REMAINING INFO #}
+                    <div class="row mt-4">
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-email"></i></p>
+                            <p class="mb-0 text-center h5">Email</p>
+                            <p class="mb-0 text-center">{{ object.child.email }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-phone"></i></p>
+                            <p class="mb-0 text-center h5">Phone</p>
+                            <p class="mb-0 text-center">{{ object.child.phone_number }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-gender-male-female-variant"></i></p>
+                            <p class="mb-0 text-center h5">Gender</p>
+                            <p class="mb-0 text-center">{{ object.child.gender }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-phone"></i></p>
+                            <p class="mb-0 text-center h5">Phone</p>
+                            <p class="mb-0 text-center">{{ object.child.phone_number }}</p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="row">
+
+                {# QUIZZESS #}
+                <div class="col-7">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-title"><b>Quizzes</b></p>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="mb-0 text-center h3"><i class="mdi mdi-check"></i></p>
+                                    <p class="mb-0 text-center small">Total</p>
+                                    <p class="mb-0 text-center h5">{{ quiz_total }}</p>
+                                </div>
+                                <div class="col">
+                                    <p class="mb-0 text-center h3 text-success"><i class="mdi mdi-arrow-up"></i></p>
+                                    <p class="mb-0 text-center small">Passed</p>
+                                    <p class="mb-0 text-center h5">{{ quiz_passed }}</p>
+                                </div>
+                                <div class="col border-right">
+                                    <p class="mb-0 text-center h3 text-danger"><i class="mdi mdi-arrow-down"></i></p>
+                                    <p class="mb-0 text-center small">Failed</p>
+                                    <p class="mb-0 text-center h5">{{ quiz_failed }}</p>
+                                </div>
+                                <div class="col">
+                                    <p class="mb-0 text-center h3"><i class="mdi mdi-account"></i></p>
+                                    <p class="mb-0 text-center small">Single</p>
+                                    <p class="mb-0 text-center h5">{{ quiz_single }}</p>
+                                </div>
+                                <div class="col">
+                                    <p class="mb-0 text-center h3"><i class="mdi mdi-account-group"></i></p>
+                                    <p class="mb-0 text-center small">Team</p>
+                                    <p class="mb-0 text-center h5">{{ quiz_multi }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                {% if quizzes %}
+                                    <div class="table-responsive table-borderless">
+                                        <table class="table table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th>Quiz Title</th>
+                                                <th>Obtained</th>
+                                                <th>Total</th>
+                                                <th>Passed</th>
+                                                <th>Skipped</th>
+                                                <th>Attempted on</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for quiz in quizzes %}
+
+                                                <tr>
+                                                    <th>
+                                                        <a href="{% url 'parent-portal:child-quiz-detail' object.pk quiz.pk %}">{{ quiz.quiz.title }}</a>
+                                                    </th>
+                                                    <td>{{ quiz.obtained }}</td>
+                                                    <td>{{ quiz.total }}</td>
+                                                    <td>{{ quiz.passed }}</td>
+                                                    <td>{{ quiz.skipped }}</td>
+                                                    <td>{{ quiz.created }}</td>
+                                                </tr>
+
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="m-0 text-danger">
+                                        <b>
+                                            <i class="mdi mdi-exclamation-thick"></i>
+                                            Quizzes are not attempted upto now.
+                                        </b>
+                                    </p>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# L-Resource #}
+                <div class="col-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-title"><b>Learning</b></p>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="mb-0 text-center h3"><i class="mdi mdi-check"></i></p>
+                                    <p class="mb-0 text-center small">Total</p>
+                                    <p class="mb-0 text-center h5">{{ learn_total }}</p>
+                                </div>
+                                <div class="col">
+                                    <p class="mb-0 text-center h3 text-success"><i class="mdi mdi-arrow-up"></i></p>
+                                    <p class="mb-0 text-center small">Passed</p>
+                                    <p class="mb-0 text-center h5">{{ learn_passed }}</p>
+                                </div>
+                                <div class="col">
+                                    <p class="mb-0 text-center h3 text-danger"><i class="mdi mdi-arrow-down"></i></p>
+                                    <p class="mb-0 text-center small">Failed</p>
+                                    <p class="mb-0 text-center h5">{{ learn_failed }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                {% if learns %}
+                                    <div class="table-responsive table-borderless">
+                                        <table class="table table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Obtained</th>
+                                                <th>Total</th>
+                                                <th>Attempts</th>
+                                                <th>Attempted on</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for learn in learns %}
+
+                                                <tr>
+                                                    <th><a href="{% url 'parent-portal:child-learn-detail' object.pk learn.pk %}">{{ learn.quiz.title }}</a></th>
+                                                    <td>{{ learn.obtained }}</td>
+                                                    <td>{{ learn.total }}</td>
+                                                    <td>{{ learn.attempts }}</td>
+                                                    <td>{{ learn.created }}</td>
+                                                </tr>
+
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="m-0 text-danger">
+                                        <b>
+                                            <i class="mdi mdi-exclamation-thick"></i>
+                                            Learning Resources are not attempted upto now.
+                                        </b>
+                                    </p>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}

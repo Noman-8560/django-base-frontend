@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block base_title %} Child Quiz Details {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="text-center py-4">
+                        <h2 class=""><b>{{ object.quiz.title }}</b></h2>
+                        <p class="mb-0">
+                            <b>
+                                <i class="fa fa-chart-line"></i> {{ object.user }}
+                            </b>
+                        </p>
+                    </div>
+
+                    {# QUIZ INFO #}
+                    <div class="row mt-4">
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-clock-check"></i></p>
+                            <p class="mb-0 text-center h5">Name</p>
+                            <p class="mb-0 text-center">{{ object.quiz.title }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-clipboard-list"></i></p>
+                            <p class="mb-0 text-center h5">Total</p>
+                            <p class="mb-0 text-center">{{ object.total }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-clipboard-alert"></i></p>
+                            <p class="mb-0 text-center h5">Remains</p>
+                            <p class="mb-0 text-center">{{ object.remains }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-clipboard-text"></i></p>
+                            <p class="mb-0 text-center h5">Skipped</p>
+                            <p class="mb-0 text-center">{{ object.skipped }}</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 text-center h3"><i class="mdi mdi-clipboard-check"></i></p>
+                            <p class="mb-0 text-center h5">Passed</p>
+                            <p class="mb-0 text-center">{{ object.passed }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+
+                    {% if attempts %}
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Team</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Attempted</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for attempt in attempts %}
+                                    <tr>
+                                        <td>{{ attempt.question.get_statement }}</td>
+                                        <td>{{ attempt.team.name }}</td>
+                                        <td>{{ attempt.start_time|time:"H:i:s a" }}</td>
+                                        <td>{{ attempt.end_time|time:"H:i:s a" }}</td>
+                                        <td>{{ attempt.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="m-0 text-danger">
+                            <b>
+                                <i class="mdi mdi-exclamation-thick"></i>
+                                Questions are not attempted upto now.
+                            </b>
+                        </p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

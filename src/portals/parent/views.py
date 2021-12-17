@@ -7,7 +7,8 @@ from django.views.generic import (
 from django.views.generic.base import View
 
 from src.accounts.models import User
-from src.application.models import Relation, RelationType
+from src.application.models import Relation, RelationType, Quiz, QuizCompleted, LearningResourceResult, Attempt, \
+    LearningResourceAttempts
 
 
 class DashboardView(TemplateView):
@@ -93,3 +94,102 @@ class RelationDeleteView(DeleteView):
 
     def get_object(self, queryset=None):
         return get_object_or_404(Relation.objects.filter(parent=self.request.user), pk=self.kwargs['pk'])
+
+
+""" CHILDREN """
+
+
+def get_child_record(context, user):
+    relation = context['object']
+    child = relation.child
+    quizzes = QuizCompleted.objects.filter(user=child)
+    learns = LearningResourceResult.objects.filter(user=child)
+
+    """ QUIZ AND LEARN >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> """
+
+    quizzes_passed = quizzes_failed = 0
+    learns_passed = learns_failed = 0
+
+    for quiz in quizzes:
+        if quiz.obtained >= quiz.total / 2:
+            quizzes_passed += 1
+        else:
+            quizzes_failed += 1
+
+    for learn in learns:
+        if learn.obtained >= learn.total / 2:
+            learns_passed += 1
+        else:
+            learns_failed += 1
+
+    """ CORE INFO  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> """
+
+    context['quiz_total'] = quizzes.count()
+    context['quiz_single'] = quizzes.filter(quiz__players='1').count()
+    context['quiz_multi'] = quizzes.exclude(quiz__players='1').count()
+    context['quiz_passed'] = quizzes_passed
+    context['quiz_failed'] = quizzes_failed
+
+    context['learn_total'] = learns.count()
+    context['learn_passed'] = learns_passed
+    context['learn_failed'] = learns_failed
+
+    context['quizzes'] = quizzes
+    context['learns'] = learns
+
+    return context
+
+
+class ChildDetailView(DetailView):
+    model = Relation
+    template_name = 'parent/child_detail.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Relation.objects.filter(
+            parent=self.request.user, is_verified_by_child=True
+        ), pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ChildDetailView, self).get_context_data(**kwargs)
+        context['object'] = self.get_object()
+        return get_child_record(context, self.request.user)
+
+
+class ChildQuizDetailView(DetailView):
+    model = QuizCompleted
+    template_name = 'parent/child_quiz_detail.html'
+
+    def get_object(self, queryset=None):
+        relation = get_object_or_404(Relation, pk=self.kwargs['relation_id'])
+        quiz_completed = get_object_or_404(QuizCompleted.objects.filter(user=relation.child), pk=self.kwargs['pk'])
+        return quiz_completed
+
+    def get_context_data(self, **kwargs):
+        context = super(ChildQuizDetailView, self).get_context_data(**kwargs)
+        quiz_completed = self.get_object()
+        user = get_object_or_404(Relation, pk=self.kwargs['relation_id']).child
+        attempts = Attempt.objects.filter(user=user, quiz=quiz_completed.quiz)
+
+        context['object'] = quiz_completed
+        context['attempts'] = attempts
+        return context
+
+
+class ChildLearningDetailView(DetailView):
+    model = LearningResourceResult
+    template_name = 'parent/child_learning_detail.html'
+
+    def get_object(self, queryset=None):
+        relation = get_object_or_404(Relation, pk=self.kwargs['relation_id'])
+        learn = get_object_or_404(LearningResourceResult.objects.filter(user=relation.child), pk=self.kwargs['pk'])
+        return learn
+
+    def get_context_data(self, **kwargs):
+        context = super(ChildLearningDetailView, self).get_context_data(**kwargs)
+        learn = self.get_object()
+        user = get_object_or_404(Relation, pk=self.kwargs['relation_id']).child
+        attempts = LearningResourceAttempts.objects.filter(user=user, quiz=learn.quiz)
+
+        context['object'] = learn
+        context['attempts'] = attempts
+        return context

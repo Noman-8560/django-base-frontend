@@ -19,18 +19,32 @@
                             {% endif %}
 
                             <div class="mt-2">
-                                <b>{{ relation.parent.get_full_name }}</b><br>
-                                <small> ({{ relation.parent.username }})</small>
+                                <b>{{ relation.parent.get_full_name }} <small> ({{ relation.parent.username }})</small></b><br>
+                                <b class="text-primary">{{ relation.relation.guardian_relation_name }}</b>
                             </div>
                         </div>
 
-                        <div>
-                            <p>
-                                {% lorem 1 p %}
-                            </p>
+                        <div class="text-left">
+                            {% if not relation.is_verified_by_child %}
+                                <p>
+                                    Above user requested to access your information, if you gave access the user will
+                                    read the given information
+                                </p>
+                                <ul>
+                                    <li>Account information</li>
+                                    <li>Quizzes Reports</li>
+                                    <li>Learning Progress</li>
+                                    <li>Team Work</li>
+                                    <li>Performance Analysis</li>
+                                </ul>
+                            {% else %}
+                                <p class="text-danger">
+                                    On removing access above user will be not be able to see your information anymore.
+                                </p>
+                            {% endif %}
                         </div>
 
-                        <div>
+                        <div class="text-left">
                             <form method="post">
                                 {% csrf_token %}
                                 {% if relation.is_verified_by_child %}
