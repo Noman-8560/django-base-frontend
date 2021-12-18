@@ -397,9 +397,9 @@ class QuizEnrollView(View):
             # ---------> NOTIFY
             ps = [request.user.pk]
             if player_2 is not None:
-                ps.append(player_2.username)
+                ps.append(player_2.pk)
             if player_3 is not None:
-                ps.append(player_3.username)
+                ps.append(player_3.pk)
 
             for user in ps:
                 desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, " \
@@ -408,7 +408,7 @@ class QuizEnrollView(View):
 
                 notify.send(
                     request.user,
-                    recipient=User.objects.get(username=user.username),
+                    recipient=User.objects.get(pk=user),
                     verb=f'Enrolled to {quiz.title}',
                     level='success',
                     description=desc
