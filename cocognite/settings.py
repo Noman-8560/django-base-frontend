@@ -15,7 +15,7 @@ ZOOM_API_SECRET_JWT = '1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF'
 
 DEBUG = True
 SERVER = False
-TEST = False
+TEST = True
 ALLOWED_HOSTS = ['*']
 SITE_ID = 1
 
