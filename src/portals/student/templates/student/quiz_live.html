@@ -4,21 +4,6 @@
 
 {% block base_title %}QUIZ > SCREEN{% endblock %}
 
-
-{% if allowed_to_start %}
-    {% block base_links %}
-        <script>
-
-            history.pushState(null, null, location.href);
-            window.onpopstate = function () {
-                history.go(1);
-            };
-
-        </script>
-
-    {% endblock %}
-{% endif %}
-
 {% block base_top_nav %}{% endblock %}
 
 {% block dont_include_details %}
@@ -304,7 +289,7 @@
 
         const csrftoken = getCookie('csrftoken');
 
-        let protection = true;
+        let protection = false;
         if (protection === true) {
             window.onbeforeunload = function () {
                 return "Are you sure you want to leave?";
@@ -487,7 +472,7 @@
                     });
                 } else {
                     if (end_quiz === false) {
-                        alert("Your quiz submitted successfully -- DONE");
+                        alert("Congrats User! Your quiz submitted successfully.");
                         end_quiz = true;
                     }
                     window.location = "{% url 'student-portal:quiz' %}";

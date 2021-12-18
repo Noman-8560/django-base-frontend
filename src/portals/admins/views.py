@@ -328,7 +328,7 @@ class QuizDetailView(DetailView):
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
-    fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
+    fields = ['learning_purpose', 'title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'admins/quiz_create_form.html'
 
     def form_valid(self, form):
@@ -345,7 +345,7 @@ class QuizCreateView(CreateView):
 class QuizUpdateView(UpdateView):
     models = Quiz
     queryset = Quiz.objects.all()
-    fields = ['title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
+    fields = ['learning_purpose', 'title', 'age_limit', 'subjects', 'players', 'start_time', 'end_time']
     template_name = 'admins/quiz_update_form.html'
 
     def get_success_url(self):

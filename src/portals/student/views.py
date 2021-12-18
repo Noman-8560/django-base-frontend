@@ -273,6 +273,7 @@ class TeamDeleteView(View):
         return redirect('student-portal:team', permanent=True)
 
 
+@method_decorator(never_cache, name='dispatch')
 class QuizEnrollView(View):
 
     def get(self, request, pk):
@@ -316,23 +317,10 @@ class QuizEnrollView(View):
             player_2 = None
             player_3 = None
 
-            # 2 player quiz ---------------------------------------------
-            if quiz.players == '2':
-                user2 = User.objects.filter(username=request.POST['player_2'])
-
-                if not user2:
-                    pass
-
-                player_2 = user2[0]
-
-            # 3 player quiz ---------------------------------------------
-            if quiz.players == '3':
-                pass
-
             # USER_EXISTS_OR_NOT
             try:
 
-                if quiz.players == '2':
+                if quiz.players == '2' or quiz.players == '3':
 
                     player_2 = User.objects.get(username=request.POST['player_2'])
                     if quiz.players == '3':
