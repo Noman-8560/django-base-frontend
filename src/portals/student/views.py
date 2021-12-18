@@ -1119,13 +1119,11 @@ class UserExistsJSON(View):
 
     def get(self, request, username):
         flag = False
-        try:
-            user = User.objects.get(username=username)
+        user = User.objects.filter(username=username, is_student=True).exclude(username=self.request.user.username)
+        if user:
             flag = True
-        except User.DoesNotExist:
-            pass
 
         response = {
-            'flag': flag
+            'flag': flag,
         }
         return JsonResponse(data=response, safe=False)
