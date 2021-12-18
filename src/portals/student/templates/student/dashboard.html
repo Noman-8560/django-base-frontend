@@ -157,8 +157,8 @@
                                     <li>Event <b>{{ quiz.title }}</b> started on
                                         {{ quiz.start_time }}and closes on
                                         {{ quiz.end_time }}
-                                        <a href="#" class="text-dark">
-                                            <b>click to go live</b>
+                                        <a href="{% url 'student-portal:quiz-enroll' quiz.pk %}" class="text-dark">
+                                            <b>click to enroll</b>
                                         </a>
                                     </li>
                                 {% endfor %}

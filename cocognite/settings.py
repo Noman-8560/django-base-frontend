@@ -15,7 +15,15 @@ ZOOM_API_SECRET_JWT = '1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF'
 
 DEBUG = True
 SERVER = False
+TEST = False
 ALLOWED_HOSTS = ['*']
+SITE_ID = 1
+
+if TEST:
+    SITE_ID = 2
+
+if SERVER:
+    SITE_ID = 3
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = '/accounts/cross-auth/'
@@ -104,9 +112,7 @@ TEMPLATES = [
     },
 ]
 
-SITE_ID = 1
 if SERVER:
-    SITE_ID = 3
     if os.name == 'posix':
         DATABASES = {
             'default': {
@@ -142,7 +148,7 @@ else:
 """ INTERNATIONALIZATION ----------------------------------------------------------------------------------------- """
 
 LANGUAGE_CODE = 'en-us'
-if DEBUG:
+if TEST:
     TIME_ZONE = 'Asia/Tashkent'
 else:
     TIME_ZONE = 'Asia/Calcutta'

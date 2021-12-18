@@ -8,77 +8,89 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="">
-                <div class="table-responsive">
-                    <table class="table project-list-table table-nowrap table-centered table-borderless">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Guardian</th>
-                            <th scope="col">Relation</th>
-                            <th scope="col">Created</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
 
-                        {% if relation_list %}
-                            {% for relation in relation_list %}
-                                <tr>
-                                    <td>{{ relation.pk }}</td>
-                                    <td>
-                                        {{ relation.parent.get_full_name }}<br>
-                                        <small class="text-muted">({{ relation.parent.username }})</small>
-                                    </td>
-                                    <td>{{ relation.relation.guardian_relation_name }}</td>
-                                    <td>{{ relation.created_on }}</td>
-                                    <td>
-                                        <b class="text-success">
-                                            <i class="fa fa-check-circle"></i> Verified
-                                        </b>
-                                    </td>
-                                    <td>
-                                        <b>
-                                            <a href="{% url 'student-portal:relation-delete' relation.pk %}">
-                                                <i class="fa fa-trash text-danger"></i>
-                                            </a>
-                                        </b>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
+                {% if relation_list or relation_list_unverified %}
+                    <div class="table-responsive">
+                        <table class="table project-list-table table-nowrap table-centered table-borderless">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Guardian</th>
+                                <th scope="col">Relation</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                        {% if relation_list_unverified %}
-                            {% for relation in relation_list_unverified %}
-                                <tr>
-                                    <td>{{ relation.pk }}</td>
-                                    <td>
-                                        {{ relation.parent.get_full_name }}<br>
-                                        <small class="text-muted">({{ relation.parent.username }})</small>
-                                    </td>
-                                    <td>{{ relation.relation.guardian_relation_name }}</td>
-                                    <td>{{ relation.created_on }}</td>
-                                    <td>
-                                        <a href="{% url 'student-portal:relation-detail' relation.pk %}">
-                                            <b class="text-primary">
-                                                <i class="fa fa-exclamation-circle"></i> Not Verified
-                                            </b><br>
-                                            <small>Click here to verify</small>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <b>
-                                            <a href="{% url 'student-portal:relation-delete' relation.pk %}">
-                                                <i class="fa fa-trash text-danger"></i>
+                            {% if relation_list %}
+                                {% for relation in relation_list %}
+                                    <tr>
+                                        <td>{{ relation.pk }}</td>
+                                        <td>
+                                            {{ relation.parent.get_full_name }}<br>
+                                            <small class="text-muted">({{ relation.parent.username }})</small>
+                                        </td>
+                                        <td>{{ relation.relation.guardian_relation_name }}</td>
+                                        <td>{{ relation.created_on }}</td>
+                                        <td>
+                                            <b class="text-success">
+                                                <i class="fa fa-check-circle"></i> Verified
+                                            </b>
+                                        </td>
+                                        <td>
+                                            <b>
+                                                <a href="{% url 'student-portal:relation-delete' relation.pk %}">
+                                                    <i class="fa fa-trash text-danger"></i>
+                                                </a>
+                                            </b>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if relation_list_unverified %}
+                                {% for relation in relation_list_unverified %}
+                                    <tr>
+                                        <td>{{ relation.pk }}</td>
+                                        <td>
+                                            {{ relation.parent.get_full_name }}<br>
+                                            <small class="text-muted">({{ relation.parent.username }})</small>
+                                        </td>
+                                        <td>{{ relation.relation.guardian_relation_name }}</td>
+                                        <td>{{ relation.created_on }}</td>
+                                        <td>
+                                            <a href="{% url 'student-portal:relation-detail' relation.pk %}">
+                                                <b class="text-primary">
+                                                    <i class="fa fa-exclamation-circle"></i> Not Verified
+                                                </b><br>
+                                                <small>Click here to verify</small>
                                             </a>
-                                        </b>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
-                        </tbody>
-                    </table>
-                </div>
+                                        </td>
+                                        <td>
+                                            <b>
+                                                <a href="{% url 'student-portal:relation-delete' relation.pk %}">
+                                                    <i class="fa fa-trash text-danger"></i>
+                                                </a>
+                                            </b>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+
+                    <p class="text-danger">
+                        <b>
+                            <i class="mdi mdi-exclamation-thick"></i>
+                            No parental control access created.
+                        </b>
+                    </p>
+
+                {% endif %}
             </div>
         </div>
     </div>

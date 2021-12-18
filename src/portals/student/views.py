@@ -395,7 +395,7 @@ class QuizEnrollView(View):
                                                       f'with team={team_name} as a caption of team.')
 
             # ---------> NOTIFY
-            ps = [request.user.username]
+            ps = [request.user.pk]
             if player_2 is not None:
                 ps.append(player_2.username)
             if player_3 is not None:
