@@ -33,8 +33,8 @@ urlpatterns = [
 
     # -------------------------------------------------------------------------------------------------- JSON RESPONSES
     path('json/learning-resource/live/access/question/<int:question_id>/quiz/<int:quiz_id>/',
-         LearningResourceLiveQuestionAccessJSON, name='learning-resource-live-access-question-json'),
-    path('json/learning-resource/live/submit/question', LearningResourceLiveQuestionSubmitJSON,
+         LearningResourceLiveQuestionAccessJSON.as_view(), name='learning-resource-live-access-question-json'),
+    path('json/learning-resource/live/submit/question/', LearningResourceLiveQuestionSubmitJSON.as_view(),
          name='learning-resource-live-submit-question-json'),
     path('json/user/<str:username>/exists/', UserExistsJSON.as_view(), name='user-exists-json'),
 

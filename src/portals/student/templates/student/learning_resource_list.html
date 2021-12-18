@@ -132,12 +132,13 @@
                                 <tr>
                                     <th>Quiz</th>
                                     <th>Questions</th>
+                                    <th>Marks</th>
+                                    <th>Attempts</th>
                                     <th>Subjects</th>
                                     <th>Start</th>
                                     <th>End</th>
-                                    <th>total</th>
-                                    <th>obtained</th>
                                     <th>Submitted</th>
+                                    <th>Result</th>
                                 </tr>
                                 </thead>
                                 <tbody class="">
@@ -146,6 +147,8 @@
                                     <tr>
                                         <td>{{ quiz.quiz.title }}</td>
                                         <td>{{ quiz.quiz.questions.count }}</td>
+                                        <td>{{ quiz.obtained }}/{{ quiz.total }}</td>
+                                        <td>{{ quiz.attempts }}</td>
                                         <td>
                                             {% for subject in quiz.quiz.subjects.all %}
                                                 <span href=""
@@ -155,9 +158,14 @@
                                         </td>
                                         <td>{{ quiz.quiz.start_time }}</td>
                                         <td>{{ quiz.quiz.end_time }}</td>
-                                        <td>{{ quiz.total }}</td>
-                                        <td>{{ quiz.obtained }}</td>
+
                                         <td>{{ quiz.created }}</td>
+                                        <td>
+                                            <b>
+                                                <a href="{% url 'student-portal:learning-resource-result' quiz.quiz.id %}"><i
+                                                        class="fa fa-eye"></i> View Results</a>
+                                            </b>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

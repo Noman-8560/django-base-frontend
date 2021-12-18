@@ -629,10 +629,6 @@ class LearningResourceLiveView(View):
         """ QUIZ and TEAM is required here """
         try:
             user_quiz = Quiz.objects.get(pk=quiz_id)
-
-            # if len(QuizCompleted.objects.filter(user=request.user, quiz=user_quiz)) > 0:
-            # messages.success(request=request, message="Dear User you have already attempted this quiz, if you attempt it again your previous record will be updated")
-
         except Quiz.DoesNotExist:
             messages.error(request=request, message="Requested Quiz doesn't exists")
             return redirect('student-portal:quiz', permanent=True)
@@ -723,7 +719,7 @@ class ZoomMeetingView(View):
 
 
 class LearningResourceLiveQuestionSubmitJSON(View):
-    def get(self, request):
+    def post(self, request):
         success = False
         message = None
         end = False
@@ -792,7 +788,7 @@ class LearningResourceLiveQuestionSubmitJSON(View):
 
 class LearningResourceLiveQuestionAccessJSON(View):
 
-    def get(self, request, quiz_id, question_id):
+    def get(self, request, question_id, quiz_id):
         total = 0
         attempts = 0
         remains = 0
