@@ -363,7 +363,14 @@ class QuizQuestion(models.Model):
     def __str__(self):
         return self.quiz.title
 
-
+    def save(self, *args, **kwargs):
+        screens = Screen.objects.all()
+        if not screens:
+            screen = Screen.objects.create(no=1, name='Screen 1')
+            self.submission_control = screen
+        else:
+            self.submission_control = screens.first()
+        super().save(*args, **kwargs)
 
 
 class StatementVisibility(models.Model):
