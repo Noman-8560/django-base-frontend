@@ -10,7 +10,7 @@ class User(AbstractUser):
         ('o', 'Other'),
     )
 
-    is_student = models.BooleanField(default=True, help_text="This account belongs to student")
+    is_student = models.BooleanField(default=False, help_text="This account belongs to student")
     is_moderator = models.BooleanField(default=False, help_text="This account belongs to Moderator/Teacher")
     is_parent = models.BooleanField(default=False, help_text="This account is parental")
     is_completed = models.BooleanField(default=False, help_text="Shows weather the account is associated with any type")
