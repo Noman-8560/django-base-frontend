@@ -1226,7 +1226,6 @@ def learn_question_submission_json(request):
 
 @login_required
 def quiz_access_question_json(request, quiz_id, question_id, user_id, skip):
-    # TODO: please write query to avoid re-attempting quiz
     statements = []
     images = []
     audios = []

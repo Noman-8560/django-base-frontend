@@ -487,7 +487,6 @@
                     {% now "jS F Y H:i:s" as nn %}
                     question_end = get_time_formatted();
 
-                    // TODO: csrf security required _ avoid csrf_exempt in deployment
                     $.post("/c/api/submit/question/",
                         {
                             quiz_id: {{ quiz_id }},
