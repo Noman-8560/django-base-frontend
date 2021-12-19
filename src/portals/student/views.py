@@ -14,6 +14,7 @@ from django.views.generic import ListView, DetailView, DeleteView
 from notifications.signals import notify
 
 from cocognite import settings
+from src.accounts.decorators import identification_required, student_required
 from src.application.models import (
     Quiz, Question, QuestionChoice,
     QuizQuestion, Screen, Team, QuizCompleted,
@@ -26,11 +27,13 @@ from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting
 
 User = get_user_model()
 
-student_decorators = [login_required]
+student_decorators = [login_required, identification_required, student_required]
+student_nocache_decorators = [login_required, identification_required, student_required, never_cache]
 
 """  VIEWS ================================================================================= """
 
 
+@method_decorator(student_decorators, name='dispatch')
 class DashboardView(View):
 
     def get(self, request):
@@ -194,6 +197,7 @@ class DashboardView(View):
         return render(request=request, template_name='student/dashboard.html', context=context)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class QuizListView(View):
 
     def get(self, request):
@@ -225,6 +229,7 @@ class QuizListView(View):
         return render(request=request, template_name='student/quiz_list.html', context=context)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class TeamDetailView(View):
 
     def get(self, request, pk):
@@ -243,6 +248,7 @@ class TeamDetailView(View):
         return render(request=request, template_name='student/team.html', context=context)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class TeamDeleteView(View):
 
     def get(self, request, pk):
@@ -266,14 +272,15 @@ class TeamDeleteView(View):
                            message="you have attempted quiz with this team, you are not allowed to delete this team now")
             return redirect('student-portal:team', permanent=True)
         else:
-            zoom_delete_meeting(team.zoom_meeting_id)
+            # TODO: Team meeting delete here
+            # zoom_delete_meeting(team.zoom_meeting_id)
             team.delete()
             messages.success(request=request,
                              message="Team Destroyed completely")
         return redirect('student-portal:team', permanent=True)
 
 
-@method_decorator(never_cache, name='dispatch')
+@method_decorator(student_nocache_decorators, name='dispatch')
 class QuizEnrollView(View):
 
     def get(self, request, pk):
@@ -332,7 +339,7 @@ class QuizEnrollView(View):
                                 request=request, message=f'Requested participant or participants '
                                                          f'already enrolled choose different partners.'
                             )
-                            return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+                            return HttpResponseRedirect(reverse('student-portal:quiz-enroll', args=(quiz.pk,)))
 
                     # PLAYER_3_ASSIGNED_OR_NOT
                     if Team.objects.filter(participants__username=player_2.username, quiz=quiz).count() != 0:
@@ -340,11 +347,11 @@ class QuizEnrollView(View):
                                          message=f'Requested participant or participants '
                                                  f'already enrolled choose different partners.'
                                          )
-                        return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+                        return HttpResponseRedirect(reverse('student-portal:quiz-enroll', args=(quiz.pk,)))
 
             except User.DoesNotExist:
                 messages.error(request=request, message=f'Requested participant or participants does not exists.')
-                return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+                return HttpResponseRedirect(reverse('student-portal:quiz-enroll', args=(quiz.pk,)))
 
             #  --------- MEETING --------- #
 
@@ -353,6 +360,7 @@ class QuizEnrollView(View):
             join_url = None
 
             if int(quiz.players) > 1:
+                # TODO: Team meeting create here
                 """response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
                                                start_time=quiz.start_time.timestamp(),
                                                end_time=quiz.end_time.timestamp(), host=request.user.email)
@@ -412,7 +420,7 @@ class QuizEnrollView(View):
         return render(request=request, template_name='student/team_create_form.html', context=context)
 
 
-@method_decorator(never_cache, name='dispatch')
+@method_decorator(student_nocache_decorators, name='dispatch')
 class QuizLiveView(View):
 
     def get(self, request, pk):
@@ -522,6 +530,7 @@ class QuizLiveView(View):
         return render(request=request, template_name='student/quiz_live.html', context=context)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class TeamListView(View):
 
     def get(self, request):
@@ -544,6 +553,7 @@ class TeamListView(View):
 """  RELATION LIST --------------------------------------------------------------------- """
 
 
+@method_decorator(student_decorators, name='dispatch')
 class RelationListView(ListView):
     model = Relation
     template_name = 'student/relation_list.html'
@@ -559,6 +569,7 @@ class RelationListView(ListView):
         return context
 
 
+@method_decorator(student_decorators, name='dispatch')
 class RelationDetailView(View):
 
     def get(self, request, pk):
@@ -585,6 +596,7 @@ class RelationDetailView(View):
         return redirect('student-portal:relation-detail', pk)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class RelationDeleteView(DeleteView):
     template_name = 'student/relation_delete.html'
     model = Relation
@@ -597,6 +609,7 @@ class RelationDeleteView(DeleteView):
 """  LEARNING RESOURCE --------------------------------------------------------------------- """
 
 
+@method_decorator(student_decorators, name='dispatch')
 class LearningResourceListView(View):
 
     def get(self, request):
@@ -618,6 +631,7 @@ class LearningResourceListView(View):
         return render(request=request, template_name='student/learning_resource_list.html', context=context)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class LearningResourceLiveView(View):
 
     def get(self, request, quiz_id):
@@ -664,6 +678,7 @@ class LearningResourceLiveView(View):
         return render(request=request, template_name='student/learning_resource_live.html', context=context)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class LearningResourceResultView(View):
 
     def get(self, request, quiz_id):
@@ -689,6 +704,7 @@ class LearningResourceResultView(View):
 
 
 """  EXTRA VIEWS ---------------------------------------------------------------------------- """
+
 
 
 class ZoomMeetingView(View):
@@ -718,6 +734,7 @@ class ZoomMeetingView(View):
 """ C-API =================================================================================== """
 
 
+@method_decorator(student_decorators, name='dispatch')
 class LearningResourceLiveQuestionSubmitJSON(View):
     def post(self, request):
         success = False
@@ -786,6 +803,7 @@ class LearningResourceLiveQuestionSubmitJSON(View):
             return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class LearningResourceLiveQuestionAccessJSON(View):
 
     def get(self, request, question_id, quiz_id):
@@ -840,6 +858,7 @@ class LearningResourceLiveQuestionAccessJSON(View):
             return JsonResponse(data=None, safe=False)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class QuizLiveQuestionSubmitJSON(View):
 
     def post(self, request):
@@ -914,10 +933,10 @@ class QuizLiveQuestionSubmitJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class QuizLiveQuestionAccessJSON(View):
 
     def get(self, request, quiz_id, question_id, user_id, skip):
-        # TODO: please write query to avoid re-attempting quiz
         statements = []
         images = []
         audios = []
@@ -1039,6 +1058,7 @@ class QuizLiveQuestionAccessJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class QuizLiveQuestionNextJSON(View):
 
     def post(self, request):
@@ -1070,6 +1090,7 @@ class QuizLiveQuestionNextJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class QuizLiveChoiceSubmitJSON(View):
 
     def post(self, request):
@@ -1099,6 +1120,7 @@ class QuizLiveChoiceSubmitJSON(View):
         return JsonResponse(data=response, safe=False)
 
 
+@method_decorator(student_decorators, name='dispatch')
 class UserExistsJSON(View):
 
     def get(self, request, username):

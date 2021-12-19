@@ -358,11 +358,12 @@ class Quiz(models.Model):
 class QuizQuestion(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    # TODO: Please solve this problem to avoid failure when the first screen id is not 1
     submission_control = models.ForeignKey(Screen, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return self.quiz.title
+
+
 
 
 class StatementVisibility(models.Model):
