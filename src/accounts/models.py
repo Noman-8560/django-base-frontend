@@ -44,3 +44,16 @@ class StudentProfile(models.Model):
     )
     zoom_account_verification = models.BooleanField(null=False, blank=False, default=False)
     zoom_user_id = models.CharField(max_length=200, null=False, blank=False)
+
+    # TODO: statistical calculations here
+    total_quizzes = models.PositiveIntegerField(default=0)
+    team_quizzes = models.PositiveIntegerField(default=0)
+    passed_quizzes = models.PositiveIntegerField(default=0)
+    total_learning = models.PositiveIntegerField(default=0)
+    passed_learning = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "Students Profiles"
+
+    def __str__(self):
+        return self.user

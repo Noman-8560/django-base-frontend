@@ -7,7 +7,6 @@ from ckeditor.fields import RichTextField
 
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-
 from django.utils.text import slugify
 
 
@@ -68,7 +67,10 @@ class AppUpdate(models.Model):
 
 class Screen(models.Model):
     no = models.PositiveIntegerField(null=False, blank=False)
-    name = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="Make sure to use the name as 'Screen 1' - 'Screen 2' and 'Screen 3'"
+    )
 
     def __str__(self):
         return f"Screen {str(self.no)}"
@@ -183,32 +185,37 @@ class Question(models.Model):
     )
 
     level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL, blank=False, null=False)
-    submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
-                                           related_name='submitted_by')
-    choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
-                                        related_name='select_choices')
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
     topics = models.ManyToManyField(Topic)
     question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False, default='1')
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
+
+    # TODO: statistical calculations here
+    total_quizzes = models.PositiveIntegerField(default=0)
+    total_learning = models.PositiveIntegerField(default=0)
+    total_correct_quizzes = models.PositiveIntegerField(default=0)
+    total_correct_learning = models.PositiveIntegerField(default=0)
+
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    submission_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
+                                           related_name='submitted_by')
+    choices_control = models.ForeignKey('Screen', blank=True, null=True, on_delete=models.SET_NULL,
+                                        related_name='select_choices')
+
+    class Meta:
+        managed = True
+        verbose_name_plural = 'Questions'
+
+    def __str__(self):
+        return str(self.pk)
 
     def save(self, *args, **kwargs):
         self.choices_control = Screen.objects.first()
         self.submission_control = self.choices_control
         super().save(*args, **kwargs)
-
-    def __str__(self):
-        return str(self.pk)
-
-    def __unicode__(self):
-        return self.pk
-
-    class Meta:
-        managed = True
-        verbose_name_plural = 'Questions'
 
     def get_statement(self):
         question_statements = QuestionStatement.objects.filter(question=self)
@@ -216,6 +223,16 @@ class Question(models.Model):
             return question_statements.first()
         else:
             return "Statement not available"
+
+    def calculate_difficulty(self):
+        _cal = (self.total_quizzes/self.total_correct_quizzes)*100
+        if _cal >= 80:
+            self.level = 'e'
+        elif 40 <= _cal < 80:
+            self.level = 'n'
+        else:
+            self.level = 'h'
+        self.save()
 
 
 class QuestionStatement(models.Model):
@@ -598,57 +615,17 @@ class QuizCompleted(models.Model):
         return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
 
 
-class Profile(models.Model):
-    GENDER_CHOICE = (
-        ('m', 'Male'),
-        ('f', 'Female'),
-        ('o', 'Other'),
-    )
-    image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
-    image_width = models.PositiveIntegerField(null=True, blank=True, editable=False, default="150")
-
-    user = models.OneToOneField(User, null=False, blank=False, on_delete=models.CASCADE)
-    profile = models.ImageField(
-        upload_to='images/profiles/',
-        height_field='image_height', width_field='image_width',
-        default='images/profiles/male-avatar.png',
-        help_text="Profile picture must be less then 500px of width and height, image must be in jpg, jpeg or png.",
-        verbose_name="Profile Picture",
-        null=False, blank=False
-    )
-    is_guardian = models.BooleanField(null=False, blank=False, default=False)
-    date_of_birth = models.DateField(
-        null=True, blank=True,
-        help_text='Date of birth format must be [yyyy/mm/dd] or [yyyy-mm-dd]'
-    )
-    gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER_CHOICE)
-    phone = models.CharField(max_length=255, unique=True, blank=True, null=True,
-                             help_text='include your phone number with your country code.')
-    about = models.TextField(null=True, blank=True,
-                             help_text='you can add details about yourself like your hobbies, favorite lines, code of '
-                                       'life, bio or other details as well'
-                             )
-    address = models.TextField(blank=True, null=True)
-
+class StudentProfile(models.Model):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     school_name = models.CharField(max_length=255, null=True, blank=True)
     class_name = models.CharField(max_length=255, null=True, blank=True)
     class_section = models.CharField(max_length=255, null=True, blank=True)
     school_email = models.CharField(max_length=255, null=True, blank=True)
     school_address = models.TextField(null=True, blank=True)
-    zoom_account = models.CharField(
-        max_length=255, null=True, blank=True,
-        help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"
-    )
-    zoom_account_verification = models.BooleanField(null=False, blank=False, default=False)
-    zoom_user_id = models.CharField(max_length=200, null=False, blank=False)
-
-    guardian_first_name = models.CharField(max_length=255, null=True, blank=True)
-    guardian_last_name = models.CharField(max_length=255, null=True, blank=True)
-    guardian_email = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        verbose_name = 'User Profile'
-        verbose_name_plural = 'User Profiles'
+        verbose_name = 'Student Profile'
+        verbose_name_plural = 'Students Profiles'
 
     def __str__(self):
         return self.user.username
@@ -658,8 +635,9 @@ class Profile(models.Model):
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
         user = User.objects.get(pk=instance.id)
-        profile = Profile(user=user)
-        profile.save()
+        if user.is_student:
+            profile = StudentProfile(user=user)
+            profile.save()
 
         from src.zoom_api.views import create_zoom_user
         # if create_zoom_user(user=user):
