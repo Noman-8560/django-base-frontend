@@ -37,7 +37,7 @@ class User(AbstractUser):
 
 
 class StudentProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student-profile+")
     zoom_account = models.CharField(
         max_length=255, null=True, blank=True,
         help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"

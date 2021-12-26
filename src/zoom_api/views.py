@@ -4,7 +4,7 @@ import jwt
 import json
 import requests
 from django.contrib.auth.models import User
-from src.application.models import Profile
+from src.application.models import StudentProfile
 from django.http import HttpResponse
 
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
@@ -142,7 +142,7 @@ def create_zoom_user(user: User):
         }
     }
     response = requests.post(url, headers=headers, json=data)
-    profile = Profile.objects.get(user=user)
+    profile = StudentProfile.objects.get(user=user)
     r_data = json.loads(response.text)
     print(f" {bearer_token}")
     print(" {} ".format(str(r_data)))

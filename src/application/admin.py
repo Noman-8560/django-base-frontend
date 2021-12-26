@@ -100,7 +100,6 @@ class StatementVisibilityAdmin(admin.ModelAdmin):
 
 admin.site.register(StatementVisibility, StatementVisibilityAdmin)
 admin.site.register(ChoiceVisibility, ChoiceVisibilityAdmin)
-admin.site.register(Profile, ProfileAdmin)
 admin.site.register(QuestionAudio, QuestionAudioAdmin)
 admin.site.register(QuestionImage, QuestionImageAdmin)
 admin.site.register(Question, QuestionAdmin)

@@ -12,11 +12,10 @@ from django.views.generic import (
 
 from src.portals.admins.dll import QuestionDS
 from src.application.models import (
-    Article, Subject, Profile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
+    Article, Subject, StudentProfile, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
     Relation, Topic, RelationType)
 from src.portals.admins.forms import (
-    ProfileBasicForm, ProfileParentForm, ProfileImageForm, ProfileOtherForm, QuizForm,
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
 )
 
