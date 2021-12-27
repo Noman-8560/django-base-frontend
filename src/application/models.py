@@ -190,11 +190,12 @@ class Question(models.Model):
     question_type = models.CharField(max_length=1, choices=QUESTION_TYPE, null=False, blank=False, default='1')
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
 
-    # TODO: statistical calculations here
+    # TODO: statistical calculations here --------------------------------------------------------------------
     total_quizzes = models.PositiveIntegerField(default=0)
     total_learning = models.PositiveIntegerField(default=0)
     total_correct_quizzes = models.PositiveIntegerField(default=0)
     total_correct_learning = models.PositiveIntegerField(default=0)
+    # --------------------------------------------------------------------------------------------------------
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -323,6 +324,12 @@ class Quiz(models.Model):
         ('3', 'Three Players'),
     )
 
+    learning_purpose = models.BooleanField(
+        default=False,
+        help_text='By checking Learning purpose some changes will be applied to this quiz, it will only visible for '
+                  'learning resource, quiz will be different from main quizzes, student can only use this quiz for '
+                  'learning purpose'
+    )
     title = models.CharField(max_length=100, null=False, blank=False)
     age_limit = models.PositiveIntegerField(
         null=False, blank=False, validators=[is_more_than_eighteen],
@@ -336,26 +343,24 @@ class Quiz(models.Model):
     questions = models.ManyToManyField(Question, through="QuizQuestion")
     topics = models.ManyToManyField(Topic)
     submission_control = models.ForeignKey(Screen, null=True, blank=True, on_delete=models.SET_NULL)
+
     start_time = models.DateTimeField(null=False, blank=False)
     end_time = models.DateTimeField(null=False, blank=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    learning_purpose = models.BooleanField(default=False,
-                                           help_text='By checking Learning purpose some changes will be applied '
-                                                     'to this quiz, it will only visible for learning resource, '
-                                                     'quiz will be different from main quizes, '
-                                                     'student can only use this quiz for learning purpose'
-                                           )
 
-    def __str__(self):
-        return self.title
-
-    def __unicode__(self):
-        return self.title
+    # TODO: statistical calculations here --------------------------------------------------------------------
+    total_teams = models.PositiveIntegerField(default=0)
+    total_players = models.PositiveIntegerField(default=0)
+    total_teams_passed = models.PositiveIntegerField(default=0)
+    # --------------------------------------------------------------------------------------------------------
 
     class Meta:
         verbose_name_plural = 'Quizzes'
+
+    def __str__(self):
+        return self.title
 
     def save(self, *args, **kwargs):
         if self.learning_purpose:
