@@ -373,7 +373,6 @@ class Quiz(models.Model):
         if teams:
             for team in teams:
                 team.delete()
-
         super(Quiz, self).delete(*args, **kwargs)
 
 

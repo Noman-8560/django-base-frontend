@@ -706,7 +706,6 @@ class LearningResourceResultView(View):
 """  EXTRA VIEWS ---------------------------------------------------------------------------- """
 
 
-
 class ZoomMeetingView(View):
 
     def get(self, request, quiz_id):

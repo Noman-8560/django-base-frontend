@@ -185,7 +185,9 @@
                                             {% for learn in learns %}
 
                                                 <tr>
-                                                    <th><a href="{% url 'parent-portal:child-learn-detail' object.pk learn.pk %}">{{ learn.quiz.title }}</a></th>
+                                                    <th>
+                                                        <a href="{% url 'parent-portal:child-learn-detail' object.pk learn.pk %}">{{ learn.quiz.title }}</a>
+                                                    </th>
                                                     <td>{{ learn.obtained }}</td>
                                                     <td>{{ learn.total }}</td>
                                                     <td>{{ learn.attempts }}</td>
@@ -212,6 +214,16 @@
 
             </div>
 
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p>
+                <b class="text-danger">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    NOTE!</b> "Passed" means results percentage more than 50%
+            </p>
         </div>
     </div>
 
