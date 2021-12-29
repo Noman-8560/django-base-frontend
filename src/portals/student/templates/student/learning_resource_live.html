@@ -221,6 +221,7 @@
         <script src="{% static 'js/refresh.js' %}"></script>
         <script src="{% static 'js/right_click.js' %}"></script>
         <script src="{% static 'js/back_click.js' %}"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% endblock %}
 
 {% endif %}
@@ -356,10 +357,29 @@
                         }
                     });
                 } else {
-                    alert("Your quiz submitted successfully");
 
                     if (path === '/s/json/learning-resource/live/submit/question/') {
-                        window.location = '{% url "student-portal:learning-resource-result" quiz_id %}';
+                        let timerInterval;
+                        Swal.fire({
+                            title: 'Congrats',
+                            html: 'Your learning quiz submitted successfully<br> Redirects in <b></b> milliseconds.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const b = Swal.getHtmlContainer().querySelector('b');
+                                timerInterval = setInterval(() => {
+                                    b.textContent = Swal.getTimerLeft();
+                                }, 100)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {}
+                            window.location = '{% url "student-portal:learning-resource-result" quiz_id %}';
+                        });
+
                     }
 
                 }

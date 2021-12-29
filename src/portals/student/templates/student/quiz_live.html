@@ -266,11 +266,14 @@
         <script src="{% static 'js/back_click.js' %}"></script>
         <script src="{% static 'js/moments.js' %}"></script>
         <script src="{% static 'application/js/x-notify.min.js' %}"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% endblock %}
 {% endif %}
 
 {% block base_external_scripts %}
     <script>
+        {#alert("Quiz Started");#}
+
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -472,10 +475,31 @@
                     });
                 } else {
                     if (end_quiz === false) {
-                        alert("Congrats User! Your quiz submitted successfully.");
+                        let timerInterval;
+                        Swal.fire({
+                            title: 'Congrats',
+                            html: 'Your quiz submitted successfully<br> Redirects in <b></b> milliseconds.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const b = Swal.getHtmlContainer().querySelector('b');
+                                timerInterval = setInterval(() => {
+                                    b.textContent = Swal.getTimerLeft();
+                                }, 100)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                {#window.location = "{% url 'student-portal:quiz' %}";#}
+                            }
+                            window.location = "{% url 'student-portal:quiz' %}";
+                        });
                         end_quiz = true;
                     }
-                    window.location = "{% url 'student-portal:quiz' %}";
+
                 }
             }
 
@@ -506,7 +530,11 @@
                     },
                 }).then(function (data, status) {
                     if (data.success === 'false') {
-                        alert(data.message);
+                        Swal.fire(
+                            'Oops...',
+                            data.message,
+                            'error'
+                        );
                     } else {
                         x_accessor();
                     }
