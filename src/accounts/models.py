@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from cocognite import settings
+from src.application.models import StudentGrade
 
 
 class User(AbstractUser):
@@ -35,11 +36,6 @@ class User(AbstractUser):
         self.profile_image.delete(save=True)
         super(User, self).delete(*args, **kwargs)
 
-    def save(self, *args, **kwargs):
-        super(User, self).save(*args, **kwargs)
-        if 'created':
-            StudentProfile.objects.create(user=self)
-
     # GET USER PROFILE
     def get_student_profile(self):
         profiles = StudentProfile.objects.filter(user__pk=self.pk, user__is_student=True)
@@ -50,18 +46,24 @@ class User(AbstractUser):
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student-profile+")
+
+    # STUDENT ZOOM
     zoom_account = models.CharField(
         max_length=255, null=True, blank=True,
         help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"
     )
     zoom_account_verification = models.BooleanField(default=False)
-    zoom_user_id = models.CharField(max_length=255, default="ID not provided")
+    zoom_user_id = models.CharField(max_length=255, null=True, blank=True)
 
-    # TODO: statistical calculations here
+    # STUDENT STATS
     total_quizzes = models.PositiveIntegerField(default=0)
     passed_quizzes = models.PositiveIntegerField(default=0)
     total_learning = models.PositiveIntegerField(default=0)
     passed_learning = models.PositiveIntegerField(default=0)
+
+    # STUDENT EDUCATION
+    grade = models.ForeignKey(StudentGrade, on_delete=models.SET_NULL, null=True, blank=False)
+    school_name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Students Profiles"

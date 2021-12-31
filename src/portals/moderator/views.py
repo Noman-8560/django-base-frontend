@@ -644,6 +644,11 @@ class QuizQuestionAddJSON(View):
                     quiz_question=quiz_question, audio=audio
                 ).save()
 
+            # TODO: statistics for quiz -----------------------------------------------------
+            question.total_times_used_in_quizzes = question.total_times_used_in_quizzes + 1
+            question.save()
+            # -------------------------------------------------------------------------------
+
         return redirect('moderator-portal:quiz-update', quiz_id, permanent=True)
 
 
@@ -657,6 +662,14 @@ class QuizQuestionDeleteJSON(View):
 
             quiz.questions.remove(question)
             messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
+
+            # TODO: statistics for quiz -----------------------------------------------------
+            question.total_times_used_in_quizzes = question.total_times_used_in_quizzes - 1
+            if question.total_times_used_in_quizzes < 0:
+                question.total_times_used_in_quizzes = 0
+            question.save()
+            # -------------------------------------------------------------------------------
+
             return redirect('moderator-portal:quiz-update', quiz_id, permanent=True)
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
             messages.error(request=request, message=f'Requested Quiz or Question Does not Exists.')

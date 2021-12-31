@@ -2,7 +2,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from cocognite import settings
-from src.accounts.models import User
 from ckeditor.fields import RichTextField
 
 from django.db.models.signals import post_save, pre_save
@@ -163,6 +162,20 @@ class Article(models.Model):
         super(Article, self).save(*args, **kwargs)
 
 
+class StudentGrade(models.Model):
+    name = models.CharField(max_length=255, default="Not Provided")
+    description = models.TextField()
+
+    is_active = models.BooleanField(default=True)
+    created_on = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "Student Grades"
+
+    def __str__(self):
+        return self.name
+
+
 '''________________________________________________________________________________'''
 
 
@@ -191,10 +204,10 @@ class Question(models.Model):
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
 
     # TODO: statistical calculations here --------------------------------------------------------------------
-    total_quizzes = models.PositiveIntegerField(default=0)
-    total_learning = models.PositiveIntegerField(default=0)
-    total_correct_quizzes = models.PositiveIntegerField(default=0)
-    total_correct_learning = models.PositiveIntegerField(default=0)
+    total_times_correct_in_quizzes = models.PositiveIntegerField(default=0)
+    total_times_correct_in_learning = models.PositiveIntegerField(default=0)
+    total_times_used_in_quizzes = models.PositiveIntegerField(default=0)
+    total_times_used_in_learning = models.PositiveIntegerField(default=0)
     # --------------------------------------------------------------------------------------------------------
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -351,9 +364,10 @@ class Quiz(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     # TODO: statistical calculations here --------------------------------------------------------------------
-    total_teams = models.PositiveIntegerField(default=0)
-    total_players = models.PositiveIntegerField(default=0)
-    total_teams_passed = models.PositiveIntegerField(default=0)
+    total_enrolled_teams = models.PositiveIntegerField(default=0)
+    total_enrolled_students = models.PositiveIntegerField(default=0)
+    total_passed_student = models.PositiveIntegerField(default=0)
+    total_attempted_students = models.PositiveIntegerField(default=0)
     # --------------------------------------------------------------------------------------------------------
 
     class Meta:
@@ -454,39 +468,6 @@ class ImageVisibility(models.Model):
         return str(self.pk)
 
 
-class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user+')
-    guardian = models.ForeignKey('Guardian', on_delete=models.DO_NOTHING, related_name='guardian+')
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return str(self.user.first_name) + ' ' + str(self.user.last_name)
-
-    def __unicode__(self):
-        return str(self.user.first_name) + ' ' + str(self.user.last_name)
-
-    class Meta:
-        managed = True
-        verbose_name_plural = 'Students'
-
-
-class Guardian(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return str(self.user.first_name) + ' ' + str(self.user.last_name)
-
-    def __unicode__(self):
-        return str(self.user.first_name) + ' ' + str(self.user.last_name)
-
-    class Meta:
-        managed = True
-        verbose_name_plural = 'Guardians'
-
-
 class Team(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False)
     quiz = models.ForeignKey('Quiz', on_delete=models.DO_NOTHING, related_name='participating-in+')
@@ -495,7 +476,7 @@ class Team(models.Model):
     zoom_meeting_id = models.CharField(max_length=255, blank=True, null=True)
     zoom_start_url = models.TextField(blank=True, null=True)
     zoom_join_url = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     is_active = models.BooleanField(null=False, blank=False, default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -635,10 +616,10 @@ class StudentProfile(models.Model):
         return self.user.username
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
-        user = User.objects.get(pk=instance.id)
+        user = settings.AUTH_USER_MODEL.objects.get(pk=instance.id)
         if user.is_student:
             profile = StudentProfile(user=user)
             profile.save()
