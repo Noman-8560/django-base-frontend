@@ -35,6 +35,18 @@ class User(AbstractUser):
         self.profile_image.delete(save=True)
         super(User, self).delete(*args, **kwargs)
 
+    def save(self, *args, **kwargs):
+        super(User, self).save(*args, **kwargs)
+        if 'created':
+            StudentProfile.objects.create(user=self)
+
+    # GET USER PROFILE
+    def get_student_profile(self):
+        profiles = StudentProfile.objects.filter(user__pk=self.pk, user__is_student=True)
+        if not profiles and self.is_student:
+            return StudentProfile.objects.create(user=self)
+        return profiles.first() if profiles else None
+
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student-profile+")
@@ -42,12 +54,11 @@ class StudentProfile(models.Model):
         max_length=255, null=True, blank=True,
         help_text="Your official zoom account email address, if you don't have account yet please signup to zoom first"
     )
-    zoom_account_verification = models.BooleanField(null=False, blank=False, default=False)
-    zoom_user_id = models.CharField(max_length=200, null=False, blank=False)
+    zoom_account_verification = models.BooleanField(default=False)
+    zoom_user_id = models.CharField(max_length=255, default="ID not provided")
 
     # TODO: statistical calculations here
     total_quizzes = models.PositiveIntegerField(default=0)
-    team_quizzes = models.PositiveIntegerField(default=0)
     passed_quizzes = models.PositiveIntegerField(default=0)
     total_learning = models.PositiveIntegerField(default=0)
     passed_learning = models.PositiveIntegerField(default=0)
@@ -56,4 +67,4 @@ class StudentProfile(models.Model):
         verbose_name_plural = "Students Profiles"
 
     def __str__(self):
-        return self.user
+        return self.user.username

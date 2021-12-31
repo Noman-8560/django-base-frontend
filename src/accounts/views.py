@@ -17,7 +17,11 @@ class CrossAuthView(View):
         if request.user.is_superuser:
             return redirect('admin-portal:dashboard')
         elif request.user.is_student:
+
+            # CREATE PROFILE IF NOT EXISTS
+            request.user.get_student_profile()
             return redirect('student-portal:dashboard')
+
         elif request.user.is_parent:
             return redirect('parent-portal:dashboard')
         else:
