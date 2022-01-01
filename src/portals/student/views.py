@@ -19,7 +19,8 @@ from src.application.models import (
     Quiz, Question, QuestionChoice,
     QuizQuestion, Screen, Team, QuizCompleted,
     Attempt, LearningResourceResult, LearningResourceAttempts,
-    Relation, QuizMisc)
+    Relation, QuizMisc
+)
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
@@ -266,12 +267,35 @@ class TeamDeleteView(View):
 
         completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
         completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
+        quiz = team.quiz
 
         if Team.objects.filter(quiz__in=completed):
             messages.error(request=request,
                            message="you have attempted quiz with this team, you are not allowed to delete this team now")
             return redirect('student-portal:team', permanent=True)
         else:
+
+            # TODO: statistics ---------------------------------------------------------
+            for user in team.participants.all():
+                profile = user.get_student_profile()
+                if quiz.learning_purpose:
+                    profile.total_learning -= 1
+                else:
+                    profile.total_quizzes -= 1
+                profile.save()
+
+
+            quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
+            quiz.total_enrolled_students = quiz.total_enrolled_students - (
+                    quiz.total_enrolled_students * int(quiz.players))
+            if quiz.total_enrolled_students == 0:
+                quiz.total_enrolled_students = 0
+
+            if quiz.total_enrolled_teams < 0:
+                quiz.total_enrolled_teams = 0
+            quiz.save()
+            # --------------------------------------------------------------------------
+
             # TODO: Team meeting delete here
             # zoom_delete_meeting(team.zoom_meeting_id)
             team.delete()
@@ -304,6 +328,7 @@ class QuizEnrollView(View):
         return render(request=request, template_name='student/team_create_form.html', context=context)
 
     def post(self, request, pk):
+
         # CHECK_QUIZ_EXISTS
         quiz = None
         try:
@@ -390,6 +415,13 @@ class QuizEnrollView(View):
             messages.success(request=request, message=f'You have successfully enrolled to quiz={quiz.title} '
                                                       f'with team={team_name} as a caption of team.')
 
+            # TODO: statistics ---------------------------------------------------------
+            quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
+            quiz.total_enrolled_students = quiz.total_enrolled_students + (
+                        quiz.total_enrolled_students * int(quiz.players))
+            quiz.save()
+            # --------------------------------------------------------------------------
+
             # ---------> NOTIFY
             ps = [request.user.pk]
             if player_2 is not None:
@@ -398,13 +430,21 @@ class QuizEnrollView(View):
                 ps.append(player_3.pk)
 
             for user in ps:
+                _user = User.objects.get(pk=user)
+                profile = user.get_student_profile()
+                if quiz.learning_purpose:
+                    profile.total_learning += 1
+                else:
+                    profile.total_quizzes += 1
+                profile.save()
+
                 desc = f"<b>Hi {user}!</b> you have registered to take part in <b>{quiz.title}</b>, " \
                        f"scheduled on <b>{quiz.start_time.ctime()}</b>" \
                        f" your team is <b>{team.name}</b> and members are {', '.join([str(elem) for elem in ps])}."
 
                 notify.send(
                     request.user,
-                    recipient=User.objects.get(pk=user),
+                    recipient=_user,
                     verb=f'Enrolled to {quiz.title}',
                     level='success',
                     description=desc
@@ -908,6 +948,10 @@ class QuizLiveQuestionSubmitJSON(View):
                 quiz_complete.obtained += 1
 
             quiz_complete.save()
+
+            # TODO: statistics ---------------------------------------------------------
+
+            # ---------------------------------------------------------------------------
 
             if int(request.POST['end']) == 1:
                 meeting_id = team.zoom_meeting_id
