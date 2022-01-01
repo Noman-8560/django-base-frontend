@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import never_cache
 from django.views.generic import (
     ListView, UpdateView, DeleteView, CreateView, DetailView,
     TemplateView)
@@ -20,6 +21,7 @@ from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
 
 
 moderator_decorators = [moderator_required, identification_required]
+moderator_nocache_decorators = [moderator_required, identification_required, never_cache]
 
 
 @method_decorator(moderator_decorators, name='dispatch')
@@ -81,7 +83,7 @@ class QuizDeleteView(DeleteView):
         return get_object_or_404(Quiz.objects.filter(created_by=self.request.user), pk=self.kwargs['pk'])
 
 
-@method_decorator(moderator_decorators, name='dispatch')
+@method_decorator(moderator_nocache_decorators, name='dispatch')
 class QuizDetailView(DetailView):
     template_name = 'moderator/quiz_detail.html'
     model = Quiz
@@ -594,7 +596,7 @@ class QuestionSubmitStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(moderator_decorators, name='dispatch')
+@method_decorator(moderator_nocache_decorators, name='dispatch')
 class QuizQuestionAddJSON(View):
 
     def get(self, request, quiz_id, question_id):
@@ -652,7 +654,7 @@ class QuizQuestionAddJSON(View):
         return redirect('moderator-portal:quiz-update', quiz_id, permanent=True)
 
 
-@method_decorator(moderator_decorators, name='dispatch')
+@method_decorator(moderator_nocache_decorators, name='dispatch')
 class QuizQuestionDeleteJSON(View):
 
     def get(self, request, quiz_id, question_id):

@@ -20,6 +20,7 @@ from src.portals.admins.forms import (
 )
 
 admin_decorators = [login_required, user_passes_test(lambda u: u.is_superuser)]
+admin_nocache_decorators = [login_required, user_passes_test(lambda u: u.is_superuser), never_cache]
 
 """  INIT ------------------------------------------------------------------------- """
 
@@ -237,7 +238,7 @@ class QuizListView(ListView):
     template_name = 'admins/quiz_list.html'
 
 
-@method_decorator(admin_decorators, name='dispatch')
+@method_decorator(admin_nocache_decorators, name='dispatch')
 class QuizDetailView(DetailView):
     template_name = 'admins/quiz_detail.html'
     model = Quiz
@@ -783,7 +784,7 @@ class QuestionSubmitStatusUpdateJSON(View):
         return JsonResponse(data=context, safe=False)
 
 
-@method_decorator(admin_decorators, name='dispatch')
+@method_decorator(admin_nocache_decorators, name='dispatch')
 class QuizQuestionAddJSON(View):
 
     def get(self, request, quiz_id, question_id):
@@ -841,7 +842,7 @@ class QuizQuestionAddJSON(View):
         return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
 
 
-@method_decorator(admin_decorators, name='dispatch')
+@method_decorator(admin_nocache_decorators, name='dispatch')
 class QuizQuestionDeleteJSON(View):
 
     def get(self, request, quiz_id, question_id):
@@ -853,10 +854,10 @@ class QuizQuestionDeleteJSON(View):
             messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
 
             # TODO: statistics for quiz -----------------------------------------------------
-            # question.total_times_used_in_quizzes = question.total_times_used_in_quizzes - 1
-            # if question.total_times_used_in_quizzes < 0:
-            #     question.total_times_used_in_quizzes = 0
-            # question.save()
+            question.total_times_used_in_quizzes = question.total_times_used_in_quizzes - 1
+            if question.total_times_used_in_quizzes < 0:
+                question.total_times_used_in_quizzes = 0
+            question.save()
             # -------------------------------------------------------------------------------
             return redirect('admin-portal:quiz-update', quiz_id, permanent=True)
         except [Quiz.DoesNotExist, Question.DoesNotExist]:
