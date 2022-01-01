@@ -10,6 +10,7 @@ from django.views.generic import (
     TemplateView, ListView, DeleteView, DetailView, UpdateView, CreateView
 )
 
+from src.accounts.models import User
 from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
@@ -32,6 +33,16 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
         return context
+
+
+class UserListView(ListView):
+    template_name = 'admins/user_list.html'
+    queryset = User.objects.all()
+
+
+class UserDetailView(DetailView):
+    model = User
+    template_name = 'admins/user_detail.html'
 
 
 """ Relations -----------------------------------------------------------"""

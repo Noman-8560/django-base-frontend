@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django_resized import ResizedImageField
+
 from cocognite import settings
 from src.application.models import StudentGrade
 
@@ -16,10 +18,9 @@ class User(AbstractUser):
     is_parent = models.BooleanField(default=False, help_text="This account is parental")
     is_completed = models.BooleanField(default=False, help_text="Shows weather the account is associated with any type")
 
-    profile_image = models.ImageField(
-        null=True, blank=True,
-        upload_to='images/profiles/',
-        verbose_name="Profile Picture", help_text="Profile image must be 150*150 in size of png, jpg or jpeg"
+    profile_image = ResizedImageField(
+        upload_to='images/profiles/', null=True, blank=True, size=[200, 200], quality=75, force_format='PNG',
+        help_text='size of logo must be 100*100 and format must be png image file', crop=['middle', 'center']
     )
     gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER_CHOICE)
     about = models.TextField(null=True, blank=True, help_text="Tell us something interesting about yourself")

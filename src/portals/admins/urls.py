@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.views.generic import TemplateView
 
 from src.portals.admins.views import (
     DashboardView,
@@ -9,6 +10,7 @@ from src.portals.admins.views import (
     RelationListView, RelationCreateView, RelationUpdateView, RelationDeleteView,
     TopicListView, TopicCreateView, TopicUpdateView, TopicDeleteView,
     RelationTypeListView, RelationTypeCreateView, RelationTypeUpdateView, RelationTypeDeleteView,
+    UserListView, UserDetailView,
 
     QuestionChoiceAddJSON, QuestionChoiceDeleteJSON, QuestionStatementAddJSON, QuestionStatementDeleteJSON,
     QuestionImageCreateView, QuestionImageDeleteView, QuestionAudioCreateView, QuestionAudioDeleteView,
@@ -22,6 +24,8 @@ from src.portals.admins.views import (
 app_name = "admin-portal"
 urlpatterns = [
     path('', DashboardView.as_view(), name='dashboard'),
+    path('user/', UserListView.as_view(), name='user'),
+    path('user/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
 
     path('article/', ArticleListView.as_view(), name='article'),
     path('article/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),

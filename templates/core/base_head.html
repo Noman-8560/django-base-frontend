@@ -89,7 +89,7 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                     {% if request.user.profile_image %}
-                        <img class="rounded-circle header-profile-user" src="{% static 'images/user.png' %}"
+                        <img class="rounded-circle header-profile-user" src="{{ request.user.profile_image.url }}"
                              alt="Header Avatar">
                     {% else %}
                         <img class="rounded-circle header-profile-user" src="{% static 'images/user.png' %}">

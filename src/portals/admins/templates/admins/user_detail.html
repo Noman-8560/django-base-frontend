@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block base_title %}
+    {{ object }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card">
+                <div class="card-body">
+
+                    {# USER IMAGE #}
+                    <div class="text-center">
+                        {% if not user.profile_image %}
+                            <img src="{% static 'images/user.png' %}" height="150" width="150" class="rounded-circle">
+                        {% else %}
+                            <img src="{{ user.profile_image.url }}" height="150" width="150" class="rounded-circle">
+                        {% endif %}
+                    </div>
+
+                    {# USER IMAGE INFO #}
+                    <div class="text-center">
+                        <h3 class="mb-0">
+                            {{ user.get_full_name }}
+                            {% if user.is_active %}
+                                <i class="fa fa-check-circle text-success"></i>
+                            {% endif %}
+
+                        </h3>
+                        <p class="mb-0">
+                            {{ user.username }} - {{ user.email }}
+                        </p>
+                        {% if user.is_superuser %}
+                            <b class="text-dark">( Admin )</b>
+                        {% elif user.is_staff %}
+                            <b class="text-secondary">( Staff )</b>
+                        {% elif user.is_student %}
+                            <b class="text-primary">( Student )</b>
+                        {% elif user.is_parent %}
+                            <b class="text-success">( Parent )</b>
+                        {% elif user.is_moderator %}
+                            <b class="text-warning">( Moderator )</b>
+                        {% else %}
+                            <b class="text-danger">( Un Defined )</b>
+                        {% endif %}
+                    </div>
+
+                    {# USER LIST INFO #}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
