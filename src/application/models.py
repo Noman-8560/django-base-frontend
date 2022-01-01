@@ -8,6 +8,8 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 
+from src.accounts.models import StudentProfile
+
 
 class RelationType(models.Model):
     guardian_relation_name = models.CharField(max_length=255, unique=True)
@@ -349,6 +351,7 @@ class Quiz(models.Model):
         help_text="Age must be greater then 5 and less than 18"
     )
     subjects = models.ManyToManyField(Subject, blank=True)
+    grade = models.ForeignKey(StudentGrade, on_delete=models.SET_NULL, null=True, blank=True)
     players = models.CharField(
         max_length=1, null=False, blank=False, choices=NO_OF_PLAYERS, default='1',
         help_text="Select no of players for this quiz"

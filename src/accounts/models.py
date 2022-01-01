@@ -3,7 +3,7 @@ from django.db import models
 from django_resized import ResizedImageField
 
 from cocognite import settings
-from src.application.models import StudentGrade
+# from src.application.models import StudentGrade
 
 
 class User(AbstractUser):
@@ -63,7 +63,7 @@ class StudentProfile(models.Model):
     passed_learning = models.PositiveIntegerField(default=0)
 
     # STUDENT EDUCATION
-    grade = models.ForeignKey(StudentGrade, on_delete=models.SET_NULL, null=True, blank=True)
+    grade = models.ForeignKey('application.StudentGrade', on_delete=models.SET_NULL, null=True, blank=True)
     school_name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
