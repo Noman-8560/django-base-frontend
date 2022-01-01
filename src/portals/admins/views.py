@@ -15,7 +15,7 @@ from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
-    Relation, Topic, RelationType)
+    Relation, Topic, RelationType, StudentGrade)
 from src.portals.admins.forms import (
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
 )
@@ -237,6 +237,42 @@ class RelationTypeDeleteView(DeleteView):
     queryset = RelationType.objects.all()
     template_name = 'admins/relation_type_delete.html'
     success_url = reverse_lazy('admin-portal:relation-type')
+
+
+"""  GRADES --------------------------------------------------------------- """
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class StudentGradeListView(ListView):
+    models = StudentGrade
+    queryset = StudentGrade.objects.all()
+    template_name = 'admins/student_grade_list.html'
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class StudentGradeCreateView(CreateView):
+    models = StudentGrade
+    queryset = StudentGrade.objects.all()
+    fields = '__all__'
+    template_name = 'admins/student_grade_create_form.html'
+    success_url = reverse_lazy('admin-portal:studentgrade')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class StudentGradeUpdateView(UpdateView):
+    models = StudentGrade
+    queryset = StudentGrade.objects.all()
+    fields = '__all__'
+    template_name = 'admins/student_grade_update_form.html'
+    success_url = reverse_lazy('admin-portal:studentgrade')
+
+
+@method_decorator(admin_decorators, name='dispatch')
+class StudentGradeDeleteView(DeleteView):
+    models = StudentGrade
+    queryset = StudentGrade.objects.all()
+    template_name = 'admins/student_grade_delete.html'
+    success_url = reverse_lazy('admin-portal:studentgrade')
 
 
 """ QUIZ -------------------------------------------------------------------------- """

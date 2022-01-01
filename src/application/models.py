@@ -166,10 +166,10 @@ class Article(models.Model):
 
 class StudentGrade(models.Model):
     name = models.CharField(max_length=255, default="Not Provided")
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
-    created_on = models.BooleanField(default=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "Student Grades"
