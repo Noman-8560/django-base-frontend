@@ -55,14 +55,14 @@ class StudentProfile(models.Model):
     zoom_account_verification = models.BooleanField(default=False)
     zoom_user_id = models.CharField(max_length=255, null=True, blank=True)
 
-    # STUDENT STATS
+    # STUDENT STATISTICS
     total_quizzes = models.PositiveIntegerField(default=0)
     passed_quizzes = models.PositiveIntegerField(default=0)
     total_learning = models.PositiveIntegerField(default=0)
     passed_learning = models.PositiveIntegerField(default=0)
 
     # STUDENT EDUCATION
-    grade = models.ForeignKey(StudentGrade, on_delete=models.SET_NULL, null=True, blank=False)
+    grade = models.ForeignKey(StudentGrade, on_delete=models.SET_NULL, null=True, blank=True)
     school_name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:

@@ -10,16 +10,17 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.cache import never_cache
-from django.views.generic import ListView, DetailView, DeleteView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView
 from notifications.signals import notify
 
 from cocognite import settings
 from src.accounts.decorators import identification_required, student_required
+from src.accounts.models import StudentProfile
 from src.application.models import (
     Quiz, Question, QuestionChoice,
     QuizQuestion, Screen, Team, QuizCompleted,
     Attempt, LearningResourceResult, LearningResourceAttempts,
-    Relation, QuizMisc
+    Relation, QuizMisc,
 )
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
@@ -196,6 +197,24 @@ class DashboardView(View):
                 messages.error(request, 'Requested quiz does not exists.')
 
         return render(request=request, template_name='student/dashboard.html', context=context)
+
+
+@method_decorator(student_decorators, name='dispatch')
+class StudentProfileDetailView(UpdateView):
+    template_name = 'student/studentprofile_update_form.html'
+    model = StudentProfile
+    fields = [
+        'zoom_account', 'grade', 'school_name'
+    ]
+    success_url = reverse_lazy('student-portal:profile-detail')
+
+    def get_object(self, queryset=None):
+        profile = self.request.user.get_student_profile()
+        return profile
+
+    def form_valid(self, form):
+        messages.success(self.request, "Your profile updated successfully")
+        return super(StudentProfileDetailView, self).form_valid(form)
 
 
 @method_decorator(student_decorators, name='dispatch')

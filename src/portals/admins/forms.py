@@ -3,7 +3,7 @@ from django.forms import *
 from django import forms
 from src.application.models import (
     Question, QuestionStatement, QuestionImage, QuestionAudio, QuestionChoice, Quiz, QuizQuestion, Article, Team,
-    Subject, StudentProfile
+    Subject
 )
 
 
@@ -71,9 +71,4 @@ class SubjectForm(ModelForm):
         model = Subject
         fields = '__all__'
 
-
-class ProfileZoomForm(ModelForm):
-    class Meta:
-        model = StudentProfile
-        fields = '__all__'
 

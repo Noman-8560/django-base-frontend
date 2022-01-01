@@ -600,22 +600,6 @@ class QuizCompleted(models.Model):
         return 'QUIZ: ' + str(self.quiz.pk) + ' was attempted User' + str(self.user.username)
 
 
-class StudentProfile(models.Model):
-    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
-    school_name = models.CharField(max_length=255, null=True, blank=True)
-    class_name = models.CharField(max_length=255, null=True, blank=True)
-    class_section = models.CharField(max_length=255, null=True, blank=True)
-    school_email = models.CharField(max_length=255, null=True, blank=True)
-    school_address = models.TextField(null=True, blank=True)
-
-    class Meta:
-        verbose_name = 'Student Profile'
-        verbose_name_plural = 'Students Profiles'
-
-    def __str__(self):
-        return self.user.username
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:

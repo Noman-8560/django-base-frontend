@@ -4,10 +4,10 @@ import jwt
 import json
 import requests
 from django.contrib.auth.models import User
-from src.application.models import StudentProfile
 from django.http import HttpResponse
 
 from cocognite.settings import ZOOM_API_KEY_JWT, ZOOM_API_SECRET_JWT
+from src.accounts.models import StudentProfile
 
 
 def get_time_duration_in_minutes(start_time: int, end_time: int) -> float:

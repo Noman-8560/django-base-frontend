@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     DashboardView, QuizListView, TeamListView, ZoomMeetingView, QuizEnrollView, QuizLiveView,
     LearningResourceListView, LearningResourceLiveView, LearningResourceResultView, TeamDetailView, TeamDeleteView,
-    RelationListView, RelationDetailView, RelationDeleteView,
+    RelationListView, RelationDetailView, RelationDeleteView, StudentProfileDetailView,
 
     LearningResourceLiveQuestionAccessJSON, LearningResourceLiveQuestionSubmitJSON, QuizLiveChoiceSubmitJSON,
     QuizLiveQuestionNextJSON, QuizLiveQuestionAccessJSON, QuizLiveQuestionSubmitJSON, UserExistsJSON
@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('', DashboardView.as_view(), name='dashboard'),
     path('zoom/<int:quiz>/', ZoomMeetingView, name='zoom-meeting'),
+    path('profile/', StudentProfileDetailView.as_view(), name='profile-detail'),  # UNUSED -->:
 
     path('team/', TeamListView.as_view(), name='team'),
     path('team/<int:pk>/', TeamDetailView.as_view(), name='team-detail'),  # UNUSED -->:
@@ -44,7 +45,7 @@ urlpatterns = [
          QuizLiveQuestionAccessJSON.as_view(), name='capi_quiz_question_access'
          ),
     path(
-         'json/quiz/live/choice/submit/',
-         QuizLiveChoiceSubmitJSON.as_view(), name='capi_quiz_choice_submit'
+        'json/quiz/live/choice/submit/',
+        QuizLiveChoiceSubmitJSON.as_view(), name='capi_quiz_choice_submit'
     )
 ]
