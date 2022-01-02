@@ -40,14 +40,13 @@ class DashboardView(TemplateView):
 class UserListView(ListView):
     template_name = 'admins/user_list.html'
     queryset = User.objects.all()
-    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
         user_filter = UserFilter(self.request.GET, queryset=User.objects.all())
         context['user_filter_form'] = user_filter.form
 
-        paginator = Paginator(user_filter.qs, 50)
+        paginator = Paginator(user_filter.qs, 10)
         page_number = self.request.GET.get('page')
         user_page_object = paginator.get_page(page_number)
 
