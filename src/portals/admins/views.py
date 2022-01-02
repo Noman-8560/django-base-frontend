@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -16,6 +17,7 @@ from src.application.models import (
     Article, Subject, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
     Relation, Topic, RelationType, StudentGrade)
+from src.portals.admins.filters import UserFilter
 from src.portals.admins.forms import (
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
 )
@@ -38,6 +40,19 @@ class DashboardView(TemplateView):
 class UserListView(ListView):
     template_name = 'admins/user_list.html'
     queryset = User.objects.all()
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        user_filter = UserFilter(self.request.GET, queryset=User.objects.all())
+        context['user_filter_form'] = user_filter.form
+
+        paginator = Paginator(user_filter.qs, 50)
+        page_number = self.request.GET.get('page')
+        user_page_object = paginator.get_page(page_number)
+
+        context['user_list'] = user_page_object
+        return context
 
 
 class UserDetailView(DetailView):

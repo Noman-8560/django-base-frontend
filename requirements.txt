@@ -1,4 +1,5 @@
 Django
+django-filter
 # djangorestframework
 django-seed
 django-crispy-forms
