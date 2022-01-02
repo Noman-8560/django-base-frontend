@@ -16,7 +16,7 @@ from src.portals.admins.dll import QuestionDS
 from src.application.models import (
     Article, Subject, Quiz, Question, QuestionStatement, QuestionChoice, QuestionImage, QuestionAudio,
     QuizQuestion, ChoiceVisibility, ImageVisibility, StatementVisibility, AudioVisibility, Screen,
-    Relation, Topic, RelationType, StudentGrade)
+    Relation, Topic, RelationType, StudentGrade, QuizCompleted, LearningResourceResult)
 from src.portals.admins.filters import UserFilter
 from src.portals.admins.forms import (
     QuestionImageForm, QuestionAudioForm, QuizQuestionForm
@@ -57,6 +57,23 @@ class UserListView(ListView):
 class UserDetailView(DetailView):
     model = User
     template_name = 'admins/user_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+        user = self.object
+        if user.is_student:
+            context['profile'] = user.get_student_profile()
+            context['quizzes'] = QuizCompleted.objects.filter(user=user)
+            context['learning'] = LearningResourceResult.objects.filter(user=user)
+            context['relations'] = Relation.objects.filter(child=user)
+        elif user.is_parent:
+            relations = Relation.objects.filter(parent=user)
+            context['relations'] = relations
+            context['relations_total'] = Relation.objects.filter(parent=user).count()
+            context['relations_pending'] = Relation.objects.filter(parent=user, is_verified_by_child=False).count()
+            context['relations_accepted'] = Relation.objects.filter(parent=user, is_verified_by_child=True).count()
+
+        return context
 
 
 """ Relations -----------------------------------------------------------"""
