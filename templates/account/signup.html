@@ -12,7 +12,7 @@
 
 {% block dont_include_details %}
 <div class="home-btn d-none d-sm-block">
-    <a href="{% url 'home' %}" class="text-dark"><i class="fas fa-home h2"></i></a>
+    <a href="{% url 'wsite:home' %}" class="text-dark"><i class="fas fa-home h2"></i></a>
 </div>
 <div class="account-pages my-5 pt-sm-5">
     <div class="container">
@@ -34,7 +34,7 @@
                     </div>
                     <div class="card-body pt-0">
                         <div>
-                            <a href="{% url 'home' %}">
+                            <a href="{% url 'wsite:home' %}">
                                 <div class="avatar-md profile-user-wid mb-4">
                                             <span class="avatar-title rounded-circle bg-light">
                                                 <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" class="rounded-circle"
@@ -105,7 +105,7 @@
                                                       class="font-weight-medium text-primary">
                             Sign in </a></p>
                         <p>© 2020 - {% now 'Y' %}
-                            <a href="{% url 'home' %}" class="text-secondary" target="_blank"> <strong>cocognito </strong></a>.
+                            <a href="{% url 'wsite:home' %}" class="text-secondary" target="_blank"> <strong>cocognito </strong></a>.
                     Design & Develop by
                     <strong><a class="text-primary" href="mailto:umair_mnz105@yahoo.com" target="_blank">Chameleon</a></strong> &
                     <strong><a class="text-primary" href="https://exarth.com/" target="_blank">Exarth</a></strong></p>
