@@ -7,5 +7,5 @@ app_name = "wsite"
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
-    path('404/', Error404View.as_view(), name='home'),
+    path('404/', Error404View.as_view(), name='404'),
 ]
