@@ -1,63 +1,131 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navigation fixed-top sticky">
-
-    <div class="container">
-        <a class="navbar-logo" href="{% url 'home' %}">
-            {# WHITE #}
-            <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" alt="" height="19" class="logo logo-dark">
-            {# COLORED #}
-            <img src="{% static 'images/new_2.png' %}" alt="" height="19" class="logo logo-light">
-        </a>
-
-        <button type="button" class="btn btn-sm px-3 font-size-16 d-lg-none header-item waves-effect waves-light"
-                data-toggle="collapse" data-target="#topnav-menu-content">
-            <i class="fa fa-fw fa-bars"></i>
-        </button>
-
-        <div class="collapse navbar-collapse" id="topnav-menu-content">
-            <ul class="navbar-nav ml-auto" id="topnav-menu">
-
-                {% if request.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link" href=""><i class="fa fa-edit"></i> HII</a>
-                    </li>
-                {% endif %}
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/#home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/#roadmap">Roadmap</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/#team">Team</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/#news">News</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'wsite:articles' %}"><i class="mdi mdi-blogger"></i> Blog</a>
-                </li>
-
-
-            </ul>
-
-
-            {% if request.user.is_authenticated %}
-                <div class="ml-lg-2">
-                    <a class="btn btn-sm btn-success" href="{% url 'application:dashboard' %}"><i
-                            class="mdi mdi-view-dashboard"></i> Dashboard
+<div class="navbar-area">
+    <div class="main-responsive-nav">
+        <div class="container">
+            <div class="main-responsive-menu">
+                <div class="logo">
+                    <a href="#">
+                        <img src="{% static 'images/cocognito_Logo_symbol.png' %}" style="height: 30px;" alt="image">
                     </a>
                 </div>
-            {% else %}
-                <div class="ml-lg-2">
-                    <a class="btn btn-sm btn-success" href="{% url 'account_login' %}"><i
-                            class="mdi mdi-account-lock"></i> Login
-                    </a>
-                </div>
-            {% endif %}
-
-
+            </div>
         </div>
     </div>
-</nav>
+    <div class="main-navbar">
+        <div class="container">
+            <nav class="navbar navbar-expand-md navbar-light">
+                <a class="navbar-brand" href="#">
+                    <img src="{% static 'images/cocognito_Logo_symbol.png' %}" style="height: 30px;" alt="image">
+                </a>
+                <div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                Classes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                Activities
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                Teachers
+                            </a>
+                        </li>
+
+                    </ul>
+                    <div class="others-options d-flex align-items-center">
+                        <div class="option-item">
+                            <div class="dropdown language-switcher d-inline-block">
+                                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <span>Language <i class='bx bx-chevron-down'></i></span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/english.png' %}" class="shadow-sm" alt="flag">
+                                        <span>English</span>
+                                    </a>
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/arab.png' %}" class="shadow-sm" alt="flag">
+                                        <span>العربيّة</span>
+                                    </a>
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/germany.png' %}" class="shadow-sm" alt="flag">
+                                        <span>Deutsch</span>
+                                    </a>
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/portugal.png' %}" class="shadow-sm" alt="flag">
+                                        <span>Português</span>
+                                    </a>
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/china.png' %}" class="shadow-sm" alt="flag">
+                                        <span>简体中文</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <a href="/accounts/login/" class="default-btn">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="others-option-for-responsive">
+        <div class="container">
+            <div class="dot-menu">
+                <div class="inner">
+                    <div class="circle circle-one"></div>
+                    <div class="circle circle-two"></div>
+                    <div class="circle circle-three"></div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="option-inner">
+                    <div class="others-options d-flex align-items-center">
+                        <div class="option-item">
+                            <div class="dropdown language-switcher d-inline-block">
+                                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <span>Language <i class='bx bx-chevron-down'></i></span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/english.png' %}" class="shadow-sm" alt="flag">
+                                        <span>English</span>
+                                    </a>
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/arab.png' %}" class="shadow-sm" alt="flag">
+                                        <span>العربيّة</span>
+                                    </a>
+                                    <a href="#" class="dropdown-item d-flex align-items-center">
+                                        <img src="{% static 'website/img/china.png' %}" class="shadow-sm" alt="flag">
+                                        <span>简体中文</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <a href="/accounts/login/" class="default-btn">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

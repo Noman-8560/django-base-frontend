@@ -1,0 +1,36 @@
+{% extends 'wsite/base.html' %}
+{% load static %}
+
+{% block base_sub_title %}
+    404 | Not Found
+{% endblock %}
+
+{% block base_header %}
+
+{% endblock %}
+
+{% block base_content %}
+
+    <section class="error-area ptb-100">
+        <div class="d-table">
+            <div class="d-table-cell">
+                <div class="container">
+                    <div class="error-content">
+                        <img src="{% static 'website/img/404.png' %}" alt="error">
+                        <h3>Error 404 : page not found</h3>
+                        <p>The page you are looking for might have been removed had its name changed or is temporarily
+                            unavailable.</p>
+                        <a href="{% url 'website:home' %}" class="default-btn">
+                            Go to home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block base_footer %}
+
+{% endblock %}

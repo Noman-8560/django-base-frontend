@@ -9,6 +9,7 @@ from . import settings
 urlpatterns = [
 
     # BASE URLS -------------------------------------------------------- #
+    path('', include('src.wsite.urls', namespace='website')),
 
     # REQUIRED --------------------------------------------------------- #
     path('admin/', admin.site.urls),
@@ -22,7 +23,6 @@ urlpatterns = [
     path('p/', include('src.portals.parent.urls', namespace='parent-portal')),
 
     # DEPRECATED ------------------------------------------------------- #
-    path('', include('src.application.urls', namespace='application')),
     path('zoom/', include('src.zoom_api.urls', namespace='zoom_api')),
 
     # NOTIFICATION SERVER ---------------------------------------------- #

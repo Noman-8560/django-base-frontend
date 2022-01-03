@@ -1,26 +1,168 @@
 {% load static %}
-<!-- Footer start -->
-<footer class="landing-footer">
+<section class="footer-area pt-100 pb-70">
     <div class="container">
-
-        <div class="row text-center">
-
-            <div class="col-lg-4 text-center">
-                <img src="{% static 'images/cocognito_Logo_symbol.svg' %}" class="" height="50">
+        <div class="row">
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-footer-widget">
+                    <div class="logo">
+                        <h2>
+                            <a href="#">Cocognito</a>
+                        </h2>
+                    </div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua.</p>
+                    <ul class="social">
+                        <li>
+                            <a href="#" target="_blank">
+                                <i class='bx bxl-facebook'></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank">
+                                <i class='bx bxl-twitter'></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank">
+                                <i class='bx bxl-pinterest-alt'></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank">
+                                <i class='bx bxl-linkedin'></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-
-            <div class="col-lg-6 text-left">
-                <p class="mb-2">2020 - {% now 'Y' %} ©
-                    <a href="{% if site.footer_organization_url %}{{ site.footer_organization_url }}{% endif %}"
-                       target="_blank">{{ site.footer_organization_name }}</a>.
-                    Design & Develop by
-                    <strong><a class="text-white" href="https://exarth.com/" target="_blank">Exarth</a></strong>
-                </p>
-                <p>{% lorem 20 w %}</p>
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-footer-widget">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-contact-info">
+                        <li>
+                            <i class='bx bxs-phone'></i>
+                            <span>Phone</span>
+                            <a href="tel:882569756">882-569-756</a>
+                        </li>
+                        <li>
+                            <i class='bx bx-envelope'></i>
+                            <span>Email</span>
+                            <a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#c1a9a4adadae81aaa4b5a0afefa2aeac"><span
+                                    class="__cf_email__" data-cfemail="f49c9198989bb49f9180959ada979b99">[email&#160;protected]</span></a>
+                        </li>
+                        <li>
+                            <i class='bx bx-map'></i>
+                            <span>Address</span>
+                            175 5th Ave Premium Area, New York, NY 10010, United States
+                        </li>
+                    </ul>
+                </div>
             </div>
-
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-footer-widget pl-5">
+                    <h3>Activities</h3>
+                    <ul class="quick-links">
+                        <li>
+                            <a href="#">Maths Olympiad</a>
+                        </li>
+                        <li>
+                            <a href="#">Art Competition</a>
+                        </li>
+                        <li>
+                            <a href="#">English Novels</a>
+                        </li>
+                        <li>
+                            <a href="#">Science Competition</a>
+                        </li>
+                        <li>
+                            <a href="#">Teachers Day</a>
+                        </li>
+                        <li>
+                            <a href="#">World Kids Day</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-footer-widget">
+                    <h3>Photo Gallery</h3>
+                    <ul class="photo-gallery-list">
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-1.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-2.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-3.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-4.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-5.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-6.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-1.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-2.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="box">
+                                <img src="{% static 'website/img/footer-gallery/footer-gallery-3.jpg' %}" alt="image">
+                                <a href="#" target="_blank" class="link-btn"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- end container -->
-</footer>
-<!-- Footer end -->
+</section>
+
+
+<div class="copyright-area">
+    <div class="container">
+        <div class="copyright-area-content">
+            <p>
+                Copyright © 2021 cocognito. Designed and Developed by
+                <a href="https://exarth.com/" target="_blank">
+                    Exarth
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<div class="go-top">
+    <i class='bx bx-up-arrow-alt'></i>
+</div>

@@ -1,26 +1,87 @@
+{% load static %}
+<!doctype html>
 
+<html lang="zxx">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>
         {% block base_title %}
-            Home
+            Cocognito |
+            {% block base_sub_title %}
+                Home
+            {% endblock %}
         {% endblock %}
+    </title>
 
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/meanmenu.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/boxicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/odometer.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/magnific-popup.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/imagelightbox.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/responsive.css' %}">
+
+    <link rel="icon" type="image/png" href="{% static 'website/img/favicon.png' %}">
 
     {% block base_css_links %}
-
     {% endblock %}
 
+</head>
+<body>
+
+<div class="preloader">
+    <div class="loader">
+        <div class="wrapper">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-1a"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+    </div>
+</div>
 
 {% block base_header %}
-
+    {% include 'wsite/include/header.html' %}
 {% endblock %}
 
-{% block base_content %}{% endblock %}
+{% block base_content %}
+
+{% endblock %}
 
 {% block base_footer %}
+    {% include 'wsite/include/footer.html' %}
+{% endblock %}
+
+
+{#<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>#}
+<script src="{% static 'website/js/jquery.min.js' %}"></script>
+
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'website/js/jquery.meanmenu.js' %}"></script>
+<script src="{% static 'website/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'website/js/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'website/js/imagelightbox.min.js' %}"></script>
+<script src="{% static 'website/js/odometer.min.js' %}"></script>
+<script src="{% static 'website/js/jquery.appear.min.js' %}"></script>
+<script src="{% static 'website/js/jquery.ajaxchimp.min.js' %}"></script>
+<script src="{% static 'website/js/form-validator.min.js' %}"></script>
+<script src="{% static 'website/js/contact-form-script.js' %}"></script>
+<script src="{% static 'website/js/main.js' %}"></script>
+
+{% block base_internal_js %}
 
 {% endblock %}
 
 
-
-{% block base_internal_js %}{% endblock %}
+</body>
+</html>
 
 {% block base_external_js %}{% endblock %}
