@@ -69,9 +69,9 @@ class UserDetailView(DetailView):
         elif user.is_parent:
             relations = Relation.objects.filter(parent=user)
             context['relations'] = relations
-            context['relations_total'] = Relation.objects.filter(parent=user).count()
-            context['relations_pending'] = Relation.objects.filter(parent=user, is_verified_by_child=False).count()
-            context['relations_accepted'] = Relation.objects.filter(parent=user, is_verified_by_child=True).count()
+            context['relations_total'] = relations.count()
+            context['relations_pending'] = relations.filter(is_verified_by_child=False).count()
+            context['relations_accepted'] = relations.filter(is_verified_by_child=True).count()
 
         return context
 
