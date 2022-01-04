@@ -15,7 +15,7 @@ from src.application.forms import QuestionImageForm
 from src.application.models import (
     Quiz, QuizQuestion, Question, ChoiceVisibility, StatementVisibility, ImageVisibility,
     AudioVisibility,
-    Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen, Topic)
+    Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen, Topic, StudentGrade)
 from src.portals.admins.dll import QuestionDS
 from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
 
@@ -200,7 +200,12 @@ class QuestionCreateView(View):
 
     def get(self, request):
         question_subjects = Subject.objects.all()
-        context = {'subjects': question_subjects, 'topics': Topic.objects.all()}
+        question_grade = StudentGrade.objects.all()
+        context = {
+            'subjects': question_subjects,
+            'grades': question_grade,
+            'topics': Topic.objects.all()
+        }
         return render(request=request, template_name='moderator/question_add_form.html', context=context)
 
     def post(self, request):
@@ -210,7 +215,7 @@ class QuestionCreateView(View):
 
         # 1: CREATE QUESTION
         question = Question.objects.create(
-            age_limit=request.POST['age'],
+            age_limit=request.POST['age'], grade=StudentGrade.objects.get(pk=request.POST['grade_id']),
             subject=Subject.objects.get(pk=request.POST['subject_id']), created_by=request.user
         )
 
@@ -262,6 +267,7 @@ class QuestionUpdateView(View):
             'question_id': question.pk,
             'question': question,
             'subjects': Subject.objects.all(),
+            'grades': StudentGrade.objects.all(),
             'image_form': QuestionImageForm(),
             'audio_form': QuestionAudioForm(),
             'topics': topics,

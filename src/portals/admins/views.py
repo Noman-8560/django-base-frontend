@@ -461,8 +461,10 @@ class QuestionCreateView(View):
 
     def get(self, request):
         question_subjects = Subject.objects.all()
+        question_grade = StudentGrade.objects.all()
         context = {
             'subjects': question_subjects,
+            'grades': question_grade,
             'topics': Topic.objects.all()
         }
         return render(request=request, template_name='admins/question_add_form.html', context=context)
@@ -477,6 +479,7 @@ class QuestionCreateView(View):
         question = Question.objects.create(
             age_limit=request.POST['age'], created_by=request.user,
             subject=Subject.objects.get(pk=request.POST['subject_id']),
+            grade=StudentGrade.objects.get(pk=request.POST['grade_id'])
         )
 
         # 2: CREATE STATEMENTS
@@ -527,6 +530,7 @@ class QuestionUpdateView(View):
             'question_id': question.pk,
             'question': question,
             'subjects': Subject.objects.all(),
+            'grades': StudentGrade.objects.all(),
             'image_form': QuestionImageForm(),
             'audio_form': QuestionAudioForm(),
             'topics': topics,

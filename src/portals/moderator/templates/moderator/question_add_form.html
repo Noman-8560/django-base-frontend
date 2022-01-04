@@ -19,7 +19,7 @@
                     <div class="card-body">
 
                         <form class="outer-repeater">
-{#                            {% csrf_token %}#}
+                            {#                            {% csrf_token %}#}
                             <div data-repeater-list="outer-group" class="outer">
                                 <div data-repeater-item="" class="outer">
 
@@ -29,6 +29,17 @@
                                         <select class="form-control" id="subject" name="subject">
                                             {% for subject in subjects %}
                                                 <option value="{{ subject.pk }}">{{ subject.title }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                    {# NORMAL --> FIELDS #}
+                                    <div class="form-group">
+                                        <label for="grade">Class/Grade</label>
+                                        <select class="form-control" id="grade" name="grade">
+                                            {% for grade in grades %}
+                                                <option value="{{ grade.pk }}">{{ grade.name }}</option>
                                             {% endfor %}
 
                                         </select>
@@ -119,7 +130,8 @@
                         </button>
                         <div class="mt-3">
                             <a href="{% url 'moderator-portal:quiz' %}"><i class="fa fa-clock"></i> View Quizzes</a> |
-                            <a href="{% url 'moderator-portal:question' %}"><i class="fa fa-pager"></i> View Questions</a>
+                            <a href="{% url 'moderator-portal:question' %}"><i class="fa fa-pager"></i> View
+                                Questions</a>
                         </div>
                     </div>
                 </div>
@@ -168,6 +180,7 @@
 
             submit_button.click(function (event) {
                 let subject = $('#subject').val();
+                let grade = $('#grade').val();
                 let age = parseInt($('#age').val());
 
                 let topics = $("#topics").val();
@@ -197,12 +210,13 @@
                         }
                     });
 
-                    for (let i = 0; i< topics.length; i++){
+                    for (let i = 0; i < topics.length; i++) {
                         topics_list.push(parseInt(topics[i]))
                     }
 
                     let data = {
                         subject_id: subject,
+                        grade_id: grade,
                         age: age,
                         statements: statements,
                         options: options,

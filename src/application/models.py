@@ -8,7 +8,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 
-from src.accounts.models import StudentProfile
+from src.accounts.models import StudentProfile, User
 
 
 class RelationType(models.Model):
@@ -199,6 +199,7 @@ class Question(models.Model):
         ('3', 'Three Player'),
     )
 
+    grade = models.ForeignKey(StudentGrade, on_delete=models.SET_NULL, null=True, blank=True)
     level = models.CharField(max_length=10, default='e', choices=QUESTION_LEVEL, blank=False, null=False)
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
     topics = models.ManyToManyField(Topic)
@@ -606,7 +607,7 @@ class QuizCompleted(models.Model):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def save_profile_on_user(sender, instance, created, **kwargs):
     if created:
-        user = settings.AUTH_USER_MODEL.objects.get(pk=instance.id)
+        user = User.objects.get(pk=instance.id)
         if user.is_student:
             profile = StudentProfile(user=user)
             profile.save()

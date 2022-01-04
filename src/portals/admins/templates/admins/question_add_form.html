@@ -35,6 +35,17 @@
                                             </select>
                                         </div>
 
+                                        {# NORMAL --> FIELDS #}
+                                        <div class="form-group">
+                                            <label for="grade">Class/Grade</label>
+                                            <select class="form-control" id="grade" name="grade">
+                                                {% for grade in grades %}
+                                                    <option value="{{ grade.pk }}">{{ grade.name }}</option>
+                                                {% endfor %}
+
+                                            </select>
+                                        </div>
+
                                         <div class="form-group">
                                             <label for="age">Age</label>
                                             <input type="number" class="form-control" id="age" name="age"
@@ -174,6 +185,7 @@
 
             submit_button.click(function (event) {
                 let subject = $('#subject').val();
+                let grade = $('#grade').val();
                 let age = parseInt($('#age').val());
 
                 let topics = $("#topics").val();
@@ -209,6 +221,7 @@
 
                     let data = {
                         subject_id: subject,
+                        grade_id: grade,
                         age: age,
                         statements: statements,
                         options: options,

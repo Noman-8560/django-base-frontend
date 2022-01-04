@@ -40,6 +40,22 @@
                                         </select>
                                     </div>
 
+                                {# NORMAL --> FIELDS #}
+                                <div class="form-group">
+                                    <label for="grade">Class/Grade</label>
+                                    <select class="form-control" id="grade" name="grade">
+                                        {% for grade in grades %}
+                                            {% if question.grade.pk == grade.pk %}
+                                                <option value="{{ grade.pk }}"
+                                                        selected>{{ grade.name }}</option>
+                                            {% else %}
+                                                <option value="{{ grade.pk }}">{{ grade.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+
                                     {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
                                     <div id="statements">
                                         <p class="font-weight-bolder mt-4 h4">QUESTION STATEMENTS</p>
