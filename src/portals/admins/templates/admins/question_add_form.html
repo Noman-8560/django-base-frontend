@@ -147,6 +147,7 @@
 {% endblock %}
 
 {% block base_internal_scripts %}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'application/libs/jquery.repeater/jquery.repeater.min.js' %}"></script>
     <script src="{% static 'application/js/pages/form-repeater.int.js' %}"></script>
 {% endblock %}
@@ -236,7 +237,29 @@
                         data: data,
                     }).then(function (data, status) {
                         if (data.message === 'success') {
-                            location.href = "/a/question/" + data.question + "/change/"
+                            Swal.fire({
+                                title: 'Question Created',
+                                icon: 'success',
+                                html: 'redirects in <b></b> milliseconds.',
+                                timer: 4000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    const b = Swal.getHtmlContainer().querySelector('b');
+                                    timerInterval = setInterval(() => {
+                                        b.textContent = Swal.getTimerLeft();
+                                    }, 100)
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval);
+                                }
+                            }).then((result) => {
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    {#window.location = "{% url 'student-portal:quiz' %}";#}
+                                }
+                                location.href = "/a/question/" + data.question + "/change/"
+                            });
+
                         }
                     }).catch(function (err) {
                         console.log(err);
