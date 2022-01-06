@@ -48,7 +48,7 @@ class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
     fields = [
-        'thumbnail', 'learning_purpose', 'title', 'age_limit',
+        'thumbnail', 'learning_purpose', 'title', 'description', 'age_limit',
         'subjects', 'grade', 'players', 'start_time', 'end_time',
         'visible_on_home'
     ]
@@ -68,7 +68,7 @@ class QuizCreateView(CreateView):
 class QuizUpdateView(UpdateView):
     models = Quiz
     fields = [
-        'thumbnail', 'learning_purpose', 'title', 'age_limit', 'subjects',
+        'thumbnail', 'learning_purpose', 'title', 'description', 'age_limit', 'subjects',
         'grade', 'players', 'start_time', 'end_time', 'visible_on_home'
     ]
     template_name = 'moderator/quiz_update_form.html'
