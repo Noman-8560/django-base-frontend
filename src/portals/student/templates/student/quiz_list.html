@@ -135,7 +135,7 @@
                         </div>
                     {% else %}
                         <div class="card-body">
-                            <h5 class="card-title text-danger">Why Quizzes are unavailable to Enroll?</h5>
+                            <h5 class="card-title text-danger"><i class="fa fa-exclamation-circle"></i> Not Found</h5>
                             <p class="card-text">{{ request.user.username }}! No quizzes are available to enroll
                                 now
                                 its because the admin didn't added yet or you have have been enrolled already
@@ -195,7 +195,7 @@
                         </div>
                     {% else %}
                         <div class="card-body">
-                            <h5 class="card-title text-danger">Why Enrolled Quizzes are unavailable?</h5>
+                            <h5 class="card-title text-danger"><i class="fa fa-exclamation-circle"></i> Not Found</h5>
                             <p class="card-text">{{ request.user.username }}! No quizzes are available now
                                 because
                                 of some reasons the admin didn't added yet, you are not enrolled to any quiz or
@@ -249,7 +249,7 @@
                         </div>
                     {% else %}
                         <div class="card-body">
-                            <h5 class="card-title text-danger">Why Completed Quizzes are unavailable?</h5>
+                            <h5 class="card-title text-danger"><i class="fa fa-exclamation-circle"></i> Not Found</h5>
                             <p class="card-text">{{ request.user.username }}! you haven't submitted any quiz
                                 yet.</p>
                         </div>
