@@ -226,6 +226,7 @@ class Question(models.Model):
     class Meta:
         managed = True
         verbose_name_plural = 'Questions'
+        ordering = ['-created_at']
 
     def __str__(self):
         return str(self.pk)
@@ -383,6 +384,7 @@ class Quiz(models.Model):
 
     class Meta:
         verbose_name_plural = 'Quizzes'
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title

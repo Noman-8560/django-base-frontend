@@ -33,9 +33,9 @@ class DashboardView(TemplateView):
         questions = Question.objects.filter(created_by=self.request.user)
         quizzes = Quiz.objects.filter(created_by=self.request.user)
 
-        context['questions'] = questions
+        context['questions'] = questions[:20]
         context['questions_all'] = questions.count()
-        context['quizzes'] = quizzes
+        context['quizzes'] = quizzes[:20]
         context['single_all'] = quizzes.filter(players='1', learning_purpose=False).count()
         context['learning_all'] = quizzes.filter(learning_purpose=False).count()
         context['team_all'] = quizzes.filter(learning_purpose=False).exclude(players='1').count()
