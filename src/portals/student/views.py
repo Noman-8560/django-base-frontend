@@ -118,7 +118,7 @@ class DashboardView(View):
                     _all_time_sum = 0
                     _max_time = 0
                     _min_time = 1000
-                    count = 0
+                    count = 1
                     for v in _attempts.values('start_time', 'end_time', 'team', 'question'):
                         current = (v['end_time'] - v['start_time']).total_seconds()
                         if current < _max_time:
