@@ -5,87 +5,95 @@
 
 {% block content %}
 
-    <div class="row">
+    <div class="row mb-2">
         <div class="col-12">
-            <a class="btn btn-sm btn-primary" href="{% url 'parent-portal:relation-create' %}">Add Relation</a>
+            <a class="btn btn-primary" href="{% url 'parent-portal:relation-create' %}">Add Relation</a>
         </div>
     </div>
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="">
-                <div class="table-responsive">
-                    <table class="table project-list-table table-nowrap table-centered table-borderless">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Child</th>
-                            <th scope="col">Relation</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Created</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% if relation_list %}
-                            {% for relation in relation_list %}
-                                <tr>
-                                    <td>{{ relation.pk }}</td>
-                                    <td>
-                                        {{ relation.child.get_full_name }}<br>
-                                        <small class="text-muted">({{ relation.child.username }})</small>
-                                    </td>
-                                    <td>{{ relation.relation.student_relation_name }}</td>
-                                    <td>
-                                        <span class="badge badge-success"><i class="fa fa-check"></i> verified</span>
-                                    </td>
-                                    <td>{{ relation.created_on }}</td>
-                                    <td>
-                                        <b>
-                                            <a href="{% url 'parent-portal:child-detail' relation.pk %}">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                        </b> |
-                                        <b>
-                                            <a href="{% url 'parent-portal:child-detail' relation.pk %}">
-                                                <i class="fa fa-chart-line"></i>
-                                            </a>
-                                        </b> |
-                                        <a href="{% url 'parent-portal:relation-delete' relation.pk %}">
-                                            <i class="fa fa-trash text-danger"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
-
-                        {% if relation_list_unverified %}
-                            {% for relation in relation_list_unverified %}
-                                <tr>
-                                    <td>{{ relation.pk }}</td>
-                                    <td>
-                                        {{ relation.child.get_full_name }}<br>
-                                        <small class="text-muted">({{ relation.child.username }})</small>
-                                    </td>
-                                    <td>{{ relation.relation.student_relation_name }}</td>
-                                    <td width="30%">
-                                        <span class="badge badge-warning"><i class="fa fa-clock"></i> Pending</span><br>
-                                        <small>Ask your {{ relation.relation.student_relation_name }} to give access
-                                            permissions</small>
-                                    </td>
-                                    <td>{{ relation.created_on }}</td>
-                                    <td>
-                                        <b>
+            <div class="card">
+                <div class="card-body">
+                    {% if relation_list_unverified or relation_list %}
+                    <div class="table-responsive">
+                        <table class="table project-list-table table-nowrap table-centered table-borderless">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Child</th>
+                                <th scope="col">Relation</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if relation_list %}
+                                {% for relation in relation_list %}
+                                    <tr>
+                                        <td>{{ relation.pk }}</td>
+                                        <td>
+                                            {{ relation.child.get_full_name }}<br>
+                                            <small class="text-muted">({{ relation.child.username }})</small>
+                                        </td>
+                                        <td>{{ relation.relation.student_relation_name }}</td>
+                                        <td>
+                                            <span class="badge badge-success"><i
+                                                    class="fa fa-check"></i> verified</span>
+                                        </td>
+                                        <td>{{ relation.created_on }}</td>
+                                        <td>
+                                            <b>
+                                                <a href="{% url 'parent-portal:child-detail' relation.pk %}">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </b> |
                                             <a href="{% url 'parent-portal:relation-delete' relation.pk %}">
                                                 <i class="fa fa-trash text-danger"></i>
                                             </a>
-                                        </b>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if relation_list_unverified %}
+                                {% for relation in relation_list_unverified %}
+                                    <tr>
+                                        <td>{{ relation.pk }}</td>
+                                        <td>
+                                            {{ relation.child.get_full_name }}<br>
+                                            <small class="text-muted">({{ relation.child.username }})</small>
+                                        </td>
+                                        <td>{{ relation.relation.student_relation_name }}</td>
+                                        <td width="30%">
+                                            <span class="badge badge-warning"><i class="fa fa-clock"></i> Pending</span><br>
+                                            <small>Ask your {{ relation.relation.student_relation_name }} to give access
+                                                permissions</small>
+                                        </td>
+                                        <td>{{ relation.created_on }}</td>
+                                        <td>
+                                            <b>
+                                                <a href="{% url 'parent-portal:relation-delete' relation.pk %}">
+                                                    <i class="fa fa-trash text-danger"></i>
+                                                </a>
+                                            </b>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if not relation_list_unverified and not relation_list %}
+                        <p class="mb-0">
+                            <b class="text-danger">No child accounts are associated with you.</b>
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>

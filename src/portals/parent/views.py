@@ -14,6 +14,11 @@ from src.application.models import Relation, RelationType, Quiz, QuizCompleted, 
 class DashboardView(TemplateView):
     template_name = 'parent/dashboard.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(DashboardView, self).get_context_data(**kwargs)
+        context['relations'] = Relation.objects.filter(parent=self.request.user)
+        return context
+
 
 class RelationListView(ListView):
     model = Relation

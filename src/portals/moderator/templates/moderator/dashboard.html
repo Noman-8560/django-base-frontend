@@ -193,82 +193,88 @@
         </div>
     </div>
     <p><b><a href="{% url 'moderator-portal:quiz' %}"> -- More Quizzes ? Click here.</a></b></p>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Questions</h4>
-                    <div class="table-responsive">
-                        <table class="table table-centered table-nowrap mb-0">
-                            <thead class="thead-light">
-                            <tr>
-                                <th>Question <br>
-                                    <small>Details</small>
-                                </th>
-                                <th>Question <br>
-                                    <small>Statistics</small>
-                                </th>
-                                <th>Level</th>
-                                <th>Subject</th>
-                                <th>Created On</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for question in questions %}
+                    {% if questions %}
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0">
+                                <thead class="thead-light">
                                 <tr>
-                                    <td>
-                                        <p class="mb-0">
-                                            <a href="javascript: void(0);"
-                                               class="text-body font-weight-bold text-wrap">
-                                                {{ question.get_statement|truncatechars:35 }}
-                                            </a><br>
-                                            <a>
-                                                Players :
-                                                <b>
-                                                    {{ question.question_type }}
-                                                </b> |
-                                                Age : <b>{{ question.age_limit }}</b> |
-                                                Grade: <b>{{ question.grade }}</b>
-                                            </a>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <b class="text-dark">
-                                            <i class="fa fa-clock"></i> Quizzes:
-                                            {{ question.total_times_used_in_quizzes }}
-                                        </b>
-                                        <br>
-                                        <b class="text-secondary">
-                                            <i class="fa fa-book"></i> Learning:
-                                            {{ question.total_times_used_in_learning }}
-                                        </b>
-                                    </td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                    </td>
-                                    <td class="">
+                                    <th>Question <br>
+                                        <small>Details</small>
+                                    </th>
+                                    <th>Question <br>
+                                        <small>Statistics</small>
+                                    </th>
+                                    <th>Level</th>
+                                    <th>Subject</th>
+                                    <th>Created On</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for question in questions %}
+                                    <tr>
+                                        <td>
+                                            <p class="mb-0">
+                                                <a href="javascript: void(0);"
+                                                   class="text-body font-weight-bold text-wrap">
+                                                    {{ question.get_statement|truncatechars:35 }}
+                                                </a><br>
+                                                <a>
+                                                    Players :
+                                                    <b>
+                                                        {{ question.question_type }}
+                                                    </b> |
+                                                    Age : <b>{{ question.age_limit }}</b> |
+                                                    Grade: <b>{{ question.grade }}</b>
+                                                </a>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <b class="text-dark">
+                                                <i class="fa fa-clock"></i> Quizzes:
+                                                {{ question.total_times_used_in_quizzes }}
+                                            </b>
+                                            <br>
+                                            <b class="text-secondary">
+                                                <i class="fa fa-book"></i> Learning:
+                                                {{ question.total_times_used_in_learning }}
+                                            </b>
+                                        </td>
+                                        <td>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </td>
+                                        <td class="">
                                     <span class="badge badge-pill badge-soft-danger font-size-12">
                                         {{ question.subject }}
                                     </span>
-                                    </td>
-                                    <td>
-                                        {{ question.created_at }}
-                                    </td>
-                                    <td>
-                                        <a class="" href="{% url 'moderator-portal:question-update' question.pk %}">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {{ question.created_at }}
+                                        </td>
+                                        <td>
+                                            <a class="" href="{% url 'moderator-portal:question-update' question.pk %}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- end table-responsive -->
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="mb-0">
+                            <b class="text-danger">You haven't created any questions yet.</b>
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
