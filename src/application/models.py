@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django_resized import ResizedImageField
 
 from cocognite import settings
 from ckeditor.fields import RichTextField
@@ -347,6 +348,10 @@ class Quiz(models.Model):
                   'learning purpose'
     )
     title = models.CharField(max_length=100, null=False, blank=False)
+    thumbnail = ResizedImageField(
+        upload_to='images/profiles/', null=True, blank=True, size=[500, 500], quality=75, force_format='PNG',
+        help_text='size of logo must be 500*500 and format must be png image file', crop=['middle', 'center']
+    )
     age_limit = models.PositiveIntegerField(
         null=False, blank=False, validators=[is_more_than_eighteen],
         help_text="Age must be greater then 5 and less than 18"
@@ -366,6 +371,7 @@ class Quiz(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    visible_on_home = models.BooleanField(default=False, help_text="Whether this quiz will be visible on website or not")
 
     # TODO: statistical calculations here --------------------------------------------------------------------
     total_enrolled_teams = models.PositiveIntegerField(default=0)

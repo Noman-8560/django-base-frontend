@@ -47,7 +47,11 @@ class QuizListView(ListView):
 class QuizCreateView(CreateView):
     models = Quiz
     queryset = Quiz.objects.all()
-    fields = ['learning_purpose', 'title', 'age_limit', 'subjects', 'grade', 'players', 'start_time', 'end_time']
+    fields = [
+        'thumbnail', 'learning_purpose', 'title', 'age_limit',
+        'subjects', 'grade', 'players', 'start_time', 'end_time',
+        'visible_on_home'
+    ]
     template_name = 'moderator/quiz_create_form.html'
 
     def form_valid(self, form):
@@ -63,7 +67,10 @@ class QuizCreateView(CreateView):
 @method_decorator(moderator_decorators, name='dispatch')
 class QuizUpdateView(UpdateView):
     models = Quiz
-    fields = ['learning_purpose', 'title', 'age_limit', 'subjects', 'grade', 'players', 'start_time', 'end_time']
+    fields = [
+        'thumbnail', 'learning_purpose', 'title', 'age_limit', 'subjects',
+        'grade', 'players', 'start_time', 'end_time', 'visible_on_home'
+    ]
     template_name = 'moderator/quiz_update_form.html'
 
     def get_object(self, queryset=None):
