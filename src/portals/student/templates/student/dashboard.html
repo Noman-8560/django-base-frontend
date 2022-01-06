@@ -50,25 +50,7 @@
                                                 <i class="fa fa-clock"></i>
                                             </h2>
                                             <small>Quizzes</small>
-                                            <h5 class="mt-2">05</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="text-success">
-                                            <h2 class="text-muted mb-0">
-                                                <i class="fa fa-check-circle text-success"></i>
-                                            </h2>
-                                            <small>Passed</small>
-                                            <h5 class="mb-0 text-success">00</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col border-right">
-                                        <div class="text-danger">
-                                            <h2 class="text-muted mb-0">
-                                                <i class="fa fa-times-circle text-danger"></i>
-                                            </h2>
-                                            <small>Failed</small>
-                                            <h5 class="mb-0 text-danger">00</h5>
+                                            <h5 class="mt-2">{{ total_quizzes }}</h5>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -77,34 +59,16 @@
                                                 <i class="fa fa-book"></i>
                                             </h2>
                                             <small>Learning</small>
-                                            <h5 class="mt-2">05</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="text-success">
-                                            <h2 class="text-muted mb-0">
-                                                <i class="fa fa-check-circle text-success"></i>
-                                            </h2>
-                                            <small>Passed</small>
-                                            <h5 class="mb-0 text-success">00</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col border-right">
-                                        <div class="text-danger">
-                                            <h2 class="text-muted mb-0">
-                                                <i class="fa fa-times-circle text-danger"></i>
-                                            </h2>
-                                            <small>Failed</small>
-                                            <h5 class="mb-0 text-danger">00</h5>
+                                            <h5 class="mt-2">{{ total_learning }}</h5>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div>
                                             <h2 class="text-muted mb-0">
-                                                <i class="fa fa-barcode"></i>
+                                                <i class="fa fa-child"></i>
                                             </h2>
-                                            <small>Average</small>
-                                            <h5 class="mb-0">00</h5>
+                                            <small>Parental Access</small>
+                                            <h5 class="mt-2">{{ total_relations }}</h5>
                                         </div>
                                     </div>
 
@@ -129,21 +93,21 @@
                         <li class="nav-item waves-effect waves-light">
                             <a class="nav-link active" data-toggle="tab" href="#live_events" role="tab"
                                aria-selected="true">
-                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                <span class="d-block d-sm-none"><i class="fas fa-clipboard"></i></span>
                                 <span class="d-none d-sm-block">Happening Right Now</span>
                             </a>
                         </li>
                         <li class="nav-item waves-effect waves-light">
                             <a class="nav-link" data-toggle="tab" href="#enrolled_events" role="tab"
                                aria-selected="false">
-                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                <span class="d-block d-sm-none"><i class="fa fa-clipboard-list"></i></span>
                                 <span class="d-none d-sm-block">Enrolled Events</span>
                             </a>
                         </li>
                         <li class="nav-item waves-effect waves-light">
                             <a class="nav-link" data-toggle="tab" href="#completed_events" role="tab"
                                aria-selected="false">
-                                <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                <span class="d-block d-sm-none"><i class="fa fa-clipboard-check"></i></span>
                                 <span class="d-none d-sm-block">Completed Events</span>
                             </a>
                         </li>
@@ -176,7 +140,9 @@
                         <div class="tab-pane" id="completed_events" role="tabpanel">
                             <ul class="m-0">
                                 {% for quiz in quizes_completed %}
-                                    <li>Event <b>{{ quiz.quiz.title }}</b> was closed on {{ quiz.quiz.end_time }}<a class="text-dark" href="/dashboard/?quiz={{ quiz.quiz_id }}"><b>click to views stats</b></a>
+                                    <li>Event <b>{{ quiz.quiz.title }}</b> was closed on {{ quiz.quiz.end_time }}<a
+                                            class="text-dark" href="/s/?quiz={{ quiz.quiz_id }}"><b>click to views
+                                        stats</b></a>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -267,6 +233,10 @@
                 </div>
             </div>
         </div>
+    {% else %}
+        <p class="">
+            <b><a href="/s/#completed_events" class="text-danger"> -- Quiz Reports Not available Now - Check your completed events tab.</a></b>
+        </p>
     {% endif %}
 
 

@@ -46,6 +46,11 @@ class DashboardView(View):
         my_teams = Team.objects.filter(participants__in=[request.user.id])
         my_quizes = Quiz.objects.filter(id__in=my_teams.values_list('quiz', flat=True))
 
+        total_quizzes = my_quizes.count()
+        total_learning = LearningResourceResult.objects.filter(user=request.user).count()
+        total_relations = Relation.objects.filter(child=request.user, is_verified_by_child=True).count()
+
+
         # AVAILABLE_QUIZES
         available_quizes = Quiz.objects.filter(
             end_time__gte=timezone.now(),
@@ -53,7 +58,7 @@ class DashboardView(View):
             start_time__lte=timezone.now()) \
             .order_by('-start_time')
 
-        completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, quiz__end_time__lt=timezone.now())
+        completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id)
 
         # QUIZ ENROLLED
         enrolled_quizes = Quiz.objects \
@@ -195,6 +200,10 @@ class DashboardView(View):
             except Quiz.DoesNotExist:
                 allow = False
                 messages.error(request, 'Requested quiz does not exists.')
+
+        context['total_relations'] = total_relations
+        context['total_quizzes'] = total_quizzes
+        context['total_learning'] = total_learning
 
         return render(request=request, template_name='student/dashboard.html', context=context)
 
@@ -450,7 +459,7 @@ class QuizEnrollView(View):
 
             for user in ps:
                 _user = User.objects.get(pk=user)
-                profile = user.get_student_profile()
+                profile = _user.get_student_profile()
                 if quiz.learning_purpose:
                     profile.total_learning += 1
                 else:
