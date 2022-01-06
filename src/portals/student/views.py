@@ -896,7 +896,7 @@ class LearningResourceLiveQuestionAccessJSON(View):
 
             ''' __FETCHING IMAGES AUDIOS CHOICES AND STATEMENTS__'''
             [statements.append(x.statement) for x in question.questionstatement_set.all()]
-            [images.append(y.image.url) if y.url is None else images.append(y.url) for y in
+            [images.append(None) if y.url is None else images.append(y.url) for y in
              question.questionimage_set.all()]
             [audios.append(z.audio) if z.url is None else audios.append(z.url) for z in
              question.questionaudio_set.all()]
