@@ -48,37 +48,37 @@
                                     <div class="col">
                                         <div>
                                             <h2 class="text-muted mb-0">
-                                                <i class="fa fa-users text-success"></i>
+                                                <i class="fa fa-user-clock"></i>
                                             </h2>
-                                            <small>Quizzes</small>
-                                            <h5 class="mt-2">05</h5>
+                                            <small>Individual Quiz</small>
+                                            <h5 class="mt-2">{{ single_all }}</h5>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div>
                                             <h2 class="text-muted mb-0">
-                                                <i class="fa fa-user-check text-success"></i>
+                                                <i class="fa fa-users"></i>
+                                            </h2>
+                                            <small>Team Quiz</small>
+                                            <h5 class="mt-2">{{ team_all }}</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-book"></i>
+                                            </h2>
+                                            <small>Learnings</small>
+                                            <h5 class="mt-2">{{ learning_all }}</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <h2 class="text-muted mb-0">
+                                                <i class="fa fa-question-circle text-danger"></i>
                                             </h2>
                                             <small>Questions</small>
-                                            <h5 class="mt-2">05</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div>
-                                            <h2 class="text-muted mb-0">
-                                                <i class="fa fa-user-lock text-warning"></i>
-                                            </h2>
-                                            <small>Attempts</small>
-                                            <h5 class="mb-0">00</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div>
-                                            <h2 class="text-muted mb-0">
-                                                <i class="fa fa-arrow-circle-down text-danger"></i>
-                                            </h2>
-                                            <small>Anything</small>
-                                            <h5 class="mb-0">00</h5>
+                                            <h5 class="mb-0">{{ questions_all }}</h5>
                                         </div>
                                     </div>
 
@@ -96,59 +96,98 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Quizzes</h4>
-                    <div class="table-responsive">
-                        <table class="table table-centered table-nowrap mb-0">
-                            <thead class="thead-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Age</th>
-                                <th>Players</th>
-                                <th>Question</th>
-                                <th>Created On</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for foo in '12345'|make_list %}
-                                <tr>
-                                    <td>
-                                        #12123213
-                                    </td>
-                                    <td><a href="javascript: void(0);" class="text-body font-weight-bold">#Quiz
-                                        Title</a>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success font-size-12">Quiz</span>
-                                    </td>
-                                    <td>
-                                        12 Years
-                                    </td>
-                                    <td>
-                                        1 Player
-                                    </td>
-                                    <td>
-                                        14
-                                    </td>
-                                    <td>
-                                        12th, Dec 2021
-                                    </td>
-                                    <td>
-                                        <a class="" href="#">
-                                            <i class="fa fa-eye"></i>
-                                        </a>
-                                        <a class="" href="#">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- end table-responsive -->
+                    {% if quizzes %}
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>
+                                        Quiz <br>
+                                        <small>Details</small>
+                                    </th>
+                                    <th>
+                                        Type
+                                    </th>
+                                    <th>
+                                        Quiz <br>
+                                        <small>Statistics</small>
+                                    </th>
+                                    <th>Subjects<br>
+                                        <small>Assigned</small>
+                                    </th>
+                                    <th>Question</th>
+                                    <th>Created On</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for quiz in quizzes %}
+                                    <tr>
+                                        <td class="">
+                                            <p class="mb-0">
+                                                <a href="javascript: void(0);"
+                                                   class="text-body font-weight-bold text-wrap">
+                                                    {{ quiz.title }}
+                                                </a><br>
+                                                <a>
+                                                    Players :
+                                                    <b>
+                                                        {% if quiz.players == '1' %}
+                                                            {{ quiz.players }}
+                                                        {% else %}
+                                                            {{ quiz.players }}
+                                                        {% endif %}
+                                                    </b> |
+                                                    Age : <b>{{ quiz.age_limit }}</b> |
+                                                    Grade: <b>{{ quiz.grade }}</b>
+                                                </a>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            {% if quiz.learning_purpose %}
+                                                <b class="text-success"><i class="fa fa-book"></i> Learning</b>
+
+                                            {% else %}
+                                                <b class="text-danger"><i class="fa fa-clock"></i> Quiz</b>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            Enrolled Teams <b>{{ quiz.total_enrolled_teams }}</b> <br>
+                                            Enrolled Students <b>{{ quiz.total_enrolled_students }}</b>
+                                        </td>
+                                        <td class="text-wrap">
+
+                                            {% for subject in quiz.subjects.all %}
+                                                <span class="badge badge-pill badge-soft-success font-size-12">
+                                                {{ subject }}
+                                                </span>
+                                            {% endfor %}
+                                        </td>
+
+                                        <td>
+                                            {{ quiz.questions.all.count }}
+                                        </td>
+                                        <td>
+                                            {{ quiz.created_at }}
+                                        </td>
+                                        <td>
+                                            <a class="" href="{% url 'moderator-portal:quiz-update' quiz.pk %}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="mb-0">
+                            <b class="text-danger">You haven't created any quizzes yet.</b>
+                        </p>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -163,54 +202,63 @@
                         <table class="table table-centered table-nowrap mb-0">
                             <thead class="thead-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Age</th>
+                                <th>Question <br>
+                                    <small>Details</small>
+                                </th>
+                                <th>Question <br>
+                                    <small>Statistics</small>
+                                </th>
                                 <th>Level</th>
-                                <th>Subjects</th>
-                                <th>Topics</th>
+                                <th>Subject</th>
                                 <th>Created On</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for foo in '12345'|make_list %}
+                            {% for question in questions %}
                                 <tr>
                                     <td>
-                                        #12123213
+                                        <p class="mb-0">
+                                            <a href="javascript: void(0);"
+                                               class="text-body font-weight-bold text-wrap">
+                                                {{ question.get_statement|truncatechars:35 }}
+                                            </a><br>
+                                            <a>
+                                                Players :
+                                                <b>
+                                                    {{ question.question_type }}
+                                                </b> |
+                                                Age : <b>{{ question.age_limit }}</b> |
+                                                Grade: <b>{{ question.grade }}</b>
+                                            </a>
+                                        </p>
                                     </td>
                                     <td>
-                                        <a href="javascript: void(0);" class="text-body font-weight-bold">
-                                            1 Player
-                                        </a>
-                                    </td>
-                                    <td>
-                                        12 Years
+                                        <b class="text-dark">
+                                            <i class="fa fa-clock"></i> Quizzes:
+                                            {{ question.total_times_used_in_quizzes }}
+                                        </b>
+                                        <br>
+                                        <b class="text-secondary">
+                                            <i class="fa fa-book"></i> Learning:
+                                            {{ question.total_times_used_in_learning }}
+                                        </b>
                                     </td>
                                     <td>
                                         <i class="fa fa-star text-warning"></i>
                                         <i class="fa fa-star"></i>
                                         <i class="fa fa-star"></i>
                                     </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success font-size-12">Sub1</span>
-                                        <span class="badge badge-pill badge-soft-success font-size-12">Sub2</span>
-                                        <span class="badge badge-pill badge-soft-success font-size-12">Sub3</span>
+                                    <td class="">
+                                    <span class="badge badge-pill badge-soft-danger font-size-12">
+                                        {{ question.subject }}
+                                    </span>
                                     </td>
                                     <td>
-                                        <span class="badge badge-pill badge-soft-primary font-size-12">T1</span>
-                                        <span class="badge badge-pill badge-soft-primary font-size-12">T2</span>
-                                        <span class="badge badge-pill badge-soft-primary font-size-12">T3</span>
-                                        <span class="badge badge-pill badge-soft-primary font-size-12">T4</span>
+                                        {{ question.created_at }}
                                     </td>
                                     <td>
-                                        12th, Dec 2021
-                                    </td>
-                                    <td>
-                                        <a class="" href="#">
-                                            <i class="fa fa-eye"></i>
-                                        </a>
-                                        <a class="" href="#">
+                                        <a class="" href="{% url 'moderator-portal:question-update' question.pk %}">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </td>

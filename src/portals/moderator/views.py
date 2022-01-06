@@ -30,6 +30,15 @@ class DashboardView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
+        questions = Question.objects.filter(created_by=self.request.user)
+        quizzes = Quiz.objects.filter(created_by=self.request.user)
+
+        context['questions'] = questions
+        context['questions_all'] = questions.count()
+        context['quizzes'] = quizzes
+        context['single_all'] = quizzes.filter(players='1', learning_purpose=False).count()
+        context['learning_all'] = quizzes.filter(learning_purpose=False).count()
+        context['team_all'] = quizzes.filter(learning_purpose=False).exclude(players='1').count()
         return context
 
 
