@@ -16,7 +16,12 @@ class DashboardView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
-        context['relations'] = Relation.objects.filter(parent=self.request.user)
+        relations = Relation.objects.filter(parent=self.request.user)
+        context['relations'] = relations
+        context['relations_all'] = relations.count()
+        context['relations_app'] = relations.filter(is_verified_by_child=True).count()
+        context['relations_pen'] = relations.filter(is_verified_by_child=False).count()
+
         return context
 
 
