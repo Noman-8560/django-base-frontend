@@ -72,8 +72,6 @@
                             force for growth, change, and discovery in people’s lives. We want to inspire and multiply
                             the kind of creative exploration that furthers expression, learning and application.
                         </p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua.</p>
                         <ul class="who-we-are-list">
                             <li>
                                 <span>1</span>
@@ -201,18 +199,19 @@
         </div>
     </section>
 
-    <section class="class-area pt-100 pb-70">
+    <section id="quizzes" class="class-area pt-100 pb-70">
         <div class="container">
             <div class="section-title">
                 <span>Tests</span>
                 <h2>Upcoming Quizzes</h2>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6">
+                {% for quizzes in '123'|make_list %}
+                    <div class="col-lg-4 col-md-6">
                     <div class="single-class">
                         <div class="class-image">
                             <a href="#">
-                                <img src="{% static 'website/img/class/class-1.jpg' %}" alt="image">
+                                <img width="550" height="500" src="{% static 'images/no_content.png' %}" alt="image">
                             </a>
                         </div>
                         <div class="class-content">
@@ -241,72 +240,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-class">
-                        <div class="class-image">
-                            <a href="#">
-                                <img src="{% static 'website/img/class/class-2.jpg' %}" alt="image">
-                            </a>
-                        </div>
-                        <div class="class-content">
-                            <div class="price">2P</div>
-                            <h3>
-                                <a href="#">Quiz Title 2</a>
-                            </h3>
-                            <p>Description not available.</p>
-                            <ul class="class-list">
-                                <li>
-                                    <span>Age:</span>
-                                    3-5 Year
-                                </li>
-                                <li>
-                                    <span>Time:</span>
-                                    8-10 AM
-                                </li>
-                                <li>
-                                    <span>Class:</span>
-                                    Grade 2
-                                </li>
-                            </ul>
-                            <div class="class-btn">
-                                <a href="#" class="default-btn">Enroll Now</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 offset-lg-0 offset-md-3">
-                    <div class="single-class">
-                        <div class="class-image">
-                            <a href="#">
-                                <img src="{% static 'website/img/class/class-3.jpg' %}" alt="image">
-                            </a>
-                        </div>
-                        <div class="class-content">
-                            <div class="price">1P</div>
-                            <h3>
-                                <a href="#">Quiz Title 3</a>
-                            </h3>
-                            <p>Description not available.</p>
-                            <ul class="class-list">
-                                <li>
-                                    <span>Age:</span>
-                                    3-5 Year
-                                </li>
-                                <li>
-                                    <span>Time:</span>
-                                    8-10 AM
-                                </li>
-                                <li>
-                                    <span>Class:</span>
-                                    Grade 3
-                                </li>
-                            </ul>
-                            <div class="class-btn">
-                                <a href="#" class="default-btn">Enroll Now</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
         <div class="class-shape">
@@ -319,19 +253,20 @@
         </div>
     </section>
 
-    <section class="event-area bg-ffffff bg-color pt-100 pb-70">
+    <section id="learnings" class="event-area bg-ffffff bg-color pt-100 pb-70">
         <div class="container-fluid">
             <div class="section-title">
                 <span>Learning Resources</span>
                 <h2>Learn by Doing</h2>
             </div>
             <div class="row">
-                <div class="col-lg-6">
+                {% for learn in '1234'|make_list %}
+                    <div class="col-lg-6">
                     <div class="event-box-item">
                         <div class="row align-items-center">
                             <div class="col-md-3">
                                 <div class="event-image">
-                                    <a href="#"><img src="{% static 'website/img/event/event-1.png' %}" alt="image"></a>
+                                    <a href="#"><img class="rounded" src="{% static 'images/no_content.png' %}" alt="image"></a>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -348,10 +283,6 @@
                                             <i class='bx bx-clipboard'></i>
                                             Grade 1
                                         </li>
-                                        <li>
-                                            <i class='bx bx-book'></i>
-                                            Subject 1, Subject 2
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -364,125 +295,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="event-box-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <div class="event-image">
-                                    <a href="#"><img src="{% static 'website/img/event/event-2.png' %}" alt="image"></a>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="event-content">
-                                    <h3>
-                                        <a href="#">Learning Resources 2</a>
-                                    </h3>
-                                    <ul class="event-list">
-                                        <li>
-                                            <i class='bx bx-time'></i>
-                                            8:00 AM - 10:00 PM
-                                        </li>
-                                        <li>
-                                            <i class='bx bx-clipboard'></i>
-                                            Grade 1
-                                        </li>
-                                        <li>
-                                            <i class='bx bx-book'></i>
-                                            Subject 1, Subject 2
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="event-date">
-                                    <h4>18</h4>
-                                    <span>January</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="event-box-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <div class="event-image">
-                                    <a href="#"><img src="{% static 'website/img/event/event-3.png' %}" alt="image"></a>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="event-content">
-                                    <h3>
-                                        <a href="#">Learning Resources 3</a>
-                                    </h3>
-                                    <ul class="event-list">
-                                        <li>
-                                            <i class='bx bx-time'></i>
-                                            8:00 AM - 10:00 PM
-                                        </li>
-                                        <li>
-                                            <i class='bx bx-clipboard'></i>
-                                            Grade 1
-                                        </li>
-                                        <li>
-                                            <i class='bx bx-book'></i>
-                                            Subject 1, Subject 2
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="event-date">
-                                    <h4>25</h4>
-                                    <span>March</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="event-box-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <div class="event-image">
-                                    <a href="#"><img src="{% static 'website/img/event/event-4.png' %}" alt="image"></a>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="event-content">
-                                    <h3>
-                                        <a href="#">Learning Resources 4</a>
-                                    </h3>
-                                    <ul class="event-list">
-                                        <li>
-                                            <i class='bx bx-time'></i>
-                                            8:00 AM - 10:00 PM
-                                        </li>
-                                        <li>
-                                            <i class='bx bx-clipboard'></i>
-                                            Grade 1
-                                        </li>
-                                        <li>
-                                            <i class='bx bx-book'></i>
-                                            Subject 1, Subject 2
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="event-date">
-                                    <h4>30</h4>
-                                    <span>April</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
-    <section class="facilities-area pt-100 pb-70">
+    <section id="values" class="facilities-area pt-100 pb-70">
         <div class="container">
             <div class="section-title">
                 <span>Our Core Values</span>
@@ -543,7 +361,7 @@
                         </div>
                         <div class="facilities-content">
                             <h3>
-                                <a href="#">Spark Your Creativityr</a>
+                                <a href="#">Spark Your Creativity</a>
                             </h3>
                             <p>Unlock a passion, side hustle, or new professional skill with thousands of classes.
                             </p>
@@ -590,7 +408,7 @@
         </div>
     </section>
 
-    <section class="teacher-area pb-70">
+    <section id="team" class="teacher-area pb-70">
         <div class="container">
             <div class="section-title">
                 <span>Haven't Meet Experts</span>
@@ -700,7 +518,7 @@
         </div>
     </section>
 
-    <section class="testimonials-area bg-color ptb-100">
+    <section id="testimonials" class="testimonials-area bg-color ptb-100">
         <div class="container">
             <div class="section-title">
                 <span>Testimonials</span>
