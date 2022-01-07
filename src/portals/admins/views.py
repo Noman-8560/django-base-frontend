@@ -37,13 +37,14 @@ class DashboardView(TemplateView):
         return context
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class UserListView(ListView):
     template_name = 'admins/user_list.html'
     queryset = User.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
-        user_filter = UserFilter(self.request.GET, queryset=User.objects.all())
+        user_filter = UserFilter(self.request.GET, queryset=User.objects.exclude(is_superuser=True))
         context['user_filter_form'] = user_filter.form
 
         paginator = Paginator(user_filter.qs, 10)
@@ -54,6 +55,7 @@ class UserListView(ListView):
         return context
 
 
+@method_decorator(admin_decorators, name='dispatch')
 class UserDetailView(DetailView):
     model = User
     template_name = 'admins/user_detail.html'
@@ -72,6 +74,17 @@ class UserDetailView(DetailView):
             context['relations_total'] = relations.count()
             context['relations_pending'] = relations.filter(is_verified_by_child=False).count()
             context['relations_accepted'] = relations.filter(is_verified_by_child=True).count()
+        elif user.is_moderator:
+            questions = Question.objects.filter(created_by=user)
+            quizzes = Quiz.objects.filter(created_by=user)
+
+            context['questions'] = questions
+            context['quizzes'] = quizzes
+
+            context['questions_all'] = questions.count()
+            context['single_all'] = quizzes.filter(players='1', learning_purpose=False).count()
+            context['learning_all'] = quizzes.filter(learning_purpose=False).count()
+            context['team_all'] = quizzes.filter(learning_purpose=False).exclude(players='1').count()
 
         return context
 

@@ -388,14 +388,203 @@
                 </div>
             {% endif %}
 
+            {% if user.is_moderator %}
+                <div class="row">
+
+                    {# ROW LEFT #}
+                    <div class="col-sm-10">
+
+                        {# STATISTICS IMPLEMENTATION #}
+                        <div class="card">
+                            <div class="card-header bg-white border-bottom">
+                                <p class="card-title mb-0">Statistics</p>
+                            </div>
+                            <div class="card-body text-center">
+
+                                <div class="row">
+
+                                    <div class="col">
+                                        <h1 class="mb-0"><i class="fa fa-user-clock"></i></h1>
+                                        <p class="mb-0">Individual Quizzes</p>
+                                        <p class="mb-0 h2">{{ single_all }}</p>
+                                    </div>
+
+                                    <div class="col">
+                                        <h1 class="mb-0"><i class="fa fa-users"></i></h1>
+                                        <p class="mb-0">Team Quizzes</p>
+                                        <p class="mb-0 h2">{{ team_all }}</p>
+                                    </div>
+
+                                    <div class="col">
+                                        <h1 class="mb-0"><i class="fa fa-book"></i></h1>
+                                        <p class="mb-0">Learning Resources</p>
+                                        <p class="mb-0 h2">{{ learning_all }}</p>
+                                    </div>
+
+                                    <div class="col">
+                                        <h1 class="mb-0"><i class="fa fa-question-circle"></i></h1>
+                                        <p class="mb-0">Questions</p>
+                                        <p class="mb-0 h2">{{ questions_all }}</p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {# QUIZ RECORDS #}
+                        <div class="card">
+                            <div class="card-header bg-white border-bottom">
+                                <p class="card-title mb-0">Quizzes</p>
+                            </div>
+                            <div class="card-body">
+                                {% if quizzes %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped table-sm">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Type</th>
+                                                <th>Players</th>
+                                                <th>Students Enrolled</th>
+                                                <th>Team Enrolled</th>
+                                                <th>Created On</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for quiz in quizzes %}
+
+                                                <tr>
+                                                    <th>
+                                                        <a href="{% url 'admin-portal:quiz-update' quiz.pk %}">
+                                                            {{ quiz.title }}
+                                                        </a>
+                                                    </th>
+                                                    <td>
+                                                        {% if quiz.learning_purpose %}
+                                                            <b><i class="fa fa-book"></i> Learning</b>
+                                                        {% else %}
+                                                            <b><i class="fa fa-clock"></i> Quiz</b>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ quiz.players }} Players</td>
+                                                    <td><b>{{ quiz.total_enrolled_students }}</b></td>
+                                                    <td><b>{{ quiz.total_enrolled_teams }}</b></td>
+                                                    <td>{{ quiz.created_at }}</td>
+                                                    <td>
+                                                        <a href="{% url 'admin-portal:quiz-update' quiz.pk %}">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="m-0 text-danger">
+                                        <b>
+                                            <i class="mdi mdi-exclamation-thick"></i>
+                                            Users didn't created any quiz upto now.
+                                        </b>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# LEARNING RECORDS #}
+                        <div class="card">
+                            <div class="card-header bg-white border-bottom">
+                                <p class="card-title mb-0">Questions</p>
+                            </div>
+                            <div class="card-body">
+                                {% if questions %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped table-sm">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Grade</th>
+                                                <th>Subject</th>
+                                                <th>Uses</th>
+                                                <th>Attempted on</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for question in questions %}
+
+                                                <tr>
+                                                    <th class="text-wrap">
+                                                        <a href="{% url 'admin-portal:question-update' question.pk %}">
+                                                            {{ question.get_statement|truncatechars:20 }}
+                                                        </a>
+                                                    </th>
+                                                    <td>{{ question.grade }}</td>
+                                                    <td>{{ question.subject }}</td>
+                                                    <td>
+                                                        <b>
+                                                            <i class="fa fa-book"></i>
+                                                            {{ question.total_times_used_in_quizzes }} |
+                                                            <i class="fa fa-clock"></i>
+                                                            {{ question.total_times_used_in_learning }}
+                                                        </b>
+                                                    </td>
+                                                    <td>{{ question.created_at }}</td>
+                                                    <td>
+                                                        <b>
+                                                            <a href="{% url 'admin-portal:question-update' question.pk %}">
+                                                                <i class="fa fa-eye"></i>
+                                                            </a>
+                                                        </b>
+                                                    </td>
+                                                </tr>
+
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="m-0 text-danger">
+                                        <b>
+                                            <i class="mdi mdi-exclamation-thick"></i>
+                                            Users didn't created any question upto now.
+                                        </b>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {# ROW RIGHT #}
+                    <div class="col-sm-2">
+                        <div class="card">
+
+                            <div class="card-header bg-white border-bottom">
+                                <p class="card-title mb-0">Undefined</p>
+                            </div>
+
+                            <div class="card-body">
+                                <b class="text-danger"><i class="fa fa-exclamation"></i> No information for this
+                                    division</b>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% endif %}
+
         </div>
     </div>
 
     <div class="row">
         <div class="col-sm-12">
-            <b><a href="#"> -- Update User</a></b><br>
-            <b><a href="#"> -- Change Password</a></b><br>
-            <b><a href="#"> -- Back to Users</a></b>
+            <b><a href="/admin/accounts/user/{{ object.pk }}/change/"> -- Update User</a></b><br>
+            <b><a href="/admin/accounts/user/{{ object.pk }}/password/"> -- Change Password</a></b><br>
+            <b><a href="{% url 'admin-portal:user' %}"> -- Back to Users</a></b>
         </div>
     </div>
 
