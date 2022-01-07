@@ -11,14 +11,12 @@ from django.views.generic import (
     TemplateView)
 
 from src.accounts.decorators import moderator_required, identification_required
-from src.application.forms import QuestionImageForm
 from src.application.models import (
     Quiz, QuizQuestion, Question, ChoiceVisibility, StatementVisibility, ImageVisibility,
     AudioVisibility,
     Subject, QuestionStatement, QuestionChoice, QuestionAudio, QuestionImage, Screen, Topic, StudentGrade)
 from src.portals.admins.dll import QuestionDS
-from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm
-
+from src.portals.admins.forms import QuizQuestionForm, QuestionAudioForm, QuestionImageForm
 
 moderator_decorators = [moderator_required, identification_required]
 moderator_nocache_decorators = [moderator_required, identification_required, never_cache]

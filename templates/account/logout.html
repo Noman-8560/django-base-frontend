@@ -1,4 +1,4 @@
-{% extends 'application/base.html' %}
+{% extends 'core/base.html' %}
 
 {% load i18n %}
 {% load account socialaccount %}
@@ -16,7 +16,7 @@
         <div class="row justify-content-center">
             <div class="col-10 col-sm-7 m-2 mt-5">
 
-                <div class="card border border-danger mt-5 p-sm-5 p-2">
+                <div class="card border border-danger mt-5 p-sm-4">
                     <div class="card-body">
                         <div class="card-header bg-transparent border-danger">
                             <h5 class="my-0 text-danger">
@@ -34,8 +34,8 @@
                                 <input type="hidden" name="{{ redirect_field_name }}"
                                        value="{{ redirect_field_value }}"/>
                             {% endif %}
-                            <button class="btn btn-danger my-2" type="submit"><i class="fa fa-door-open"></i> PROCEED</button>
-                            <a class="btn btn-primary my-2" href="{% url 'accounts:cross-auth-view' %}"><i class="fa fa-user-check"></i> Dashboard</a>
+                            <button class="btn btn-danger my-2" type="submit"><i class="fa fa-door-open"></i> Logout</button><br><br>
+                            <a class="mt-4" href="{% url 'accounts:cross-auth-view' %}"><i class="fa fa-arrow-left"></i> Back to Dashboard</a>
                         </form>
                         </div>
 

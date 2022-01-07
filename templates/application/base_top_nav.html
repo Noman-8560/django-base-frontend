@@ -1,9 +1,0 @@
-{% load static %}
-
-{% if request.user.is_authenticated %}
-    {% if request.user.is_superuser %}
-        {% include 'include/admin_top_nav.html' %}
-    {% else %}
-        {% include 'include/student_top_nav.html' %}
-    {% endif %}
-{% endif %}
