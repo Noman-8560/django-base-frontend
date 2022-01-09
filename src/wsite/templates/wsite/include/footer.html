@@ -61,22 +61,23 @@
                     <h3>Activities</h3>
                     <ul class="quick-links">
                         <li>
-                            <a href="#">Learning Resources</a>
+                            <a href="{% url 'website:quizzes' %}">Tests and Quizzes</a>
                         </li>
                         <li>
-                            <a href="#">Individual Quizzes</a>
+                            <a href="{% url 'website:learning-resources' %}">Learning Resources</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'accounts:cross-auth-view' %}">Parental Access</a>
                         </li>
                         <li>
-                            <a href="#">Team Quizzes</a>
+                            <a href="{% url 'accounts:cross-auth-view' %}">Live Challenges</a>
                         </li>
                         <li>
-                            <a href="#">Parental Access</a>
+                            <a href="{% url 'accounts:cross-auth-view' %}">Performance Tracking</a>
                         </li>
                         <li>
-                            <a href="#">Live Challenges</a>
-                        </li>
-                        <li>
-                            <a href="#">Performance Tracking</a>
+                            <a href="{% url 'website:terms-and-conditions' %}">Terms and Conditions</a>
                         </li>
                     </ul>
                 </div>
@@ -150,11 +151,15 @@
 <div class="copyright-area">
     <div class="container">
         <div class="copyright-area-content">
-            <p>
+            <p class="mb-0">
                 Copyright © 2021 cocognito. Designed and Developed by
                 <a href="https://exarth.com/" target="_blank">
                     Exarth
                 </a>
+            </p>
+            <p>
+                <b><a href="{% url 'website:terms-and-conditions' %}">Terms</a></b> |
+                <b><a href="{% url 'website:privacy-policy' %}">Privacy Policy</a></b>
             </p>
         </div>
     </div>
