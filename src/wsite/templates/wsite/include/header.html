@@ -21,54 +21,71 @@
                     <ul class="navbar-nav">
 
                         <li class="nav-item">
-                            <a href="#quizzes" class="nav-link">
-                                Quizzes
+                            <a href="/#activities" class="nav-link">
+                                Activities
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a href="#learnings" class="nav-link">
-                                Learning
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#values" class="nav-link">
+                            <a href="/#values" class="nav-link">
                                 Values
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a href="#team" class="nav-link">
+                            <a href="/#team" class="nav-link">
                                 Team
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a href="#testimonials" class="nav-link">
-                                Contact Us
+                            <a href="{% url 'website:quizzes' %}" class="nav-link">
+                                Quizzes
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{% url 'website:learning-resources' %}" class="nav-link">
+                                Learning
                             </a>
                         </li>
 
                     </ul>
                     <div class="others-options d-flex align-items-center">
-                        <div class="option-item">
-                            <div class="dropdown language-switcher d-inline-block">
-                                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                    <span>Language <i class='bx bx-chevron-down'></i></span>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item d-flex align-items-center">
-                                        <img src="{% static 'website/img/english.png' %}" class="shadow-sm" alt="flag">
-                                        <span>English</span>
-                                    </a>
-                                    <a href="#" class="dropdown-item d-flex align-items-center">
-                                        <img src="{% static 'website/img/arab.png' %}" class="shadow-sm" alt="flag">
-                                        <span>العربيّة</span>
-                                    </a>
+                        {% if request.user.is_authenticated %}
+                            <div class="option-item">
+                                <div class="dropdown language-switcher d-inline-block">
+                                    <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+
+                                        {% if request.user.profile_image %}
+                                            <img class="rounded-circle" height="100" width="100"
+                                                 src="{{ request.user.profile_image.url }}">
+                                        {% else %}
+                                            <img class="rounded-circle" height="100" width="100"
+                                                 src="{% static 'images/user.png' %}">
+                                        {% endif %}
+
+                                        <span class=""> {{ request.user.username }}<i
+                                                class='bx bx-chevron-down'></i></span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a href="{% url 'accounts:cross-auth-view' %}" class="dropdown-item d-flex align-items-center">
+                                            <span><i class='bx bxs-dashboard'></i> Dashboard</span>
+                                        </a>
+                                        <a href="{% url 'account_logout' %}"
+                                           class="dropdown-item d-flex align-items-center text-danger">
+                                            <span><i class='bx bxs-log-out-circle'></i> Logout</span>
+                                        </a>
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="option-item">
-                            <a href="/accounts/login/" class="default-btn">Login</a>
-                        </div>
+                        {% else %}
+                            <div class="option-item">
+                                <a href="/accounts/login/" class="default-btn">Login</a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </nav>
@@ -86,27 +103,42 @@
             <div class="container">
                 <div class="option-inner">
                     <div class="others-options d-flex align-items-center">
-                        <div class="option-item">
-                            <div class="dropdown language-switcher d-inline-block">
-                                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                    <span>Language <i class='bx bx-chevron-down'></i></span>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item d-flex align-items-center">
-                                        <img src="{% static 'website/img/english.png' %}" class="shadow-sm" alt="flag">
-                                        <span>English</span>
-                                    </a>
-                                    <a href="#" class="dropdown-item d-flex align-items-center">
-                                        <img src="{% static 'website/img/arab.png' %}" class="shadow-sm" alt="flag">
-                                        <span>العربيّة</span>
-                                    </a>
+                        {% if request.user.is_authenticated %}
+
+                            <div class="option-item">
+                                <div class="dropdown language-switcher d-inline-block">
+                                    <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                        {% if request.user.profile_image %}
+                                            <img class="rounded-circle" height="100" width="100"
+                                                 src="{{ request.user.profile_image.url }}">
+                                        {% else %}
+                                            <img class="rounded-circle" height="100" width="100"
+                                                 src="{% static 'images/user.png' %}">
+                                        {% endif %}
+
+                                        <span>{{ request.user.username }} <i class='bx bx-chevron-down'></i></span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a href="{% url 'accounts:cross-auth-view' %}" class="dropdown-item d-flex align-items-center">
+                                            <span><i class='bx bxs-dashboard'></i> Dashboard</span>
+                                        </a>
+                                        <a href="{% url 'account_logout' %}"
+                                           class="dropdown-item d-flex align-items-center text-danger">
+                                            <span><i class='bx bxs-log-out-circle'></i> Logout</span>
+                                        </a>
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="option-item">
-                            <a href="/accounts/login/" class="default-btn">Login</a>
-                        </div>
+
+                        {% else %}
+
+                            <div class="option-item">
+                                <a href="/accounts/login/" class="default-btn">Login</a>
+                            </div>
+
+                        {% endif %}
                     </div>
                 </div>
             </div>
