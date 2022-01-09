@@ -2,6 +2,7 @@ import django_filters
 from django.forms import TextInput
 
 from src.accounts.models import User
+from src.application.models import Quiz
 
 
 class UserFilter(django_filters.FilterSet):
@@ -14,4 +15,15 @@ class UserFilter(django_filters.FilterSet):
         model = User
         fields = {
             'is_active': ['exact']
+        }
+
+
+class QuizFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(widget=TextInput(attrs={'placeholder': 'Quiz Title'}), lookup_expr='icontains')
+    age_limit = django_filters.CharFilter(widget=TextInput(attrs={'placeholder': 'Age Limit'}), lookup_expr='icontains')
+
+    class Meta:
+        model = Quiz
+        fields = {
+            'grade': ['exact'],
         }

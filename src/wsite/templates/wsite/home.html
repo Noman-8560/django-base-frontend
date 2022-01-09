@@ -204,7 +204,9 @@
             <div class="section-title">
                 <span>Tests</span>
                 <h2>Upcoming Quizzes</h2>
+
             </div>
+
             {% if quizzes %}
                 <div class="row">
                     {% for quiz in quizzes %}
@@ -323,8 +325,10 @@
                                                 {{ learn.description|truncatechars:120 }}
                                             </p>
                                             <span class="text-danger">
-                                                {{ learn.start_time|time:"h:i:s A" }}
+                                                <b>
+                                                    {{ learn.start_time|time:"h:i:s A" }}
                                                 - {{ learn.end_time|time:"h:i:s A" }}
+                                                </b>
                                         </span>
                                         </div>
                                     </div>

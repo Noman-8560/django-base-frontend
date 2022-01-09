@@ -1,5 +1,6 @@
 {% extends 'wsite/base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block base_title %}
     Learning Resources
@@ -20,6 +21,27 @@
                             <li>Learning Resources</li>
                         </ul>
                     </div>
+                    <div class="row mt-4 justify-content-center">
+                        <div class="col-6">
+
+                            <form method="get">
+                                <div class="input-group mb-4">
+                                    {{ quiz_filter_form }}
+
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="bx bx-search"></i> Search
+                                        </button>
+                                        <a class="btn btn-danger" href="{% url 'website:learning-resources' %}">
+                                            <i class="bx bx-brush"></i> Clear
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -29,8 +51,8 @@
         <div class="container-fluid">
             <div class="row">
 
-                {% if object_list %}
-                    {% for object in object_list %}
+                {% if quiz_list %}
+                    {% for object in quiz_list %}
                         <div class="col-lg-6">
                             <div class="event-box-item">
                                 <div class="row align-items-center">
@@ -73,6 +95,22 @@
                             </div>
                         </div>
                     {% endfor %}
+
+                    <div class="col-lg-12 col-md-12">
+                        <div class="pagination-area">
+                            {% if quiz_list.has_previous %}
+                                <a href="{% relative_url quiz_list.previous_page_number 'page' request.GET.urlencode %}" class="prev page-numbers">
+                                    <i class='bx bx-chevron-left'></i>
+                                </a>
+                            {% endif %}
+                            <span class="page-numbers current" aria-current="page">{{ quiz_list.number }}</span>
+                            {% if quiz_list.has_next %}
+                                <a href="{% relative_url quiz_list.next_page_number 'page' request.GET.urlencode %}" class="next page-numbers">
+                                    <i class='bx bx-chevron-right'></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
                 {% else %}
                     <p class="text-center">
                         <b class="text-danger">
@@ -84,5 +122,20 @@
             </div>
         </div>
     </section>
+
+{% endblock %}
+
+
+{% block base_external_js %}
+
+    <script>
+        $(document).ready(function () {
+
+            $('label').hide();
+            $('input').addClass('form-control');
+            $('select').addClass('form-control');
+
+        });
+    </script>
 
 {% endblock %}
