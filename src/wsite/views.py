@@ -27,6 +27,17 @@ class LearningListView(ListView):
         return Quiz.objects.filter(learning_purpose=True)
 
 
+class PrivacyPolicyView(TemplateView):
+    template_name = 'wsite/policy.html'
+
+
+class TermsAndConditionsView(TemplateView):
+    template_name = 'wsite/terms.html'
+
+
+class ContactView(TemplateView):
+    template_name = 'wsite/contact.html'
+
+
 class Error404View(TemplateView):
     template_name = 'wsite/404.html'
-

@@ -1,0 +1,126 @@
+{% extends 'wsite/base.html' %}
+{% load static %}
+
+{% block base_title %}
+    Quizzes
+{% endblock %}
+
+{% block base_content %}
+    <div class="page-banner-area item-bg1">
+        <div class="d-table">
+            <div class="d-table-cell">
+                <div class="container">
+                    <div class="page-banner-content">
+                        <h2>Challenge your self Now</h2>
+                        <ul>
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>Quizzes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <section class="class-area pt-100 pb-100">
+        <div class="container">
+            <div class="row">
+
+                {% if object_list %}
+                    {% for object in object_list %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="single-class">
+                                <div class="class-image">
+                                    <a href="#">
+                                        {% if not quiz.thumbnail %}
+                                            <img width="550" height="500" src="{% static 'images/no_content.png' %}"
+                                                 alt="image">
+                                        {% else %}
+                                            <img width="550" height="500" src="{{ object.thumbnail.url }}"
+                                                 alt="image">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="class-content">
+                                    <div class="price">{{ object.players }}P</div>
+                                    <h3>
+                                        <a href="#">{{ object.title|truncatechars:50 }}</a>
+                                    </h3>
+                                    <p>{{ object.description|truncatechars:120 }}</p>
+                                    <ul class="class-list">
+                                        <li>
+                                            <span>Age:</span>
+                                            3-{{ object.age_limit }} Year
+                                        </li>
+                                        <li>
+                                            <span>Class:</span>
+                                            {{ object.grade }}
+                                        </li>
+                                        <li>
+                                            <span>Time:</span>
+                                            {{ object.start_time|time:"h:i:s A" }}
+                                                - {{ object.end_time|time:"h:i:s A" }}
+                                        </li>
+                                    </ul>
+                                    <div class="class-btn">
+                                        {% if not request.user.is_authenticated %}
+                                            <a href="{% url 'student-portal:quiz-enroll' object.pk %}"
+                                               class="default-btn">
+                                                Enroll Now
+                                            </a>
+                                        {% else %}
+                                            {% if request.user.is_student %}
+                                                <a href="{% url 'account_login' %}" class="default-btn">
+                                                    Enroll Now
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'account_login' %}" class="default-btn">
+                                                    Enroll Now
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+
+                    <div class="col-lg-12 col-md-12">
+                        <div class="pagination-area">
+                            <a href="#" class="prev page-numbers">
+                                <i class='bx bx-chevron-left'></i>
+                            </a>
+                            <a href="#" class="page-numbers">1</a>
+                            <span class="page-numbers current" aria-current="page">2</span>
+                            <a href="#" class="page-numbers">3</a>
+                            <a href="#" class="page-numbers">4</a>
+                            <a href="#" class="next page-numbers">
+                                <i class='bx bx-chevron-right'></i>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center">
+                        <b class="text-danger">
+                            No Quizzes available.
+                        </b>
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="class-shape">
+            <div class="shape-1">
+                <img src="{% static 'website/img/class/class-shape-1.png' %}" alt="image">
+            </div>
+            <div class="shape-2">
+                <img src="{% static 'website/img/class/class-shape-2.png' %}" alt="image">
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
