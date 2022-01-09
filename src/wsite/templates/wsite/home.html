@@ -235,12 +235,13 @@
                                             3-{{ quiz.age_limit }} Year
                                         </li>
                                         <li>
-                                            <span>Time:</span>
-                                            8-10 AM
-                                        </li>
-                                        <li>
                                             <span>Class:</span>
                                             {{ quiz.grade }}
+                                        </li>
+                                        <li>
+                                            <span>Time:</span>
+                                            {{ quiz.start_time|time:"h:i:s A" }}
+                                            - {{ quiz.end_time|time:"h:i:s A" }}
                                         </li>
                                     </ul>
                                     <div class="class-btn">
