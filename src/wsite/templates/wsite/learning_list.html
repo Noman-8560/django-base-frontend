@@ -1,0 +1,88 @@
+{% extends 'wsite/base.html' %}
+{% load static %}
+
+{% block base_title %}
+    Learning Resources
+{% endblock %}
+
+{% block base_content %}
+
+    <div class="page-banner-area item-bg3">
+        <div class="d-table">
+            <div class="d-table-cell">
+                <div class="container">
+                    <div class="page-banner-content">
+                        <h2>Learning Resources</h2>
+                        <ul>
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>Learning Resources</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="event-area event-item-two pt-100 pb-70">
+        <div class="container-fluid">
+            <div class="row">
+
+                {% if object_list %}
+                    {% for object in object_list %}
+                        <div class="col-lg-6">
+                            <div class="event-box-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3">
+                                        <div class="event-image">
+                                                {% if not quiz.thumbnail %}
+                                                    <img class="rounded" src="{% static 'images/no_content.png' %}"
+                                                         alt="image">
+                                                {% else %}
+                                                    <img class="rounded" src="{{ quiz.thumbnail.url }}" alt="image">
+                                                {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="event-content">
+                                            <h3>
+                                                <a href="#">{{ object.title }}</a>
+                                            </h3>
+                                            <p>
+                                                {{ object.description|truncatechars:120 }}
+                                            </p>
+                                            <span>
+                                                {{ object.start_time|time:"h:i:s A" }}
+                                                - {{ object.end_time|time:"h:i:s A" }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="event-date">
+                                            <h4>{{ object.start_time|date:"M" }}</h4>
+                                            <span>{{ object.start_time|date:"Y" }}</span>
+                                            <p class="mb-0 mt-2">
+                                                <a class="btn btn-danger" href="{% url 'student-portal:learning-resource' %}">
+                                                    Take a Test
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>
+                        <b class="text-danger">
+                            No Learning Resources available.
+                        </b>
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

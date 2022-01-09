@@ -15,12 +15,12 @@
         <div class="row justify-content-center">
             <div class="col-sm-8">
 
-                <div class="card p-4">
+                <div class="card">
                     <div class="card-header bg-white border-bottom">
                         <p class="card-title mb-0">Basic Details</p>
                     </div>
                     <div class="card-body">
-                            <form class="outer-repeater">
+                        <form class="outer-repeater">
                             <div data-repeater-list="outer-group" class="outer">
                                 <div data-repeater-item="" class="outer">
 
@@ -40,21 +40,21 @@
                                         </select>
                                     </div>
 
-                                {# NORMAL --> FIELDS #}
-                                <div class="form-group">
-                                    <label for="grade">Class/Grade</label>
-                                    <select class="form-control" id="grade" name="grade">
-                                        {% for grade in grades %}
-                                            {% if question.grade.pk == grade.pk %}
-                                                <option value="{{ grade.pk }}"
-                                                        selected>{{ grade.name }}</option>
-                                            {% else %}
-                                                <option value="{{ grade.pk }}">{{ grade.name }}</option>
-                                            {% endif %}
-                                        {% endfor %}
+                                    {# NORMAL --> FIELDS #}
+                                    <div class="form-group">
+                                        <label for="grade">Class/Grade</label>
+                                        <select class="form-control" id="grade" name="grade">
+                                            {% for grade in grades %}
+                                                {% if question.grade.pk == grade.pk %}
+                                                    <option value="{{ grade.pk }}"
+                                                            selected>{{ grade.name }}</option>
+                                                {% else %}
+                                                    <option value="{{ grade.pk }}">{{ grade.name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
 
-                                    </select>
-                                </div>
+                                        </select>
+                                    </div>
 
                                     {# STATEMENTS -- GLOBAL --------------------------------------------------------- #}
                                     <div id="statements">
@@ -275,7 +275,7 @@
                     </div>
                 </div>
 
-                <div class="card p-4">
+                <div class="card">
                     <div class="card-header bg-white border-bottom">
                         <p class="card-title mb-0">Topic Details</p>
                     </div>
@@ -308,16 +308,14 @@
                     </div>
                 </div>
 
-                <div class="card p-4">
+                <div class="card">
                     <div class="card-header bg-white border-bottom">
                         <p class="card-title mb-0">More Details</p>
                     </div>
                     <div class="card-body">
                         <p class="text-muted"><b>NOTE: </b>This is a complete update question form, feel free to add,
-                            update
-                            statements options images and audios, you can change it later whereas screen selection will
-                            be on
-                            quiz builder during question selection.
+                            update statements options images and audios, you can change it later whereas screen
+                            selection will be on quiz builder during question selection.
                         </p>
                         <button class="btn btn-primary" data-toggle="modal" data-target="#audioModel">
                             <i class="fa fa-file-audio"></i> Add Audio hint
@@ -325,13 +323,19 @@
                         <button class="btn btn-primary" data-toggle="modal" data-target="#imageModel">
                             <i class="fa fa-images"></i> Add Image hint
                         </button>
-                        <div class="mt-3">
-                            <a href="{% url 'moderator-portal:question-create' %}"><i class="fa fa-plus"></i> Add New</a> |
-                            <a href="{% url 'moderator-portal:quiz' %}"><i class="fa fa-clock"></i> View Quizzes</a> |
-                            <a href="{% url 'moderator-portal:question' %}"><i class="fa fa-pager"></i> View
-                                Questions</a>
-                        </div>
                     </div>
+                </div>
+
+                <div>
+                    <p class="mb-0"><b><a href="{% url 'moderator-portal:question-create' %}">
+                        -- <i class="fa fa-plus"></i> Add New</a></b>
+                    </p>
+                    <p class="mb-0"><b><a href="{% url 'moderator-portal:quiz' %}">
+                        -- <i class="fa fa-clock"></i> View Quizzes</a></b>
+                    </p>
+                    <p class="mb-0"><b><a href="{% url 'moderator-portal:question' %}">
+                        -- <i class="fa fa-pager"></i> View Questions</a></b>
+                    </p>
                 </div>
 
             </div>

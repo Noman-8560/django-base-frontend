@@ -96,8 +96,8 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="who-we-are-image-wrap">
-                        <img src="{% static 'website/img/who-we-are/who-we-are-2.png' %}" alt="image">
+                    <div class="who-we-are-image">
+                        <img src="{% static 'website/img/who-we-are/who-we-are.jpg' %}" alt="image">
                     </div>
                 </div>
             </div>
@@ -242,13 +242,19 @@
                                 </ul>
                                 <div class="class-btn">
                                     {% if not request.user.is_authenticated %}
-                                        <a href="{% url 'account_login' %}" class="default-btn">
+                                        <a href="{% url 'student-portal:quiz-enroll' quiz.pk %}" class="default-btn">
                                             Enroll Now
                                         </a>
                                     {% else %}
-                                        <a href="{% url 'account_login' %}" class="default-btn">
-                                            Enroll Now
-                                        </a>
+                                        {% if request.user.is_student %}
+                                            <a href="{% url 'account_login' %}" class="default-btn">
+                                                Enroll Now
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'account_login' %}" class="default-btn">
+                                                Enroll Now
+                                            </a>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>
