@@ -14,12 +14,24 @@
                                     <span>Play, Learn and Grow</span>
                                     <h1>We are Professional Educators</h1>
                                     <p>
-                                        From the classroom to the boardroom and factory floor, learning is something we
-                                        all have in common. As a result, finding ways to improve and optimise learning
-                                        experiences has become increasingly crucial for educators, trainers and
-                                        companies alike. Learning analytics can be an incredibly powerful tool that
-                                        helps us better understand how employees learn, leading to improved performance
-                                    </p>
+                                        Human beings are social animals and we have been successful in becoming the most
+                                        dominant species, by way of our team effort.
+                                        Great news is we thrive when we work as a team.
+                                        But then why should learning activity be a isolated and single person effort.
+                                        At CoCognito, we believe learning need not be a single person effort. Rather it
+                                        should be a social activity.
+                                    </p><br>
+                                    <p>
+                                        That way it is more engaging, lasting and should be say, more FUN :-)
+                                        So we have built quizzes here on variety of subjects that you can practice
+                                        together with your friend(s).
+                                        Remember, idea here is not to compete. But to work together to problem solve a
+                                        situation.
+                                        You share ideas, discuss them, suggest point of views, take suggestions and
+                                        finally make a decision.
+                                        Sounds fun, rite?
+                                    </p><br>
+                                    <span>Come lets CoCognito !</span>
                                     <div class="banner-btn">
                                         <a href="{% url 'account_signup' %}" class="default-btn">
                                             Register Now
@@ -339,7 +351,7 @@
                                             <span>{{ learn.start_time|date:"Y" }}</span>
                                             <p class="mb-0 mt-2">
                                                 <a class="btn btn-danger"
-                                                   href="{% url 'student-portal:learning-resource' %}">
+                                                   href="{% url 'student-portal:learning-resource-live' learn.pk %}">
                                                     Take a Test
                                                 </a>
                                             </p>

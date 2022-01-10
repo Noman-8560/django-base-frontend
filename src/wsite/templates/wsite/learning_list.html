@@ -6,6 +6,13 @@
     Learning Resources
 {% endblock %}
 
+{% block base_css_links %}
+    <!-- XDSoft DateTimePicker -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+          integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
+{% endblock %}
+
 {% block base_content %}
 
     <div class="page-banner-area item-bg3">
@@ -21,27 +28,30 @@
                             <li>Learning Resources</li>
                         </ul>
                     </div>
-                    <div class="row mt-4 justify-content-center">
-                        <div class="col-6">
+                </div>
+            </div>
+        </div>
+    </div>
 
-                            <form method="get">
-                                <div class="input-group mb-4">
-                                    {{ quiz_filter_form }}
+    <div class="partner-area ptb-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12">
 
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="bx bx-search"></i> Search
-                                        </button>
-                                        <a class="btn btn-danger" href="{% url 'website:learning-resources' %}">
-                                            <i class="bx bx-brush"></i> Clear
-                                        </a>
-                                    </div>
-
-                                </div>
-                            </form>
-
+                    <form method="get">
+                        <div class=" mb-4">
+                            {{ quiz_filter_form }}
                         </div>
-                    </div>
+                        <div class="">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bx bx-search"></i> Search
+                            </button>
+                            <a class="btn btn-danger" href="{% url 'website:learning-resources' %}">
+                                <i class="bx bx-brush"></i>
+                            </a>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -58,12 +68,12 @@
                                 <div class="row align-items-center">
                                     <div class="col-md-3">
                                         <div class="event-image">
-                                                {% if not quiz.thumbnail %}
-                                                    <img class="rounded" src="{% static 'images/no_content.png' %}"
-                                                         alt="image">
-                                                {% else %}
-                                                    <img class="rounded" src="{{ quiz.thumbnail.url }}" alt="image">
-                                                {% endif %}
+                                            {% if not quiz.thumbnail %}
+                                                <img class="rounded" src="{% static 'images/no_content.png' %}"
+                                                     alt="image">
+                                            {% else %}
+                                                <img class="rounded" src="{{ quiz.thumbnail.url }}" alt="image">
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -85,7 +95,8 @@
                                             <h4>{{ object.start_time|date:"M" }}</h4>
                                             <span>{{ object.start_time|date:"Y" }}</span>
                                             <p class="mb-0 mt-2">
-                                                <a class="btn btn-danger" href="{% url 'student-portal:learning-resource' %}">
+                                                <a class="btn btn-danger"
+                                                   href="{% url 'student-portal:learning-resource-live' object.pk %}">
                                                     Take a Test
                                                 </a>
                                             </p>
@@ -99,13 +110,15 @@
                     <div class="col-lg-12 col-md-12">
                         <div class="pagination-area">
                             {% if quiz_list.has_previous %}
-                                <a href="{% relative_url quiz_list.previous_page_number 'page' request.GET.urlencode %}" class="prev page-numbers">
+                                <a href="{% relative_url quiz_list.previous_page_number 'page' request.GET.urlencode %}"
+                                   class="prev page-numbers">
                                     <i class='bx bx-chevron-left'></i>
                                 </a>
                             {% endif %}
                             <span class="page-numbers current" aria-current="page">{{ quiz_list.number }}</span>
                             {% if quiz_list.has_next %}
-                                <a href="{% relative_url quiz_list.next_page_number 'page' request.GET.urlencode %}" class="next page-numbers">
+                                <a href="{% relative_url quiz_list.next_page_number 'page' request.GET.urlencode %}"
+                                   class="next page-numbers">
                                     <i class='bx bx-chevron-right'></i>
                                 </a>
                             {% endif %}
@@ -126,14 +139,28 @@
 {% endblock %}
 
 
+{% block base_internal_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
+            integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+{% endblock %}
+
 {% block base_external_js %}
 
     <script>
         $(document).ready(function () {
 
-            $('label').hide();
             $('input').addClass('form-control');
             $('select').addClass('form-control');
+
+            {#$('#id_grade').val($('#id_grade').find("option:first").text("Select Grade"));#}
+
+
+            $('#id_start_time').datetimepicker({
+                format: 'Y-m-d H:i:s',
+            });
+            $('#id_end_time').datetimepicker({
+                format: 'Y-m-d H:i:s',
+            });
 
         });
     </script>
