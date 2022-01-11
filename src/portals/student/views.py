@@ -325,7 +325,7 @@ class TeamDeleteView(View):
             # --------------------------------------------------------------------------
 
             # TODO: Team meeting delete here
-            # zoom_delete_meeting(team.zoom_meeting_id)
+            zoom_delete_meeting(team.zoom_meeting_id)
             team.delete()
             messages.success(request=request,
                              message="Team Destroyed completely")
@@ -414,7 +414,7 @@ class QuizEnrollView(View):
 
             if int(quiz.players) > 1:
                 # TODO: Team meeting create here
-                """response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
+                response = zoom_create_meeting(name=f"QUIZ {quiz.title} - TEAM {team_name}",
                                                start_time=quiz.start_time.timestamp(),
                                                end_time=quiz.end_time.timestamp(), host=request.user.email)
                 if response.status_code != 201:
@@ -425,7 +425,7 @@ class QuizEnrollView(View):
                 meeting = json.loads(response.text)
                 meeting_id = meeting['id']
                 start_url = meeting['start_url']
-                join_url = meeting['join_url']"""
+                join_url = meeting['join_url']
 
             # --------- SAVE --------- #
 
@@ -771,8 +771,8 @@ class LearningResourceResultView(View):
 
 class ZoomMeetingView(View):
 
-    def get(self, request, quiz_id):
-        user_quiz = Quiz.objects.get(pk=quiz_id)
+    def get(self, request, quiz):
+        user_quiz = Quiz.objects.get(pk=quiz)
         user_team = Team.objects.filter(quiz=user_quiz, participants=request.user)[0]
         data = {
             'apiKey': "EBB0k1HnRN6hlD5dvrkAyw",

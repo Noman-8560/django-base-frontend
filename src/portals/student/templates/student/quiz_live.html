@@ -12,7 +12,7 @@
             <div class="bg-danger text-light text-center">
                 {% if quiz.players != '1' %}
                     <p class="p-2 small">
-                        Quiz {{ quiz.title }} is a collabotative quiz <br>
+                        Quiz {{ quiz.title }} is a collaborative quiz <br>
                         The question statements and answer choices appear divided among the participants.<br>
                         Please talk to your team members to know what is displayed on their screens and then answer the
                         question.
@@ -352,15 +352,16 @@
             {# ----------------------------------------------------------------------------------------------------- #}
 
             function initialization() {
+                alert({{ quiz_id}});
                 // TODO: Team meeting show here
-                {#                {% if quiz.players != '1' %}#}
-                {#                    myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");#}
-                {#                    const Notify = new XNotify();#}
-                {#                    Notify.success({#}
-                {#                        title: "Team Meeting",#}
-                {#                        description: "Your team meeting started in new tab."#}
-                {#                    });#}
-                {#                {% endif %}#}
+                {% if quiz.players != '1' %}
+                    myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
+                    const Notify = new XNotify();
+                    Notify.success({
+                        title: "Team Meeting",
+                        description: "Your team meeting started in new tab."
+                    });
+                {% endif %}
 
                 countdown();
                 x_accessor();

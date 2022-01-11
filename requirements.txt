@@ -1,5 +1,6 @@
 Django
 django-filter
+PyJWT==1.7.1
 # djangorestframework
 django-seed
 django-crispy-forms
