@@ -337,16 +337,10 @@
                                             <p>
                                                 {{ learn.description|truncatechars:120 }}
                                             </p>
-                                            <span class="text-danger">
-                                                    {{ learn.start_time }}
-                                                - {{ learn.end_time }}
-                                        </span>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="event-date">
-                                            <h4>{{ learn.start_time|date:"M" }}</h4>
-                                            <span>{{ learn.start_time|date:"Y" }}</span>
                                             <p class="mb-0 mt-2">
                                                 <a class="btn btn-danger"
                                                    href="{% url 'student-portal:learning-resource-live' learn.pk %}">

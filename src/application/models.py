@@ -369,8 +369,8 @@ class Quiz(models.Model):
     topics = models.ManyToManyField(Topic)
     submission_control = models.ForeignKey(Screen, null=True, blank=True, on_delete=models.SET_NULL)
 
-    start_time = models.DateTimeField(null=False, blank=False)
-    end_time = models.DateTimeField(null=False, blank=False)
+    start_time = models.DateTimeField(null=False, blank=True)
+    end_time = models.DateTimeField(null=False, blank=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

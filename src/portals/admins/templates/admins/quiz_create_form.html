@@ -5,7 +5,6 @@
 {% block base_title %}Quiz Builder{% endblock %}
 
 {% block base_links %}
-    <!-- XDSoft DateTimePicker -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
           integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous"/>
@@ -52,6 +51,9 @@
         $(document).ready(function () {
 
             let players_div = $('#div_id_players');
+            let start_time_div = $('#div_id_start_time');
+            let end_time_div = $('#div_id_end_time');
+
             let submission_div = $('#div_id_submission_control');
             let created_by_div = $('#div_id_created_by');
 
@@ -76,9 +78,13 @@
                 if (check) {
                     players_div.hide();
                     submission_div.hide();
+                    start_time_div.hide();
+                    end_time_div.hide();
                 } else {
                     players_div.show();
                     submission_div.show();
+                    start_time_div.show();
+                    end_time_div.show();
                 }
             }
         });

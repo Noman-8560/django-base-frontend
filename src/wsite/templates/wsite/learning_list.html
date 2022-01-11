@@ -89,18 +89,10 @@
                                             <p>
                                                 {{ object.description|truncatechars:120 }}
                                             </p>
-                                            <span>
-                                                <small>
-                                                    {{ object.start_time }}
-                                                - {{ object.end_time }}
-                                                </small>
-                                            </span>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="event-date">
-                                            <h4>{{ object.start_time|date:"M" }}</h4>
-                                            <span>{{ object.start_time|date:"Y" }}</span>
                                             <p class="mb-0 mt-2">
                                                 <a class="btn btn-danger"
                                                    href="{% url 'student-portal:learning-resource-live' object.pk %}">

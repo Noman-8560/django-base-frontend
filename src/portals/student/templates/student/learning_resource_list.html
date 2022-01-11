@@ -21,10 +21,7 @@
 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#all"><i class="fa fa-list"></i> All</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#available"><i class="fa fa-pen"></i> Available</a>
+                    <a class="nav-link active" data-toggle="tab" href="#available"><i class="fa fa-pen"></i> Available</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-success" data-toggle="tab" href="#completed"><i class="fa fa-check"></i>
@@ -32,51 +29,7 @@
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="all">
-                    {% if all_quizes %}
-                        <div class="table-responsive py-4">
-                            <table class="table table-hover table-bordered table-striped" id="l_all">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Questions</th>
-                                    <th>Subjects</th>
-                                    <th>Starts</th>
-                                    <th>Ends</th>
-                                </tr>
-                                </thead>
-                                <tbody class="">
-
-                                {% for quiz in all_quizes %}
-                                    <tr>
-                                        <td>{{ quiz.title }}</td>
-                                        <td>{{ quiz.questions.count }}</td>
-                                        <td>
-                                            {% for subject in quiz.subjects.all %}
-                                                <span href=""
-                                                      class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
-                                                <br>
-                                            {% endfor %}
-                                        </td>
-                                        <td>{{ quiz.start_time }}</td>
-                                        <td>{{ quiz.end_time }}</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="card-body">
-                            <h5 class="card-title mt-0 text-danger"><i class="fa fa-exclamation-circle"></i> Not Found</h5>
-                            <p class="card-text">No learning resources are
-                                available now
-                                because
-                                the admin didn't added yet come back later.
-                            </p>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="tab-pane fade show" id="available">
+                <div class="tab-pane fade show active" id="available">
                     {% if available_quizes %}
                         <div class="table-responsive py-4">
                             <table class="table table-hover table-bordered table-striped" id="l_available">
@@ -85,9 +38,7 @@
                                     <th>Name</th>
                                     <th>Questions</th>
                                     <th>Subjects</th>
-                                    <th>Starts</th>
-                                    <th>Ends</th>
-                                    <th>Ends</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody class="">
@@ -103,8 +54,6 @@
                                                 <br>
                                             {% endfor %}
                                         </td>
-                                        <td>{{ quiz.start_time }}</td>
-                                        <td>{{ quiz.end_time }}</td>
                                         <td><a href="{% url 'student-portal:learning-resource-live' quiz.pk %}"><i
                                                 class="bx bx-task"></i> Try a tutorial</a></td>
                                     </tr>
@@ -135,8 +84,6 @@
                                     <th>Marks</th>
                                     <th>Attempts</th>
                                     <th>Subjects</th>
-                                    <th>Start</th>
-                                    <th>End</th>
                                     <th>Submitted</th>
                                     <th>Result</th>
                                 </tr>
@@ -156,8 +103,6 @@
                                                 <br>
                                             {% endfor %}
                                         </td>
-                                        <td>{{ quiz.quiz.start_time }}</td>
-                                        <td>{{ quiz.quiz.end_time }}</td>
 
                                         <td>{{ quiz.created }}</td>
                                         <td>

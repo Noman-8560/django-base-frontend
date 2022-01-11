@@ -681,18 +681,12 @@ class RelationDeleteView(DeleteView):
 class LearningResourceListView(View):
 
     def get(self, request):
-        # ALL_QUIZES
-        all_quizes = Quiz.objects.filter(learning_purpose=True).order_by('-start_time')
 
         # AVAILABLE_QUIZES
-        available_quizes = Quiz.objects.filter(
-            end_time__gte=timezone.now(),
-            learning_purpose=True).order_by('-start_time')
-
+        available_quizes = Quiz.objects.filter(learning_purpose=True).order_by('-start_time')
         completed_by_me = LearningResourceResult.objects.filter(user__id=request.user.id).order_by('-created')
 
         context = {
-            'all_quizes': all_quizes,
             'available_quizes': available_quizes,
             'completed_quizes': completed_by_me,
         }
@@ -712,13 +706,14 @@ class LearningResourceLiveView(View):
         try:
             user_quiz = Quiz.objects.get(pk=quiz_id)
         except Quiz.DoesNotExist:
-            messages.error(request=request, message="Requested Quiz doesn't exists")
-            return redirect('student-portal:quiz', permanent=True)
+            messages.error(request=request, message="Requested Learning Resource doesn't exists")
+            return redirect('student-portal:learning-resource', permanent=True)
 
         if not user_quiz.questions.all():
             messages.error(request=request,
-                           message="Quiz is incomplete no questions are associated with this quiz - please consult admin")
-            return redirect('student-portal:quiz', permanent=True)
+                           message="Learning resource is incomplete no questions are associated with this - "
+                                   "please consult admin")
+            return redirect('student-portal:learning-resource', permanent=True)
 
         if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
             allowed_to_start = True

@@ -54,7 +54,12 @@
             let players_div = $('#div_id_players');
             let submission_div = $('#div_id_submission_control');
             let created_by_div = $('#div_id_created_by');
+            let start_time_div = $('#div_id_start_time');
+            let end_time_div = $('#div_id_end_time');
+
             created_by_div.hide();
+            start_time_div.hide();
+            end_time_div.hide();
 
             check_resource($('#id_learning_purpose').is(':checked'));
 
@@ -75,9 +80,13 @@
                 if (check) {
                     players_div.hide();
                     submission_div.hide();
+                    start_time_div.hide();
+                    end_time_div.hide();
                 } else {
                     players_div.show();
                     submission_div.show();
+                    start_time_div.show();
+                    end_time_div.show();
                 }
             }
         });

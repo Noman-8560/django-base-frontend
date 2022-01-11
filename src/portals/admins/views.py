@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import never_cache
@@ -427,9 +428,9 @@ class QuizCreateView(CreateView):
     template_name = 'admins/quiz_create_form.html'
 
     def form_valid(self, form):
-        quiz = form.save(commit=True)
-        quiz.created_by = self.request.user
-        quiz.save()
+        form.instance.created_by = self.request.user
+        form.instance.start_time = timezone.now()
+        form.instance.end_time = timezone.now()
         return super(QuizCreateView, self).form_valid(form)
 
     def get_success_url(self):
