@@ -252,8 +252,8 @@
                                         </li>
                                         <li>
                                             <span>Time:</span>
-                                            {{ quiz.start_time|time:"h:i:s A" }}
-                                            - {{ quiz.end_time|time:"h:i:s A" }}
+                                            <small>{{ quiz.start_time }}
+                                            - {{ quiz.end_time }}</small>
                                         </li>
                                     </ul>
                                     <div class="class-btn">
@@ -338,10 +338,8 @@
                                                 {{ learn.description|truncatechars:120 }}
                                             </p>
                                             <span class="text-danger">
-                                                <b>
-                                                    {{ learn.start_time|time:"h:i:s A" }}
-                                                - {{ learn.end_time|time:"h:i:s A" }}
-                                                </b>
+                                                    {{ learn.start_time }}
+                                                - {{ learn.end_time }}
                                         </span>
                                         </div>
                                     </div>

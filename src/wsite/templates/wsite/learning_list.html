@@ -38,20 +38,23 @@
             <div class="row justify-content-center">
                 <div class="col-12">
 
-                    <form method="get">
-                        <div class=" mb-4">
-                            {{ quiz_filter_form }}
-                        </div>
-                        <div class="">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="bx bx-search"></i> Search
-                            </button>
-                            <a class="btn btn-danger" href="{% url 'website:learning-resources' %}">
-                                <i class="bx bx-brush"></i>
-                            </a>
-                        </div>
-                    </form>
+                    <details>
+                        <summary><b>Click To Apply Search Filters</b></summary>
 
+                        <form method="get">
+                            <div class=" mb-4">
+                                {{ quiz_filter_form }}
+                            </div>
+                            <div class="">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bx bx-search"></i> Search
+                                </button>
+                                <a class="btn btn-danger" href="{% url 'website:learning-resources' %}">
+                                    <i class="bx bx-brush"></i>
+                                </a>
+                            </div>
+                        </form>
+                    </details>
                 </div>
             </div>
         </div>
@@ -61,7 +64,9 @@
         <div class="container-fluid">
             <div class="row">
 
+
                 {% if quiz_list %}
+
                     {% for object in quiz_list %}
                         <div class="col-lg-6">
                             <div class="event-box-item">
@@ -85,8 +90,10 @@
                                                 {{ object.description|truncatechars:120 }}
                                             </p>
                                             <span>
-                                                {{ object.start_time|time:"h:i:s A" }}
-                                                - {{ object.end_time|time:"h:i:s A" }}
+                                                <small>
+                                                    {{ object.start_time }}
+                                                - {{ object.end_time }}
+                                                </small>
                                             </span>
                                         </div>
                                     </div>
@@ -106,6 +113,8 @@
                             </div>
                         </div>
                     {% endfor %}
+
+
 
                     <div class="col-lg-12 col-md-12">
                         <div class="pagination-area">

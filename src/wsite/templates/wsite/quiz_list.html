@@ -96,8 +96,7 @@
                                         </li>
                                         <li>
                                             <span>Time:</span>
-                                            {{ object.start_time|time:"h:i:s A" }}
-                                            - {{ object.end_time|time:"h:i:s A" }}
+                                            <small>{{ object.start_time }} - {{ object.end_time }}</small>
                                         </li>
                                     </ul>
                                     <div class="class-btn">
