@@ -144,11 +144,8 @@ def create_zoom_user(user: User):
     response = requests.post(url, headers=headers, json=data)
     profile = StudentProfile.objects.get(user=user)
     r_data = json.loads(response.text)
-    print(f" {bearer_token}")
-    print(" {} ".format(str(r_data)))
     profile.zoom_user_id = r_data['id']
     profile.save()
-    print(response.text)
     return response.status_code == 201
 
 

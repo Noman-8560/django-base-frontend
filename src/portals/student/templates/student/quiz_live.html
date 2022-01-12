@@ -352,7 +352,6 @@
             {# ----------------------------------------------------------------------------------------------------- #}
 
             function initialization() {
-                alert({{ quiz_id}});
                 // TODO: Team meeting show here
                 {% if quiz.players != '1' %}
                     myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
