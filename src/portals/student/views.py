@@ -420,7 +420,7 @@ class QuizEnrollView(View):
                 if response.status_code != 201:
                     messages.error(request=request,
                                    message=f'Failed To create zoom meeting please consult administration')
-                    return HttpResponseRedirect(reverse('application:enroll_quiz', args=(quiz.pk,)))
+                    return HttpResponseRedirect(reverse('student-portal:quiz-enroll', args=(quiz.pk,)))
 
                 meeting = json.loads(response.text)
                 meeting_id = meeting['id']
@@ -775,22 +775,21 @@ class ZoomMeetingView(View):
         user_quiz = Quiz.objects.get(pk=quiz)
         user_team = Team.objects.filter(quiz=user_quiz, participants=request.user)[0]
         data = {
-            'apiKey': "EBB0k1HnRN6hlD5dvrkAyw",
-            'apiSecret': "1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF",
+            'apiKey': settings.ZOOM_API_KEY_JWT,
+            'apiSecret': settings.ZOOM_API_SECRET_JWT,
             'meetingNumber': user_team.zoom_meeting_id,
             'role': 1,
         }
         signature = generate_signature(data)
 
         context = {
-            'meeting': user_team.zoom_meeting_id,
+            'meeting_id': user_team.zoom_meeting_id,
             'start_url': user_team.zoom_start_url,
             'created_by': user_team.created_by,
             'join_url': user_team.zoom_join_url,
-            'signature': signature,
-            'user_name': request.user.username,
-            'user_email': request.user.email,
             'api_key': settings.ZOOM_API_KEY_JWT,
+            'api_secret': settings.ZOOM_API_SECRET_JWT,
+            'signature': signature,
         }
 
         return render(request=request, template_name='student/zoom_meeting.html', context=context)

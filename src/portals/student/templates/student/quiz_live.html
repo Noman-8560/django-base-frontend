@@ -354,7 +354,7 @@
             function initialization() {
                 // TODO: Team meeting show here
                 {% if quiz.players != '1' %}
-                    myWindow = window.open("{{ start_url }}", "myWindow", "width=500,height=500");
+                    myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
                     const Notify = new XNotify();
                     Notify.success({
                         title: "Team Meeting",
