@@ -50,7 +50,6 @@ class DashboardView(View):
         total_learning = LearningResourceResult.objects.filter(user=request.user).count()
         total_relations = Relation.objects.filter(child=request.user, is_verified_by_child=True).count()
 
-
         # AVAILABLE_QUIZES
         available_quizes = Quiz.objects.filter(
             end_time__gte=timezone.now(),
@@ -312,7 +311,6 @@ class TeamDeleteView(View):
                     profile.total_quizzes -= 1
                 profile.save()
 
-
             quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
             quiz.total_enrolled_students = quiz.total_enrolled_students - (
                     quiz.total_enrolled_students * int(quiz.players))
@@ -446,7 +444,7 @@ class QuizEnrollView(View):
             # TODO: statistics ---------------------------------------------------------
             quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
             quiz.total_enrolled_students = quiz.total_enrolled_students + (
-                        quiz.total_enrolled_students * int(quiz.players))
+                    quiz.total_enrolled_students * int(quiz.players))
             quiz.save()
             # --------------------------------------------------------------------------
 
@@ -581,21 +579,55 @@ class QuizLiveView(View):
         if user_team.created_by == request.user:
             start_url = user_team.zoom_start_url
 
-        context = {
-            'time_status': time_status,
-            'allowed_to_start': allowed_to_start,
-            'quiz_start_date': user_quiz.start_time,
-            'quiz_end_date': user_quiz.end_time,
-            'question_ids': question_ids,
-            'team_id': user_team.pk,
-            'start_url': start_url,
-            'quiz_id': user_quiz.pk,
-            'user_no': user_no,
-            'submission_control': submission,
-            'quiz': Quiz.objects.get(pk=pk)
-        }
+        if user_quiz.players != '1':
 
-        return render(request=request, template_name='student/quiz_live.html', context=context)
+            role = 0
+            if user_team.created_by == request.user:
+                role = 1
+
+            data = {
+                'apiKey': settings.ZOOM_API_KEY_JWT,
+                'apiSecret': settings.ZOOM_API_SECRET_JWT,
+                'meetingNumber': user_team.zoom_meeting_id,
+                'role': role,
+            }
+            signature = generate_signature(data)
+
+            context = {
+                'meeting_id': user_team.zoom_meeting_id,
+                'start_url': user_team.zoom_start_url,
+                'created_by': user_team.created_by,
+                'join_url': user_team.zoom_join_url,
+                'api_key': settings.ZOOM_API_KEY_JWT,
+                'api_secret': settings.ZOOM_API_SECRET_JWT,
+                'signature': signature,
+                'time_status': time_status,
+                'allowed_to_start': allowed_to_start,
+                'quiz_start_date': user_quiz.start_time,
+                'quiz_end_date': user_quiz.end_time,
+                'question_ids': question_ids,
+                'team_id': user_team.pk,
+                'quiz_id': user_quiz.pk,
+                'user_no': user_no,
+                'submission_control': submission,
+                'quiz': Quiz.objects.get(pk=pk)
+            }
+        else:
+            context = {
+                'time_status': time_status,
+                'allowed_to_start': allowed_to_start,
+                'quiz_start_date': user_quiz.start_time,
+                'quiz_end_date': user_quiz.end_time,
+                'question_ids': question_ids,
+                'team_id': user_team.pk,
+                'start_url': start_url,
+                'quiz_id': user_quiz.pk,
+                'user_no': user_no,
+                'submission_control': submission,
+                'quiz': Quiz.objects.get(pk=pk)
+            }
+
+        return render(request=request, template_name='student/quiz_live_extended.html', context=context)
 
 
 @method_decorator(student_decorators, name='dispatch')
@@ -681,7 +713,6 @@ class RelationDeleteView(DeleteView):
 class LearningResourceListView(View):
 
     def get(self, request):
-
         # AVAILABLE_QUIZES
         available_quizes = Quiz.objects.filter(learning_purpose=True).order_by('-start_time')
         completed_by_me = LearningResourceResult.objects.filter(user__id=request.user.id).order_by('-created')
@@ -774,11 +805,16 @@ class ZoomMeetingView(View):
     def get(self, request, quiz):
         user_quiz = Quiz.objects.get(pk=quiz)
         user_team = Team.objects.filter(quiz=user_quiz, participants=request.user)[0]
+
+        role = 0
+        if user_team.created_by == request.user:
+            role = 1
+
         data = {
             'apiKey': settings.ZOOM_API_KEY_JWT,
             'apiSecret': settings.ZOOM_API_SECRET_JWT,
             'meetingNumber': user_team.zoom_meeting_id,
-            'role': 1,
+            'role': role,
         }
         signature = generate_signature(data)
 
