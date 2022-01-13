@@ -577,8 +577,9 @@ class QuizLiveView(View):
             elif timezone.now() > user_quiz.end_time:
                 time_status = 'past'
 
-        zoom_start_url = f"https://zoom.us/s/{user_team.zoom_meeting_id}"
-        zoom_join_url = f"https://zoom.us/j/{user_team.zoom_meeting_id}"
+        start_url = user_team.zoom_join_url
+        if user_team.created_by == request.user:
+            start_url = user_team.zoom_start_url
 
         context = {
             'time_status': time_status,
@@ -587,8 +588,7 @@ class QuizLiveView(View):
             'quiz_end_date': user_quiz.end_time,
             'question_ids': question_ids,
             'team_id': user_team.pk,
-            'zoom_join_url': zoom_start_url if user_team.created_by == request.user else zoom_join_url,
-            'zoom_start_url': user_team.zoom_start_url,
+            'start_url': start_url,
             'quiz_id': user_quiz.pk,
             'user_no': user_no,
             'submission_control': submission,
@@ -778,12 +778,15 @@ class ZoomMeetingView(View):
             'apiKey': "EBB0k1HnRN6hlD5dvrkAyw",
             'apiSecret': "1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF",
             'meetingNumber': user_team.zoom_meeting_id,
-            'role': 1
+            'role': 1,
         }
         signature = generate_signature(data)
 
         context = {
             'meeting': user_team.zoom_meeting_id,
+            'start_url': user_team.zoom_start_url,
+            'created_by': user_team.created_by,
+            'join_url': user_team.zoom_join_url,
             'signature': signature,
             'user_name': request.user.username,
             'user_email': request.user.email,
