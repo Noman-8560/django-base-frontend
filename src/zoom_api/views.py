@@ -80,11 +80,11 @@ def zoom_create_meeting(name, start_time, end_time, host):
             "jbh_time": 0,
             "mute_upon_entry": False,
             "participant_video": True,
-            "registrants_confirmation_email": True,
+            "registrants_confirmation_email": False,
             "use_pmi": False,
             "waiting_room": False,
             "watermark": False,
-            "registrants_email_notification": True
+            "registrants_email_notification": False
         },
         "start_time": str(datetime.datetime.utcfromtimestamp(start_time)),  # FORMAT 2019-09-05T16:54:14Z
         "status": "waiting",
@@ -125,11 +125,25 @@ def zoom_check_user(user='cocognito2020@gmail.com'):
     return response
 
 
-def create_zoom_user(user: User):
+def zoom_activate_user(user):
+    bearer_token = get_jwt()
+    url = f"https://api.zoom.us/v2/users/{user.email}/status"
+    headers = {
+        'authorization': f"Bearer {bearer_token}"
+    }
+    data = {
+        "action": "activate"
+    }
+    response = requests.put(url=url, data=data, headers=headers)
+    print(response.text)
+    return response
+
+
+def zoom_create_user(user):
     bearer_token = get_jwt()
     url = 'https://api.zoom.us/v2/users'
     headers = {
-        'content-type': 'application/json',
+        'content-type': "application/json",
         'authorization': f"Bearer {bearer_token}"
     }
     data = {
@@ -142,11 +156,14 @@ def create_zoom_user(user: User):
         }
     }
     response = requests.post(url, headers=headers, json=data)
+    print(response.text)
+
     profile = StudentProfile.objects.get(user=user)
-    r_data = json.loads(response.text)
-    profile.zoom_user_id = r_data['id']
-    profile.save()
-    return response.status_code == 201
+    if response.status_code == 201:
+        r_data = json.loads(response.text)
+        profile.zoom_user_id = r_data['id']
+        profile.save()
+    return response
 
 
 def zoom(request):

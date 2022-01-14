@@ -4,6 +4,8 @@ from .views import (
     LearningResourceListView, LearningResourceLiveView, LearningResourceResultView, TeamDetailView, TeamDeleteView,
     RelationListView, RelationDetailView, RelationDeleteView, StudentProfileDetailView,
 
+    ActivateZoomAccount,
+
     LearningResourceLiveQuestionAccessJSON, LearningResourceLiveQuestionSubmitJSON, QuizLiveChoiceSubmitJSON,
     QuizLiveQuestionNextJSON, QuizLiveQuestionAccessJSON, QuizLiveQuestionSubmitJSON, UserExistsJSON
 )
@@ -13,6 +15,7 @@ urlpatterns = [
 
     path('', DashboardView.as_view(), name='dashboard'),
     path('zoom/<int:quiz>/', ZoomMeetingView.as_view(), name='zoom-meeting'),
+    path('zoom/activate/', ActivateZoomAccount.as_view(), name='zoom-activate'),
     path('profile/', StudentProfileDetailView.as_view(), name='profile-detail'),  # UNUSED -->:
 
     path('team/', TeamListView.as_view(), name='team'),

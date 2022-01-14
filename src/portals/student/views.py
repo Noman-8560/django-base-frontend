@@ -25,7 +25,7 @@ from src.application.models import (
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
-from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting
+from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting, zoom_create_user, zoom_activate_user
 
 User = get_user_model()
 
@@ -212,7 +212,7 @@ class StudentProfileDetailView(UpdateView):
     template_name = 'student/studentprofile_update_form.html'
     model = StudentProfile
     fields = [
-        'zoom_account', 'grade', 'school_name'
+        'grade', 'school_name'
     ]
     success_url = reverse_lazy('student-portal:profile-detail')
 
@@ -416,8 +416,18 @@ class QuizEnrollView(View):
                                                start_time=quiz.start_time.timestamp(),
                                                end_time=quiz.end_time.timestamp(), host=request.user.email)
                 if response.status_code != 201:
-                    messages.error(request=request,
-                                   message=f'Failed To create zoom meeting please consult administration')
+                    if response.status_code == 404:
+                        messages.error(
+                            request=request,
+                            message=f'You email is not registered with Zoom - '
+                                    f'Please add your zoom account in profile '
+                        )
+                        return HttpResponseRedirect(reverse('student-portal:profile-detail'))
+                    else:
+                        messages.error(
+                            request=request,
+                            message=f'Failed To create zoom meeting please consult administration'
+                        )
                     return HttpResponseRedirect(reverse('student-portal:quiz-enroll', args=(quiz.pk,)))
 
                 meeting = json.loads(response.text)
@@ -795,6 +805,22 @@ class LearningResourceResultView(View):
             'attempts': attempts
         }
         return render(request=request, template_name='student/learning_resource_result.html', context=context)
+
+
+class ActivateZoomAccount(View):
+
+    def get(self, request):
+
+        profile = request.user.get_student_profile()
+        response = zoom_create_user(request.user)
+
+        # CREATE ZOOM USER
+        if response.status_code == 201:
+            messages.success(request, "Requested user zoom account created successfully-  verify to continue.")
+        if response.status_code == 409:
+            messages.warning(request, "Requested user zoom account already exists")
+
+        return redirect('student-portal:profile-detail')
 
 
 """  EXTRA VIEWS ---------------------------------------------------------------------------- """

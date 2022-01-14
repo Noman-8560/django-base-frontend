@@ -7,9 +7,14 @@
 {% block content %}
 
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-sm-7 col-12">
                 <div class="card">
+                    <div class="card-header border-bottom bg-white">
+                        <p class="mb-0 card-title">
+                            Profile Settings
+                        </p>
+                    </div>
                     <div class="card-body">
                         <div class="p-3">
                             <form autocomplete="off" method="post" action="">
@@ -23,6 +28,61 @@
                                 </a>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5 col-12">
+                <div class="card">
+                    <div class="card-header border-bottom bg-white">
+                        <p class="mb-0 card-title">
+                            Zoom Account Verification
+                        </p>
+                    </div>
+                    <div class="card-body text-center">
+                        {% if request.user.get_student_profile.zoom_user_id %}
+                            <div>
+                                <h1 class="mb-0 text-success">
+                                    <i class="mdi mdi-shield-check"></i><br>
+                                </h1>
+                                <b class="text-success">(Created)</b>
+                                <p class="mb-0"><b>ID:</b> {{ request.user.get_student_profile.zoom_user_id }}</p>
+                            </div>
+                            <div>
+
+                            </div>
+                        {% else %}
+                            <div>
+                                <h1 class="mb-0 text-danger">
+                                    <i class="mdi mdi-shield-alert"></i><br>
+                                </h1>
+                                <b class="text-danger">(Not Created)</b><br><br>
+
+
+                                <a href="{% url 'student-portal:zoom-activate' %}">
+                                    <b class="btn btn-primary">
+                                        <i class="fa fa-link"></i>
+                                        Create Zoom Account
+                                    </b>
+                                </a>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="card-footer border-top bg-white">
+                        <p class="card-title text-danger">Steps to Validate Your account <small>(optional)</small></p>
+                        <ul>
+                            {% if request.user.get_student_profile.zoom_user_id %}
+                                <li>Your Account is created and ID is <b>{{ request.user.get_student_profile.zoom_user_id }}</b></li>
+                            {% else %}
+                                <li>Create your account by clicking the button above <b>"Create Zoom Account"</b></li>
+                            {% endif %}
+                            <li>
+                                After creating account, please check your email <b>{{ request.user.email }} </b>to verify.
+                            </li>
+                            <li>
+                                If you get any email from zoom please verify then, if not leave it.
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

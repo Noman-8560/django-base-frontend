@@ -621,19 +621,3 @@ def save_profile_on_user(sender, instance, created, **kwargs):
         if user.is_student:
             profile = StudentProfile(user=user)
             profile.save()
-
-        from src.zoom_api.views import create_zoom_user
-        # if create_zoom_user(user=user):
-        #     verb = f'Zoom profile created'
-        #     description = f'Hi <b>{user}</b>, your zoom profile was created, so you can join and/or start meetings.'
-        # else:
-        #     verb = f'Failed to create Zoom profile'
-        #     description = f'Hi <b>{user}</b>, failed to create your Zoom profile, please contact the administrators.'
-
-        # notify.send(
-        #     user,
-        #     recipient=user,
-        #     verb=verb,
-        #     level='info',
-        #     description=description
-        # )

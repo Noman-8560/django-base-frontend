@@ -2,10 +2,11 @@
 {% load static %}
 {% load tz %}
 
-{% block base_title %}QUIZ > SCREEN{% endblock %}
+{% block base_title %}QUIZ LIVE{% endblock %}
 
 {% block base_links %}
     <meta charset="utf-8"/>
+{#    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/bootstrap.css" />#}
     <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/react-select.css"/>
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -200,8 +201,8 @@
                                 </div>
                             </div>
 
-                            <div id="meetingSDKElement">
-                                <!-- Zoom Meeting SDK Rendered Here -->
+                            <div id="meetingSDKElement" style="z-index: 10;">
+
                             </div>
                         </div>
                     {% endif %}
@@ -391,17 +392,11 @@
                         zoomAppRoot: meetingSDKElement,
                         language: 'en-US',
                         customize: {
-                            meetingInfo: ['topic', 'host', 'mn', 'pwd', 'telPwd', 'invite', 'participant', 'dc', 'enctype'],
+                            meetingInfo: [
+                                'topic', 'host', 'mn', 'pwd', 'telPwd', 'invite', 'participant', 'dc', 'enctype'
+                            ],
                             toolbar: {
-                                buttons: [
-                                    {
-                                        text: 'Custom Button',
-                                        className: 'CustomButton',
-                                        onClick: () => {
-                                            console.log('custom button');
-                                        }
-                                    }
-                                ]
+
                             }
                         }
 
@@ -412,7 +407,7 @@
                         signature: "{{ signature }}",
                         meetingNumber: {{ meeting_id }},
                         password: null,
-                        userName: "{{ created_by.username }}"
+                        userName: "{{ request.user.username }}"
                     });
                 {% endif %}
 
@@ -727,7 +722,7 @@
             }
 
             function openWin() {
-                myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");
+                location.reload()
             }
 
             function closeWin() {
