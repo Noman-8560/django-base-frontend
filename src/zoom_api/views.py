@@ -99,7 +99,6 @@ def zoom_create_meeting(name, start_time, end_time, host):
     }
 
     response = requests.post(url=url, json=payload, headers=headers)
-    print(response.text)
     return response
 
 
@@ -121,7 +120,6 @@ def zoom_check_user(user='cocognito2020@gmail.com'):
         'authorization': f"Bearer {bearer_token}"
     }
     response = requests.get(url, headers=headers)
-    print(response.text)
     return response
 
 
@@ -135,7 +133,6 @@ def zoom_activate_user(user):
         "action": "activate"
     }
     response = requests.put(url=url, data=data, headers=headers)
-    print(response.text)
     return response
 
 
@@ -156,7 +153,6 @@ def zoom_create_user(user):
         }
     }
     response = requests.post(url, headers=headers, json=data)
-    print(response.text)
 
     profile = StudentProfile.objects.get(user=user)
     if response.status_code == 201:
