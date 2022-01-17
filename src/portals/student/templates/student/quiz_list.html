@@ -137,10 +137,7 @@
                         <div class="card-body">
                             <h5 class="card-title text-danger"><i class="fa fa-exclamation-circle"></i> Not Found</h5>
                             <p class="card-text">{{ request.user.username }}! No quizzes are available to enroll
-                                now
-                                its because the admin didn't added yet or you have have been enrolled already
-                                check
-                                your <a href="{% url 'student-portal:team' %}">teams</a> to confirm it.</p>
+                                now</p>
                         </div>
                     {% endif %}
                 </div>
@@ -151,7 +148,9 @@
                                 <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Required</th>
+                                    <th>Team</th>
+                                    <th>Participants</th>
+                                    <th>Type</th>
                                     <th>Questions</th>
                                     <th>Subjects</th>
                                     <th>Start</th>
@@ -163,20 +162,28 @@
 
                                 {% for quiz in quizes_enrolled %}
                                     <tr>
-                                        <td>{{ quiz.title }}</td>
-                                        <td>{{ quiz.get_players_display }}</td>
-                                        <td>{{ quiz.questions.count }}</td>
+                                        <td>{{ quiz.quiz.title }}</td>
+                                        <td>{{ quiz.name }}</td>
                                         <td>
-                                            {% for subject in quiz.subjects.all %}
+                                            {% for user in quiz.participants.all %}
+                                                <span href=""
+                                                      class="badge badge-pill badge-soft-primary">{{ user.username }}</span>
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ quiz.quiz.get_players_display }}</td>
+                                        <td>{{ quiz.quiz.questions.count }}</td>
+                                        <td>
+                                            {% for subject in quiz.quiz.subjects.all %}
                                                 <span href=""
                                                       class="badge badge-pill badge-soft-primary">{{ subject.title }}</span>
                                                 <br>
                                             {% endfor %}
                                         </td>
-                                        <td>{{ quiz.start_time }}</td>
-                                        <td>{{ quiz.end_time }}</td>
+                                        <td>{{ quiz.quiz.start_time }}</td>
+                                        <td>{{ quiz.quiz.end_time }}</td>
                                         <td>
-                                            <a href="{% url 'student-portal:quiz-live' quiz.pk %}"><i
+                                            <a href="{% url 'student-portal:quiz-live' quiz.quiz.pk %}"><i
                                                     class="fa fa-play"></i>
                                                 Start
                                             </a>
@@ -197,8 +204,7 @@
                         <div class="card-body">
                             <h5 class="card-title text-danger"><i class="fa fa-exclamation-circle"></i> Not Found</h5>
                             <p class="card-text">{{ request.user.username }}! No quizzes are available now
-                                because
-                                of some reasons the admin didn't added yet, you are not enrolled to any quiz or
+                                because  you are not enrolled to any quiz or
                                 you
                                 have attempted all your enrolled quizzes.</p>
                         </div>

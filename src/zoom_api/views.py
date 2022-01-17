@@ -157,6 +157,10 @@ def zoom_create_user(user):
         r_data = json.loads(response.text)
         profile.zoom_user_id = r_data['id']
         profile.save()
+    elif response.status_code == 409:
+        profile.zoom_user_id = user.username
+        profile.save()
+
     return response
 
 

@@ -241,9 +241,9 @@ class QuizListView(View):
         completed_by_me = QuizCompleted.objects.filter(user__id=request.user.id, passed=F('total'))
 
         # QUIZ ENROLLED
-        enrolled_quizes = Quiz.objects \
-            .filter(end_time__gt=timezone.now(), learning_purpose=False, id__in=my_quizes.values_list('id', flat=True)) \
-            .exclude(id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-start_time')
+        enrolled_quizes = Team.objects \
+            .filter(quiz__end_time__gt=timezone.now(), quiz__learning_purpose=False) \
+            .exclude(quiz__id__in=completed_by_me.values_list('quiz', flat=True)).order_by('-quiz__start_time')
 
         # QUIZ SUBMITTED
         completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True), learning_purpose=False)
@@ -276,7 +276,7 @@ class TeamDetailView(View):
         return render(request=request, template_name='student/team.html', context=context)
 
 
-@method_decorator(student_decorators, name='dispatch')
+@method_decorator(student_nocache_decorators, name='dispatch')
 class TeamDeleteView(View):
 
     def get(self, request, pk):
@@ -296,38 +296,32 @@ class TeamDeleteView(View):
         completed = Quiz.objects.filter(pk__in=completed_by_me.values_list('quiz', flat=True))
         quiz = team.quiz
 
-        if Team.objects.filter(quiz__in=completed):
-            messages.error(request=request,
-                           message="you have attempted quiz with this team, you are not allowed to delete this team now")
-            return redirect('student-portal:team', permanent=True)
-        else:
+        # TODO: statistics ---------------------------------------------------------
+        for user in team.participants.all():
+            profile = user.get_student_profile()
+            if quiz.learning_purpose:
+                profile.total_learning -= 1
+            else:
+                profile.total_quizzes -= 1
+            profile.save()
 
-            # TODO: statistics ---------------------------------------------------------
-            for user in team.participants.all():
-                profile = user.get_student_profile()
-                if quiz.learning_purpose:
-                    profile.total_learning -= 1
-                else:
-                    profile.total_quizzes -= 1
-                profile.save()
+        quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
+        quiz.total_enrolled_students = quiz.total_enrolled_students - (
+                quiz.total_enrolled_students * int(quiz.players))
+        if quiz.total_enrolled_students == 0:
+            quiz.total_enrolled_students = 0
 
-            quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
-            quiz.total_enrolled_students = quiz.total_enrolled_students - (
-                    quiz.total_enrolled_students * int(quiz.players))
-            if quiz.total_enrolled_students == 0:
-                quiz.total_enrolled_students = 0
+        if quiz.total_enrolled_teams < 0:
+            quiz.total_enrolled_teams = 0
+        quiz.save()
+        # --------------------------------------------------------------------------
 
-            if quiz.total_enrolled_teams < 0:
-                quiz.total_enrolled_teams = 0
-            quiz.save()
-            # --------------------------------------------------------------------------
-
-            # TODO: Team meeting delete here
-            zoom_delete_meeting(team.zoom_meeting_id)
-            team.delete()
-            messages.success(request=request,
-                             message="Team Destroyed completely")
-        return redirect('student-portal:team', permanent=True)
+        # TODO: Team meeting delete here
+        zoom_delete_meeting(team.zoom_meeting_id)
+        team.delete()
+        messages.success(request=request,
+                             message="Successfully unenrolled from the quiz")
+        return redirect('student-portal:quiz', permanent=True)
 
 
 @method_decorator(student_nocache_decorators, name='dispatch')

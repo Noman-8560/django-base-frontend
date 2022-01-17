@@ -22,7 +22,7 @@
                         <div class="p-4 border-bottom">
                             <div class="">
                                 <label for="team_name" class="form-label">Team Name</label>
-                                <input type="text" class="form-control" id="team_name" name="team_name">
+                                <input type="text" class="form-control" id="team_name" name="team_name" required>
                             </div>
                             <br>
 
@@ -50,17 +50,18 @@
                             {% endif %}
                         </div>
                         <div class="p-4">
-                            <ul class="text-muted">
+                            <ul class="text-muted list-unstyled">
 
-                                <li>If quiz type is single player start one man team.
+                                <li>You are allowed to add one or two more players, depending upon the quiz type
                                 </li>
-                                <li>You are allowed to add one or two more players, depending upon the quiz req
+                                <li>Please add username of your teammate to create team for 2 players
                                 </li>
-                                <li>You are not allowed to update quiz details, remove participants and
-                                    transfer status.
+                                <li>Please add usernames of two other teammates to create team for 3 players.</li>
+                                <li>If you want to edit your team later on, go to <a
+                                        href="{% url 'student-portal:team' %}">team menu</a>, delete your team and
+                                    enroll again with your new team
                                 </li>
-                                <li>If you have any issue please remove your team and add new one</li>
-                                <li>once your team attempts the quiz you are not allowed to delete
+                                <li>Once your team attempts the quiz you are not allowed to delete
                                     team anymore.
                                 </li>
                             </ul>

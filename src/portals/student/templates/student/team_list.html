@@ -32,7 +32,6 @@
                             <table class="table table-hover table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>SNO</th>
                                     <th>Name</th>
                                     <th>Quiz</th>
                                     <th>Quiz Type</th>
@@ -44,7 +43,6 @@
 
                                 {% for team in teams %}
                                     <tr>
-                                        <td>{{ team.pk }}</td>
                                         <td>{{ team.name }}</td>
                                         <td>{{ team.quiz.title }}</td>
                                         <td>{{ team.quiz.get_players_display }}</td>
@@ -70,12 +68,12 @@
                         <div class="card-body">
                             <h5 class="card-title text-danger">How to Create or Join Team</h5>
                             <p class="card-text">{{ request.user.username }}! You are not associated to any team
-                                        until
-                                        now,
-                                        you can create your own team by selecting <a
-                                                href="{% url 'student-portal:quiz' %}">Quiz</a>
-                                        from available quizes or you can join someone team, give them your username:
-                                        <b>{{ request.user.username }}</b> and ask them to add.
+                                until
+                                now,
+                                you can create your own team by selecting <a
+                                        href="{% url 'student-portal:quiz' %}">Quiz</a>
+                                from available quizes or you can join someone team, give them your username:
+                                <b>{{ request.user.username }}</b> and ask them to add.
                             </p>
                         </div>
                     {% endif %}
@@ -87,7 +85,6 @@
                             <table class="table table-hover table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>SNO</th>
                                     <th>Name</th>
                                     <th>Quiz</th>
                                     <th>Quiz Type</th>
@@ -99,7 +96,6 @@
 
                                 {% for team in ex_teams %}
                                     <tr>
-                                        <td>{{ team.pk }}</td>
                                         <td>{{ team.name }}</td>
                                         <td>{{ team.quiz.title }}</td>
                                         <td>{{ team.quiz.get_players_display }}</td>
@@ -142,7 +138,6 @@
                             <table class="table table-hover table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>SNO</th>
                                     <th>Name</th>
                                     <th>Quiz</th>
                                     <th>Quiz Type</th>
@@ -155,7 +150,6 @@
 
                                 {% for team in av_teams %}
                                     <tr>
-                                        <td>{{ team.pk }}</td>
                                         <td>{{ team.name }}</td>
                                         <td>{{ team.quiz.title }}</td>
                                         <td>{{ team.quiz.get_players_display }}</td>
@@ -168,10 +162,11 @@
                                         </td>
                                         <td>{{ team.created_at }}</td>
 
-                                        <td><a class="text-danger"
-                                               href="{% url 'student-portal:team-delete' team.pk %}"><i
-                                                class="fa fa-trash"></i>
-                                            Leave</a>
+                                        <td>
+                                            <button class="btn btn-danger" id="delete-team" data-id="{{ team.pk }}"><i
+                                                    class="fa fa-trash"></i>
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
 
@@ -202,11 +197,57 @@
 
 {% block base_internal_scripts %}
     <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block base_external_scripts %}
     <script>
         $(document).ready(function () {
+
+            $('#available #delete-team').click(function (event) {
+                let value = $(this).data('id');
+
+                {# SWEET #}
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: 'Are you sure?',
+                    text: "Deleting team will unenroll you from the quiz, you will have to register again for the quiz, do you wish to proceed?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        swalWithBootstrapButtons.fire(
+                            'Team Deleted!',
+                            'You have successfully unenrolled from this quiz.',
+                            'success'
+                        );
+                        window.location = "/s/team/" + value + "/delete/"
+                    } else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        swalWithBootstrapButtons.fire(
+                            'Cancelled',
+                            'Your team is safe :)',
+                            'error'
+                        )
+                    }
+                });
+
+                {# ----- #}
+
+            });
 
             $('table').DataTable();
 
