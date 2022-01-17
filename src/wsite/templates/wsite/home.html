@@ -1,6 +1,10 @@
 {% extends 'wsite/base.html' %}
 {% load static %}
 
+{% block base_sub_title %}
+    Lets Learn Together
+{% endblock %}
+
 {% block base_content %}
 
     <div class="main-banner">
@@ -12,7 +16,7 @@
                             <div class="col-lg-6">
                                 <div class="main-banner-content">
                                     <span>Play, Learn and Grow</span>
-                                    <h1>We are Professional Educators</h1>
+                                    <h1>Lets Learn Together</h1>
                                     <p>
                                         Human beings are social animals and we have been successful in becoming the most
                                         dominant species, by way of our team effort.
@@ -72,144 +76,144 @@
         </div>
     </div>
 
-    <section class="who-we-are ptb-100">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="who-we-are-content">
-                        <span>Who We Are</span>
-                        <h3>Learn About Our Work and Cultural Activities</h3>
-                        <p>
-                            At Cocognito, we’ve seen again and again how the seemingly simple act of creating can be a
-                            force for growth, change, and discovery in people’s lives. We want to inspire and multiply
-                            the kind of creative exploration that furthers expression, learning and application.
-                        </p>
-                        <ul class="who-we-are-list">
-                            <li>
-                                <span>1</span>
-                                Support your whole team
-                            </li>
-                            <li>
-                                <span>2</span>
-                                Quality Educators
-                            </li>
-                            <li>
-                                <span>3</span>
-                                Engage with ease
-                            </li>
-                            <li>
-                                <span>4</span>
-                                Play to Learn
-                            </li>
-                        </ul>
-                        <div class="who-we-are-btn">
-                            <a href="#" class="default-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="who-we-are-image">
-                        <img src="{% static 'website/img/who-we-are/who-we-are.jpg' %}" alt="image">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+{#    <section class="who-we-are ptb-100">#}
+{#        <div class="container">#}
+{#            <div class="row align-items-center">#}
+{#                <div class="col-lg-6">#}
+{#                    <div class="who-we-are-content">#}
+{#                        <span>Who We Are</span>#}
+{#                        <h3>Learn About Our Work and Cultural Activities</h3>#}
+{#                        <p>#}
+{#                            At Cocognito, we’ve seen again and again how the seemingly simple act of creating can be a#}
+{#                            force for growth, change, and discovery in people’s lives. We want to inspire and multiply#}
+{#                            the kind of creative exploration that furthers expression, learning and application.#}
+{#                        </p>#}
+{#                        <ul class="who-we-are-list">#}
+{#                            <li>#}
+{#                                <span>1</span>#}
+{#                                Support your whole team#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <span>2</span>#}
+{#                                Quality Educators#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <span>3</span>#}
+{#                                Engage with ease#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <span>4</span>#}
+{#                                Play to Learn#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                        <div class="who-we-are-btn">#}
+{#                            <a href="#" class="default-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-6">#}
+{#                    <div class="who-we-are-image">#}
+{#                        <img src="{% static 'website/img/who-we-are/who-we-are.jpg' %}" alt="image">#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
 
-    <section id="activities" class="activities-area pt-100 pb-70">
-        <div class="container">
-            <div class="section-title">
-                <span>Our Activities</span>
-                <h2>Our More Enjoyable Activities</h2>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-activities">
-                        <div class="number">
-                            <span>01</span>
-                        </div>
-                        <div class="activities-content">
-                            <h3>
-                                <a href="#">Learning Resources</a>
-                            </h3>
-                            <p>description not available.</p>
-                            <a href="#" class="activities-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-activities">
-                        <div class="number">
-                            <span class="bg-2">02</span>
-                        </div>
-                        <div class="activities-content">
-                            <h3>
-                                <a href="#">Individual Tests</a>
-                            </h3>
-                            <p>description not available.</p>
-                            <a href="#" class="activities-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-activities">
-                        <div class="number">
-                            <span class="bg-3">03</span>
-                        </div>
-                        <div class="activities-content">
-                            <h3>
-                                <a href="#">Team Tests</a>
-                            </h3>
-                            <p>description not available.</p>
-                            <a href="#" class="activities-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-activities">
-                        <div class="number">
-                            <span class="bg-4">04</span>
-                        </div>
-                        <div class="activities-content">
-                            <h3>
-                                <a href="#">Knowlege Challenges</a>
-                            </h3>
-                            <p>description not available.</p>
-                            <a href="#" class="activities-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-activities">
-                        <div class="number">
-                            <span class="bg-5">05</span>
-                        </div>
-                        <div class="activities-content">
-                            <h3>
-                                <a href="#">Parental Access</a>
-                            </h3>
-                            <p>description not available.</p>
-                            <a href="#" class="activities-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-activities">
-                        <div class="number">
-                            <span class="bg-6">06</span>
-                        </div>
-                        <div class="activities-content">
-                            <h3>
-                                <a href="#">Live Performance</a>
-                            </h3>
-                            <p>description not available.</p>
-                            <a href="#" class="activities-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+{#    <section id="activities" class="activities-area pt-100 pb-70">#}
+{#        <div class="container">#}
+{#            <div class="section-title">#}
+{#                <span>Our Activities</span>#}
+{#                <h2>Our More Enjoyable Activities</h2>#}
+{#            </div>#}
+{#            <div class="row">#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="single-activities">#}
+{#                        <div class="number">#}
+{#                            <span>01</span>#}
+{#                        </div>#}
+{#                        <div class="activities-content">#}
+{#                            <h3>#}
+{#                                <a href="#">Learning Resources</a>#}
+{#                            </h3>#}
+{#                            <p>description not available.</p>#}
+{#                            <a href="#" class="activities-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="single-activities">#}
+{#                        <div class="number">#}
+{#                            <span class="bg-2">02</span>#}
+{#                        </div>#}
+{#                        <div class="activities-content">#}
+{#                            <h3>#}
+{#                                <a href="#">Individual Tests</a>#}
+{#                            </h3>#}
+{#                            <p>description not available.</p>#}
+{#                            <a href="#" class="activities-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="single-activities">#}
+{#                        <div class="number">#}
+{#                            <span class="bg-3">03</span>#}
+{#                        </div>#}
+{#                        <div class="activities-content">#}
+{#                            <h3>#}
+{#                                <a href="#">Team Tests</a>#}
+{#                            </h3>#}
+{#                            <p>description not available.</p>#}
+{#                            <a href="#" class="activities-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="single-activities">#}
+{#                        <div class="number">#}
+{#                            <span class="bg-4">04</span>#}
+{#                        </div>#}
+{#                        <div class="activities-content">#}
+{#                            <h3>#}
+{#                                <a href="#">Knowlege Challenges</a>#}
+{#                            </h3>#}
+{#                            <p>description not available.</p>#}
+{#                            <a href="#" class="activities-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="single-activities">#}
+{#                        <div class="number">#}
+{#                            <span class="bg-5">05</span>#}
+{#                        </div>#}
+{#                        <div class="activities-content">#}
+{#                            <h3>#}
+{#                                <a href="#">Parental Access</a>#}
+{#                            </h3>#}
+{#                            <p>description not available.</p>#}
+{#                            <a href="#" class="activities-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="single-activities">#}
+{#                        <div class="number">#}
+{#                            <span class="bg-6">06</span>#}
+{#                        </div>#}
+{#                        <div class="activities-content">#}
+{#                            <h3>#}
+{#                                <a href="#">Live Performance</a>#}
+{#                            </h3>#}
+{#                            <p>description not available.</p>#}
+{#                            <a href="#" class="activities-btn">Read More</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
 
     <section id="quizzes" class="class-area pt-100 pb-70">
         <div class="container">

@@ -24,7 +24,6 @@ def get_jwt():
     return jwt.encode(payload, ZOOM_API_SECRET_JWT).decode('utf-8')
 
 
-# NOT WORKING
 def o_auth_authorize():
     """
     https://zoom.us/oauth/authorize?response_type=code&client_id=7lstjK9NTyett_oeXtFiEQ&redirect_uri=https://yourapp.com
@@ -40,7 +39,6 @@ def o_auth_authorize():
     return response
 
 
-# NOT WORKING
 def o_auth_access_token():
     """
     https://zoom.us/oauth/token?grant_type=authorization_code&code=FROM_ABOVE_API&redirect_uri=REDIRECT_URL
@@ -113,7 +111,7 @@ def zoom_delete_meeting(meeting_id):
     return response.status_code
 
 
-def zoom_check_user(user='cocognito2020@gmail.com'):
+def zoom_check_user(user):
     bearer_token = get_jwt()
     url = f"https://api.zoom.us/v2/users/{user}"
     headers = {
