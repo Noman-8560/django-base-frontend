@@ -64,7 +64,9 @@
                                                 <i class="fa fa-clock"></i>
                                             </h2>
                                             <small>Quizzes</small>
-                                            <h5 class="mt-2">{{ total_quizzes }}</h5>
+                                            <h5 class="mt-2">
+                                                <a href="{% url 'student-portal:quiz' %}">{{ total_quizzes }}</a>
+                                            </h5>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -73,7 +75,9 @@
                                                 <i class="fa fa-book"></i>
                                             </h2>
                                             <small>Learning</small>
-                                            <h5 class="mt-2">{{ total_learning }}</h5>
+                                            <h5 class="mt-2">
+                                                <a href="{% url 'student-portal:learning-resource' %}">{{ total_learning }}</a>
+                                            </h5>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -82,7 +86,9 @@
                                                 <i class="fa fa-child"></i>
                                             </h2>
                                             <small>Parental Access</small>
-                                            <h5 class="mt-2">{{ total_relations }}</h5>
+                                            <h5 class="mt-2"><a href="{% url 'student-portal:relation' %}">
+                                                {{ total_relations }}
+                                            </a></h5>
                                         </div>
                                     </div>
 

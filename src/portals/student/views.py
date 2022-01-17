@@ -750,23 +750,15 @@ class LearningResourceLiveView(View):
                                    "please consult admin")
             return redirect('student-portal:learning-resource', permanent=True)
 
-        if user_quiz.start_time <= timezone.now() < user_quiz.end_time:
-            allowed_to_start = True
-            time_status = 'present'
+        time_status = 'present'
 
-            questions = user_quiz.questions.all()
-            for question in questions:
-                question_ids.append(question.pk)
-
-        else:
-            if user_quiz.start_time > timezone.now():
-                time_status = 'future'
-            elif timezone.now() > user_quiz.end_time:
-                time_status = 'past'
+        questions = user_quiz.questions.all()
+        for question in questions:
+            question_ids.append(question.pk)
 
         context = {
+            'total': user_quiz.questions.count(),
             'time_status': time_status,
-            'allowed_to_start': allowed_to_start,
             'quiz_start_date': user_quiz.start_time,
             'quiz_end_date': user_quiz.end_time,
             'question_ids': question_ids,
