@@ -251,7 +251,7 @@ class QuizListView(View):
         context = {
             'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
             'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
-            'quizes_enrolled': enrolled_quizes,  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+            'quizes_enrolled': enrolled_quizes.filter(participants__in=[request.user]),  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
             'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
         }
         return render(request=request, template_name='student/quiz_list.html', context=context)
