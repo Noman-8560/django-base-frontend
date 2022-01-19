@@ -447,9 +447,10 @@ class QuizEnrollView(View):
 
             # TODO: statistics ---------------------------------------------------------
             quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
-            quiz.total_enrolled_students = quiz.total_enrolled_students + (
-                    quiz.total_enrolled_students * int(quiz.players))
+            quiz.total_enrolled_students = quiz.total_enrolled_students + 1
             quiz.save()
+            # --------------------------------------------------------------------------
+
             # --------------------------------------------------------------------------
 
             # ---------> NOTIFY
@@ -885,6 +886,14 @@ class LearningResourceLiveQuestionSubmitJSON(View):
                 x.successful = correct
                 x.save()
 
+            # TODO: QUESTION STATS > learning resource
+            """ QUESTION STATS -------------------------------------------- """
+            # question.total_times_used_in_learning += 1
+            # if choice_id:
+            #     question.total_times_correct_in_learning += 1
+            # question.save()
+            """ ---------------------------------------------------------- """
+
             if request.POST['end'] == 'True':
                 yy = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz)
 
@@ -965,6 +974,7 @@ class LearningResourceLiveQuestionAccessJSON(View):
                 'attempts': attempts,
                 'remains': remains,
             }
+            print(response)
             return JsonResponse(data=response, safe=False)
         else:
             return JsonResponse(data=None, safe=False)

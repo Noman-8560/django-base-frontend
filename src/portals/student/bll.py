@@ -15,3 +15,7 @@ def is_participation_already_enrolled(player, quiz):
 
 def quiz_enrollment_logic():
     pass
+
+
+def question_grading_logic(question):
+    pass
