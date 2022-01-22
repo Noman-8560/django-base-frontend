@@ -96,6 +96,7 @@ urlpatterns = [
          name='question-audio-status-change-json'),
     path('json/quiz/question/submission/status/<int:pk>/change/', QuestionSubmitStatusUpdateJSON.as_view(),
          name='question-submission-status-change-json'),
+
     path('json/quiz/<int:quiz_id>/question/<int:question_id>/add/', QuizQuestionAddJSON.as_view(),
          name='quiz-question-add-json'),
     path('json/quiz/<int:quiz_id>/question/<int:question_id>/delete/', QuizQuestionDeleteJSON.as_view(),

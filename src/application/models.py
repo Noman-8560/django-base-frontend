@@ -208,10 +208,13 @@ class Question(models.Model):
     age_limit = models.PositiveIntegerField(null=False, blank=False, validators=[is_more_than_eighteen])
 
     # TODO: statistical calculations here --------------------------------------------------------------------
-    total_times_correct_in_quizzes = models.PositiveIntegerField(default=0)
-    total_times_correct_in_learning = models.PositiveIntegerField(default=0)
     total_times_used_in_quizzes = models.PositiveIntegerField(default=0)
+    total_times_attempted_in_quizzes = models.PositiveIntegerField(default=0)
+    total_times_correct_in_quizzes = models.PositiveIntegerField(default=0)
+
     total_times_used_in_learning = models.PositiveIntegerField(default=0)
+    total_times_attempted_in_learning = models.PositiveIntegerField(default=0)
+    total_times_correct_in_learning = models.PositiveIntegerField(default=0)
     # --------------------------------------------------------------------------------------------------------
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)

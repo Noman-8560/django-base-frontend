@@ -447,7 +447,7 @@ class QuizEnrollView(View):
 
             # TODO: statistics ---------------------------------------------------------
             quiz.total_enrolled_teams = quiz.total_enrolled_teams + 1
-            quiz.total_enrolled_students = quiz.total_enrolled_students + 1
+            quiz.total_enrolled_students = quiz.total_enrolled_students + int(quiz.players)
             quiz.save()
             # --------------------------------------------------------------------------
 
@@ -888,10 +888,10 @@ class LearningResourceLiveQuestionSubmitJSON(View):
 
             # TODO: QUESTION STATS > learning resource
             """ QUESTION STATS -------------------------------------------- """
-            # question.total_times_used_in_learning += 1
-            # if choice_id:
-            #     question.total_times_correct_in_learning += 1
-            # question.save()
+            question.total_times_attempted_in_learning += 1
+            if correct:
+                question.total_times_correct_in_learning += 1
+            question.save()
             """ ---------------------------------------------------------- """
 
             if request.POST['end'] == 'True':
@@ -969,7 +969,6 @@ class LearningResourceLiveQuestionAccessJSON(View):
                 'statements': statements,
                 'images': images,
                 'audios': audios,
-
                 'total': total,
                 'attempts': attempts,
                 'remains': remains,
@@ -1032,10 +1031,6 @@ class QuizLiveQuestionSubmitJSON(View):
 
             quiz_complete.save()
 
-            # TODO: statistics ---------------------------------------------------------
-
-            # ---------------------------------------------------------------------------
-
             if int(request.POST['end']) == 1:
                 meeting_id = team.zoom_meeting_id
                 if meeting_id is not None or meeting_id == '':
@@ -1048,8 +1043,15 @@ class QuizLiveQuestionSubmitJSON(View):
                     level='info',
                     description=f'<b>Hi {user}!</b> you can review your vs other teams performance on dashboard'
                 )
-        miscellaneous.delete()
 
+        # TODO: statistics ---------------------------------------------------------
+        if miscellaneous.choice.is_correct:
+            question.total_times_correct_in_quizzes += 1
+        question.total_times_attempted_in_quizzes += 1
+        question.save()
+        # ---------------------------------------------------------------------------
+
+        miscellaneous.delete()
         response = {
             'success': 'true',
             'message': message,

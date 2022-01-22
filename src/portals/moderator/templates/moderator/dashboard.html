@@ -51,7 +51,7 @@
                                                 <i class="fa fa-user-clock"></i>
                                             </h2>
                                             <small>Individual Quiz</small>
-                                            <h5 class="mt-2">{{ single_all }}</h5>
+                                            <h5 class="mt-2"><a href="{% url 'moderator-portal:quiz' %}">{{ single_all }}</a></h5>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -60,7 +60,7 @@
                                                 <i class="fa fa-users"></i>
                                             </h2>
                                             <small>Team Quiz</small>
-                                            <h5 class="mt-2">{{ team_all }}</h5>
+                                            <h5 class="mt-2"><a href="{% url 'moderator-portal:quiz' %}">{{ team_all }}</a></h5>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -69,7 +69,7 @@
                                                 <i class="fa fa-book"></i>
                                             </h2>
                                             <small>Learnings</small>
-                                            <h5 class="mt-2">{{ learning_all }}</h5>
+                                            <h5 class="mt-2"><a href="{% url 'moderator-portal:quiz' %}">{{ learning_all }}</a></h5>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -78,7 +78,7 @@
                                                 <i class="fa fa-question-circle text-danger"></i>
                                             </h2>
                                             <small>Questions</small>
-                                            <h5 class="mb-0">{{ questions_all }}</h5>
+                                            <h5 class="mb-0"><a href="{% url 'moderator-portal:question' %}">{{ questions_all }}</a></h5>
                                         </div>
                                     </div>
 

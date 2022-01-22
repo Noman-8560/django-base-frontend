@@ -938,7 +938,10 @@ class QuizQuestionAddJSON(View):
                 ).save()
 
             # TODO: statistics for quiz -----------------------------------------------------
-            question.total_times_used_in_quizzes = question.total_times_used_in_quizzes + 1
+            if quiz.learning_purpose:
+                question.total_times_used_in_learning = question.total_times_used_in_learning + 1
+            else:
+                question.total_times_used_in_quizzes = question.total_times_used_in_quizzes + 1
             question.save()
             # -------------------------------------------------------------------------------
 
@@ -957,9 +960,14 @@ class QuizQuestionDeleteJSON(View):
             messages.success(request=request, message=f'Requested Question [ID: {question_id}] deleted successfully.')
 
             # TODO: statistics for quiz -----------------------------------------------------
-            question.total_times_used_in_quizzes = question.total_times_used_in_quizzes - 1
-            if question.total_times_used_in_quizzes < 0:
-                question.total_times_used_in_quizzes = 0
+            if quiz.learning_purpose:
+                question.total_times_used_in_learning = question.total_times_used_in_learning - 1
+                if question.total_times_used_in_learning < 0:
+                    question.total_times_used_in_learning = 0
+            else:
+                question.total_times_used_in_quizzes = question.total_times_used_in_quizzes - 1
+                if question.total_times_used_in_quizzes < 0:
+                    question.total_times_used_in_quizzes = 0
             question.save()
             # -------------------------------------------------------------------------------
             return redirect('admin-portal:quiz-update', quiz_id, permanent=True)

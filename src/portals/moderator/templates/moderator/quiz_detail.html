@@ -21,7 +21,9 @@
             <a href="{% url 'moderator-portal:quiz-update' quiz_id %}" class=""><i
                     class="fa fa-edit"></i> Edit</a> |
             <a href="{% url 'moderator-portal:quiz-create' %}" class="text-success"><i
-                    class="fa fa-plus"></i> New</a>
+                    class="fa fa-plus"></i> New</a> ||
+            <a href="{% url 'moderator-portal:quiz' %}" class="text-secondary"><i
+                    class="fa fa-clock"></i> Quizzes</a>
         </div>
         <div class="col-5 text-right">
             <b class="font-weight-bolder"><i class="fa fa-list"></i> <b id="total">{{ total }}</b></b> |

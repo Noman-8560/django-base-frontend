@@ -22,11 +22,22 @@ class GuardianAdmin(admin.ModelAdmin):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'subject', 'choices_control']
+    fieldsets = (
+        (None, {'fields': ('age_limit', 'grade', 'level', 'subject', 'topics', 'question_type')}),
+        ('Quiz Statistics', {'fields': (
+            'total_times_used_in_quizzes', 'total_times_attempted_in_quizzes', 'total_times_correct_in_quizzes'
+        )}),
+        ('Learning Statistics', {'fields': (
+            'total_times_used_in_learning', 'total_times_attempted_in_learning', 'total_times_correct_in_learning'
+        )}),
+        ('Creation', {'fields': ('created_by',)}),
+        ('Misc', {'fields': ('submission_control', 'choices_control')}),
+    )
+    list_display = ['id', 'age_limit', 'grade']
 
 
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ['title', 'id']
+    list_display = ['id', 'title', 'created_at']
 
 
 class AttemptAdmin(admin.ModelAdmin):
@@ -39,6 +50,19 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 class QuizAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields': ('title', 'description', 'thumbnail', 'age_limit')}),
+        ('Linked', {'fields': (
+            'subjects', 'grade', 'players', 'topics'
+        )}),
+        ('Quiz Statistics', {'fields': (
+            'total_enrolled_teams', 'total_enrolled_students', 'total_attempted_students', 'total_passed_student'
+        )}),
+        ('Author and Dates', {'fields': (
+            'created_by', 'start_time', 'end_time'
+        )}),
+        ('Misc', {'fields': ('submission_control',)}),
+    )
     list_display = ['title', 'start_time', 'end_time']
 
 
