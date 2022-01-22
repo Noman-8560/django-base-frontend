@@ -26,7 +26,6 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Writer</th>
                             <th>Players</th>
                             <th>Subjects</th>
                             <th>Questions</th>
@@ -41,13 +40,6 @@
                             <tr>
                                 <td>{{ quiz.pk }}</td>
                                 <td>{{ quiz.title }}</td>
-                                <td>
-                                    {% if quiz.created_by %}
-                                        <b>{{ quiz.created_by.username }}</b>
-                                    {% else %}
-                                        <b class="text-danger"></b>
-                                    {% endif %}
-                                </td>
                                 <td>{{ quiz.players }}</td>
                                 <td>{{ quiz.subjects.count }}</td>
                                 <td>{{ quiz.questions.count }}</td>
