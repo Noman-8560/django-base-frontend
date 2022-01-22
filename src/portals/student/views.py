@@ -22,6 +22,7 @@ from src.application.models import (
     Attempt, LearningResourceResult, LearningResourceAttempts,
     Relation, QuizMisc,
 )
+from src.portals.student.bll import question_grading_logic
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
@@ -451,9 +452,6 @@ class QuizEnrollView(View):
             quiz.save()
             # --------------------------------------------------------------------------
 
-            # --------------------------------------------------------------------------
-
-            # ---------> NOTIFY
             ps = [request.user.pk]
             if player_2 is not None:
                 ps.append(player_2.pk)
@@ -1049,6 +1047,7 @@ class QuizLiveQuestionSubmitJSON(View):
             question.total_times_correct_in_quizzes += 1
         question.total_times_attempted_in_quizzes += 1
         question.save()
+        question_grading_logic(question)
         # ---------------------------------------------------------------------------
 
         miscellaneous.delete()

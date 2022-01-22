@@ -47,9 +47,9 @@
 
                                 <tr>
                                     <td>
-                                        <b><a href="{% url 'moderator-portal:question-update' q.question_id %}">
-                                            SNO ({{ q.question_id }}) <i class="fa fa-edit"></i>
-                                        </a></b>
+                                        <b>
+                                            SNO ({{ q.question_id }})
+                                        </b>
                                         <div class="">
                                             <input type="checkbox" id="question_submission" data-quiz="{{ quiz_id }}"
                                                    data-question="{{ q.question_id }}" data-quizquestion="{{ q.id }}"
@@ -66,15 +66,15 @@
                                         </h5>
                                     </td>
                                     <td>
-                                        Level {{ q.level }}<br>
+                                        Level <br>
                                         {% if q.level == 'e' %}
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% elif q.level == 'n' %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% else %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
@@ -392,7 +392,9 @@
                                 <tr>
 
                                     <td>
-                                        SNO ({{ q.id }})
+                                        <b>
+                                            SNO ({{ q.id }})
+                                        </b>
                                         <div class="">
                                             <input type="checkbox" class="mt-2" id="question_submission"
                                                    data-quiz="{{ quiz_id }}"
@@ -413,12 +415,12 @@
                                         Level<br>
                                         {% if q.level == 'e' %}
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% elif q.level == 'n' %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% else %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
@@ -563,8 +565,8 @@
                     },
                 }).then(function (data, status) {
                     if (data.success == "False") {
-                            alert(data.message);
-                        }
+                        alert(data.message);
+                    }
                 }).catch(function (err) {
                     console.log(err);
                 });
@@ -585,8 +587,8 @@
                     },
                 }).then(function (data, status) {
                     if (data.success == "False") {
-                            alert(data.message);
-                        }
+                        alert(data.message);
+                    }
                 }).catch(function (err) {
                     console.log(err);
                 });

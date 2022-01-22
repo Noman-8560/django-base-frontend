@@ -38,7 +38,7 @@
 
                         {% for question in question_list %}
                             <tr>
-                                <td>{{ question.get_statement }}</td>
+                                <td class="text-wrap">{{ question.get_statement|truncatechars:'50' }}</td>
                                 <td class="text-wrap">{{ question.choices_control }}</td>
                                 <td>{{ question.subject }}</td>
                                 <td>{{ question.age_limit }}</td>
@@ -46,13 +46,16 @@
                                 <td>
                                     {% if question.level == 'e' %}
                                         <i class="fa fa-star text-warning"></i>
-                                    {% elif question.level == 'm' %}
-                                        <i class="fa fa-star" style="color: darkorange;"></i>
-                                        <i class="fa fa-star" style="color: darkorange;"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                    {% elif question.level == 'n' %}
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-secondary"></i>
                                     {% else %}
-                                        <i class="fa fa-star text-danger"></i>
-                                        <i class="fa fa-star text-danger"></i>
-                                        <i class="fa fa-star text-danger"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
                                     {% endif %}
                                 </td>
                                 <td><a href="{% url 'admin-portal:question-update' question.pk %}">

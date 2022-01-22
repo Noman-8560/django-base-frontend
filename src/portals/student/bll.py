@@ -18,4 +18,16 @@ def quiz_enrollment_logic():
 
 
 def question_grading_logic(question):
-    pass
+    total_attempts = question.total_times_attempted_in_quizzes
+    total_correct = question.total_times_correct_in_quizzes
+
+    result = (total_correct/total_attempts)*100
+    if result >= 85:
+        question.level = 'e'
+    elif 60 <= result < 85:
+        question.level = 'n'
+    elif result < 60:
+        question.level = 'h'
+
+    question.save()
+    print(question.level)

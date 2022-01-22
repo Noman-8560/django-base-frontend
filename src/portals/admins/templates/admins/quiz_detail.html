@@ -20,7 +20,7 @@
             <a href="{% url 'admin-portal:quiz-update' quiz_id %}" class=""><i
                     class="fa fa-edit"></i> Edit</a> |
             <a href="{% url 'admin-portal:quiz-delete' quiz_id %}" class="text-danger"><i
-                class="fa fa-trash"></i> Remove</a> ||
+                    class="fa fa-trash"></i> Remove</a> ||
             <a href="{% url 'admin-portal:quiz' %}" class="text-secondary"><i
                     class="fa fa-clock"></i> Quizzes</a>
         </div>
@@ -65,15 +65,15 @@
                                         </h5>
                                     </td>
                                     <td>
-                                        Level {{ q.level }}<br>
+                                        Level <br>
                                         {% if q.level == 'e' %}
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% elif q.level == 'n' %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% else %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
@@ -391,7 +391,9 @@
                                 <tr>
 
                                     <td>
-                                        SNO ({{ q.id }})
+                                        <b><a href="{% url 'admin-portal:question-update' q.id %}">
+                                            SNO ({{ q.id }}) <i class="fa fa-edit"></i>
+                                        </a></b>
                                         <div class="">
                                             <input type="checkbox" class="mt-2" id="question_submission"
                                                    data-quiz="{{ quiz_id }}"
@@ -412,12 +414,12 @@
                                         Level<br>
                                         {% if q.level == 'e' %}
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% elif q.level == 'n' %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star text-secondary"></i>
                                         {% else %}
                                             <i class="fa fa-star text-warning"></i>
                                             <i class="fa fa-star text-warning"></i>
@@ -562,8 +564,8 @@
                     },
                 }).then(function (data, status) {
                     if (data.success == "False") {
-                            alert(data.message);
-                        }
+                        alert(data.message);
+                    }
                 }).catch(function (err) {
                     console.log(err);
                 });
@@ -584,8 +586,8 @@
                     },
                 }).then(function (data, status) {
                     if (data.success == "False") {
-                            alert(data.message);
-                        }
+                        alert(data.message);
+                    }
                 }).catch(function (err) {
                     console.log(err);
                 });
