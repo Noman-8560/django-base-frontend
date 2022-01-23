@@ -118,10 +118,8 @@
                                     <tr>
                                         <td>Submission Control</td>
                                         <td>
-                                            <input type="radio"
-                                                   name="submission_control_{{ q.id }}" id="submission_control"
-                                                   value="1"
-                                                   data-questionid="{{ q.id }}"
+                                            <input type="radio" name="submission_control_{{ q.id }}"
+                                                   id="submission_control" value="1" data-questionid="{{ q.id }}"
                                                    {% if q.submission_control.no == 1 %}checked="checked"{% endif %}
                                             >
                                         </td>
