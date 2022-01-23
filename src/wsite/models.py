@@ -65,7 +65,7 @@ class Testimonial(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name_plural = "Team"
+        verbose_name_plural = "Testimonials"
 
     def __str__(self):
         return self.name
@@ -82,7 +82,7 @@ class Partner(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name_plural = "Team"
+        verbose_name_plural = "Partners"
 
     def __str__(self):
         return self.name

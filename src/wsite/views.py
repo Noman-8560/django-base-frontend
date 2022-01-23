@@ -3,6 +3,7 @@ from django.views.generic import TemplateView, ListView
 
 from src.application.models import Quiz
 from src.portals.admins.filters import QuizFilter
+from src.wsite.models import Content, Testimonial, Team, Partner
 
 
 class HomeView(TemplateView):
@@ -10,8 +11,18 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
+
+        if Content.objects.all():
+            context['content'] = Content.objects.first()
+        else:
+            context['content'] = Content.objects.create()
+        context['dynamic'] = False
+        context['testimonials'] = Testimonial.objects.filter(is_active=True)
+        context['partners'] = Partner.objects.filter(is_active=True)
+        context['team'] = Team.objects.filter(is_active=True)
         context['quizzes'] = Quiz.objects.filter(visible_on_home=True, learning_purpose=False)
         context['learning'] = Quiz.objects.filter(visible_on_home=True, learning_purpose=True)
+
         return context
 
 

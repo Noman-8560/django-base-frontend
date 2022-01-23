@@ -7,6 +7,7 @@
 
 {% block base_content %}
 
+    {# HERO, WHO, ACTIVITIES ---------------------------------------------------------------------------------------- #}
     <div class="main-banner">
         <div class="main-banner-item banner-item-two">
             <div class="d-table">
@@ -15,27 +16,15 @@
                         <div class="row align-items-center">
                             <div class="col-lg-6">
                                 <div class="main-banner-content">
-                                    <span>Play, Learn and Grow</span>
-                                    <h1>Lets Learn Together</h1>
+                                    <span>{{ content.hero_pre_heading }}</span>
+                                    <h1>{{ content.hero_heading }}</h1>
                                     <p>
-                                        Human beings are social animals and we have been successful in becoming the most
-                                        dominant species, by way of our team effort.
-                                        Great news is we thrive when we work as a team.
-                                        But then why should learning activity be a isolated and single person effort.
-                                        At CoCognito, we believe learning need not be a single person effort. Rather it
-                                        should be a social activity.
+                                        {{ content.hero_paragraph_1 }}
                                     </p><br>
                                     <p>
-                                        That way it is more engaging, lasting and should be say, more FUN :-)
-                                        So we have built quizzes here on variety of subjects that you can practice
-                                        together with your friend(s).
-                                        Remember, idea here is not to compete. But to work together to problem solve a
-                                        situation.
-                                        You share ideas, discuss them, suggest point of views, take suggestions and
-                                        finally make a decision.
-                                        Sounds fun, rite?
+                                        {{ content.hero_paragraph_2 }}
                                     </p><br>
-                                    <span>Come lets CoCognito !</span>
+                                    <span>{{ content.hero_end_line }}</span>
                                     <div class="banner-btn">
                                         <a href="{% url 'account_signup' %}" class="default-btn">
                                             Register Now
@@ -120,100 +109,102 @@
         </div>
     </section>
 
-{#    <section id="activities" class="activities-area pt-100 pb-70">#}
-{#        <div class="container">#}
-{#            <div class="section-title">#}
-{#                <span>Our Activities</span>#}
-{#                <h2>Our More Enjoyable Activities</h2>#}
-{#            </div>#}
-{#            <div class="row">#}
-{#                <div class="col-lg-4 col-md-6">#}
-{#                    <div class="single-activities">#}
-{#                        <div class="number">#}
-{#                            <span>01</span>#}
-{#                        </div>#}
-{#                        <div class="activities-content">#}
-{#                            <h3>#}
-{#                                <a href="#">Learning Resources</a>#}
-{#                            </h3>#}
-{#                            <p>description not available.</p>#}
-{#                            <a href="#" class="activities-btn">Read More</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-lg-4 col-md-6">#}
-{#                    <div class="single-activities">#}
-{#                        <div class="number">#}
-{#                            <span class="bg-2">02</span>#}
-{#                        </div>#}
-{#                        <div class="activities-content">#}
-{#                            <h3>#}
-{#                                <a href="#">Individual Tests</a>#}
-{#                            </h3>#}
-{#                            <p>description not available.</p>#}
-{#                            <a href="#" class="activities-btn">Read More</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-lg-4 col-md-6">#}
-{#                    <div class="single-activities">#}
-{#                        <div class="number">#}
-{#                            <span class="bg-3">03</span>#}
-{#                        </div>#}
-{#                        <div class="activities-content">#}
-{#                            <h3>#}
-{#                                <a href="#">Team Tests</a>#}
-{#                            </h3>#}
-{#                            <p>description not available.</p>#}
-{#                            <a href="#" class="activities-btn">Read More</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-lg-4 col-md-6">#}
-{#                    <div class="single-activities">#}
-{#                        <div class="number">#}
-{#                            <span class="bg-4">04</span>#}
-{#                        </div>#}
-{#                        <div class="activities-content">#}
-{#                            <h3>#}
-{#                                <a href="#">Knowlege Challenges</a>#}
-{#                            </h3>#}
-{#                            <p>description not available.</p>#}
-{#                            <a href="#" class="activities-btn">Read More</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-lg-4 col-md-6">#}
-{#                    <div class="single-activities">#}
-{#                        <div class="number">#}
-{#                            <span class="bg-5">05</span>#}
-{#                        </div>#}
-{#                        <div class="activities-content">#}
-{#                            <h3>#}
-{#                                <a href="#">Parental Access</a>#}
-{#                            </h3>#}
-{#                            <p>description not available.</p>#}
-{#                            <a href="#" class="activities-btn">Read More</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-lg-4 col-md-6">#}
-{#                    <div class="single-activities">#}
-{#                        <div class="number">#}
-{#                            <span class="bg-6">06</span>#}
-{#                        </div>#}
-{#                        <div class="activities-content">#}
-{#                            <h3>#}
-{#                                <a href="#">Live Performance</a>#}
-{#                            </h3>#}
-{#                            <p>description not available.</p>#}
-{#                            <a href="#" class="activities-btn">Read More</a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
+    {#    <section id="activities" class="activities-area pt-100 pb-70">#}
+    {#        <div class="container">#}
+    {#            <div class="section-title">#}
+    {#                <span>Our Activities</span>#}
+    {#                <h2>Our More Enjoyable Activities</h2>#}
+    {#            </div>#}
+    {#            <div class="row">#}
+    {#                <div class="col-lg-4 col-md-6">#}
+    {#                    <div class="single-activities">#}
+    {#                        <div class="number">#}
+    {#                            <span>01</span>#}
+    {#                        </div>#}
+    {#                        <div class="activities-content">#}
+    {#                            <h3>#}
+    {#                                <a href="#">Learning Resources</a>#}
+    {#                            </h3>#}
+    {#                            <p>description not available.</p>#}
+    {#                            <a href="#" class="activities-btn">Read More</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-lg-4 col-md-6">#}
+    {#                    <div class="single-activities">#}
+    {#                        <div class="number">#}
+    {#                            <span class="bg-2">02</span>#}
+    {#                        </div>#}
+    {#                        <div class="activities-content">#}
+    {#                            <h3>#}
+    {#                                <a href="#">Individual Tests</a>#}
+    {#                            </h3>#}
+    {#                            <p>description not available.</p>#}
+    {#                            <a href="#" class="activities-btn">Read More</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-lg-4 col-md-6">#}
+    {#                    <div class="single-activities">#}
+    {#                        <div class="number">#}
+    {#                            <span class="bg-3">03</span>#}
+    {#                        </div>#}
+    {#                        <div class="activities-content">#}
+    {#                            <h3>#}
+    {#                                <a href="#">Team Tests</a>#}
+    {#                            </h3>#}
+    {#                            <p>description not available.</p>#}
+    {#                            <a href="#" class="activities-btn">Read More</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-lg-4 col-md-6">#}
+    {#                    <div class="single-activities">#}
+    {#                        <div class="number">#}
+    {#                            <span class="bg-4">04</span>#}
+    {#                        </div>#}
+    {#                        <div class="activities-content">#}
+    {#                            <h3>#}
+    {#                                <a href="#">Knowlege Challenges</a>#}
+    {#                            </h3>#}
+    {#                            <p>description not available.</p>#}
+    {#                            <a href="#" class="activities-btn">Read More</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-lg-4 col-md-6">#}
+    {#                    <div class="single-activities">#}
+    {#                        <div class="number">#}
+    {#                            <span class="bg-5">05</span>#}
+    {#                        </div>#}
+    {#                        <div class="activities-content">#}
+    {#                            <h3>#}
+    {#                                <a href="#">Parental Access</a>#}
+    {#                            </h3>#}
+    {#                            <p>description not available.</p>#}
+    {#                            <a href="#" class="activities-btn">Read More</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-lg-4 col-md-6">#}
+    {#                    <div class="single-activities">#}
+    {#                        <div class="number">#}
+    {#                            <span class="bg-6">06</span>#}
+    {#                        </div>#}
+    {#                        <div class="activities-content">#}
+    {#                            <h3>#}
+    {#                                <a href="#">Live Performance</a>#}
+    {#                            </h3>#}
+    {#                            <p>description not available.</p>#}
+    {#                            <a href="#" class="activities-btn">Read More</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </section>#}
+
+    {# QUIZ LEARNING AND VALUES ------------------------------------------------------------------------------------- #}
 
     <section id="quizzes" class="class-area pt-100 pb-70">
         <div class="container">
@@ -257,7 +248,7 @@
                                         <li>
                                             <span>Time:</span>
                                             <small>{{ quiz.start_time }}
-                                            - {{ quiz.end_time }}</small>
+                                                - {{ quiz.end_time }}</small>
                                         </li>
                                     </ul>
                                     <div class="class-btn">
@@ -484,108 +475,191 @@
         </div>
     </section>
 
-    <section id="team" class="teacher-area pb-70">
-        <div class="container">
-            <div class="section-title">
-                <span>Haven't Meet Experts</span>
-                <h2>Our Core Team</h2>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-teacher-box">
-                        <div class="image">
-                            <img src="{% static 'website/img/teacher/teacher-5.png' %}" alt="image">
-                        </div>
-                        <div class="content">
-                            <h3>Arvindh Arun</h3>
-                            <span>Rank Name</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="single-teacher-box">
-                        <div class="image">
-                            <img src="{% static 'website/img/teacher/teacher-6.png' %}" alt="image">
-                        </div>
-                        <div class="content">
-                            <h3>Mark I</h3>
-                            <span>Rank Name</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 offset-lg-0 offset-md-3">
-                    <div class="single-teacher-box">
-                        <div class="image">
-                            <img src="{% static 'website/img/teacher/teacher-7.png' %}" alt="image">
-                        </div>
-                        <div class="content">
-                            <h3>IhSir</h3>
-                            <span>Rank Name</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    {# TEAM --------------------------------------------------------------------------------------------------------- #}
 
-    <section id="testimonials" class="testimonials-area bg-color ptb-100">
-        <div class="container">
-            <div class="section-title">
-                <span>Testimonials</span>
-                <h2>What Parents Say About Us</h2>
-            </div>
-            <div class="feedback-slides owl-carousel owl-theme">
-                <div class="feedback-item">
-                    <div class="row align-items-center">
-                        <div class="col-lg-4">
-                            <div class="feedback-image">
-                                <img src="{% static 'website/img/testimonials/testimonials-4.jpg' %}" alt="image">
+    {% if dynamic %}
+
+        {% if team %}
+            <section id="team" class="teacher-area pb-70">
+                <div class="container">
+                    <div class="section-title">
+                        <span>Haven't Meet Experts</span>
+                        <h2>Our Core Team</h2>
+                    </div>
+                    <div class="row">
+
+                        {% for t  in team %}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="single-teacher-box">
+                                    <div class="image">
+                                        <img src="{{ t.image.url }}" alt="image">
+                                    </div>
+                                    <div class="content">
+                                        <h3>{{ t.name }}</h3>
+                                        <span>{{ t.rank }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+    {% else %}
+
+        <section id="team" class="teacher-area pb-70">
+            <div class="container">
+                <div class="section-title">
+                    <span>Haven't Meet Experts</span>
+                    <h2>Our Core Team</h2>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-teacher-box">
+                            <div class="image">
+                                <img src="{% static 'website/img/teacher/teacher-5.png' %}" alt="image">
+                            </div>
+                            <div class="content">
+                                <h3>Arvindh Arun</h3>
+                                <span>Rank Name</span>
                             </div>
                         </div>
-                        <div class="col-lg-8">
-                            <div class="feedback-content">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                    incididunt
-                                    ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus
-                                    commodo
-                                    viverra accumsan lacus vel facilisis. Lorem Ipsum is simply dummy text of the
-                                    printing
-                                    and typesetting industry.</p>
-                                <div class="feedback-info">
-                                    <h3>Glims Bond</h3>
-                                    <span></span>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-teacher-box">
+                            <div class="image">
+                                <img src="{% static 'website/img/teacher/teacher-6.png' %}" alt="image">
+                            </div>
+                            <div class="content">
+                                <h3>Mark I</h3>
+                                <span>Rank Name</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 offset-lg-0 offset-md-3">
+                        <div class="single-teacher-box">
+                            <div class="image">
+                                <img src="{% static 'website/img/teacher/teacher-7.png' %}" alt="image">
+                            </div>
+                            <div class="content">
+                                <h3>IhSir</h3>
+                                <span>Rank Name</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    {% endif %}
+
+    {# TESTIMONIAL -------------------------------------------------------------------------------------------------- #}
+    {% if dynamic %}
+
+        {% if testimonials %}
+            <section id="testimonials" class="testimonials-area bg-color ptb-100">
+                <div class="container">
+                    <div class="section-title">
+                        <span>Testimonials</span>
+                        <h2>What Parents Say About Us</h2>
+                    </div>
+                    <div class="feedback-slides owl-carousel owl-theme">
+                        {% for testimonial in testimonials %}
+
+                            <div class="feedback-item">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-4">
+                                        <div class="feedback-image">
+                                            <img src="{{ testimonial.image.url }}"
+                                                 alt="image">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="feedback-content">
+                                            <p>
+                                                {{ testimonial.description }}
+                                            </p>
+                                            <div class="feedback-info">
+                                                <h3>{{ testimonial.name }}</h3>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+    {% else %}
+
+        <section id="testimonials" class="testimonials-area bg-color ptb-100">
+            <div class="container">
+                <div class="section-title">
+                    <span>Testimonials</span>
+                    <h2>What Parents Say About Us</h2>
+                </div>
+                <div class="feedback-slides owl-carousel owl-theme">
+                    <div class="feedback-item">
+                        <div class="row align-items-center">
+                            <div class="col-lg-4">
+                                <div class="feedback-image">
+                                    <img src="{% static 'website/img/testimonials/testimonials-4.jpg' %}" alt="image">
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="feedback-content">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                        incididunt
+                                        ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus
+                                        commodo
+                                        viverra accumsan lacus vel facilisis. Lorem Ipsum is simply dummy text of the
+                                        printing
+                                        and typesetting industry.</p>
+                                    <div class="feedback-info">
+                                        <h3>Glims Bond</h3>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feedback-item">
+                        <div class="row align-items-center">
+                            <div class="col-lg-4">
+                                <div class="feedback-image">
+                                    <img src="{% static 'website/img/testimonials/testimonials-5.jpg' %}" alt="image">
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="feedback-content">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                        incididunt
+                                        ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus
+                                        commodo
+                                        viverra accumsan lacus vel facilisis. Lorem Ipsum is simply dummy text of the
+                                        printing
+                                        and typesetting industry.</p>
+                                    <div class="feedback-info">
+                                        <h3>Priestly Herbart</h3>
+                                        <span></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="feedback-item">
-                    <div class="row align-items-center">
-                        <div class="col-lg-4">
-                            <div class="feedback-image">
-                                <img src="{% static 'website/img/testimonials/testimonials-5.jpg' %}" alt="image">
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="feedback-content">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                    incididunt
-                                    ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus
-                                    commodo
-                                    viverra accumsan lacus vel facilisis. Lorem Ipsum is simply dummy text of the
-                                    printing
-                                    and typesetting industry.</p>
-                                <div class="feedback-info">
-                                    <h3>Priestly Herbart</h3>
-                                    <span></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+    {% endif %}
+
+    {# BLOG --------------------------------------------------------------------------------------------------------- #}
 
     {#    <section class="blog-area pt-100 pb-70">#}
     {#        <div class="container">#}
@@ -688,26 +762,47 @@
     {#        </div>#}
     {#    </section>#}
 
-    <div class="partner-area ptb-100">
-        <div class="container">
-            <div class="partner-slider owl-carousel owl-theme">
-                <div class="partner-item">
-                    <img src="{% static 'website/img/partner/partner-1.png' %}" alt="image">
+    {# PARTNERS ----------------------------------------------------------------------------------------------------- #}
+
+    {% if dynamic %}
+        {% if partners %}
+            <div class="partner-area ptb-100">
+                <div class="container">
+                    <div class="partner-slider owl-carousel owl-theme">
+                        {% for partner in partners %}
+                            <div class="partner-item">
+                                <img src="{{ partner.image.url }}" alt="image">
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="partner-item">
-                    <img src="{% static 'website/img/partner/partner-2.png' %}" alt="image">
-                </div>
-                <div class="partner-item">
-                    <img src="{% static 'website/img/partner/partner-3.png' %}" alt="image">
-                </div>
-                <div class="partner-item">
-                    <img src="{% static 'website/img/partner/partner-4.png' %}" alt="image">
-                </div>
-                <div class="partner-item">
-                    <img src="{% static 'website/img/partner/partner-5.png' %}" alt="image">
+            </div>
+        {% endif %}
+
+    {% else %}
+
+        <div class="partner-area ptb-100">
+            <div class="container">
+                <div class="partner-slider owl-carousel owl-theme">
+                    <div class="partner-item">
+                        <img src="{% static 'website/img/partner/partner-1.png' %}" alt="image">
+                    </div>
+                    <div class="partner-item">
+                        <img src="{% static 'website/img/partner/partner-2.png' %}" alt="image">
+                    </div>
+                    <div class="partner-item">
+                        <img src="{% static 'website/img/partner/partner-3.png' %}" alt="image">
+                    </div>
+                    <div class="partner-item">
+                        <img src="{% static 'website/img/partner/partner-4.png' %}" alt="image">
+                    </div>
+                    <div class="partner-item">
+                        <img src="{% static 'website/img/partner/partner-5.png' %}" alt="image">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+    {% endif %}
 
 {% endblock %}
