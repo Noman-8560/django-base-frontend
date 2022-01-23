@@ -31,8 +31,8 @@ class Team(models.Model):
     name = models.CharField(max_length=255)
     rank = models.CharField(max_length=255)
     image = ResizedImageField(
-        upload_to='website/images/team/', null=True, blank=True, size=[500, 500], quality=75, force_format='PNG',
-        help_text='size of logo must be 500*500 and format must be png image file', crop=['middle', 'center']
+        upload_to='website/images/team/', null=True, blank=True, size=[300, 300], quality=75, force_format='PNG',
+        help_text='size of logo must be 300*300 and format must be png image file', crop=['middle', 'center']
     )
 
     is_active = models.BooleanField(default=True)
@@ -56,7 +56,7 @@ class Testimonial(models.Model):
     description = models.TextField(default="Description not provided yet.")
     testimonial_type = models.CharField(max_length=1, choices=TESTIMONIAL_TYPE)
     image = ResizedImageField(
-        upload_to='website/images/testimonial /', null=True, blank=True, size=[300, 300], quality=75,
+        upload_to='website/images/testimonial/', null=True, blank=True, size=[300, 300], quality=75,
         force_format='PNG',
         help_text='size of logo must be 300*300 and format must be png image file', crop=['middle', 'center']
     )
@@ -74,7 +74,7 @@ class Testimonial(models.Model):
 class Partner(models.Model):
     name = models.CharField(max_length=255)
     image = ResizedImageField(
-        upload_to='website/images/partner /', null=True, blank=True, size=[195, 65], quality=75, force_format='PNG',
+        upload_to='website/images/partner/', null=True, blank=True, size=[195, 65], quality=75, force_format='PNG',
         help_text='size of logo must be 195*65 and format must be png image file', crop=['middle', 'center']
     )
 
