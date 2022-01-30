@@ -30,4 +30,3 @@ def question_grading_logic(question):
         question.level = 'h'
 
     question.save()
-    print(question.level)

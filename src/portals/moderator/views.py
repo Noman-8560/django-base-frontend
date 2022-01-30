@@ -64,8 +64,9 @@ class QuizCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        form.instance.start_time = timezone.now()
-        form.instance.end_time = timezone.now()
+        if form.instance.learning_purpose:
+            form.instance.start_time = timezone.now()
+            form.instance.end_time = timezone.now()
         return super(QuizCreateView, self).form_valid(form)
 
     def get_success_url(self):
