@@ -9,16 +9,16 @@
 {% block content %}
 
     {% if not request.user.get_student_profile.zoom_user_id %}
-    <div class="row">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="mdi mdi-alert-outline mr-2"></i>
-            Your zoom account is not created yet - To participate in team quizzes create account
-            <a href="{% url 'student-portal:profile-detail' %}" class="alert-link">Click Here to Create</a>.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
+        <div class="row">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="mdi mdi-alert-outline mr-2"></i>
+                Your zoom account is not created yet - To participate in team quizzes create account
+                <a href="{% url 'student-portal:profile-detail' %}" class="alert-link">Click Here to Create</a>.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
         </div>
-    </div>
     {% endif %}
 
     <div class="row">
@@ -180,6 +180,18 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <h4 class="card-title mb-4">My Team vs Teams Average Time</h4>
+                            <div id="team_vs_teams" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end card-->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
                             <h4 class="card-title mb-4">Time Statistics Total</h4>
                             <div id="time_states_total" class="apex-charts" dir="ltr"></div>
                         </div>
@@ -237,17 +249,6 @@
                         <div class="card-body">
                             <h4 class="card-title mb-4">Incorrect Attempts</h4>
                             <div id="incorrect_attempts" class="apex-charts" dir="ltr"></div>
-                        </div>
-                    </div><!--end card-->
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-4">My Team vs Teams Average Time</h4>
-                            <div id="team_vs_teams" class="apex-charts" dir="ltr"></div>
                         </div>
                     </div><!--end card-->
                 </div>

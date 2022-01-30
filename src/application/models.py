@@ -355,7 +355,7 @@ class Quiz(models.Model):
     description = models.TextField(default="Description not provided yet.",
                                    help_text="Pleases add a description less than 120 words")
     thumbnail = ResizedImageField(
-        upload_to='images/profiles/', null=True, blank=True, size=[500, 500], quality=75, force_format='PNG',
+        upload_to='images/profiles/', null=True, blank=True, size=[400, 300], quality=75, force_format='PNG',
         help_text='size of logo must be 500*500 and format must be png image file', crop=['middle', 'center']
     )
     age_limit = models.PositiveIntegerField(
