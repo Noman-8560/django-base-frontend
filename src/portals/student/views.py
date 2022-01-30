@@ -171,7 +171,7 @@ class DashboardView(View):
 
                 context = {
                     'allow': allow,
-                    'questions': [question.pk for question in questions],
+                    'questions': [count+1 for count in range(len(questions))],
 
                     'user_total_correct': user_total_correct,
                     'user_total_incorrect': user_total_incorrect,
