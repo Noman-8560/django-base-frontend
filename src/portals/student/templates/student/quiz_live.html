@@ -352,6 +352,12 @@
             {# ----------------------------------------------------------------------------------------------------- #}
 
             function initialization() {
+                Swal.fire(
+                    'The Internet?',
+                    'That thing is still around?',
+                    'question'
+                );
+
                 // TODO: Team meeting show here
                 {% if quiz.players != '1' %}
                     myWindow = window.open("/s/zoom/{{ quiz_id }}/", "myWindow", "width=500,height=500");

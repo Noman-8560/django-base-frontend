@@ -6,7 +6,7 @@
 
 {% block base_links %}
     <meta charset="utf-8"/>
-{#    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/bootstrap.css" />#}
+    {#    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/bootstrap.css" />#}
     <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/react-select.css"/>
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -271,7 +271,53 @@
                 </div>
             </div>
         </div>
+
+
     {% endif %}
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="text-center">
+                        <h1>
+                            <i class="fa fa-exclamation-circle text-warning"></i>
+                        </h1>
+                        <h3 class="modal-title" id="exampleModalLabel">
+                            Quiz Instructions
+                        </h3>
+                        <p class="">
+                            <b>"Here are some instructions for you to participate in the quiz"</b>
+                        </p>
+                    </div>
+                    <hr class="border-danger">
+                    <div>
+                        <ul>
+                            <li>You and your friend are solving the same problem, but you see different content on your
+                                screen
+                            </li>
+                            <li>So talk to you friend, ask what question statements they see in their screens</li>
+                            <li>Ask them what answer choices they see in their screen</li>
+                            <li>Then you tell them what question statements and answer choices you see</li>
+                            <li>Then discuss with them to find the answer</li>
+                            <li>Once you have discussed the answers, the player that sees the correct answer option in
+                                their
+                                screen should select that
+                            </li>
+                            <li>Finally one of the players who sees the submit button will submit.</li>
+                        </ul>
+                    </div>
+                    <hr class="border-danger">
+                    <div>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-check-circle"></i> Understood
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 
@@ -384,6 +430,9 @@
             function initialization() {
                 // TODO: Team meeting show here
                 {% if quiz.players != '1' %}
+
+                    $('#exampleModal').modal('show');
+
                     const client = ZoomMtgEmbedded.createClient();
                     let meetingSDKElement = document.getElementById('meetingSDKElement');
 
@@ -395,9 +444,7 @@
                             meetingInfo: [
                                 'topic', 'host', 'mn', 'pwd', 'telPwd', 'invite', 'participant', 'dc', 'enctype'
                             ],
-                            toolbar: {
-
-                            }
+                            toolbar: {}
                         }
 
                     });
