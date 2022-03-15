@@ -239,6 +239,12 @@ class Question(models.Model):
         self.submission_control = self.choices_control
         super().save(*args, **kwargs)
 
+    def get_choices(self):
+        return self.questionchoice_set.all()
+
+    def get_correct_choice(self):
+        return self.questionchoice_set.filter(is_correct=True)
+
     def get_statement(self):
         question_statements = QuestionStatement.objects.filter(question=self)
         if question_statements:
@@ -582,6 +588,7 @@ class LearningResourceAttempts(models.Model):
     user = models.ForeignKey('accounts.User', null=False, blank=False, related_name='attempt-by+',
                              on_delete=models.CASCADE)
     quiz = models.ForeignKey('Quiz', null=False, blank=False, on_delete=models.CASCADE)
+    choice = models.ForeignKey('QuestionChoice', models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     successful = models.BooleanField(null=False, blank=False)

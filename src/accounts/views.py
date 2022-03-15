@@ -50,17 +50,43 @@ class IdentificationCheckView(View):
 
             # IF USER HAS CORRECT TYPE
             if user_type == 's' or user_type == 'm' or user_type == 'p':
+
+                # IF STUDENT
                 if user_type == 's':
-                    messages.success(request, "You are identified as Student")
-                    user.is_student = True
+
+                    age = request.POST.get('age')
+                    school_email = request.POST.get('school')
+                    parent_email = request.POST.get('parent')
+
+                    # IF STUDENT IS CORRECT
+                    if age and school_email and parent_email:
+
+                        user.is_student = True
+                        user.is_completed = True
+                        user.save()
+
+                        profile = user.get_student_profile()
+                        profile.age = age
+                        profile.parent_email = parent_email
+                        profile.school_email = school_email
+                        profile.save()
+
+                        messages.success(request, "You are identified as Student")
+
+                    else:
+                        messages.error(request, "Please provide correct information for student account")
+
                 elif user_type == 'm':
                     messages.success(request, "You are identified as Moderator")
                     user.is_moderator = True
+                    user.is_completed = True
+                    user.save()
                 else:
                     messages.success(request, "You are identified as Parent")
                     user.is_parent = True
-                user.is_completed = True
-                user.save()
+                    user.is_completed = True
+                    user.save()
+
                 return redirect('accounts:cross-auth-view')
             else:
                 messages.error(request, "Please provide correct user type")
@@ -85,3 +111,4 @@ class UserUpdateView(View):
             form.save(commit=True)
         context = {'form': form}
         return render(request, template_name='accounts/user_update_form.html', context=context)
+

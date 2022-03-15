@@ -65,6 +65,9 @@ class StudentProfile(models.Model):
     # STUDENT EDUCATION
     grade = models.ForeignKey('application.StudentGrade', on_delete=models.SET_NULL, null=True, blank=True)
     school_name = models.CharField(max_length=255, null=True, blank=True)
+    school_email = models.EmailField(null=True, blank=True)
+    parent_email = models.EmailField(null=True, blank=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Students Profiles"

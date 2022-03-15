@@ -213,7 +213,7 @@ class StudentProfileDetailView(UpdateView):
     template_name = 'student/studentprofile_update_form.html'
     model = StudentProfile
     fields = [
-        'grade', 'school_name'
+        'grade', 'school_name', 'school_email', 'parent_email', 'age'
     ]
     success_url = reverse_lazy('student-portal:profile-detail')
 
@@ -783,6 +783,8 @@ class LearningResourceResultView(View):
             pass
 
         attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz)
+        print(attempts[0].question.get_choices())
+        print(attempts[0].question.get_correct_choice())
 
         context = {
             'quiz': quiz,
@@ -862,6 +864,7 @@ class LearningResourceLiveQuestionSubmitJSON(View):
 
             """ CHECK CORRECT OR NOT """
             correct = QuestionChoice.objects.get(pk=choice_id).is_correct
+            choice = QuestionChoice.objects.get(pk=choice_id)
 
             """------------------------------------------------------------"""
             """                     SAVING DATA                            """
@@ -873,6 +876,7 @@ class LearningResourceLiveQuestionSubmitJSON(View):
                     question=question,
                     user=request.user,
                     quiz=quiz,
+                    choice=choice,
                     start_time=request.POST['start_time'],
                     end_time=request.POST['end_time'],
                     successful=correct
@@ -882,6 +886,7 @@ class LearningResourceLiveQuestionSubmitJSON(View):
                 x.start_time = request.POST['start_time']
                 x.end_time = request.POST['end_time']
                 x.successful = correct
+                x.choice = choice
                 x.save()
 
             # TODO: QUESTION STATS > learning resource

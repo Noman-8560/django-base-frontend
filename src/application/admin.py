@@ -63,7 +63,7 @@ class QuizAdmin(admin.ModelAdmin):
         )}),
         ('Misc', {'fields': ('submission_control',)}),
     )
-    list_display = ['title', 'start_time', 'end_time']
+    list_display = ['title', 'age_limit', 'created_by', 'learning_purpose', 'start_time', 'end_time']
 
 
 class QuestionChoiceAdmin(admin.ModelAdmin):

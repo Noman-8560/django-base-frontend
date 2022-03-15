@@ -15,12 +15,14 @@ ZOOM_API_SECRET_JWT = '1hnrKhnDfgbZDsg5WdLKxEIA9bZsPBm2BKOF'
 
 DEBUG = True
 SERVER = False
-TEST = True
+TEST = False
 ALLOWED_HOSTS = ['*']
 
 if TEST:
+    GOOGLE_CALLBACK_ADDRESS = "https://tasktok.app/accounts/google/login/callback"
     SITE_ID = 2
 else:
+    GOOGLE_CALLBACK_ADDRESS = "http://127.0.0.1:8000/accounts/google/login/callback"
     SITE_ID = 1
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

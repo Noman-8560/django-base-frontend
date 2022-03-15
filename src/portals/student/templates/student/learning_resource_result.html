@@ -78,20 +78,39 @@
                     <th>Description</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th>Result</th>
+                    <th>Attempted</th>
+                    <th>correct</th>
+                    <th class="border-left">Result</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for attempt in attempts %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ attempt }}</td>
+                        <td>{{ attempt|truncatechars:50 }}</td>
                         <td>{{ attempt.start_time }}</td>
                         <td>{{ attempt.end_time }}</td>
+                        <td>
+                            <i class="fa fa-pen"></i> {{ attempt.choice }}
+                        </td>
+                        <td class="border-left">
+                            <b>{% for choice in attempt.question.get_correct_choice %}
+                                <span class="bg-light text-dark p-1 mr-2">{{ choice }}</span>
+                            {% endfor %}
+                            </b>
+                        </td>
                         {% if attempt.successful %}
-                            <td><i class="text-success mdi mdi-check-circle"></i></td>
+                            <td class="text-success">
+                                <b>
+                                    <i class="text-success fa fa-check-circle"></i> Correct
+                                </b>
+                            </td>
                         {% else %}
-                            <td><i class="text-danger fa fa-times-circle"></i></td>
+                            <td class="text-danger">
+                                <b>
+                                    <i class="text-danger fa fa-times-circle"></i> Wrong
+                                </b>
+                            </td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -103,8 +122,10 @@
     <div class="row">
         <div class="col-12">
 
-            <a class="font-weight-bolder" href="{% url 'student-portal:learning-resource-live' quiz.pk %}"><i class="mdi mdi-refresh"></i> Try Again</a> |
-            <a class="font-weight-bolder" href="{% url 'student-portal:learning-resource' %}"><i class="mdi mdi-clipboard-list"></i> View All</a>
+            <a class="font-weight-bolder" href="{% url 'student-portal:learning-resource-live' quiz.pk %}"><i
+                    class="mdi mdi-refresh"></i> Try Again</a> |
+            <a class="font-weight-bolder" href="{% url 'student-portal:learning-resource' %}"><i
+                    class="mdi mdi-clipboard-list"></i> View All</a>
 
         </div>
     </div>

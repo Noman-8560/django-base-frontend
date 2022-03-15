@@ -22,7 +22,8 @@
             <!-- THIS IS UPPER AREA -->
             <div class="row justify-content-center">
                 <div class="col-12 text-center">
-                    <h2 class="lead mb-4" style="font-size: xx-large"><i class="fa fa-running"></i> Just One Step Behind!
+                    <h2 class="lead mb-4" style="font-size: xx-large"><i class="fa fa-running"></i> Just One Step
+                        Behind!
                     </h2>
                     <p>
                         <b>Cocognito</b> was developed during the times of <b class="text-danger">COVID-19</b> to help
@@ -30,7 +31,7 @@
                         students performance tracking system, below here your are seeing different types of accounts
                         each one has its own features and portal system, please make sure to select a right category for
                         your self, once you have selected your account will be associated with that portal system and it
-                         can't be changed in future.
+                        can't be changed in future.
                     </p>
                 </div>
             </div>
@@ -47,7 +48,7 @@
                             <div class="card-body">
 
                                 <div class="text-center">
-                                    <img src="{% static 'images/student.png' %}">
+                                    <iframe src="https://embed.lottiefiles.com/animation/78813" frameborder="0"></iframe>
                                 </div>
                                 <div class="mt-4 text-center">
                                     <b class="text-secondary">
@@ -57,6 +58,15 @@
                                         <p class="my-0">Team Building</p>
                                         <p class="my-0">Competitions Participation's</p>
                                     </b>
+                                </div>
+                                <div class="mt-2" id="student-div">
+                                    <hr>
+                                    <input type="number" required id="age" name="age" placeholder="Enter your age"
+                                           class="mb-2 form-control">
+                                    <input type="email" required id="school" name="school"
+                                           placeholder="Enter school email" class="mb-2 form-control">
+                                    <input type="email" required id="parent" name="parent"
+                                           placeholder="Enter parent email" class="form-control">
                                 </div>
 
                             </div>
@@ -74,7 +84,7 @@
                             <div class="card-body">
 
                                 <div class="text-center">
-                                    <img src="{% static 'images/teacher.png' %}">
+                                    <iframe src="https://embed.lottiefiles.com/animation/79986" frameborder="0"></iframe>
                                 </div>
                                 <div class="mt-4 text-center">
                                     <b class="text-secondary">
@@ -102,7 +112,7 @@
                             <div class="card-body">
 
                                 <div class="text-center">
-                                    <img src="{% static 'images/parent.png' %}">
+                                    <iframe src="https://embed.lottiefiles.com/animation/51107" frameborder="0 "></iframe>
                                 </div>
                                 <div class="mt-4 text-center">
                                     <b class="text-secondary">
@@ -139,5 +149,17 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+    $(document).ready(function () {
+        let student_div = $('#student-div');student_div.hide();
+        $('body #user_type').change(function (event) {
+            let value  = $(this).val();
+            if (value === 's'){student_div.show();}else {student_div.hide();}
+        })
+    });
+    </script>
 {% endblock %}
 
