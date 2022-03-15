@@ -360,6 +360,33 @@
                         count_attempted += 1;
                         count_remains -= 1;
                         path = data.path;
+
+                        if (data.end === 'True'){
+
+                            Swal.fire({
+                            title: 'Congrats',
+                            html: 'Your quiz submitted successfully<br> Re-Checking ends in <b></b> milliseconds.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const b = Swal.getHtmlContainer().querySelector('b');
+                                timerInterval = setInterval(() => {
+                                    b.textContent = Swal.getTimerLeft();
+                                }, 100)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                {#window.location = "{% url 'student-portal:quiz' %}";#}
+                            }
+                            window.location = '{% url 'student-portal:learning-resource-result' quiz_id %}'
+                        });
+
+                        }
                         x_accessor();
                     }
                 }).catch(function (err) {
