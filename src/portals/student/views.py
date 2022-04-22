@@ -12,7 +12,7 @@ from django.views import View
 from django.views.decorators.cache import never_cache
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView
 from notifications.signals import notify
-
+import statistics
 from cocognite import settings
 from src.accounts.decorators import identification_required, student_required
 from src.accounts.models import StudentProfile
@@ -79,11 +79,147 @@ class DashboardView(View):
         if request.GET.get('quiz'):
             try:
                 allow = True
-                quiz = Quiz.objects.get(pk=int(request.GET.get('quiz')))
+                requested_quiz = Quiz.objects.get(pk=int(request.GET.get('quiz')))
 
-                questions = quiz.questions.all()
+                questions = requested_quiz.questions.all()
                 user = User.objects.get(username=request.user.username)
-                user_attempts = Attempt.objects.filter(user=user, quiz=quiz)
+                user_attempts = Attempt.objects.filter(user=user, quiz=requested_quiz)
+                # TODO: re-write entirely
+                """
+                get current team - request user in participant to a team participated in current quiz
+                                GET ALL TEAMS PARTICIPATED IN CURRENT QUIZ, FILTER TEAM WHICH HAS CURRENT USER IN IT
+                                
+                get all attempts - to the the requested quiz 
+
+                get time - [end time - start time] of a particular attempt
+                
+                
+                if attempt not found to a particular quiz, it will be considered as pass/skip
+                if successful = True -> Correct
+                if successful = False -> Incorrect
+                
+                """
+                all_teams = Team.objects.filter(quiz=requested_quiz)
+                print(all_teams)
+                current_team = all_teams.get(participants__in=[request.user])
+                list_time_max = []
+                list_time_min = []
+                list_time_avg = []
+
+                list_total_pass = []
+                list_total_correct = []
+                list_total_incorrect = []
+
+                list_avg_pass = []
+                list_avg_correct = []
+                list_avg_incorrect = []
+
+                list_team_pass = []
+                list_team_correct = []
+                list_team_incorrect = []
+
+                list_time_my_team = []
+                for question in questions:
+                    _attempts = Attempt.objects.filter(question=question).values('team').distinct()
+                    print(_attempts)
+                    list_time_values = []
+
+                    _min_time = -1
+                    _avg_time = 0
+                    _current_team_time = 0
+
+                    _total_correct = 0
+                    _total_incorrect = 0
+                    _total_pass = 0
+
+                    _current_team_attempt = 0
+
+                    teams_passed = [x.pk for x in all_teams]
+
+                    print(teams_passed)
+                    for v in _attempts.values('start_time', 'end_time', 'team', 'question', 'successful'):
+                        current = (v['end_time'] - v['start_time']).total_seconds()
+                        print('team in loop : ', v['team'])
+                        print('current team : ', current_team.pk)
+                        print('time taken by team in loop : ', current)
+                        list_time_values.append(current)
+                        print(v['team'])
+                        print(v['successful'])
+
+                        if v['successful']:
+                            _total_correct += 1
+                        else:
+                            _total_incorrect += 1
+
+                        if v['team'] == current_team.pk:
+                            _current_team_time = current
+                            if v['successful']:
+                                _current_team_attempt = 1
+                            else:
+                                _current_team_attempt = 0
+
+                        if v['team'] in teams_passed:
+                            print(f"removed {v['team']}")
+                            teams_passed.remove(v['team'])
+
+                        print(teams_passed)
+
+                    _avg_time = statistics.mean(list_time_values)
+
+                    list_time_max.append(max(list_time_values))
+                    list_time_min.append(min(list_time_values))
+                    list_time_avg.append(_avg_time)
+
+                    if current_team.pk in teams_passed:
+                        list_team_pass.append(1)
+                    else:
+                        list_team_pass.append(0)
+
+                    list_total_pass.append(len(teams_passed))
+                    list_total_correct.append(_total_correct)
+                    list_total_incorrect.append(_total_incorrect)
+                    list_time_my_team.append(_current_team_time)
+
+                    list_avg_pass.append(len(teams_passed) / all_teams.count())
+                    list_avg_correct.append(_total_correct / all_teams.count())
+                    list_avg_incorrect.append(_total_incorrect / all_teams.count())
+
+                    if _current_team_attempt == 1:
+                        list_team_correct.append(0)
+                        list_team_incorrect.append(1)
+                    else:
+                        list_team_correct.append(1)
+                        list_team_incorrect.append(0)
+
+                chart_1 = {
+                    'time_max': list_time_max,
+                    'time_min': list_time_min,
+                    'time_avg': list_time_avg,
+                    'time_my_team': list_time_my_team,
+                    'questions': [x for x in range(len(questions))]
+                }
+
+                chart_2 = {
+                    'total_pass': list_total_pass,
+                    'total_correct': list_total_correct,
+                    'total_incorrect': list_total_incorrect
+                }
+
+                chart_3 = {
+                    'avg_pass': list_avg_pass,
+                    'avg_correct': list_avg_correct,
+                    'avg_incorrect': list_avg_incorrect
+                }
+
+                chart_4_5_6 = {
+                    'avg_pass': list_avg_pass,
+                    'avg_correct': list_avg_correct,
+                    'avg_incorrect': list_avg_incorrect,
+                    'team_pass': list_team_pass,
+                    'team_correct': list_team_correct,
+                    'team_incorrect': list_team_incorrect
+                }
+
                 teams = []
 
                 # USER_REQUIREMENTS
@@ -170,8 +306,12 @@ class DashboardView(View):
                     user_total_pass.append(0)
 
                 context = {
+                    'chart_1': chart_1,
+                    'chart_2': chart_2,
+                    'chart_3': chart_3,
+                    'chart_4': chart_4_5_6,
                     'allow': allow,
-                    'questions': [count+1 for count in range(len(questions))],
+                    'questions': [count + 1 for count in range(len(questions))],
 
                     'user_total_correct': user_total_correct,
                     'user_total_incorrect': user_total_incorrect,
@@ -197,9 +337,13 @@ class DashboardView(View):
                     # QUIZ=> REQUIRED(upcoming, not_attempted) [CHECK_MODEL = QuizCompleted]
                     'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
                 }
+
             except Quiz.DoesNotExist:
                 allow = False
                 messages.error(request, 'Requested quiz does not exists.')
+            except Team.DoesNotExist:
+                allow = False
+                messages.error(request, 'You have not participated in the requested quiz.')
 
         context['total_relations'] = total_relations
         context['total_quizzes'] = total_quizzes
@@ -252,7 +396,8 @@ class QuizListView(View):
         context = {
             'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
             'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
-            'quizes_enrolled': enrolled_quizes.filter(participants__in=[request.user]),  # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
+            'quizes_enrolled': enrolled_quizes.filter(participants__in=[request.user]),
+            # QUIZ=> REQUIRED(upcoming, not_attempted)[CHECK_MODEL = QuizCompleted]
             'quizes_completed': completed_by_me  # QUIZ=> REQUIRED(Attempted)
         }
         return render(request=request, template_name='student/quiz_list.html', context=context)
@@ -321,7 +466,7 @@ class TeamDeleteView(View):
         zoom_delete_meeting(team.zoom_meeting_id)
         team.delete()
         messages.success(request=request,
-                             message="Successfully unenrolled from the quiz")
+                         message="Successfully unenrolled from the quiz")
         return redirect('student-portal:quiz', permanent=True)
 
 

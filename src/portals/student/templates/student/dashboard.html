@@ -281,9 +281,9 @@
                 {# CHART 1 TIME STATISTICS#}
                 let chart_time_states_total_options = {
                     series: [
-                        {name: 'Max Time', data: {{ time_max }}},
-                        {name: 'Min Time', data: {{ time_min }}},
-                        {name: 'Avg Time', data: {{ time_avg }}}
+                        {name: 'Max Time', data: {{ chart_1.time_max }}},
+                        {name: 'Min Time', data: {{ chart_1.time_min }}},
+                        {name: 'Avg Time', data: {{ chart_1.time_avg }}}
                     ],
                     chart: {
                         type: 'bar',
@@ -306,7 +306,7 @@
                         colors: ['transparent']
                     },
                     xaxis: {
-                        categories: {{ questions }},
+                        categories: {{ chart_1.questions }},
                     },
                     yaxis: {
                         title: {
@@ -333,13 +333,13 @@
                 var chart_attempt_states_total_options = {
                     series: [{
                         name: 'Total Pass',
-                        data: {{ pass_attempts_all }}
+                        data: {{ chart_2.total_pass }}
                     }, {
                         name: 'Total Correct',
-                        data: {{ correct_attempts_all }}
+                        data: {{ chart_2.total_correct }}
                     }, {
                         name: 'Total Incorrect',
-                        data: {{ incorrect_attempts_all }}
+                        data: {{ chart_2.total_incorrect }}
                     }],
                     chart: {
                         type: 'bar',
@@ -361,7 +361,7 @@
                         colors: ['transparent']
                     },
                     xaxis: {
-                        categories: {{ questions }},
+                        categories: {{ chart_1.questions }},
                     },
                     yaxis: {
                         title: {
@@ -382,13 +382,13 @@
                 var chart_attempt_states_average_options = {
                     series: [{
                         name: 'Average Pass',
-                        data: {{ average_pass_attempts_all }}
+                        data: {{ chart_3.avg_pass }}
                     }, {
                         name: 'Average Correct',
-                        data: {{ average_correct_attempts_all }}
+                        data: {{ chart_3.avg_correct }}
                     }, {
                         name: 'Average Incorrect',
-                        data: {{ average_incorrect_attempts_all }}
+                        data: {{ chart_3.avg_incorrect }}
                     }],
                     chart: {
                         type: 'bar',
@@ -411,7 +411,7 @@
                         colors: ['transparent']
                     },
                     xaxis: {
-                        categories: {{ questions }},
+                        categories: {{ chart_1.questions }},
                     },
                     yaxis: {
                         title: {
@@ -437,11 +437,11 @@
                 {# CHART 4 #}
                 var chart_correct_attempts_options = {
                     series: [{
-                        name: 'Avg Pass Attempts',
-                        data: {{ average_pass_attempts_all }}
+                        name: 'Avg Correct Attempts',
+                        data: {{ chart_4.avg_correct }}
                     }, {
-                        name: 'Team Pass Attempts',
-                        data: {{ user_total_pass }}
+                        name: 'Team Correct Attempts',
+                        data: {{ chart_4.team_correct }}
                     }
                     ],
                     chart: {
@@ -465,7 +465,7 @@
                         colors: ['transparent']
                     },
                     xaxis: {
-                        categories: {{ questions }},
+                        categories: {{ chart_1.questions }},
                     },
                     yaxis: {
                         title: {
@@ -491,11 +491,11 @@
                 {# CHART 5 #}
                 var chart_incorrect_attempts_options = {
                     series: [{
-                        name: 'Avg Correct Attempts',
-                        data: {{ average_correct_attempts_all }}
+                        name: 'Avg Incorrect Attempts',
+                        data: {{ chart_4.avg_incorrect }}
                     }, {
-                        name: 'Team Correct Attempts',
-                        data: {{ user_total_correct }}
+                        name: 'Team Incorrect Attempts',
+                        data: {{ chart_4.team_incorrect }}
                     }
                     ],
                     chart: {
@@ -545,11 +545,11 @@
                 {# CHART 6 #}
                 var chart_pass_attempts_options = {
                     series: [{
-                        name: 'Avg Wrong Attempts',
-                        data: {{ average_incorrect_attempts_all }}
+                        name: 'Avg Pass Attempts',
+                        data: {{ chart_4.avg_pass }}
                     }, {
-                        name: 'Team Wrong Attempts',
-                        data: {{ user_total_incorrect }}
+                        name: 'Team Pass Attempts',
+                        data: {{ chart_4.team_pass }}
                     }
                     ],
                     chart: {
@@ -591,6 +591,7 @@
                         }
                     }
                 };
+
                 var chart_pass_attempts = new ApexCharts(document.querySelector("#pass_attempts"),
                     chart_pass_attempts_options
                 );
@@ -600,16 +601,16 @@
                 var chart_myteam_vs_teams_options = {
                     series: [{
                         name: 'Max Time',
-                        data: {{ time_max }}
+                        data: {{ chart_1.time_max }}
                     }, {
                         name: 'Min Time',
-                        data: {{ time_min }}
+                        data: {{ chart_1.time_min }}
                     }, {
                         name: 'Avg Time',
-                        data: {{ time_avg }}
+                        data: {{ chart_1.time_avg }}
                     }, {
                         name: 'My Team',
-                        data: {{ my_team_time }}
+                        data: {{ chart_1.time_my_team }}
                     }
                     ],
                     chart: {
@@ -633,7 +634,7 @@
                         colors: ['transparent']
                     },
                     xaxis: {
-                        categories: {{ questions }},
+                        categories: {{ chart_1.questions }},
                     },
                     yaxis: {
                         title: {

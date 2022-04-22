@@ -52,13 +52,12 @@
 {% endblock %}
 
 {% block base_content %}
+    {% block base_footer %}
+        {% include 'wsite/include/footer.html' %}
+    {% endblock %}
+
 
 {% endblock %}
-
-{% block base_footer %}
-    {% include 'wsite/include/footer.html' %}
-{% endblock %}
-
 
 {#<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>#}
 <script src="{% static 'website/js/jquery.min.js' %}"></script>
