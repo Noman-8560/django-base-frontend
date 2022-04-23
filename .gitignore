@@ -102,6 +102,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+db_unchanged.sqlite3
 env/
 venv/
 ENV/

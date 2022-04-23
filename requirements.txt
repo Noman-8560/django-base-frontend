@@ -1,15 +1,11 @@
-Django
-django-filter
-PyJWT==1.7.1
-# djangorestframework
-django-seed
-django-crispy-forms
-django-ckeditor
-pillow
-django-resized
-django-allauth
-django-notifications-hq
-# django-model-utils
-six
-django-preventconcurrentlogins
-django-environ
+Django==3.1.3
+django_allauth==0.45.0
+django_ckeditor==6.0.0
+django_environ==0.4.5
+django_filter==21.1
+django_notifications_hq==1.6.0
+django_resized==0.3.11
+environ==1.0
+notifications==0.3.2
+PyJWT==2.3.0
+requests==2.25.1
