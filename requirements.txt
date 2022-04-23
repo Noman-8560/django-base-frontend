@@ -7,5 +7,5 @@ django_notifications_hq==1.6.0
 django_resized==0.3.11
 environ==1.0
 notifications==0.3.2
-PyJWT==2.3.0
+PyJWT==1.7.1
 requests==2.25.1
