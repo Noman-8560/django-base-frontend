@@ -1,4 +1,5 @@
 import os
+import environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -8,8 +9,9 @@ AUTH_USER_MODEL = 'accounts.User'
 ROOT_URLCONF = 'cocognite.urls'
 WSGI_APPLICATION = 'cocognite.wsgi.application'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 env_file = os.path.join(BASE_DIR, ".env")
-env = os.environ.Env()
+env = environ.Env()
 env.read_env(env_file)
 
 SECRET_KEY = 's(l5vi&5nq3619gdskadhgjaksd981234hlaskhjdlasd'
