@@ -84,24 +84,11 @@ class DashboardView(View):
                 questions = requested_quiz.questions.all()
                 user = User.objects.get(username=request.user.username)
                 user_attempts = Attempt.objects.filter(user=user, quiz=requested_quiz)
-                # TODO: re-write entirely
-                """
-                get current team - request user in participant to a team participated in current quiz
-                                GET ALL TEAMS PARTICIPATED IN CURRENT QUIZ, FILTER TEAM WHICH HAS CURRENT USER IN IT
-                                
-                get all attempts - to the the requested quiz 
 
-                get time - [end time - start time] of a particular attempt
-                
-                
-                if attempt not found to a particular quiz, it will be considered as pass/skip
-                if successful = True -> Correct
-                if successful = False -> Incorrect
-                
-                """
                 all_teams = Team.objects.filter(quiz=requested_quiz)
-                print(all_teams)
+
                 current_team = all_teams.get(participants__in=[request.user])
+
                 list_time_max = []
                 list_time_min = []
                 list_time_avg = []
@@ -136,15 +123,9 @@ class DashboardView(View):
 
                     teams_passed = [x.pk for x in all_teams]
 
-                    print(teams_passed)
                     for v in _attempts.values('start_time', 'end_time', 'team', 'question', 'successful'):
                         current = (v['end_time'] - v['start_time']).total_seconds()
-                        print('team in loop : ', v['team'])
-                        print('current team : ', current_team.pk)
-                        print('time taken by team in loop : ', current)
                         list_time_values.append(current)
-                        print(v['team'])
-                        print(v['successful'])
 
                         if v['successful']:
                             _total_correct += 1
@@ -159,30 +140,27 @@ class DashboardView(View):
                                 _current_team_attempt = 0
 
                         if v['team'] in teams_passed:
-                            print(f"removed {v['team']}")
                             teams_passed.remove(v['team'])
-
-                        print(teams_passed)
 
                     _avg_time = statistics.mean(list_time_values)
 
-                    list_time_max.append(max(list_time_values))
-                    list_time_min.append(min(list_time_values))
-                    list_time_avg.append(_avg_time)
+                    list_time_max.append(round(max(list_time_values), 2))
+                    list_time_min.append(round(min(list_time_values), 2))
+                    list_time_avg.append(round(_avg_time, 2))
 
                     if current_team.pk in teams_passed:
                         list_team_pass.append(1)
                     else:
                         list_team_pass.append(0)
 
-                    list_total_pass.append(len(teams_passed))
-                    list_total_correct.append(_total_correct)
-                    list_total_incorrect.append(_total_incorrect)
-                    list_time_my_team.append(_current_team_time)
+                    list_total_pass.append(round(len(teams_passed), 2))
+                    list_total_correct.append(round(_total_correct, 2))
+                    list_total_incorrect.append(round(_total_incorrect, 2))
+                    list_time_my_team.append(round(_current_team_time, 2))
 
-                    list_avg_pass.append(len(teams_passed) / all_teams.count())
-                    list_avg_correct.append(_total_correct / all_teams.count())
-                    list_avg_incorrect.append(_total_incorrect / all_teams.count())
+                    list_avg_pass.append(round(len(teams_passed) / all_teams.count(), 2))
+                    list_avg_correct.append(round(_total_correct / all_teams.count(), 2))
+                    list_avg_incorrect.append(round(_total_incorrect / all_teams.count(), 2))
 
                     if _current_team_attempt == 1:
                         list_team_correct.append(0)
