@@ -198,91 +198,6 @@ class DashboardView(View):
                     'team_incorrect': list_team_incorrect
                 }
 
-                teams = []
-
-                # USER_REQUIREMENTS
-                user_total_correct = []
-                user_total_incorrect = []
-                user_time_spent = []
-                user_total_pass = []
-
-                # OVER_ALL_REQUIREMENTS
-                correct_attempts_all = []
-                incorrect_attempts_all = []
-
-                average_correct_attempts_all = []
-                average_incorrect_attempts_all = []
-                pass_attempts_all = []
-                average_pass_attempts_all = []
-
-                time_max = []
-                time_min = []
-                time_avg = []
-                my_team_time = []
-
-                for question in questions:
-                    pass_attempts_all.append(1)
-                    average_pass_attempts_all.append(1)
-                    _attempts = Attempt.objects.filter(question=question).values('team').distinct()
-                    _s_attempts = _attempts.filter(successful=True)
-                    _u_attempts = _attempts.filter(successful=False)
-                    temp_denominator = _s_attempts.count() + _u_attempts.count()
-
-                    # GET TIMES -------------------------------------------------------------------------------------
-                    _all_time_sum = 0
-                    _max_time = 0
-                    _min_time = 1000
-                    count = 1
-                    for v in _attempts.values('start_time', 'end_time', 'team', 'question'):
-                        current = (v['end_time'] - v['start_time']).total_seconds()
-                        if current < _max_time:
-                            _max_time = _max_time
-                        else:
-                            _max_time = current
-
-                        if current < _min_time:
-                            _min_time = current
-                        else:
-                            _min_time = _min_time
-                        count += 1
-
-                        _all_time_sum += int(current)
-
-                    time_max.append(int(_max_time))
-                    time_min.append(int(_min_time))
-                    time_avg.append(_all_time_sum / count)
-
-                    my_team_attempts = Attempt.objects.filter(question=question, user=user)
-                    if my_team_attempts.exists():
-                        for a in my_team_attempts:
-                            my_team_time.append(int((a.end_time - a.start_time).total_seconds()))
-                    else:
-                        my_team_time.append(0)
-                    # -----------------------------------------------------------------------------------------------
-
-                    # CORRECT ALL and IN_CORRECT ALL ----------------------------------------------------------------
-                    correct_attempts_all.append(_s_attempts.count())
-                    incorrect_attempts_all.append(_u_attempts.count())
-                    # -----------------------------------------------------------------------------------------------
-
-                    # AVG CORRECT ALL and AVG IN_CORRECT ALL --------------------------------------------------------
-                    average_correct_attempts_all.append(
-                        _s_attempts.count() / temp_denominator if temp_denominator > 0 else 0)
-                    average_incorrect_attempts_all.append(
-                        _u_attempts.count() / temp_denominator if temp_denominator > 0 else 0)
-                    # -----------------------------------------------------------------------------------------------
-
-                for attempt in user_attempts:
-                    if attempt.successful:
-                        user_total_correct.append(1)
-                        user_total_incorrect.append(0)
-                    else:
-                        user_total_correct.append(0)
-                        user_total_incorrect.append(1)
-
-                    user_time_spent.append((attempt.end_time - attempt.start_time).total_seconds())
-                    user_total_pass.append(0)
-
                 context = {
                     'chart_1': chart_1,
                     'chart_2': chart_2,
@@ -290,24 +205,6 @@ class DashboardView(View):
                     'chart_4': chart_4_5_6,
                     'allow': allow,
                     'questions': [count + 1 for count in range(len(questions))],
-
-                    'user_total_correct': user_total_correct,
-                    'user_total_incorrect': user_total_incorrect,
-                    'user_time_spent': user_time_spent,
-                    'user_total_pass': user_total_pass,
-
-                    'correct_attempts_all': correct_attempts_all,
-                    'incorrect_attempts_all': incorrect_attempts_all,
-                    'pass_attempts_all': pass_attempts_all,
-
-                    'time_max': time_max,
-                    'time_min': time_min,
-                    'time_avg': time_avg,
-                    'my_team_time': my_team_time,
-
-                    'average_correct_attempts_all': average_correct_attempts_all,
-                    'average_incorrect_attempts_all': average_incorrect_attempts_all,
-                    'average_pass_attempts_all': average_pass_attempts_all,
 
                     'quizes_all': all_quizes,  # QUIZ=> REQUIRED(current, upcoming)
                     'quizes_available': available_quizes,  # QUIZ=> REQUIRED(upcoming, not_enrolled)
