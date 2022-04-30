@@ -1,18 +1,20 @@
 import json
+import statistics
+
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import never_cache
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView
+from django.views.generic import ListView, DeleteView, UpdateView
 from notifications.signals import notify
-import statistics
+
 from cocognite import settings
 from src.accounts.decorators import identification_required, student_required
 from src.accounts.models import StudentProfile
@@ -26,7 +28,7 @@ from src.portals.student.bll import question_grading_logic
 from src.portals.student.dll import identify_user_in_team
 from src.portals.student.forms import TeamForm
 from src.portals.student.helpers import generate_signature
-from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting, zoom_create_user, zoom_activate_user
+from src.zoom_api.views import zoom_create_meeting, zoom_delete_meeting, zoom_create_user
 
 User = get_user_model()
 
@@ -82,12 +84,12 @@ class DashboardView(View):
                 requested_quiz = Quiz.objects.get(pk=int(request.GET.get('quiz')))
 
                 questions = requested_quiz.questions.all()
-                user = User.objects.get(username=request.user.username)
-                user_attempts = Attempt.objects.filter(user=user, quiz=requested_quiz)
-
                 all_teams = Team.objects.filter(quiz=requested_quiz)
 
                 current_team = all_teams.get(participants__in=[request.user])
+
+                print('current_team')
+                print(current_team)
 
                 list_time_max = []
                 list_time_min = []
@@ -108,7 +110,6 @@ class DashboardView(View):
                 list_time_my_team = []
                 for question in questions:
                     _attempts = Attempt.objects.filter(question=question).values('team').distinct()
-                    print(_attempts)
                     list_time_values = []
 
                     _min_time = -1
@@ -148,11 +149,6 @@ class DashboardView(View):
                     list_time_min.append(round(min(list_time_values), 2))
                     list_time_avg.append(round(_avg_time, 2))
 
-                    if current_team.pk in teams_passed:
-                        list_team_pass.append(1)
-                    else:
-                        list_team_pass.append(0)
-
                     list_total_pass.append(round(len(teams_passed), 2))
                     list_total_correct.append(round(_total_correct, 2))
                     list_total_incorrect.append(round(_total_incorrect, 2))
@@ -162,12 +158,18 @@ class DashboardView(View):
                     list_avg_correct.append(round(_total_correct / all_teams.count(), 2))
                     list_avg_incorrect.append(round(_total_incorrect / all_teams.count(), 2))
 
-                    if _current_team_attempt == 1:
+                    if current_team.pk in teams_passed:
+                        list_team_pass.append(1)
                         list_team_correct.append(0)
-                        list_team_incorrect.append(1)
-                    else:
-                        list_team_correct.append(1)
                         list_team_incorrect.append(0)
+                    else:
+                        list_team_pass.append(0)
+                        if _current_team_attempt == 1:
+                            list_team_correct.append(0)
+                            list_team_incorrect.append(1)
+                        else:
+                            list_team_correct.append(1)
+                            list_team_incorrect.append(0)
 
                 chart_1 = {
                     'time_max': list_time_max,
@@ -803,9 +805,6 @@ class LearningResourceResultView(View):
             pass
 
         attempts = LearningResourceAttempts.objects.filter(user=request.user, quiz=quiz)
-        print(attempts[0].question.get_choices())
-        print(attempts[0].question.get_correct_choice())
-
         context = {
             'quiz': quiz,
             'result': result,
