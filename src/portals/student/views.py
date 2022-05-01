@@ -176,11 +176,11 @@ class DashboardView(View):
                     else:
                         list_team_pass.append(0)
                         if _current_team_attempt == 1:
-                            list_team_correct.append(0)
-                            list_team_incorrect.append(1)
-                        else:
                             list_team_correct.append(1)
                             list_team_incorrect.append(0)
+                        else:
+                            list_team_correct.append(0)
+                            list_team_incorrect.append(1)
 
                 chart_1 = {
                     'time_max': list_time_max,
