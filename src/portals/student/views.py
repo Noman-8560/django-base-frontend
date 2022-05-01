@@ -88,9 +88,6 @@ class DashboardView(View):
 
                 current_team = all_teams.get(participants__in=[request.user])
 
-                print('current_team')
-                print(current_team)
-
                 list_time_max = []
                 list_time_min = []
                 list_time_avg = []
@@ -109,7 +106,7 @@ class DashboardView(View):
 
                 list_time_my_team = []
                 for question in questions:
-                    _attempts = Attempt.objects.filter(question=question).values('team').distinct()
+                    _attempts = Attempt.objects.filter(quiz=requested_quiz, question=question).values('team').distinct()
                     list_time_values = []
 
                     _min_time = -1
@@ -126,7 +123,10 @@ class DashboardView(View):
 
                     for v in _attempts.values('start_time', 'end_time', 'team', 'question', 'successful'):
                         current = (v['end_time'] - v['start_time']).total_seconds()
+
                         list_time_values.append(current)
+                        print(current)
+                        print(v['team'])
 
                         if v['successful']:
                             _total_correct += 1
@@ -143,11 +143,22 @@ class DashboardView(View):
                         if v['team'] in teams_passed:
                             teams_passed.remove(v['team'])
 
-                    _avg_time = statistics.mean(list_time_values)
+                    print(list_time_values)
 
-                    list_time_max.append(round(max(list_time_values), 2))
-                    list_time_min.append(round(min(list_time_values), 2))
-                    list_time_avg.append(round(_avg_time, 2))
+                    try:
+                        list_time_max.append(round(max(list_time_values), 2))
+                    except:
+                        list_time_max.append(0)
+
+                    try:
+                        list_time_min.append(round(min(list_time_values), 2))
+                    except:
+                        list_time_min.append(0)
+
+                    try:
+                        list_time_avg.append(round(statistics.mean(list_time_values), 2))
+                    except:
+                        list_time_avg.append(0)
 
                     list_total_pass.append(round(len(teams_passed), 2))
                     list_total_correct.append(round(_total_correct, 2))
